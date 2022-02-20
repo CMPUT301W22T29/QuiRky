@@ -1,12 +1,12 @@
 
-// Tutorial expects the following line to exist:
-// apply plugin: 'com.android.application'
-// Then says to place this line:
-apply plugin: 'com.google.gms.google-services'
-
 plugins {
     id 'com.android.application'
 }
+
+// Tutorial expects the following line to exist:
+apply plugin: 'com.android.application'
+// Then says to place this line:
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdk 32
