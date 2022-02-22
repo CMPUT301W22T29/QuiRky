@@ -5,16 +5,14 @@ pluginManagement {
         mavenCentral()
     }
 }
-/* Removing this block of code as per the suggestion of this stackoverflow answer:
-// https://stackoverflow.com/a/69197871
-// https://stackoverflow.com/users/8982117/ycuicui
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
     }
-} */
+}
 
 rootProject.name = "QuiRky"
 include ':app'

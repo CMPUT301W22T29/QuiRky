@@ -2,9 +2,6 @@ package com.example.quirky;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -13,7 +10,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,14 +45,14 @@ DatabaseManager:
      This method will create a new document every time you write.
  */
 public class DatabaseManager {
-    private FirebaseFirestore db;
+    private final FirebaseFirestore db;
     private CollectionReference col_ref;
     private DocumentReference doc_ref;
 
-    private OnSuccessListener<DocumentReference> sl;
-    private OnFailureListener fl;
+    private final OnSuccessListener<DocumentReference> sl;
+    private final OnFailureListener fl;
 
-    private String TAG = "Sample";
+    private final String TAG = "Sample";
 
     public DatabaseManager() {
         db = FirebaseFirestore.getInstance();
@@ -87,20 +83,17 @@ public class DatabaseManager {
     }
 
 
-    // FIXME: Currently have two read methods: read() and readAlt(), implementing two seperate methods of reading from the database
+    // FIXME: Currently have two read methods: read() and readAlt(), implementing two separate methods of reading from the database
     public Map<String, Object> read(String doc) {
         Map<String, Object> data;
 
-        col_ref.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()) {
-                    for(QueryDocumentSnapshot doc : task.getResult()) {
-                        Log.d(TAG, doc.getId() + " => " + doc.getData());
-                    }
-                } else {
-                    Log.w(TAG, "Error getting documents.", task.getException());
+        col_ref.get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()) {
+                for(QueryDocumentSnapshot doc1 : task.getResult()) {
+                    Log.d(TAG, doc1.getId() + " => " + doc1.getData());
                 }
+            } else {
+                Log.w(TAG, "Error getting documents.", task.getException());
             }
         });
 
