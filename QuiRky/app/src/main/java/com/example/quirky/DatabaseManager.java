@@ -2,6 +2,9 @@ package com.example.quirky;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -10,6 +13,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,30 +45,33 @@ DatabaseManager:
             - Map<String, String> data = new HashMap();
             - data.put("key, "value");
         Use the write method
-            - dm.write(data);
+            - dm.write(data, "document_name");
      This method will create a new document every time you write.
  */
 public class DatabaseManager {
     private final FirebaseFirestore db;
     private CollectionReference col_ref;
-    private DocumentReference doc_ref;
+    private HashMap<String, Object> data;
 
-    private final OnSuccessListener<DocumentReference> sl;
+    private final OnSuccessListener<Void> sl;
     private final OnFailureListener fl;
 
-    private final String TAG = "Sample";
+    private final String TAG = "DatabaseManager says: ";
 
+    // Default constructor
     public DatabaseManager() {
         db = FirebaseFirestore.getInstance();
-        sl = docref -> Log.d("Sample", "DocumentSnapshot added with ID: " + docref.getId());
+        sl = docref -> Log.d(TAG, "DocumentSnapshot added with ID.");
+
         fl = e -> Log.d("Sample", "Error adding document! ", e);
 
         col_ref = db.collection("users");
     }
 
+    // Constructor to set collection
     public DatabaseManager(String collection) {
         db = FirebaseFirestore.getInstance();
-        sl = docref -> Log.d(TAG, "DocumentSnapshot added with ID: " + docref.getId());
+        sl = docref -> Log.d(TAG, "DocumentSnapshot added with ID.");
         fl = e -> Log.d(TAG, "Error adding document! ", e);
 
         col_ref = db.collection(collection);
@@ -74,43 +81,33 @@ public class DatabaseManager {
         col_ref = db.collection((collection));
     }
 
-    public void setDoc(String doc) {
-        doc_ref = col_ref.document(doc);
+    public void write(Map<String, Object> data, String doc) {
+        col_ref.document(doc).set(data).addOnSuccessListener(sl).addOnFailureListener(fl);
     }
 
-    public void write(Map<String, Object> data) {
-        col_ref.add(data).addOnSuccessListener(sl).addOnFailureListener(fl);
-    }
+    // This method is for reading a specific document you know exists.
+    // If you call it on a document that does not exist in the current collection, it throws an exception.
+    // Use the generic read() method if you do not know what documents exist in the collection.
+    public HashMap<String, Object> read(String doc) {
 
-
-    // FIXME: Currently have two read methods: read() and readAlt(), implementing two separate methods of reading from the database
-    public Map<String, Object> read(String doc) {
-        Map<String, Object> data;
-
-        col_ref.get().addOnCompleteListener(task -> {
-            if(task.isSuccessful()) {
-                for(QueryDocumentSnapshot doc1 : task.getResult()) {
-                    Log.d(TAG, doc1.getId() + " => " + doc1.getData());
+        Task<DocumentSnapshot> ReadTask = col_ref.document(doc).get();
+        ReadTask.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()) {
+                    data = (HashMap<String, Object>) task.getResult().getData();
+                } else {
+                    Log.w(TAG, "_*_Error reading the document.", task.getException());
                 }
-            } else {
-                Log.w(TAG, "Error getting documents.", task.getException());
             }
         });
 
-        // FIXME: this read method currently does not work.
-        data = new HashMap<>();
+        // FIXME: data keeps being null, there is an error somewhere in the read. I think the listener is not calling it's onComplete method before we reach the end of this method, and so data is never initialized.
+        if(data == null) {
+            // This exception throw was just being used for debugging purposes.
+            throw new ArithmeticException(TAG + "For some reason data is null...");
+        }
+
         return data;
-    }
-
-    public Map<String, Object> readAlt(String doc) {
-        Task<DocumentSnapshot> t;
-        t = col_ref.document(doc).get();
-
-        // FIXME: The Task object represents a task.
-        // FIXME:   Calling col_ref.document(doc).get() will start a task that will take time to complete
-        // FIXME:   Calling t.getResult() immediately may cause bugs if the task is not yet complete
-        // FIXME:   Must implement some kind of stalling feature?
-
-        return t.getResult().getData(); // TODO: t.getResult().getData() can return Null. Make sure this case is accounted for.
     }
 }
