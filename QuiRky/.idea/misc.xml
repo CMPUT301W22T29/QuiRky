@@ -3,11 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/kyrie/Desktop/QuiRky/QuiRky/app/src/main/res/layout/activity_details.xml" value="0.5" />
-        <entry key="..\:/Users/kyrie/Desktop/QuiRky/QuiRky/app/src/main/res/layout/activity_main.xml" value="0.33" />
-        <entry key="..\:/Users/kyrie/Desktop/QuiRky/QuiRky/app/src/main/res/layout/activity_main_page.xml" value="0.75" />
-        <entry key="..\:/Users/kyrie/Desktop/QuiRky/QuiRky/app/src/main/res/layout/activity_setting.xml" value="0.33" />
-        <entry key="..\:/Users/kyrie/Desktop/QuiRky/QuiRky/app/src/main/res/layout/activity_starting_page.xml" value="0.25" />
+        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/activity_details.xml" value="0.25" />
+        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/activity_setting.xml" value="0.18645833333333334" />
+        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/activity_settings.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/activity_starting_page.xml" value="0.36666666666666664" />
       </map>
     </option>
   </component>

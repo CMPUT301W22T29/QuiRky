@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">QuiRky</string>
-    <string name="title_activity_setting">Leanback Setting</string>
+    <string name="title_activity_setting">Settings</string>
     <string name="browse_title">Videos by Your Company</string>
     <string name="related_movies">Related Videos</string>
     <string name="grid_view">Grid View</string>
