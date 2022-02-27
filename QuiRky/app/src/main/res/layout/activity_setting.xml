@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_browse_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Setting"
+    tools:deviceIds="tv"
+    tools:ignore="MergeRootFrame" >
+
+    <TextView
+        android:layout_width="210dp"
+        android:layout_height="60dp"
+        android:text="Settings"
+        android:textSize="40dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="40dp"
+        android:textAlignment="center" />
+
+    <Button
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:id="@+id/allowLocation"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="250dp"
+        android:text="Allow Getting Location"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/myGallery"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:text="Close My Gallery"
+        android:layout_marginLeft="40dp"
+        android:textSize="20dp"
+        android:layout_marginTop="350dp"
+        />
+
+    <Switch
+        android:id="@+id/locationSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="280dp"
+        android:layout_marginTop="250dp"
+        android:text="On/Off" />
+
+    <Switch
+        android:id="@+id/gallerySwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="280dp"
+        android:layout_marginTop="350dp"
+        android:text="On/Off" />
+</FrameLayout>
+
