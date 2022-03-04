@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class StartingPage extends AppCompatActivity {
+public class StartingPageActivity extends AppCompatActivity {
     private Button back;
     private Button search;
     private Button QRCodes;

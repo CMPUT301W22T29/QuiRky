@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentActivity;
 /*
  * Main Activity class that loads {@link MainFragment}.
  */
-public class Setting extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

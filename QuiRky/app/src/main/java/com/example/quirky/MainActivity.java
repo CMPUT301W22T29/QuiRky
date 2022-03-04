@@ -19,8 +19,8 @@ public class MainActivity extends AppCompatActivity {
         getStarted = findViewById(R.id.getStarted);
         settings = findViewById(R.id.setting);
         quit = findViewById(R.id.quit);
-        Intent viewOfSetting = new Intent(this,Setting.class);
-        Intent viewOfMainPage = new Intent(this,StartingPage.class);
+        Intent viewOfSetting = new Intent(this, SettingsActivity.class);
+        Intent viewOfMainPage = new Intent(this, StartingPageActivity.class);
         getStarted.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
