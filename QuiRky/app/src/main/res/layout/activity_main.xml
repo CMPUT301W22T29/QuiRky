@@ -43,8 +43,8 @@
 
     <Button
         android:id="@+id/quit"
-        android:layout_width="98dp"
-        android:layout_height="71dp"
+        android:layout_width="120dp"
+        android:layout_height="70dp"
         android:text="Quit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
