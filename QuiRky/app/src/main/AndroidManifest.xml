@@ -31,13 +31,7 @@
         <activity
             android:name=".SettingsActivity"
             android:exported="true"
-            android:label="@string/title_activity_setting"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
-            </intent-filter>
+            android:label="@string/title_activity_setting">
         </activity>
         <activity
             android:name=".MainActivity"
