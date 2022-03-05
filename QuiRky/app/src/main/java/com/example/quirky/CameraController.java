@@ -27,6 +27,11 @@ public class CameraController {
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private Preview preview;
     private CameraSelector cameraSelector;
+    //private static CameraController instance;
+
+    /*public static CameraController getInstance() {
+        return instance;
+    }*/
 
     protected static boolean hasCameraPermission(Context context) {
         return ContextCompat.checkSelfPermission(
@@ -50,6 +55,7 @@ public class CameraController {
         preview = new Preview.Builder().build();
         cameraSelector = new CameraSelector.Builder()
                 .requireLensFacing(CameraSelector.LENS_FACING_BACK).build();
+        //instance = this;
     }
 
     public void startCameraPreview(Preview.SurfaceProvider surfaceProvider, Context context) {
@@ -66,6 +72,4 @@ public class CameraController {
             }
         }, ContextCompat.getMainExecutor(context));
     }
-
-
 }
