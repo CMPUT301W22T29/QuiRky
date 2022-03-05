@@ -2,6 +2,7 @@ package com.example.quirky;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -21,10 +22,12 @@ public class StartingPageActivity extends AppCompatActivity {
         QRCodes = findViewById(R.id.QRCodes);
         myProfile = findViewById(R.id.back);
         community = findViewById(R.id.community);
-        /*/back.setOnClickListener(new View.OnClickListener(){
+        Intent Intent_Community = new Intent(this, Community.class);
+        Intent Intent_QRCodes = new Intent(this, QRCodes.class);
+        back.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-
+                finish();
 
             }
         });
@@ -38,7 +41,7 @@ public class StartingPageActivity extends AppCompatActivity {
         QRCodes.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-
+                startActivity(Intent_QRCodes);
 
             }
         });
@@ -49,15 +52,15 @@ public class StartingPageActivity extends AppCompatActivity {
 
             }
         });
-        Community.setOnClickListener(new View.OnClickListener(){
+        community.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-
+                startActivity(Intent_Community);
 
             }
         });
 
-        */
+
 
 
 
