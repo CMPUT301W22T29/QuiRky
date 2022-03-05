@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
         getStarted.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-
                 startActivity(viewOfMainPage);
             }
         });
@@ -32,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
         settings.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-
                 startActivity(viewOfSetting);
             }
         });
