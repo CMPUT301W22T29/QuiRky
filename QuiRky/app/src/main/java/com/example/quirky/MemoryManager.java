@@ -28,19 +28,16 @@ public class MemoryManager {
     private final Context ct;
 
     @SuppressLint("HardwareIds")
-    public MemoryManager(Context ct) {
-        /*
-        Code for getting unique device ID taken from:
-        https://stackoverflow.com/a/2785493
-        Written by user:
-        https://stackoverflow.com/users/166712/anthony-forloney
-        Published May 7 2010
-        */
-
+    public MemoryManager(Context ct, String id) {
         this.ct = ct;
-        id = Settings.Secure.getString(ct.getContentResolver(), Settings.Secure.ANDROID_ID);
+        this.id = id;
         this.dir = new File(ct.getFilesDir(), id);
     }
+
+    public boolean exist() {
+        return dir.exists();
+    }
+    public void make() { dir.mkdir(); }
 
     // Read the user's profile from memory
     public Profile read() {
@@ -125,43 +122,54 @@ public class MemoryManager {
     }
 
     // Write a profile to local memory
-    public void write(Profile p) {
-        File file;
+    public void writeName(String name) {
+        File file = new File(dir, "name");
         FileOutputStream fos;
 
-        // Write the name File
-        file = new File(dir, "name");
         try {
             file.createNewFile();
             fos = new FileOutputStream(file, false);
 
-            fos.write( p.getName().getBytes()  );
+            fos.write( name.getBytes()  );
 
             fos.close();
-        } catch (IOException e) { e.printStackTrace(); }
-
-        // Write the email File
-        file = new File(dir, "email");
-        try {
-            file.createNewFile();
-            fos = new FileOutputStream(file, false);
-
-            fos.write( p.getEmail().getBytes()  );
-
-            fos.close();
-        } catch (IOException e) { e.printStackTrace(); }
-
-        // Write the phone File
-        file = new File(dir, "phone");
-        try {
-            file.createNewFile();
-            fos = new FileOutputStream(file, false);
-
-            fos.write( p.getPhone().getBytes()  );
-
-            fos.close();
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+    public void writeEmail(String email) {
+        File file = new File(dir, "name");
+        FileOutputStream fos;
+
+        try {
+            file.createNewFile();
+            fos = new FileOutputStream(file, false);
+
+            fos.write( email.getBytes()  );
+
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writePhone(String phone) {
+        File file = new File(dir, "name");
+        FileOutputStream fos;
+
+        try {
+            file.createNewFile();
+            fos = new FileOutputStream(file, false);
+
+            fos.write( phone.getBytes()  );
+
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     // Delete the user's folder from local memory
     public void delete() {
