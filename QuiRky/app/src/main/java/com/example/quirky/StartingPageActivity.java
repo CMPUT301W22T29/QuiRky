@@ -22,7 +22,7 @@ public class StartingPageActivity extends AppCompatActivity {
         QRCodes = findViewById(R.id.QRCodes);
         //myProfile = findViewById(R.id.);
         community = findViewById(R.id.community);
-        Intent Intent_Community = new Intent(this, Community.class);
+        Intent Intent_Community = new Intent(this, CommunityActivity.class);
         Intent Intent_QRCodes = new Intent(this, QRCodes.class);
         back.setOnClickListener(new View.OnClickListener(){
             @Override

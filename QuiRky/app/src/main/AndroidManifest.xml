@@ -15,7 +15,7 @@
             android:name=".QRCodes"
             android:exported="false" />
         <activity
-            android:name=".Community"
+            android:name=".CommunityActivity"
             android:exported="false" />
         <activity
             android:name=".StartingPageActivity"
