@@ -20,9 +20,9 @@ public class StartingPageActivity extends AppCompatActivity {
         back = findViewById(R.id.back);
         search = findViewById(R.id.search);
         QRCodes = findViewById(R.id.QRCodes);
-        myProfile = findViewById(R.id.back);
+        //myProfile = findViewById(R.id.);
         community = findViewById(R.id.community);
-        Intent Intent_Community = new Intent(this, Community.class);
+        Intent Intent_Community = new Intent(this, CommunityActivity.class);
         Intent Intent_QRCodes = new Intent(this, QRCodes.class);
         back.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -45,13 +45,15 @@ public class StartingPageActivity extends AppCompatActivity {
 
             }
         });
-        myProfile.setOnClickListener(new View.OnClickListener(){
+        /*/myProfile.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
 
 
             }
         });
+
+         */
         community.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
