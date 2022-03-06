@@ -43,9 +43,9 @@ public class MainActivity extends AppCompatActivity {
         //      We must write the user's id to local memory and the database
         if(!mm.exist()) {
             mm.make();
-            mm.writeName("");
-            mm.writeEmail("");
-            mm.writePhone("");
+            mm.write("name", "");
+            mm.write("email", "");
+            mm.write("phone", "");
 
             DatabaseManager dm = new DatabaseManager("users");
             dm.write(new HashMap<>(), id);
