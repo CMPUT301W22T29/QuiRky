@@ -72,7 +72,7 @@ public class QRCodeInfo {
     }
 
     public void comment() {
-        Intent intent = new Intent(this, Comment.class);
+        Intent intent = new Intent(this, CommentActivity.class);
         startActivity(intent);
     }
 

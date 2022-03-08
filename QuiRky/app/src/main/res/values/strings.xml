@@ -29,6 +29,7 @@
     <string name="button_save">Save</string>
     <string name="text_write_comment">Write A Comment?</string>
     <string name="text_comment">Comments</string>
+    <string name="string_comment">Comment</string>
 
 
 </resources>
