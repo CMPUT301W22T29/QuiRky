@@ -37,6 +37,8 @@ public class CommentActivity extends AppCompatActivity {
 
         firebaseDatabase = FirebaseDatabase.getInstance(); // Need to review how the firebase database works.
 
+        // Need to extract comment values from database.
+
         commentList = findViewById(R.id.listView_user_comment);
         commentDataList = new ArrayList<>();
 

@@ -3,7 +3,7 @@
 
 package com.example.quirky;
 
-// From youtube.com
+// From: youtube.com
 // URL: https://www.youtube.com/watch?v=HEJg-hvj0nE
 // Author: https://www.youtube.com/channel/UCoQp_Duwqh0JWEZrg4DT2Ug
 
@@ -18,10 +18,15 @@ public class AddComment implements Comparable {
         this.uname = uname;
 //        this.qrCodeHashValue = qrCodeHashValue; // Won't be needed because the comments are already sorted for every QRCodeHashvalue.
 //    this.timestamp = ServerValue.TIMESTAMP;
-
-
     }
 
+    // The purpose is to sort by timeStamp. The oldest/smallest value is supposed to be first. So descending order i guess???
+    // Used the Ascending order variation done in the beginnersbook.
+
+    // From: beginnersbook.com
+    // URL: https://beginnersbook.com/2013/12/java-arraylist-of-object-sort-example-comparable-and-comparator/
+    // Specifically on the section for "Sorting of ArrayList<Object> with Comparable"
+    // Author: Chaitanya Singh
     @Override
     public int compareTo(Object o) {
         AddComment comment = (AddComment) o;
@@ -30,7 +35,7 @@ public class AddComment implements Comparable {
         Integer intTime = (Integer) time; // Dummy command need to be changed. Need to get the integer value of TimeStamp
         // But first need to know how to get that from the Firebase.
 
-        return intTime - (Integer) this.timestamp; // Same difference
+        return (Integer) this.timestamp - intTime; // Same difference
     }
 
     public String getContent() {
