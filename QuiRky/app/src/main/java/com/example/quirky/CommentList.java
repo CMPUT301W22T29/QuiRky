@@ -16,12 +16,12 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class CommentList extends ArrayAdapter<AddComment> {
+public class CommentList extends ArrayAdapter<Comment> {
 
-    private ArrayList<AddComment> comments;
+    private ArrayList<Comment> comments;
     private Context context;
 
-    public CommentList(Context context, ArrayList<AddComment> comments) {
+    public CommentList(Context context, ArrayList<Comment> comments) {
         super(context, 0, comments);
         Collections.sort(comments);
         this.comments = comments;
@@ -36,7 +36,7 @@ public class CommentList extends ArrayAdapter<AddComment> {
             view = LayoutInflater.from(context).inflate(R.layout.comment_list, parent, false);
         }
 
-        AddComment comment = comments.get(position);
+        Comment comment = comments.get(position);
         TextView textComment = view.findViewById(R.id.comment_content_text);
         TextView userName = view.findViewById(R.id.text_user_name);
 
