@@ -1,3 +1,34 @@
+<<<<<<< Updated upstream
 <resources>
     <string name="app_name">QuiRky</string>
+=======
+<resources>
+    <string name="app_name">QuiRky</string>
+    <string name="title_activity_setting">Settings</string>
+    <string name="browse_title">Videos by Your Company</string>
+    <string name="related_movies">Related Videos</string>
+    <string name="grid_view">Grid View</string>
+    <string name="error_fragment">Error Fragment</string>
+    <string name="personal_settings">Personal Settings</string>
+    <string name="watch_trailer_1">Watch trailer</string>
+    <string name="watch_trailer_2">FREE</string>
+    <string name="rent_1">Rent By Day</string>
+    <string name="rent_2">From $1.99</string>
+    <string name="buy_1">Buy and Own</string>
+    <string name="buy_2">AT $9.99</string>
+    <string name="movie">Movie</string>
+
+    <!-- Error messages -->
+    <string name="error_fragment_message">An error occurred</string>
+    <string name="dismiss_error">Dismiss</string>
+
+    <string name="show_score">Show Score</string>
+    <string name="qr_code_selected">QR Code Selected</string>
+    <string name="button_comments">Comments</string>
+    <string name="button_who_else_has_this_code">Who Else has this Code?</string>
+    <string name="button_set_private">Set Private</string>
+    <string name="button_delete">Delete</string>
+    <string name="location">Location</string>
+
+>>>>>>> Stashed changes
 </resources>
