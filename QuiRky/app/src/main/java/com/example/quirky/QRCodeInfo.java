@@ -1,18 +1,23 @@
+// Author: Raymart
+// Contact me Through discord for any questions
+
 package com.example.quirky;
 
-import static com.google.firebase.firestore.FieldValue.delete;
+//import static com.google.firebase.firestore.FieldValue.delete;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 
 /**
  * This class is of the Activity for when you're clicking on one of the listed items in "Your QR Codes" or
  * "nearby QR code" in "MAP" Activity, as seen on the Project Part 2 Miro.
  * */
-public class QRCodeInfo {
+public class QRCodeInfo extends AppCompatActivity {
     private Button Comment;
     private Button ElseQRCode;
     private Button SetPrivate;
@@ -29,9 +34,7 @@ public class QRCodeInfo {
         ElseQRCode = findViewById(R.id.button_who_else_has_this_code);
         SetPrivate = findViewById(R.id.button_set_private);
         Delete = findViewById(R.id.button_delete);
-//        Location = findViewById(R.id.button_location);
-
-
+        Location = findViewById(R.id.button_location); // would be better if it was a clickable text
 
 
         // initialized intent

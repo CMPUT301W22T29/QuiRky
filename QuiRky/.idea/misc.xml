@@ -5,7 +5,8 @@
       <map>
         <entry key="..\:/Users/Rayma/OneDrive - ualberta.ca/2022/CMPUT 301 Project/yes/QuiRky/app/src/main/res/layout/activity_code_scanner.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Rayma/OneDrive - ualberta.ca/2022/CMPUT 301 Project/yes/QuiRky/app/src/main/res/layout/activity_comment.xml" value="0.25" />
-        <entry key="..\:/Users/Rayma/OneDrive - ualberta.ca/2022/CMPUT 301 Project/yes/QuiRky/app/src/main/res/layout/activity_qr_code_info.xml" value="0.25" />
+        <entry key="..\:/Users/Rayma/OneDrive - ualberta.ca/2022/CMPUT 301 Project/yes/QuiRky/app/src/main/res/layout/activity_qr_code_info.xml" value="0.33" />
+        <entry key="..\:/Users/Rayma/OneDrive - ualberta.ca/2022/CMPUT 301 Project/yes/QuiRky/app/src/main/res/layout/comment_list.xml" value="0.25" />
       </map>
     </option>
   </component>

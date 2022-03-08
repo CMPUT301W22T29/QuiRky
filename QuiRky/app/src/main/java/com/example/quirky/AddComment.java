@@ -1,34 +1,40 @@
-package com.example.quirky;
+// Author: Raymart
+// Contact me Through discord for any questions
 
+package com.example.quirky;
 
 // From youtube.com
 // URL: https://www.youtube.com/watch?v=HEJg-hvj0nE
 // Author: https://www.youtube.com/channel/UCoQp_Duwqh0JWEZrg4DT2Ug
 
 // This will add the comment to the firebase Database.
-public class AddComment {
-    private String content, uid, uimg, uname;
-    private Object timestamp;
+public class AddComment implements Comparable {
+    private String content, uname, qrCodeHashValue;
+    private Object timestamp; // Time stamp is used to tell how old the comment was. This could be used to order the comment
+    // Could this timeStamp also be an int? That would be really helpful for the sorting....
 
-    public AddComment(String content, String uid, String uimg, String uname) {
+    public AddComment(String content, String uname) {
         this.content = content;
-        this.uid = uid;
-        this.uimg = uimg;
         this.uname = uname;
+//        this.qrCodeHashValue = qrCodeHashValue; // Won't be needed because the comments are already sorted for every QRCodeHashvalue.
 //    this.timestamp = ServerValue.TIMESTAMP;
 
+
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        AddComment comment = (AddComment) o;
+        Object time = comment.getTimestamp(); // Need to be able to get the int value of this
+
+        Integer intTime = (Integer) time; // Dummy command need to be changed. Need to get the integer value of TimeStamp
+        // But first need to know how to get that from the Firebase.
+
+        return intTime - (Integer) this.timestamp; // Same difference
     }
 
     public String getContent() {
         return content;
-    }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public String getUimg() {
-        return uimg;
     }
 
     public String getUname() {
@@ -37,14 +43,6 @@ public class AddComment {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
-    public void setUimg(String uimg) {
-        this.uimg = uimg;
     }
 
     public void setUname(String uname) {
@@ -58,4 +56,5 @@ public class AddComment {
     public void setTimestamp(Object timestamp) {
         this.timestamp = timestamp;
     }
+
 }
