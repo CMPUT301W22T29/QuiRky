@@ -9,11 +9,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +47,7 @@ DatabaseManager:
  */
 public class DatabaseManager {
     private final FirebaseFirestore db;
-    private CollectionReference col_ref;
+    private CollectionReference collection;
     private HashMap<String, Object> data;
 
     private final OnSuccessListener<Void> sl;
@@ -65,7 +62,7 @@ public class DatabaseManager {
 
         fl = e -> Log.d("Sample", "Error adding document! ", e);
 
-        col_ref = db.collection("users");
+        collection = db.collection("users");
     }
 
     // Constructor to set collection
@@ -74,23 +71,21 @@ public class DatabaseManager {
         sl = docref -> Log.d(TAG, "DocumentSnapshot added with ID.");
         fl = e -> Log.d(TAG, "Error adding document! ", e);
 
-        col_ref = db.collection(collection);
+        this.collection = db.collection(collection);
     }
 
     public void setCollection(String collection) {
-        col_ref = db.collection((collection));
+        this.collection = db.collection((collection));
     }
 
     public void write(Map<String, Object> data, String doc) {
-        col_ref.document(doc).set(data).addOnSuccessListener(sl).addOnFailureListener(fl);
+        collection.document(doc).set(data).addOnSuccessListener(sl).addOnFailureListener(fl);
     }
 
-    // This method is for reading a specific document you know exists.
-    // If you call it on a document that does not exist in the current collection, it throws an exception.
-    // Use the generic read() method if you do not know what documents exist in the collection.
+    /* DEPRECATED METHOD
     public HashMap<String, Object> read(String doc) {
 
-        Task<DocumentSnapshot> ReadTask = col_ref.document(doc).get();
+        Task<DocumentSnapshot> ReadTask = collection.document(doc).get();
         ReadTask.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -109,5 +104,5 @@ public class DatabaseManager {
         }
 
         return data;
-    }
+    } */
 }
