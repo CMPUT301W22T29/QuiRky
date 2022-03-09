@@ -2,17 +2,18 @@ package com.example.quirky;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /*
@@ -48,61 +49,54 @@ DatabaseManager:
 public class DatabaseManager {
     private final FirebaseFirestore db;
     private CollectionReference collection;
-    private HashMap<String, Object> data;
 
-    private final OnSuccessListener<Void> sl;
-    private final OnFailureListener fl;
+    private List<DocumentSnapshot> docs;
+
+    private final OnSuccessListener<Void> writeSuccess;
+    private final OnFailureListener writeFail;
 
     private final String TAG = "DatabaseManager says: ";
 
     // Default constructor
     public DatabaseManager() {
         db = FirebaseFirestore.getInstance();
-        sl = docref -> Log.d(TAG, "DocumentSnapshot added with ID.");
-
-        fl = e -> Log.d("Sample", "Error adding document! ", e);
+        writeSuccess = docref -> Log.d(TAG, "The write was successful.");
+        writeFail = e -> Log.d(TAG, "The write operation failed. ", e);
 
         collection = db.collection("users");
     }
 
-    // Constructor to set collection
-    public DatabaseManager(String collection) {
-        db = FirebaseFirestore.getInstance();
-        sl = docref -> Log.d(TAG, "DocumentSnapshot added with ID.");
-        fl = e -> Log.d(TAG, "Error adding document! ", e);
+    public void writeComment(Map<String, String> data, String qrId) {
+        collection = db.collection("QRcodes").document(qrId).collection("comments");
+        String commentId = data.get("content").toString();
 
-        this.collection = db.collection(collection);
+        collection.document(commentId).set(data).addOnSuccessListener(writeSuccess).addOnFailureListener(writeFail);
     }
 
-    public void setCollection(String collection) {
-        this.collection = db.collection((collection));
+    public void writeUser(Map<String, Object> data, String doc) {
+        collection = db.collection("users");
+        collection.document(doc).set(data).addOnSuccessListener(writeSuccess).addOnFailureListener(writeFail);
     }
 
-    public void write(Map<String, Object> data, String doc) {
-        collection.document(doc).set(data).addOnSuccessListener(sl).addOnFailureListener(fl);
-    }
+    public ArrayList<Comment> getComments(Task<QuerySnapshot> task) {
+        // FIXME: android studio says following line may produce null pointer exception. Consider how.
+        List<DocumentSnapshot> docs = task.getResult().getDocuments();
 
-    /* DEPRECATED METHOD
-    public HashMap<String, Object> read(String doc) {
+        // Here we assume docs is a filled List of Document Snapshots
+        ArrayList<Comment> comments = new ArrayList<>();
+        for(int i = 0; i < docs.size(); i++) {
+            String content = docs.get(i).getString("contents");
+            String user = docs.get(i).getString("user");
+            Date timestamp = docs.get(i).getDate("timestamp");
 
-        Task<DocumentSnapshot> ReadTask = collection.document(doc).get();
-        ReadTask.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
-                    data = (HashMap<String, Object>) task.getResult().getData();
-                } else {
-                    Log.w(TAG, "_*_Error reading the document.", task.getException());
-                }
-            }
-        });
-
-        // FIXME: data keeps being null, there is an error somewhere in the read. I think the listener is not calling it's onComplete method before we reach the end of this method, and so data is never initialized.
-        if(data == null) {
-            // This exception throw was just being used for debugging purposes.
-            throw new ArithmeticException(TAG + "For some reason data is null...");
+            comments.add(new Comment(content, user, timestamp));
         }
 
-        return data;
-    } */
+        return comments;
+    }
+
+    public Task<QuerySnapshot> readComments(String qrCodeId) {
+        collection = db.collection("QRCode").document(qrCodeId).collection("Comments");
+        return collection.get();
+    }
 }
