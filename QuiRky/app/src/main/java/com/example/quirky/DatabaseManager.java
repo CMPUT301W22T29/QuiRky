@@ -103,7 +103,7 @@ public class DatabaseManager {
     }
 
     public Task<QuerySnapshot> readComments(String qrCodeId) {
-        collection = db.collection("QRCode").document(qrCodeId).collection("Comments");
+        collection = db.collection("QRcode").document(qrCodeId).collection("comments");
         return collection.get();
     }
 }

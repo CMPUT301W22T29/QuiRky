@@ -7,17 +7,22 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Button;
 
-import java.util.HashMap;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    Button settings;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         Button getStarted = findViewById(R.id.getStarted);
-        Button settings = findViewById(R.id.setting);
+        settings = findViewById(R.id.setting);
         Button quit = findViewById(R.id.quit);
 
         getStarted.setOnClickListener(view -> startHubActivity());
@@ -46,13 +51,14 @@ public class MainActivity extends AppCompatActivity {
             mm.write("name", "");
             mm.write("email", "");
             mm.write("phone", "");
-
-            DatabaseManager dm = new DatabaseManager("users");
-            dm.write(new HashMap<>(), id);
         }
-        startActivity(i);
+        DatabaseManager dm = new DatabaseManager();
+        Task<QuerySnapshot> task = dm.readComments("sample");
 
-
+        task.addOnSuccessListener(queryDocumentSnapshots -> {
+            ArrayList<Comment> comments = dm.getComments(task);
+            settings.setText(comments.get(0).getContent());
+        });
     }
 
     private void startSettingsActivity() {
