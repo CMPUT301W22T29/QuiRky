@@ -81,8 +81,15 @@ public class DatabaseManager {
         col_ref = db.collection((collection));
     }
 
+    //
     public void write(Map<String, Object> data, String doc) {
         col_ref.document(doc).set(data).addOnSuccessListener(sl).addOnFailureListener(fl);
+    }
+
+    // String id is the id of the QR code.
+    public void writeComment(Comment c, String id) {
+        // Pretend that it works.
+        System.out.println("This bitch is receiving it and you are good");
     }
 
     // This method is for reading a specific document you know exists.

@@ -10,6 +10,8 @@ import android.widget.Button;
 import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
+    public static final String EXTRA_MESSAGE = "com.example.QuiRky.MESSAGE";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,14 +21,21 @@ public class MainActivity extends AppCompatActivity {
         Button getStarted = findViewById(R.id.getStarted);
         Button settings = findViewById(R.id.setting);
         Button quit = findViewById(R.id.quit);
+        Button comment = findViewById(R.id.comment);
 
         getStarted.setOnClickListener(view -> startHubActivity());
         settings.setOnClickListener(view -> startSettingsActivity());
         quit.setOnClickListener(view -> finish());
+        comment.setOnClickListener(view -> comment());
+
+    }
+
+    private void comment() {
+        Intent i = new Intent(this, CommentActivity.class);
+        startActivity(i);
     }
 
     private void startHubActivity() {
-
         /*
         Code for getting unique device ID taken from:
         https://stackoverflow.com/a/2785493
@@ -51,8 +60,6 @@ public class MainActivity extends AppCompatActivity {
             dm.write(new HashMap<>(), id);
         }
         startActivity(i);
-
-
     }
 
     private void startSettingsActivity() {

@@ -3,6 +3,7 @@
 
 package com.example.quirky;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
@@ -13,9 +14,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -29,7 +32,7 @@ public class CommentActivity extends AppCompatActivity {
 
 //    FirebaseDatabase firebaseDatabase; // Suspect Code will need to review how the Firebase database works.
 
-    DatabaseManager DM;
+//    DatabaseManager DM;
 
     // Need to retrieve the Comments that were made for that QR code.
     // Also still need to show the comments.
@@ -42,15 +45,27 @@ public class CommentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        firebaseDatabase = FirebaseDatabase.getInstance(); // Need to review how the firebase database works.
+        // Get the QRCodeID that got commented on so that the qrcode database collection can be opened in the database
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        
+//        String message = intent.getExtras().getParcelable("comments"); // hopefully this works
+
+        System.out.println("It worked."+message);
 
         String comment = "whdfsk"; // sample comment
-        Map<String, String> a; // The comment must be stored with a random key value pair, but doesn't really matter what the name is
+        Map<String, String> a = new HashMap<String, String>(); // The comment must be stored with a random key value pair, but doesn't really matter what the name is
+
         a.put("comment", comment); // Key matches the Field that you want to store it in.
 
-        DM.setCollection("comments"); // Opens the collection Comments
+//        DM.setCollection("comments"); // Opens the collection Comments
 
-        DM.write(a, "comment1"); // Writes a into the document "comment1"
+
+        Comment sampleComment = new Comment(comment, "Raymart", new Date());
+        String id = "12345";
+
+        // (Comment c, String id)
+//        DM.writeComment(sampleComment, id); // Writes the comment into the specific qr code with the specific id.
 
         // Need to extract comment values from database.
 
@@ -62,9 +77,14 @@ public class CommentActivity extends AppCompatActivity {
 
 
         for (int i = 0; i < sampleComments.length; i++) {
-            commentDataList.add(new Comment(sampleComments[i], sampleNames[i], new Date()));
+            Comment sampleComment1 = new Comment(sampleComments[i], sampleNames[i], new Date());
+            commentDataList.add(sampleComment1);
+
+            // I am hoping that writeComment() doesn't overwrite any of the comments that i am passing.
+//            DM.writeComment(sampleComment1, Integer.toString(i)); // This should kind of work.
         }
 
+        // Recycler Adapter instead of list Adapter. Recycler List instead of
         commentAdapter = new CommentList(this, commentDataList);
         commentList.setAdapter(commentAdapter);
         commentAdapter.notifyDataSetChanged();
@@ -125,7 +145,7 @@ public class CommentActivity extends AppCompatActivity {
 //            }
 //        });
 //        finish();
-//    }
+    }
 
     private void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();

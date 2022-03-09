@@ -6,7 +6,7 @@ package com.example.quirky;
 import java.util.Date;
 
 // This will add the comment to the firebase Database.
-public class Comment {
+public class Comment implements Comparable<Comment>{
     private String content, uname;
     private Date timestamp;
 
@@ -14,7 +14,10 @@ public class Comment {
         this.content = content;
         this.uname = uname;
         this.timestamp = timestamp;
+    }
 
+    public int compareTo(Comment compareComment) {
+        return this.timestamp.compareTo(compareComment.getTimestamp());
     }
 
     public String getContent() {
