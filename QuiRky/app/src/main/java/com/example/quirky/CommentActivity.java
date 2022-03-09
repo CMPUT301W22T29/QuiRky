@@ -3,7 +3,9 @@
 
 package com.example.quirky;
 
+
 import android.content.Intent;
+
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
@@ -14,11 +16,17 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
 import java.util.Locale;
 import java.util.Map;
 
@@ -32,7 +40,8 @@ public class CommentActivity extends AppCompatActivity {
 
 //    FirebaseDatabase firebaseDatabase; // Suspect Code will need to review how the Firebase database works.
 
-//    DatabaseManager DM;
+
+    DatabaseManager DM;
 
     // Need to retrieve the Comments that were made for that QR code.
     // Also still need to show the comments.
@@ -77,6 +86,7 @@ public class CommentActivity extends AppCompatActivity {
 
 
         for (int i = 0; i < sampleComments.length; i++) {
+
             Comment sampleComment1 = new Comment(sampleComments[i], sampleNames[i], new Date());
             commentDataList.add(sampleComment1);
 
@@ -85,6 +95,7 @@ public class CommentActivity extends AppCompatActivity {
         }
 
         // Recycler Adapter instead of list Adapter. Recycler List instead of
+
         commentAdapter = new CommentList(this, commentDataList);
         commentList.setAdapter(commentAdapter);
         commentAdapter.notifyDataSetChanged();
@@ -145,6 +156,7 @@ public class CommentActivity extends AppCompatActivity {
 //            }
 //        });
 //        finish();
+
     }
 
     private void showMessage(String message) {

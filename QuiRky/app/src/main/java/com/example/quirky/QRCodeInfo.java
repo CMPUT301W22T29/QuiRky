@@ -18,7 +18,9 @@ import androidx.appcompat.app.AppCompatActivity;
  * "nearby QR code" in "MAP" Activity, as seen on the Project Part 2 Miro.
  * */
 public class QRCodeInfo extends AppCompatActivity {
+
 //    public static final String EXTRA_MESSAGE = "com.example.QuiRky.MESSAGE";
+
 
     private Button Comment;
     private Button ElseQRCode;
@@ -78,8 +80,10 @@ public class QRCodeInfo extends AppCompatActivity {
 
     public void comment() {
         Intent intent = new Intent(this, CommentActivity.class);
+
         String message = "Sample QR Code ID"; // This needs to be a specific QR code Id.
         intent.putExtra("comment", message);
+
         startActivity(intent);
     }
 
