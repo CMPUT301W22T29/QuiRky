@@ -13,6 +13,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -66,16 +67,22 @@ public class DatabaseManager {
         collection = db.collection("users");
     }
 
-    public void writeComment(Map<String, String> data, String qrId) {
+    public void writeComment(Comment comment, String qrId) {
         collection = db.collection("QRcodes").document(qrId).collection("comments");
-        String commentId = data.get("content").toString();
-
-        collection.document(commentId).set(data).addOnSuccessListener(writeSuccess).addOnFailureListener(writeFail);
+        HashMap<String, String> data = new HashMap<>();
+        data.put("content", comment.getContent());
+        data.put("user", comment.getUname());
+        data.put("timestamp", comment.getTimestamp().toString());
+        collection.document(comment.getTimestamp().toString()).set(data).addOnSuccessListener(writeSuccess).addOnFailureListener(writeFail);
     }
 
-    public void writeUser(Map<String, Object> data, String doc) {
+    public void writeUser(Profile p) {
         collection = db.collection("users");
-        collection.document(doc).set(data).addOnSuccessListener(writeSuccess).addOnFailureListener(writeFail);
+        HashMap<String, String> data = new HashMap<>();
+        data.put("name", p.getName());
+        data.put("email", p.getEmail());
+        data.put("phone", p.getPhone());
+        collection.document(p.getName()).set(data).addOnSuccessListener(writeSuccess).addOnFailureListener(writeFail);
     }
 
     public ArrayList<Comment> getComments(Task<QuerySnapshot> task) {
