@@ -63,7 +63,6 @@ public class DatabaseManager {
         db = FirebaseFirestore.getInstance();
         writeSuccess = docref -> Log.d(TAG, "The write was successful.");
         writeFail = e -> Log.d(TAG, "The write operation failed. ", e);
-
         collection = db.collection("users");
     }
 

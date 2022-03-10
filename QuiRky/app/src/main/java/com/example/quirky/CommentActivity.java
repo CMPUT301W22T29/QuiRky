@@ -41,7 +41,7 @@ public class CommentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+/*
 //        firebaseDatabase = FirebaseDatabase.getInstance(); // Need to review how the firebase database works.
 
         String comment = "whdfsk"; // sample comment
@@ -140,5 +140,7 @@ public class CommentActivity extends AppCompatActivity {
 
     public void cancel() {
         finish(); // This should go back to the previous Activity.
+    }
+*/
     }
 }
