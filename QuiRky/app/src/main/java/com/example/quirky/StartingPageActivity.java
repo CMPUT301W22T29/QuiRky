@@ -63,7 +63,7 @@ public class StartingPageActivity extends AppCompatActivity {
 
         mid.setText("My Stats");
         mid.setOnClickListener(view -> {
-            Intent i = new Intent(this, CodeScannerActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
             startActivity(i);
         });
 
@@ -83,7 +83,7 @@ public class StartingPageActivity extends AppCompatActivity {
 
         mid.setText("The Leaderboards");
         mid.setOnClickListener(view -> {
-            Intent i = new Intent(this, CodeScannerActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
             startActivity(i);
         });
 

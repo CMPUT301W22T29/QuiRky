@@ -32,5 +32,6 @@
     <string name="string_comment">Comment</string>
     <string name="qr_codes">QR Codes</string>
     <string name="community">Community</string>
+    <string name="settings">Settings</string>
 
 </resources>
