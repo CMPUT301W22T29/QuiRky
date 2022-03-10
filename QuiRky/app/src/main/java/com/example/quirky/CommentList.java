@@ -1,5 +1,3 @@
-// Author: Raymart
-// Contact me Through discord for any questions
 
 package com.example.quirky;
 
@@ -35,6 +33,13 @@ public class CommentList extends RecyclerView.Adapter<CommentList.CommentViewHol
     }
 
     // Watching the video will help me identify what these are.
+
+    /**
+     *
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @NonNull
     @Override
     public CommentList.CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -43,21 +48,37 @@ public class CommentList extends RecyclerView.Adapter<CommentList.CommentViewHol
         return new CommentViewHolder(view);
     }
 
+    /**
+     *
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         holder.commentText.setText( comments.get(position).getContent());
         holder.uNameText.setText(comments.get(position).getUname());
     }
 
+    /**
+     * Returns the size of the ArrayList<Comment> comments
+     * @return - size of the Array
+     */
     @Override
     public int getItemCount() {
         return comments.size();
     }
 
+    /**
+     *
+     */
     public class CommentViewHolder extends RecyclerView.ViewHolder {
         TextView commentText, uNameText;
         // I don't think I need a background.
 
+        /**
+         *
+         * @param itemView
+         */
         public CommentViewHolder(final View itemView) {
             super(itemView);
             commentText = itemView.findViewById(R.id.comment_content_text);

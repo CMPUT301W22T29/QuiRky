@@ -1,5 +1,3 @@
-// Author: Raymart
-// Contact me Through discord for any questions
 
 package com.example.quirky;
 
@@ -20,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 public class QRCodeInfo extends AppCompatActivity {
 
 //    public static final String EXTRA_MESSAGE = "com.example.QuiRky.MESSAGE";
-
 
     private Button Comment;
     private Button ElseQRCode;
@@ -78,6 +75,9 @@ public class QRCodeInfo extends AppCompatActivity {
         });
     }
 
+    /**
+     * Opens the Comment Activity Intent.
+     */
     public void comment() {
         Intent intent = new Intent(this, CommentActivity.class);
 

@@ -1,5 +1,4 @@
-// Author: Raymart
-// Contact me Through discord for any questions
+
 
 package com.example.quirky;
 
@@ -126,6 +125,13 @@ public class CommentActivity extends AppCompatActivity {
     }
 
     // Write Intent for this, and also launch into their Activity.
+
+    /**
+     * When clicked the comment, uname and time will be saved to the database
+     * under a document field of a specific QR Code
+     *
+     * //// Not Finished
+     */
     public void save() {
         // Get information of the person who wanted to comment.
         // and then store it into the firestore database
@@ -166,10 +172,12 @@ public class CommentActivity extends AppCompatActivity {
 
     }
 
-    private void showMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
 
+    /**
+     * This would return the String version of the passed time.
+     * @param time - given time
+     * @return String version of the date in the format "dd-MM-yyyy"
+     */
     private String timestampToString(long time) {
         Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
         calendar.setTimeInMillis(time);
@@ -177,7 +185,10 @@ public class CommentActivity extends AppCompatActivity {
         return date;
     }
 
+    /**
+     * Goes back to previous Activity
+     */
     public void cancel() {
-        finish(); // This should go back to the previous Activity.
+        finish();
     }
 }
