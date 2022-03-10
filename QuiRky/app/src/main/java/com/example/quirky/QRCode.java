@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class QRCode {
     private final String content, id; // id is hash of content.
-    private int score;
+    private final int score;
     private Location geolocation;
     private ArrayList<Comment> comments;
 
@@ -51,5 +51,9 @@ public class QRCode {
 
     public ArrayList<Comment> getComments() {
         return comments;
+    }
+
+    public void addComment(Comment c) {
+        comments.add(c);
     }
 }
