@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 
 import java.security.Timestamp;
@@ -30,11 +31,18 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * Comment Activity page which allows users to scroll through comments of a
+ * Specific QR code and also add commments.
+ *
+ * @author Raymart Bless C. Datuin
+ * */
+
 public class CommentActivity extends AppCompatActivity {
     private Button Save;
     private Button Cancel;
 
-    ListView commentList;
+    RecyclerView commentList;
     ArrayList<Comment> commentDataList;
     CommentList commentAdapter;
 
@@ -78,7 +86,6 @@ public class CommentActivity extends AppCompatActivity {
 
         // Need to extract comment values from database.
 
-        commentList = findViewById(R.id.listView_user_comment);
         commentDataList = new ArrayList<>();
 
         String[] sampleComments = {"cool", "nice", "rad"};
@@ -97,8 +104,8 @@ public class CommentActivity extends AppCompatActivity {
         // Recycler Adapter instead of list Adapter. Recycler List instead of
 
         commentAdapter = new CommentList(this, commentDataList);
+        commentList = (RecyclerView) findViewById(R.id.recycleListView_user_comment);
         commentList.setAdapter(commentAdapter);
-        commentAdapter.notifyDataSetChanged();
 
         // initialized intent
         Save.setOnClickListener(new View.OnClickListener() {

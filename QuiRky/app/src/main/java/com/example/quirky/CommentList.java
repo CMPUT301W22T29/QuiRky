@@ -12,36 +12,59 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class CommentList extends ArrayAdapter<Comment> {
+/**
+ * This class is used to make a scrollable list, and used in the Recycler Adapter.
+ *
+ * @author Raymart Bless C. Datuin
+ *
+ */
+public class CommentList extends RecyclerView.Adapter<CommentList.CommentViewHolder> {
 
     private ArrayList<Comment> comments;
     private Context context;
 
     public CommentList(Context context, ArrayList<Comment> comments) {
-        super(context, 0, comments);
-        Collections.sort(comments);
+        Collections.sort(comments); // Kinda suspect
         this.comments = comments;
         this.context = context;
     }
 
+    // Watching the video will help me identify what these are.
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        View view = convertView;
-        if (view == null) {
-            view = LayoutInflater.from(context).inflate(R.layout.comment_list, parent, false);
-        }
-
-        Comment comment = comments.get(position);
-        TextView textComment = view.findViewById(R.id.comment_content_text);
-        TextView userName = view.findViewById(R.id.text_user_name);
-
-        textComment.setText(comment.getContent());
-        userName.setText(comment.getUname());
-        return view;
+    public CommentList.CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.comment_list, parent, false); // List of comments
+        return new CommentViewHolder(view);
     }
+
+    @Override
+    public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
+        holder.commentText.setText( comments.get(position).getContent());
+        holder.uNameText.setText(comments.get(position).getUname());
+    }
+
+    @Override
+    public int getItemCount() {
+        return comments.size();
+    }
+
+    public class CommentViewHolder extends RecyclerView.ViewHolder {
+        TextView commentText, uNameText;
+        // I don't think I need a background.
+
+        public CommentViewHolder(final View itemView) {
+            super(itemView);
+            commentText = itemView.findViewById(R.id.comment_content_text);
+            uNameText = itemView.findViewById(R.id.text_user_name);
+            // IDs on the XML files
+        }
+    }
+
+
 }

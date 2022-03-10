@@ -31,10 +31,11 @@ public class MainActivity extends AppCompatActivity {
         getStarted.setOnClickListener(view -> startHubActivity());
         settings.setOnClickListener(view -> startSettingsActivity());
         quit.setOnClickListener(view -> finish());
-        comment.setOnClickListener(view -> comment());
+        comment.setOnClickListener(view -> comment()); // For Testing Comments out
 
     }
 
+    // For Testing comments out
     private void comment() {
         Intent i = new Intent(this, CommentActivity.class);
         startActivity(i);
