@@ -52,12 +52,23 @@ public class DatabaseManager {
     }
 
     public void writeUser(Profile p) {
+
+        assert (p != null);
+
         collection = db.collection("users");
+
+        String name = p.getUname();
+        String email = p.getEmail();
+        String phone = p.getPhone();
+
         HashMap<String, String> data = new HashMap<>();
-        data.put("name", p.getUname());
-        data.put("email", p.getEmail());
-        data.put("phone", p.getPhone());
-        collection.document(p.getUname()).set(data).addOnSuccessListener(writeSuccess).addOnFailureListener(writeFail);
+        data.put("name", name);
+        data.put("email", email);
+        data.put("phone", phone);
+
+        collection.document(name).set(data)
+                .addOnSuccessListener(writeSuccess)
+                .addOnFailureListener(writeFail);
     }
 
     public ArrayList<Comment> getComments(Task<QuerySnapshot> task) {

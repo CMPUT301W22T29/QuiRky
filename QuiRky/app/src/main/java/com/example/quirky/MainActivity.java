@@ -68,7 +68,14 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         mm.write("email", "");
         mm.write("phone", "");
 
-        dm.writeUser(user);
+
+        /* FIXME: can't write user to database because dm.writeUser produces a null pointer exception.
+            except that I have two seperate tests confirming that the profile is not null...
+        */
+
+        assert(user != null);
+
+        // dm.writeUser(user); Commented out so it is at least runnable.
     }
 
     private void startHubActivity() {
