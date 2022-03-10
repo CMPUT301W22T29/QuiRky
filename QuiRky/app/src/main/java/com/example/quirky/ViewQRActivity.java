@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
  * This class is of the Activity for when you're clicking on one of the listed items in "Your QR Codes" or
  * "nearby QR code" in "MAP" Activity, as seen on the Project Part 2 Miro.
  * */
-public class QRCodeInfo extends AppCompatActivity {
+public class ViewQRActivity extends AppCompatActivity {
     private Button Comment;
     private Button ElseQRCode;
     private Button SetPrivate;
@@ -28,7 +28,7 @@ public class QRCodeInfo extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_qr_code_info);
+        setContentView(R.layout.activity_view_qr);
 
         Comment = findViewById(R.id.button_comments);
         ElseQRCode = findViewById(R.id.button_who_else_has_this_code);
@@ -75,7 +75,7 @@ public class QRCodeInfo extends AppCompatActivity {
     }
 
     public void comment() {
-        Intent intent = new Intent(this, CommentActivity.class);
+        Intent intent = new Intent(this, ViewCommentActivity.class);
         startActivity(intent);
     }
 

@@ -4,28 +4,20 @@
 package com.example.quirky;
 
 import android.os.Bundle;
-import android.text.format.DateFormat;
-import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
 
-public class CommentActivity extends AppCompatActivity {
+public class ViewCommentActivity extends AppCompatActivity {
     private Button Save;
     private Button Cancel;
 
     ListView commentList;
     ArrayList<Comment> commentDataList;
-    CommentList commentAdapter;
+    CommentAdapter commentAdapter;
 
 //    FirebaseDatabase firebaseDatabase; // Suspect Code will need to review how the Firebase database works.
 
@@ -65,7 +57,7 @@ public class CommentActivity extends AppCompatActivity {
             commentDataList.add(new Comment(sampleComments[i], sampleNames[i], new Date()));
         }
 
-        commentAdapter = new CommentList(this, commentDataList);
+        commentAdapter = new CommentAdapter(this, commentDataList);
         commentList.setAdapter(commentAdapter);
         commentAdapter.notifyDataSetChanged();
 

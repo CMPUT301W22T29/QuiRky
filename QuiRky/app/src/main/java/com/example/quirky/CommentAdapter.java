@@ -16,13 +16,13 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class CommentList {
+public class CommentAdapter {
 
     private ArrayList<Comment> comments;
     private Context context;
 
     /*
-    public CommentList(Context context, ArrayList<Comment> comments) {
+    public CommentAdapter(Context context, ArrayList<Comment> comments) {
         super(context, 0, comments);
         Collections.sort(comments);
         this.comments = comments;
