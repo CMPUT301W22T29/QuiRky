@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Button;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -37,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     // For Testing comments out
     private void comment() {
-        Intent i = new Intent(this, CommentActivity.class);
+        Intent i = new Intent(this, ViewCommentsActivity.class);
         startActivity(i);
     }
 

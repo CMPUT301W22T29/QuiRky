@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
  * This class is of the Activity for when you're clicking on one of the listed items in "Your QR Codes" or
  * "nearby QR code" in "MAP" Activity, as seen on the Project Part 2 Miro.
  * */
-public class QRCodeInfo extends AppCompatActivity {
+public class ViewQRActivity extends AppCompatActivity {
 
 //    public static final String EXTRA_MESSAGE = "com.example.QuiRky.MESSAGE";
 
@@ -79,7 +79,7 @@ public class QRCodeInfo extends AppCompatActivity {
      * Opens the Comment Activity Intent.
      */
     public void comment() {
-        Intent intent = new Intent(this, CommentActivity.class);
+        Intent intent = new Intent(this, ViewCommentsActivity.class);
 
         String message = "Sample QR Code ID"; // This needs to be a specific QR code Id.
         intent.putExtra("comment", message);

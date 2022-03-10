@@ -37,7 +37,7 @@ import java.util.Map;
  * @author Raymart Bless C. Datuin
  * */
 
-public class CommentActivity extends AppCompatActivity {
+public class ViewCommentsActivity extends AppCompatActivity {
     private Button Save;
     private Button Cancel;
 

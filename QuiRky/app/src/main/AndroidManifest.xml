@@ -28,10 +28,10 @@
             android:name=".SettingsActivity"
             android:exported="false"/>
         <activity
-            android:name=".QRCodeInfo"
+            android:name=".ViewQRActivity"
             android:exported="false"/>
         <activity
-            android:name=".CommentActivity"
+            android:name=".ViewCommentsActivity"
             android:exported="false">
         </activity>
         <activity
