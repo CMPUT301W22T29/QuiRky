@@ -26,6 +26,7 @@ public class QRCode {
         this.comments = new ArrayList<Comment>();
     }
 
+    // TODO: implement the SHA-256 algorithm and the scoring of the hash
     private String SHA256(String content) {
         return content;
     }

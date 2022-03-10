@@ -21,31 +21,7 @@ import java.util.Map;
 DatabaseManager:
     This class manages all writing and reading from our database at FireStore.
     Create an instance of this class whenever you want to write or read from the database
-
-    Our Database works in the following way:
-        The database has Collections.
-            Collections are like directories.
-        The Collections have Documents
-            Documents store the data.
-        Documents store data in field-value pairs, like a dictionary
-
-        The Hierarchy is:
-        Database
-            Collections
-                Documents
-                    Data (Key-Value Pairs)
-
-    To use the DatabaseManager:
-        Create an instance of the class
-            - DatabaseManager dm = new DatabaseManager();
-        Set the collection you want to write to
-            - dm.setCollection("users");
-        Create a Map and fill it with data
-            - Map<String, String> data = new HashMap();
-            - data.put("key, "value");
-        Use the write method
-            - dm.write(data, "document_name");
-     This method will create a new document every time you write.
+    TODO: replace your comments with proper Javadoc
  */
 public class DatabaseManager {
     private final FirebaseFirestore db;
@@ -76,12 +52,23 @@ public class DatabaseManager {
     }
 
     public void writeUser(Profile p) {
+
+        assert (p != null);
+
         collection = db.collection("users");
+
+        String name = p.getUname();
+        String email = p.getEmail();
+        String phone = p.getPhone();
+
         HashMap<String, String> data = new HashMap<>();
-        data.put("name", p.getName());
-        data.put("email", p.getEmail());
-        data.put("phone", p.getPhone());
-        collection.document(p.getName()).set(data).addOnSuccessListener(writeSuccess).addOnFailureListener(writeFail);
+        data.put("name", name);
+        data.put("email", email);
+        data.put("phone", phone);
+
+        collection.document(name).set(data)
+                .addOnSuccessListener(writeSuccess)
+                .addOnFailureListener(writeFail);
     }
 
     public ArrayList<Comment> getComments(Task<QuerySnapshot> task) {
