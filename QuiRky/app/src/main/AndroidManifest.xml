@@ -23,6 +23,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuiRky">
         <activity
+            android:name=".CodeScannerActivity"
+            android:exported="false" />
+        <activity
             android:name=".QRCodes"
             android:exported="false" />
         <activity

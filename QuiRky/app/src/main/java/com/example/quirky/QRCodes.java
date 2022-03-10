@@ -2,6 +2,8 @@ package com.example.quirky;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +21,7 @@ public class QRCodes extends AppCompatActivity {
         ManagesCodes = findViewById(R.id.button_ManageCodes);
         ScanCodes = findViewById(R.id.button_ScanCodes);
         GenerateCodes = findViewById(R.id.button_GenerateCodes);
+        Context context = this;
 
         // init intent here
 
@@ -38,7 +41,12 @@ public class QRCodes extends AppCompatActivity {
         ScanCodes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //startactivity(intent_ScanCodes);
+                // get camera permissions, start code scanner activity
+                if (CameraController.hasCameraPermission(context)) {
+                    startCodeScannerActivity();
+                } else if (CameraController.requestCameraPermission(context)) {
+                    startCodeScannerActivity();
+                }
             }
         });
         GenerateCodes.setOnClickListener(new View.OnClickListener() {
@@ -47,5 +55,11 @@ public class QRCodes extends AppCompatActivity {
                 //startactivity(intent_GenerateCodes);
             }
         });
+    }
+
+    private void startCodeScannerActivity() {
+        assert CameraController.hasCameraPermission(this);
+        Intent intent = new Intent(this, CodeScannerActivity.class);
+        startActivity(intent);
     }
 }
