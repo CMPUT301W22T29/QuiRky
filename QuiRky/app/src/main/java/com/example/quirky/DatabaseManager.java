@@ -78,10 +78,10 @@ public class DatabaseManager {
     public void writeUser(Profile p) {
         collection = db.collection("users");
         HashMap<String, String> data = new HashMap<>();
-        data.put("name", p.getName());
+        data.put("name", p.getUname());
         data.put("email", p.getEmail());
         data.put("phone", p.getPhone());
-        collection.document(p.getName()).set(data).addOnSuccessListener(writeSuccess).addOnFailureListener(writeFail);
+        collection.document(p.getUname()).set(data).addOnSuccessListener(writeSuccess).addOnFailureListener(writeFail);
     }
 
     public ArrayList<Comment> getComments(Task<QuerySnapshot> task) {

@@ -19,6 +19,9 @@
             android:name=".StartingPageActivity"
             android:exported="false" />
         <activity
+            android:name=".CodeScannerActivity"
+            android:exported="false" />
+        <activity
             android:name=".SettingsActivity"
             android:exported="false">
         </activity>

@@ -1,20 +1,11 @@
 package com.example.quirky;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.widget.Button;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
         */ // FIXME: this method may sometimes return null I think? But also a rare case? may need to find another method to id a device
         String id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
 
-        Intent i = new Intent(this, StartingPageActivity.class);
         MemoryManager mm = new MemoryManager(this, id);
 
         // If the directory does not exist, this is the first time the user has opened the app
@@ -54,15 +44,13 @@ public class MainActivity extends AppCompatActivity {
             mm.write("name", "");
             mm.write("email", "");
             mm.write("phone", "");
-        }
-        DatabaseManager dm = new DatabaseManager();
-        Task<QuerySnapshot> task = dm.readComments("sample");
 
-        task.addOnSuccessListener(queryDocumentSnapshots -> {
-            Log.d("- Main Activity Says : ", " The read was a success!                         < ----- ");
-            ArrayList<Comment> comments = dm.getComments(task);
-            settings.setText(comments.get(0).getContent());
-        }).addOnFailureListener(e -> Log.d("- Main Activity Says : ", " The read FAILED!                         < ----- "));
+            DatabaseManager dm = new DatabaseManager();
+            dm.writeUser(new Profile(""));
+        }
+
+        Intent i = new Intent(this, StartingPageActivity.class);
+        startActivity(i);
     }
 
     private void startSettingsActivity() {
