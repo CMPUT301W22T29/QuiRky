@@ -99,8 +99,8 @@
         android:id="@+id/editableName"
         android:layout_width="165dp"
         android:layout_height="28dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="44dp"
         android:textSize="24sp"
         app:layout_constraintStart_toEndOf="@+id/textView3"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
