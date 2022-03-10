@@ -67,6 +67,7 @@ public class DatabaseManager {
         collection = db.collection("users");
     }
 
+    /// --------------- read ----------- ///
     public void writeComment(Comment comment, String qrId) {
         collection = db.collection("QRcodes").document(qrId).collection("comments");
         HashMap<String, String> data = new HashMap<>();

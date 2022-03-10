@@ -61,9 +61,11 @@ public class MainActivity extends AppCompatActivity {
             mm.write("email", "");
             mm.write("phone", "");
         }
+
         DatabaseManager dm = new DatabaseManager();
         Task<QuerySnapshot> task = dm.readComments("sample");
 
+        // We need to get Listeners in our classes in order to receive data
         task.addOnSuccessListener(queryDocumentSnapshots -> {
             ArrayList<Comment> comments = dm.getComments(task);
             settings.setText(comments.get(0).getContent());
