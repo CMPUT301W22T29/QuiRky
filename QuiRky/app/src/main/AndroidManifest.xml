@@ -16,12 +16,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuiRky">
         <activity
-            android:name=".QRCodesActivity"
-            android:exported="false" />
-        <activity
-            android:name=".CommunityActivity"
-            android:exported="false" />
-        <activity
             android:name=".StartingPageActivity"
             android:exported="false" />
         <activity
