@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-
+/**
+ * This is the activity that shows once the app is opened
+ */
 public class MainActivity extends AppCompatActivity {
     private Button getStarted;
     private Button settings;
