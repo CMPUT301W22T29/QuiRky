@@ -59,7 +59,7 @@ public class ViewCommentsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_comment);
 
         // Get the QRCodeID that got commented on so that the qrcode database collection can be opened in the database
         Intent intent = getIntent();
@@ -105,6 +105,9 @@ public class ViewCommentsActivity extends AppCompatActivity {
         commentAdapter = new CommentList(this, commentDataList);
         commentList = (RecyclerView) findViewById(R.id.recycleListView_user_comment);
         commentList.setAdapter(commentAdapter);
+
+        Save = (Button) findViewById(R.id.button_save);
+        Cancel = (Button) findViewById(R.id.button_cancel);
 
         // initialized intent
         Save.setOnClickListener(new View.OnClickListener() {

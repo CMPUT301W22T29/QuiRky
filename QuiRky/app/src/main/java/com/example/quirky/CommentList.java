@@ -81,8 +81,8 @@ public class CommentList extends RecyclerView.Adapter<CommentList.CommentViewHol
          */
         public CommentViewHolder(final View itemView) {
             super(itemView);
-            commentText = itemView.findViewById(R.id.comment_content_text);
-            uNameText = itemView.findViewById(R.id.text_user_name);
+            commentText = itemView.findViewById(R.id.commentText);
+            uNameText = itemView.findViewById(R.id.userNameText);
             // IDs on the XML files
         }
     }
