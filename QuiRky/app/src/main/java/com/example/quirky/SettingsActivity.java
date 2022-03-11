@@ -1,5 +1,6 @@
 package com.example.quirky;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,14 +10,14 @@ import android.widget.Switch;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
-/*
- * Main Activity class that loads {@link MainFragment}.
+/**
+ * This is the activity that has the setting of the app
  */
-
 public class SettingsActivity extends AppCompatActivity {
     private Button back;
     private Switch locationSwitch;
     private Switch gallerySwitch;
+    private Button ownerSetting;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +26,9 @@ public class SettingsActivity extends AppCompatActivity {
         back = findViewById(R.id.back);
         locationSwitch = (Switch) findViewById(R.id.locationSwitch);
         gallerySwitch = (Switch) findViewById(R.id.gallerySwitch);
+        ownerSetting = findViewById(R.id.goToOwnerSetting);
 
+        //Intent Owner = new Intent(this,Owner.class);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -48,6 +51,12 @@ public class SettingsActivity extends AppCompatActivity {
                 } else {
                     // The toggle is disabled
                 }
+            }
+        });
+        ownerSetting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //startActivity(Owner);
             }
         });
 

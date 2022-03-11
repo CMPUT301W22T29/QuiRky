@@ -42,6 +42,22 @@
         android:textSize="20dp"
         android:layout_marginTop="350dp"
         />
+    <TextView
+        android:id="@+id/ownerSetting"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="450dp"
+        android:text="Owner Settings"
+        android:textSize="20dp" />
+
+    <Button
+        android:id="@+id/goToOwnerSetting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Go"
+        android:layout_marginLeft="280dp"
+        android:layout_marginTop="450dp"/>
 
     <Switch
         android:id="@+id/locationSwitch"

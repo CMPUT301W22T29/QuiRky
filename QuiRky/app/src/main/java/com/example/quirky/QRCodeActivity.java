@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-
+/**
+ * This is the activity that shows once QRCode button is clicked and the user want to interact with the QR Codes
+ */
 public class QRCodeActivity extends AppCompatActivity {
     private Button Back;
     private Button ManagesCodes;

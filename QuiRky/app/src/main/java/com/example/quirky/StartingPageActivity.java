@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-
+/**
+ * This is the activity that has different areas user may want to go to, after the user logins
+ */
 public class StartingPageActivity extends AppCompatActivity {
     private Button back;
     private Button search;
