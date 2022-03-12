@@ -60,7 +60,7 @@ public class StartingPageActivity extends AppCompatActivity {
 
         bottom.setText("Generate Codes");
         bottom.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement generate qrcodes activity
+            Intent i = new Intent(this, GenerateActivity.class);    // TODO: implement generate qrcodes activity
             startActivity(i);
         });
     }
@@ -68,13 +68,13 @@ public class StartingPageActivity extends AppCompatActivity {
     private void setProfileLayout() {
         top.setText("My Profile");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, MyProfile1.class);    // TODO: implement the activity this should direct to
             startActivity(i);
         });
 
         mid.setText("My Stats");
         mid.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, myStats.class);    // TODO: implement the activity this should direct to
             startActivity(i);
         });
 
