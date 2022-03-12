@@ -35,23 +35,19 @@
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />
         <activity
-            android:name=".otherPlayerProfile"
+            android:name=".EditProfileActivity"
             android:exported="false"
-            android:parentActivityName=".StartingPageActivity" />
-        <activity
-            android:name=".changeName"
-            android:exported="false"
-            android:parentActivityName=".MyProfile1" />
+            android:parentActivityName=".ProfileViewerActivity" />
         <activity
             android:name=".MyQRCode"
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />
         <activity
-            android:name=".myStats"
+            android:name=".MyStatsActivity"
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />
         <activity
-            android:name=".MyProfile1"
+            android:name=".ProfileViewerActivity"
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />
         <activity
