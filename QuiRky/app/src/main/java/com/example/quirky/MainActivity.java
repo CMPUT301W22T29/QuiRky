@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     // For Testing comments out
     private void comment() {
         Intent i = new Intent(this, ViewCommentsActivity.class);
+        String qrCodeID = "Raymoney Johnson";
+        i.putExtra(EXTRA_MESSAGE, qrCodeID);
         startActivity(i);
     }
 

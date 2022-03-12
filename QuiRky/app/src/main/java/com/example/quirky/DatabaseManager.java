@@ -67,7 +67,6 @@ public class DatabaseManager {
         collection = db.collection("users");
     }
 
-    /// --------------- read ----------- ///
     public void writeComment(Comment comment, String qrId) {
         collection = db.collection("QRcodes").document(qrId).collection("comments");
         HashMap<String, String> data = new HashMap<>();
@@ -82,7 +81,7 @@ public class DatabaseManager {
         HashMap<String, String> data = new HashMap<>();
         data.put("name", p.getName());
         data.put("email", p.getEmail());
-        data.put("phone", p.getPhone());
+        data.put("phone", p.    getPhone());
         collection.document(p.getName()).set(data).addOnSuccessListener(writeSuccess).addOnFailureListener(writeFail);
     }
 
@@ -103,6 +102,7 @@ public class DatabaseManager {
         return comments;
     }
 
+    // What is being returned?
     public Task<QuerySnapshot> readComments(String qrCodeId) {
         collection = db.collection("QRcode").document(qrCodeId).collection("comments");
         return collection.get();
