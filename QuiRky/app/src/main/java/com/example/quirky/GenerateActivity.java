@@ -1,6 +1,4 @@
-package com.example.quirky
-
-import androidx.appcompat.app.AppCompatActivity;
+package com.example.quirky;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -11,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;

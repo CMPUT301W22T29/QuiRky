@@ -4,55 +4,82 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.provider.Settings;
 import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity {
-    private Button myProfile, myQRCodes, myStats;
+public class MainActivity extends AppCompatActivity implements InputUnameLoginFragment.LoginFragListener {
+
+    DatabaseManager dm;
+    MemoryManager mm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        myProfile = (Button) findViewById(R.id.myprofile);
-        //below are several clicks that open some new pages
+        Button getStarted = findViewById(R.id.getStarted);
+        Button settings = findViewById(R.id.setting);
+        Button quit = findViewById(R.id.quit);
 
-        myProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view1) {
-                openMyProfile();
-            }
+        getStarted.setOnClickListener(view -> login());
+        settings.setOnClickListener(view -> startSettingsActivity());
+        quit.setOnClickListener(view -> finishAffinity());
+    }
 
-        });
-        myStats = (Button)findViewById(R.id.mystats);
-        myStats.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view2) {
-                openMyStats();
+    @Override
+    public void confirm(String uname) {
+        // TODO: Database read to check this username does not already exist
+        Profile p = new Profile(uname);
+        writeUser(p);
+        startHubActivity();
+    }
 
-            }
-        });
-        myQRCodes = (Button) findViewById(R.id.qrcodes1);
-        myQRCodes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openMyQrCode();
-            }
-        });
+    private void login() {
+        /*
+        Code for getting unique device ID taken from:
+        https://stackoverflow.com/a/2785493
+        Written by user:
+        https://stackoverflow.com/users/166712/anthony-forloney
+        Published May 7 2010
+        */
+        // FIXME: this method may sometimes return null I think? But also a rare case? may need to find another method to id a device
+        String id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        mm = new MemoryManager(this, id);
+
+        // mm.exist() checks if the user has logged in on this device before
+        if(!mm.exist()) {
+            // If the user has not logged in yet, show the fragment that asks for a username
+            // This fragment's listener will call the write user method
+            InputUnameLoginFragment frag = new InputUnameLoginFragment();
+            frag.show(getSupportFragmentManager(), "GET_UNAME");
+        } else {
+            startHubActivity();
+        }
     }
-    //Actually can merge these three functions, but not sure whether need
-    public void openMyProfile(){
-        Intent intent1 = new Intent(this, MyProfile1.class);
-        startActivity(intent1);
+
+    private void startSettingsActivity() {
+        Intent i = new Intent(this, SettingsActivity.class);
+        startActivity(i);
     }
-    public void openMyStats(){
-        Intent stats = new Intent(this, myStats.class);
-        startActivity(stats);
+
+    private void writeUser(Profile user) {
+        mm.make();
+        mm.write("name", user.getUname());
+        mm.write("email", "");
+        mm.write("phone", "");
+
+
+        /* FIXME: can't write user to database because dm.writeUser produces a null pointer exception.
+            except that I have two seperate tests confirming that the profile is not null...
+        */
+
+        assert(user != null);
+
+        // dm.writeUser(user); Commented out so it is at least runnable.
     }
-    public void openMyQrCode() {
-        Intent qrcode = new Intent(this, MyQRCode.class);
-        startActivity(qrcode);
+
+    private void startHubActivity() {
+        Intent i = new Intent(this, StartingPageActivity.class);
+        startActivity(i);
     }
-    //there should be a back button that return to the main page.
 }
