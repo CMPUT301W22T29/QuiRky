@@ -1,4 +1,3 @@
-
 package com.example.quirky;
 
 //import static com.google.firebase.firestore.FieldValue.delete;
@@ -9,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 
 /**
  * This class is of the Activity for when you're clicking on one of the listed items in "Your QR Codes" or
@@ -29,7 +27,7 @@ public class ViewQRActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_qr_code_info);
+        setContentView(R.layout.activity_view_qr);
 
         Comment = findViewById(R.id.button_comments);
         ElseQRCode = findViewById(R.id.button_who_else_has_this_code);

@@ -1,4 +1,3 @@
-
 package com.example.quirky;
 
 import java.util.Date;
@@ -19,7 +18,6 @@ public class Comment implements Comparable<Comment>{
         this.content = content;
         this.uname = uname;
         this.timestamp = timestamp;
-
     }
 
     /**

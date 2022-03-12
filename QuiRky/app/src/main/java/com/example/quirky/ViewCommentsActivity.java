@@ -52,7 +52,7 @@ public class ViewCommentsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_comment);
+        setContentView(R.layout.activity_view_comment);
         ImageView QRCodeImage;
         QRCodeImage = findViewById(R.id.QRCodeImmage_Comment);
 //        QRCodeImage.setImageResource(0); // This is going to have to be something in order to view Image.

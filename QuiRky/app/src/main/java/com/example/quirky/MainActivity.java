@@ -9,27 +9,25 @@ import android.widget.Button;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements InputUnameLoginFragment.LoginFragListener {
     public static final String EXTRA_MESSAGE = "com.example.QuiRky.MESSAGE";
 
+    DatabaseManager dm;
+    MemoryManager mm;
 
-    Button settings;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         Button getStarted = findViewById(R.id.getStarted);
-        settings = findViewById(R.id.setting);
+        Button settings = findViewById(R.id.setting);
         Button quit = findViewById(R.id.quit);
         Button comment = findViewById(R.id.comment);
 
-        getStarted.setOnClickListener(view -> startHubActivity());
+        getStarted.setOnClickListener(view -> login());
         settings.setOnClickListener(view -> startSettingsActivity());
-        quit.setOnClickListener(view -> finish());
+        quit.setOnClickListener(view -> finishAffinity());
         comment.setOnClickListener(view -> comment()); // For Testing Comments out
 
     }
@@ -42,41 +40,61 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    private void startHubActivity() {
+
+    @Override
+    public void confirm(String uname) {
+        // TODO: Database read to check this username does not already exist
+        Profile p = new Profile(uname);
+        writeUser(p);
+        startHubActivity();
+    }
+
+    private void login() {
         /*
         Code for getting unique device ID taken from:
         https://stackoverflow.com/a/2785493
         Written by user:
         https://stackoverflow.com/users/166712/anthony-forloney
         Published May 7 2010
-        */ // FIXME: this method may sometimes return null I think? But also a rare case? may need to find another method to id a device
+        */
+        // FIXME: this method may sometimes return null I think? But also a rare case? may need to find another method to id a device
         String id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        mm = new MemoryManager(this, id);
 
-        Intent i = new Intent(this, StartingPageActivity.class);
-        MemoryManager mm = new MemoryManager(this, id);
-
-        // If the directory does not exist, this is the first time the user has opened the app
-        //      We must write the user's id to local memory and the database
+        // mm.exist() checks if the user has logged in on this device before
         if(!mm.exist()) {
-            mm.make();
-            mm.write("name", "");
-            mm.write("email", "");
-            mm.write("phone", "");
+            // If the user has not logged in yet, show the fragment that asks for a username
+            // This fragment's listener will call the write user method
+            InputUnameLoginFragment frag = new InputUnameLoginFragment();
+            frag.show(getSupportFragmentManager(), "GET_UNAME");
+        } else {
+            startHubActivity();
         }
-
-        DatabaseManager dm = new DatabaseManager();
-        Task<QuerySnapshot> task = dm.readComments("sample");
-
-        // We need to get Listeners in our classes in order to receive data
-        task.addOnSuccessListener(queryDocumentSnapshots -> {
-            ArrayList<Comment> comments = dm.getComments(task);
-            settings.setText(comments.get(0).getContent());
-        });
-	startActivity(i);
     }
 
     private void startSettingsActivity() {
         Intent i = new Intent(this, SettingsActivity.class);
+        startActivity(i);
+    }
+
+    private void writeUser(Profile user) {
+        mm.make();
+        mm.write("name", user.getUname());
+        mm.write("email", "");
+        mm.write("phone", "");
+
+
+        /* FIXME: can't write user to database because dm.writeUser produces a null pointer exception.
+            except that I have two seperate tests confirming that the profile is not null...
+        */
+
+        assert(user != null);
+
+        // dm.writeUser(user); Commented out so it is at least runnable.
+    }
+
+    private void startHubActivity() {
+        Intent i = new Intent(this, StartingPageActivity.class);
         startActivity(i);
     }
 }

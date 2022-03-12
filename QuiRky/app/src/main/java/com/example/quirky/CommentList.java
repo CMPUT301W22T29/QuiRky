@@ -1,4 +1,3 @@
-
 package com.example.quirky;
 
 import android.content.Context;
@@ -61,6 +60,4 @@ public class CommentList extends RecyclerView.Adapter<CommentList.CommentViewHol
             uNameText = itemView.findViewById(R.id.userNameText);
         }
     }
-
-
 }
