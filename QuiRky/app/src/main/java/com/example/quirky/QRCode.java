@@ -30,6 +30,7 @@ public class QRCode {
     private String SHA256(String content) {
         return content;
     }
+
     private int generateScore(String content) {
         return 0;
     }

@@ -31,7 +31,7 @@ import java.util.Map;
  *          - images:
  *              Holds an image for each player that scanned the code and chose to save the image.
  */
-public class DatabaseManager {
+public class DatabaseController {
     private final FirebaseFirestore db;
     private CollectionReference collection;
 
@@ -40,10 +40,10 @@ public class DatabaseManager {
     private final OnSuccessListener<Void> writeSuccess;
     private final OnFailureListener writeFail;
 
-    private final String TAG = "DatabaseManager says: ";
+    private final String TAG = "DatabaseController says: ";
 
     // Default constructor
-    public DatabaseManager() {
+    public DatabaseController() {
         db = FirebaseFirestore.getInstance();
         writeSuccess = docref -> Log.d(TAG, "The write was successful.");
         writeFail = e -> Log.d(TAG, "The write operation failed. ", e);
@@ -141,6 +141,5 @@ public class DatabaseManager {
         c.add(new Comment("I found this QRCode on a bench in a public park!", "Raymart", new Date()));
 
         return c;
-
     }
 }
