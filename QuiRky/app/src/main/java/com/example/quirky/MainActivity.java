@@ -11,9 +11,7 @@ import android.widget.Button;
  * This is the activity that shows once the app is opened
  */
 public class MainActivity extends AppCompatActivity implements InputUnameLoginFragment.LoginFragListener {
-    private Button getStarted;
-    private Button settings;
-    private Button quit;
+
     DatabaseManager dm;
     MemoryManager mm;
 
@@ -31,7 +29,11 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         settings.setOnClickListener(view -> startSettingsActivity());
         quit.setOnClickListener(view -> finishAffinity());
     }
-
+    /**
+     * This method is to let user to confirm the info after the user have wrote the info and starts the HubActivity
+     * @param uname
+     * User name which it stores
+     */
     @Override
     public void confirm(String uname) {
         // TODO: Database read to check this username does not already exist
@@ -39,7 +41,9 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         writeUser(p);
         startHubActivity();
     }
-
+    /**
+     * This is the login function to prompt user to input username and password
+     */
     private void login() {
         /*
         Code for getting unique device ID taken from:
@@ -62,12 +66,18 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
             startHubActivity();
         }
     }
-
+    /**
+     * This function is to start the setting activity which directs to setting
+     */
     private void startSettingsActivity() {
         Intent i = new Intent(this, SettingsActivity.class);
         startActivity(i);
     }
-
+    /**
+     * todo
+     * @param user
+     * the user that it writes about
+     */
     private void writeUser(Profile user) {
         mm.make();
         mm.write("name", user.getUname());
@@ -83,7 +93,9 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
 
         // dm.writeUser(user); Commented out so it is at least runnable.
     }
-
+    /**
+     * This function is to start the HubActivity which directs to StartingPageActivity.class
+     */
     private void startHubActivity() {
         Intent i = new Intent(this, StartingPageActivity.class);
         startActivity(i);
