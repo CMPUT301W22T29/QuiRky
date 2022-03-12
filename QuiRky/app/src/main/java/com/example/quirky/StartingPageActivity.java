@@ -36,6 +36,12 @@ public class StartingPageActivity extends AppCompatActivity {
         setQRlayout();
     }
 
+    private void startCodeScannerActivity() {
+        assert CameraController.hasCameraPermission(this);
+        Intent intent = new Intent(this, CodeScannerActivity.class);
+        startActivity(intent);
+    }
+
     private void setQRlayout() {
         top.setText("Manage Codes");
         top.setOnClickListener(view -> {
@@ -45,13 +51,18 @@ public class StartingPageActivity extends AppCompatActivity {
 
         mid.setText("Scan Codes");
         mid.setOnClickListener(view -> {
-            Intent i = new Intent(this, CodeScannerActivity.class);
-            startActivity(i);
+            if (CameraController.hasCameraPermission(this)) {
+                startCodeScannerActivity();
+            } else if (CameraController.requestCameraPermission(this)) {
+                startCodeScannerActivity();
+            }
+            //Intent i = new Intent(this, CodeScannerActivity.class);
+            //startActivity(i);
         });
 
         bottom.setText("Generate Codes");
         bottom.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement generate qrcodes activity
+            Intent i = new Intent(this, GenerateActivity.class);    // TODO: implement generate qrcodes activity
             startActivity(i);
         });
     }
@@ -59,13 +70,13 @@ public class StartingPageActivity extends AppCompatActivity {
     private void setProfileLayout() {
         top.setText("My Profile");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, MyProfile1.class);    // TODO: implement the activity this should direct to
             startActivity(i);
         });
 
         mid.setText("My Stats");
         mid.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, myStats.class);    // TODO: implement the activity this should direct to
             startActivity(i);
         });
 

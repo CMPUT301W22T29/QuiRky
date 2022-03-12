@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
 
         getStarted.setOnClickListener(view -> login());
         settings.setOnClickListener(view -> startSettingsActivity());
-        quit.setOnClickListener(view -> finish());
+        quit.setOnClickListener(view -> finishAffinity());
     }
 
     @Override

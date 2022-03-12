@@ -2,10 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.quirky">
+
     <uses-feature android:name="android.hardware.camera.any"
         tools:ignore="UnsupportedTvHardware" />
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -28,6 +28,30 @@
             android:name=".SettingsActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
+	<activity
+            android:name=".GenerateActivity"
+            android:exported="false"
+            android:parentActivityName=".StartingPageActivity" />
+        <activity
+            android:name=".otherPlayerProfile"
+            android:exported="false"
+            android:parentActivityName=".StartingPageActivity" />
+        <activity
+            android:name=".changeName"
+            android:exported="false"
+            android:parentActivityName=".MyProfile1" />
+        <activity
+            android:name=".MyQRCode"
+            android:exported="false"
+            android:parentActivityName=".StartingPageActivity" />
+        <activity
+            android:name=".myStats"
+            android:exported="false"
+            android:parentActivityName=".StartingPageActivity" />
+        <activity
+            android:name=".MyProfile1"
+            android:exported="false"
+            android:parentActivityName=".StartingPageActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

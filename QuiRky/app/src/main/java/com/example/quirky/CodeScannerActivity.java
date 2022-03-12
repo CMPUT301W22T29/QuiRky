@@ -12,6 +12,7 @@ public class CodeScannerActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // TODO: Adjust the xml so that it matches the new fragment layout better (eg. there's currently two different back buttons)
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_code_scanner);
         previewView = findViewById(R.id.previewView);
