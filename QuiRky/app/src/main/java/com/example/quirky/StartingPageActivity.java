@@ -1,6 +1,9 @@
 package com.example.quirky;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,63 +13,86 @@ import android.widget.Button;
  * This is the activity that has different areas user may want to go to, after the user logins
  */
 public class StartingPageActivity extends AppCompatActivity {
-    private Button back;
-    private Button search;
-    private Button QRCodes;
-    private Button myProfile;
-    private Button community;
+    private Button QRButton, ProfileButton, CommunityButton;
+    private Button top, mid, bottom;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_starting_page);
-        back = findViewById(R.id.back);
-        search = findViewById(R.id.search);
-        QRCodes = findViewById(R.id.QRCodes);
-        //myProfile = findViewById(R.id.);
-        community = findViewById(R.id.community);
-        Intent Intent_Community = new Intent(this, CommunityActivity.class);
-        Intent Intent_QRCodes = new Intent(this, QRCodeActivity.class);
-        back.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                finish();
 
-            }
-        });
-        search.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
+        QRButton = findViewById(R.id.hub_qr_codes);
+        ProfileButton = findViewById(R.id.hub_profile_button);
+        CommunityButton = findViewById(R.id.hub_community_button);
 
+        top = findViewById(R.id.hub_button1);
+        mid = findViewById(R.id.hub_button2);
+        bottom = findViewById(R.id.hub_button3);
 
-            }
-        });
-        QRCodes.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                startActivity(Intent_QRCodes);
+        QRButton.setOnClickListener(view -> setQRlayout());
+        ProfileButton.setOnClickListener(view -> setProfileLayout());
+        CommunityButton.setOnClickListener(view -> setCommunityLayout());
 
-            }
-        });
-        /*/myProfile.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
+        setQRlayout();
+    }
 
-
-            }
+    private void setQRlayout() {
+        top.setText("Manage Codes");
+        top.setOnClickListener(view -> {
+            Intent i = new Intent(this, MainActivity.class);    // TODO: implement activity that views player's qr codes
+            startActivity(i);
         });
 
-         */
-        community.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                startActivity(Intent_Community);
-
-            }
+        mid.setText("Scan Codes");
+        mid.setOnClickListener(view -> {
+            Intent i = new Intent(this, CodeScannerActivity.class);
+            startActivity(i);
         });
 
+        bottom.setText("Generate Codes");
+        bottom.setOnClickListener(view -> {
+            Intent i = new Intent(this, MainActivity.class);    // TODO: implement generate qrcodes activity
+            startActivity(i);
+        });
+    }
 
+    private void setProfileLayout() {
+        top.setText("My Profile");
+        top.setOnClickListener(view -> {
+            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            startActivity(i);
+        });
 
+        mid.setText("My Stats");
+        mid.setOnClickListener(view -> {
+            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            startActivity(i);
+        });
 
+        bottom.setText("My QR Codes");
+        bottom.setOnClickListener(view -> {
+            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            startActivity(i);
+        });
+    }
 
+    private void setCommunityLayout() {
+        top.setText("Search Other Users");
+        top.setOnClickListener(view -> {
+            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            startActivity(i);
+        });
+
+        mid.setText("The Leaderboards");
+        mid.setOnClickListener(view -> {
+            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            startActivity(i);
+        });
+
+        bottom.setText("Nearby QR Codes");
+        bottom.setOnClickListener(view -> {
+            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            startActivity(i);
+        });
     }
 }

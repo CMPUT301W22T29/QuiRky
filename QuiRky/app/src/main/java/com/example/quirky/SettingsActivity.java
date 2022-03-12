@@ -14,7 +14,6 @@ import androidx.fragment.app.FragmentActivity;
  * This is the activity that has the setting of the app
  */
 public class SettingsActivity extends AppCompatActivity {
-    private Button back;
     private Switch locationSwitch;
     private Switch gallerySwitch;
     private Button ownerSetting;
@@ -23,18 +22,10 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
-        back = findViewById(R.id.back);
         locationSwitch = (Switch) findViewById(R.id.locationSwitch);
         gallerySwitch = (Switch) findViewById(R.id.gallerySwitch);
         ownerSetting = findViewById(R.id.goToOwnerSetting);
 
-        //Intent Owner = new Intent(this,Owner.class);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
         locationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -53,14 +44,13 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
+
         ownerSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //startActivity(Owner);
             }
         });
-
-
 
     }
 }
