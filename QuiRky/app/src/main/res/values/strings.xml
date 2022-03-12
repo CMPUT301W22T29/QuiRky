@@ -1,5 +1,30 @@
 <resources>
     <string name="app_name">QuiRky</string>
+    <string name="title_activity_setting">Settings</string>
+    <string name="grid_view">Grid View</string>
+    <string name="error_fragment">Error Fragment</string>
+    <string name="personal_settings">Personal Settings</string>
+
+    <!-- Error messages -->
+    <string name="error_fragment_message">An error occurred</string>
+    <string name="dismiss_error">Dismiss</string>
+
+    <string name="show_score">Show Score</string>
+    <string name="qr_code_selected">QR Code Selected</string>
+    <string name="button_comments">Comments</string>
+    <string name="button_who_else_has_this_code">Who Else has this Code?</string>
+    <string name="button_set_private">Set Private</string>
+    <string name="button_delete">Delete</string>
+    <string name="location">Location</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_save">Save</string>
+    <string name="text_write_comment">Write A Comment?</string>
+    <string name="text_comment">Comments</string>
+    <string name="string_comment">Comment</string>
+    <string name="qr_codes">QR Codes</string>
+    <string name="community">Community</string>
+    <string name="settings">Settings</string>
+
     <string name="my_profile1">My Profile</string>
     <string name="back">Back</string>
     <string name="username">Username:</string>
@@ -26,7 +51,6 @@
     <string name="cancel">cancel</string>
     <string name="editablename">editableName</string>
     <string name="generate_qr_codes">Generate QR Codes</string>
-    <string name="back1">back</string>
     <string name="generate_by_text">generate by text</string>
     <string name="generate_by_integer">generate by integer</string>
     <string name="generate_by_url_link">generate by URL Link</string>
