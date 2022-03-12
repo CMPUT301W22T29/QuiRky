@@ -34,6 +34,12 @@ public class StartingPageActivity extends AppCompatActivity {
         setQRlayout();
     }
 
+    private void startCodeScannerActivity() {
+        assert CameraController.hasCameraPermission(this);
+        Intent intent = new Intent(this, CodeScannerActivity.class);
+        startActivity(intent);
+    }
+
     private void setQRlayout() {
         top.setText("Manage Codes");
         top.setOnClickListener(view -> {
@@ -43,8 +49,13 @@ public class StartingPageActivity extends AppCompatActivity {
 
         mid.setText("Scan Codes");
         mid.setOnClickListener(view -> {
-            Intent i = new Intent(this, CodeScannerActivity.class);
-            startActivity(i);
+            if (CameraController.hasCameraPermission(this)) {
+                startCodeScannerActivity();
+            } else if (CameraController.requestCameraPermission(this)) {
+                startCodeScannerActivity();
+            }
+            //Intent i = new Intent(this, CodeScannerActivity.class);
+            //startActivity(i);
         });
 
         bottom.setText("Generate Codes");
