@@ -1,54 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    tools:context=".StartingPageActivity"
     android:layout_height="match_parent"
-    tools:context=".StartingPageActivity">
+    android:layout_width="match_parent">
 
     <TextView
-        android:layout_width="170dp"
-        android:layout_height="50dp"
-        android:text="Main Page"
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="QuiRky's Hub!"
         android:textAlignment="center"
-        android:layout_marginHorizontal="120dp"
-        android:textSize="40dp"
-        android:layout_marginTop="10dp"/>
+        android:textColor="@color/dark"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/back"
+        android:id="@+id/hub_qr_codes"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Back"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"/>
+        android:layout_marginBottom="24dp"
+        android:text="@string/qr_codes"
+        android:textColor="@color/dark"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/hub_profile_button"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <Button
-        android:id="@+id/search"
+        android:id="@+id/hub_profile_button"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Search"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="310dp"/>
-    <Button
-        android:id="@+id/QRCodes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="QR Codes"
-        android:layout_marginTop="150dp"
-        android:layout_marginLeft="150dp"/>
-    <Button
-        android:id="@+id/myProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
         android:text="My Profile"
-        android:layout_marginTop="300dp"
-        android:layout_marginLeft="145dp"/>
+        android:textColor="@color/dark"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <Button
-        android:id="@+id/community"
+        android:id="@+id/hub_community_button"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Community"
-        android:layout_marginTop="450dp"
-        android:layout_marginLeft="145dp"/>
+        android:layout_marginBottom="24dp"
+        android:text="@string/community"
 
-</FrameLayout>
+        android:textColor="@color/dark"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/hub_profile_button" />
+
+    <Button
+        android:id="@+id/hub_button1"
+        android:layout_width="200dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="64dp"
+        android:hint="To be replaced"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <Button
+        android:id="@+id/hub_button2"
+        android:layout_width="200dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="32dp"
+        android:hint="To be replaced"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hub_button1" />
+
+    <Button
+        android:id="@+id/hub_button3"
+        android:layout_width="200dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="32dp"
+        android:hint="To be replaced"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/hub_button2" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

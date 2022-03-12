@@ -2,112 +2,145 @@ package com.example.quirky;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-/*
-DatabaseManager:
-    This class manages all writing and reading from our database at FireStore.
-    Create an instance of this class whenever you want to write or read from the database
-
-    Our Database works in the following way:
-        The database has Collections.
-            Collections are like directories.
-        The Collections have Documents
-            Documents store the data.
-        Documents store data in field-value pairs, like a dictionary
-
-        The Hierarchy is:
-        Database
-            Collections
-                Documents
-                    Data (Key-Value Pairs)
-
-    To use the DatabaseManager:
-        Create an instance of the class
-            - DatabaseManager dm = new DatabaseManager();
-        Set the collection you want to write to
-            - dm.setCollection("users");
-        Create a Map and fill it with data
-            - Map<String, String> data = new HashMap();
-            - data.put("key, "value");
-        Use the write method
-            - dm.write(data, "document_name");
-     This method will create a new document every time you write.
+/**
+ * @author Jonathen Adsit
+ * This is a controller class that does all the reading and writing to FireStore
+ * Our database has these collections:
+ *  - users
+ *      Holds a document for each player holding their unique username, contact information, etc.
+ *  - QRcodes
+ *      Holds a document for each QRCode that has been scanned with the app, holding it's content, hash, score, location...
+ *      Has two inner collections:
+ *          - comments:
+ *              Holds a document for each comment the QRCode has
+ *          - images:
+ *              Holds an image for each player that scanned the code and chose to save the image.
  */
 public class DatabaseManager {
     private final FirebaseFirestore db;
-    private CollectionReference col_ref;
-    private HashMap<String, Object> data;
+    private CollectionReference collection;
 
-    private final OnSuccessListener<Void> sl;
-    private final OnFailureListener fl;
+    private List<DocumentSnapshot> docs;
+
+    private final OnSuccessListener<Void> writeSuccess;
+    private final OnFailureListener writeFail;
 
     private final String TAG = "DatabaseManager says: ";
 
     // Default constructor
     public DatabaseManager() {
         db = FirebaseFirestore.getInstance();
-        sl = docref -> Log.d(TAG, "DocumentSnapshot added with ID.");
-
-        fl = e -> Log.d("Sample", "Error adding document! ", e);
-
-        col_ref = db.collection("users");
+        writeSuccess = docref -> Log.d(TAG, "The write was successful.");
+        writeFail = e -> Log.d(TAG, "The write operation failed. ", e);
+        collection = db.collection("users");
     }
 
-    // Constructor to set collection
-    public DatabaseManager(String collection) {
-        db = FirebaseFirestore.getInstance();
-        sl = docref -> Log.d(TAG, "DocumentSnapshot added with ID.");
-        fl = e -> Log.d(TAG, "Error adding document! ", e);
-
-        col_ref = db.collection(collection);
+    /**
+     * Write comment writes a comment object to FireStore
+     * @param comment
+     *      - The comment object to be written
+     * @param qrId
+     *      - The QRCode the comment is written under
+     */
+    public void writeComment(Comment comment, String qrId) {
+        collection = db.collection("QRcodes").document(qrId).collection("comments");
+        HashMap<String, String> data = new HashMap<>();
+        data.put("content", comment.getContent());
+        data.put("user", comment.getUname());
+        data.put("timestamp", comment.getTimestamp().toString());
+        collection.document(comment.getTimestamp().toString()).set(data).addOnSuccessListener(writeSuccess).addOnFailureListener(writeFail);
     }
 
-    public void setCollection(String collection) {
-        col_ref = db.collection((collection));
+    /**
+     * Write a user's profile to FireStore
+     * @param p
+     *      - The profile object to be written
+     */
+    public void writeUser(Profile p) {
+
+        assert (p != null);
+
+        collection = db.collection("users");
+
+        String name = p.getUname();
+        String email = p.getEmail();
+        String phone = p.getPhone();
+
+        HashMap<String, String> data = new HashMap<>();
+        data.put("name", name);
+        data.put("email", email);
+        data.put("phone", phone);
+
+        collection.document(name).set(data)
+                .addOnSuccessListener(writeSuccess)
+                .addOnFailureListener(writeFail);
     }
 
-    public void write(Map<String, Object> data, String doc) {
-        col_ref.document(doc).set(data).addOnSuccessListener(sl).addOnFailureListener(fl);
+    /**
+     * readComments() begins the read process from FireStore. Because this takes time, a task is returned.
+     * The calling class must set a listener to the Task that calls getComments() to get the data it wants.
+     *
+     * @param qrCodeId
+     *      - The id field of the QRCode that holds the desired comments
+     * @return
+     */
+    public Task<QuerySnapshot> readComments(String qrCodeId) {
+        collection = db.collection("QRcode").document(qrCodeId).collection("comments");
+        return collection.get();
     }
 
-    // This method is for reading a specific document you know exists.
-    // If you call it on a document that does not exist in the current collection, it throws an exception.
-    // Use the generic read() method if you do not know what documents exist in the collection.
-    public HashMap<String, Object> read(String doc) {
+    /**
+     * getComments() is the second half of the read process, once the Task is complete the caller uses getComments() to actually get the data.
+     * @param task
+     *      - The task returned to by readComments(). If this is called with a different task, method will not work properly.
+     * @return
+     *      - All comments written to the QRCode stored in a ArrayList
+     */
+    public ArrayList<Comment> getComments(Task<QuerySnapshot> task) {
+        // FIXME: android studio says following line may produce null pointer exception. Consider how.
+        List<DocumentSnapshot> docs = task.getResult().getDocuments();
 
-        Task<DocumentSnapshot> ReadTask = col_ref.document(doc).get();
-        ReadTask.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
-                    data = (HashMap<String, Object>) task.getResult().getData();
-                } else {
-                    Log.w(TAG, "_*_Error reading the document.", task.getException());
-                }
-            }
-        });
+        // Here we assume docs is a filled List of Document Snapshots
+        ArrayList<Comment> comments = new ArrayList<>();
+        for(int i = 0; i < docs.size(); i++) {
+            String content = docs.get(i).getString("contents");
+            String user = docs.get(i).getString("user");
+            Date timestamp = docs.get(i).getDate("timestamp");
 
-        // FIXME: data keeps being null, there is an error somewhere in the read. I think the listener is not calling it's onComplete method before we reach the end of this method, and so data is never initialized.
-        if(data == null) {
-            // This exception throw was just being used for debugging purposes.
-            throw new ArithmeticException(TAG + "For some reason data is null...");
+            comments.add(new Comment(content, user, timestamp));
         }
 
-        return data;
+        return comments;
+    }
+
+
+    /**
+     * A mock comment reader to be used until the actual comment reading works properly.
+     * @return
+     *      - An arraylist of hardcoded comments.
+     */
+    public ArrayList<Comment> MockReadComments(String qrCodeId) {
+        ArrayList<Comment> c = new ArrayList<>();
+        c.add(new Comment("This is a comment on: " + qrCodeId, "Sum Guy", new Date()));
+        c.add(new Comment("This is comment 2 on: " + qrCodeId, "Guy 2", new Date()));
+        c.add(new Comment("I found this QRCode on a bench in a public park!", "Raymart", new Date()));
+
+        return c;
+
     }
 }
