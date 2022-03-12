@@ -32,10 +32,6 @@
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />
         <activity
-            android:name=".otherPlayerProfileActivity"
-            android:exported="false"
-            android:parentActivityName=".StartingPageActivity" />
-        <activity
             android:name=".EditProfileActivity"
             android:exported="false"
             android:parentActivityName=".ProfileViewerActivity" />
