@@ -9,7 +9,7 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity implements InputUnameLoginFragment.LoginFragListener {
 
-    DatabaseManager dm;
+    DatabaseController dm;
     MemoryManager mm;
 
     @Override

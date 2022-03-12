@@ -12,12 +12,12 @@ import android.widget.TextView;
 
 //There will be an import of database
 
-public class MyProfile1 extends AppCompatActivity {
+public class ProfileViewerActivity extends AppCompatActivity {
     private Button backBt, changeUName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_profile1);
+        setContentView(R.layout.activity_my_profile);
         TextView editableName;
         editableName = findViewById(R.id.editableName);
 
@@ -47,7 +47,7 @@ public class MyProfile1 extends AppCompatActivity {
         startActivity(intent1);
     }
     public void changeUserName(){
-        Intent intent2 = new Intent(this, changeName.class);
+        Intent intent2 = new Intent(this, EditProfileActivity.class);
         startActivity(intent2);
     }
 

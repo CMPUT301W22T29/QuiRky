@@ -1,13 +1,9 @@
 package com.example.quirky;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 
 public class StartingPageActivity extends AppCompatActivity {
@@ -68,13 +64,13 @@ public class StartingPageActivity extends AppCompatActivity {
     private void setProfileLayout() {
         top.setText("My Profile");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, MyProfile1.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, ProfileViewerActivity.class);    // TODO: implement the activity this should direct to
             startActivity(i);
         });
 
         mid.setText("My Stats");
         mid.setOnClickListener(view -> {
-            Intent i = new Intent(this, myStats.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, MyStatsActivity.class);    // TODO: implement the activity this should direct to
             startActivity(i);
         });
 
