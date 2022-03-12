@@ -47,7 +47,6 @@ public class ViewCommentsActivity extends AppCompatActivity {
     RecyclerView commentList;
     ArrayList<Comment> commentDataList;
     CommentList commentAdapter;
-
     DatabaseManager DM;
 
     @Override
@@ -59,6 +58,10 @@ public class ViewCommentsActivity extends AppCompatActivity {
 //        QRCodeImage.setImageResource(0); // This is going to have to be something in order to view Image.
 
         Intent intent = getIntent();
+
+        // If we are switching intents from a fragment. How are we supposed to identify
+        // the specific fragment? Or could we just switch from a frangement and pass taht
+        // as an intent (the fragment)
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE); // Needs to be changed
         System.out.println("It worked."+message);
         commentDataList = new ArrayList<>();
