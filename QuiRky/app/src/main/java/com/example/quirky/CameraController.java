@@ -7,8 +7,13 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.media.Image;
 
+import androidx.annotation.NonNull;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.core.UseCase;
 import androidx.camera.lifecycle.ProcessCameraProvider;
@@ -17,6 +22,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.mlkit.vision.common.InputImage;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -26,6 +32,7 @@ public class CameraController {
     private static final int CAMERA_REQUEST_CODE = 10;
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private Preview preview;
+    private ImageCapture imageCapture;
     private CameraSelector cameraSelector;
     //private static CameraController instance;
 
@@ -53,6 +60,7 @@ public class CameraController {
         assert hasCameraPermission(context);    // I have no idea if this is a good idea or not.
         cameraProviderFuture = ProcessCameraProvider.getInstance(context);
         preview = new Preview.Builder().build();
+        imageCapture = new ImageCapture.Builder().build();
         cameraSelector = new CameraSelector.Builder()
                 .requireLensFacing(CameraSelector.LENS_FACING_BACK).build();
         //instance = this;
@@ -65,11 +73,27 @@ public class CameraController {
                 try {
                     ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
                     preview.setSurfaceProvider(surfaceProvider);
-                    cameraProvider.bindToLifecycle((LifecycleOwner) context, cameraSelector, preview);
+                    cameraProvider.bindToLifecycle((LifecycleOwner) context, cameraSelector, imageCapture, preview);
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }, ContextCompat.getMainExecutor(context));
+    }
+
+    public QRCode captureQRCode(Context context) {
+        final QRCode[] code = new QRCode[1];
+        imageCapture.takePicture(ContextCompat.getMainExecutor(context),
+                new ImageCapture.OnImageCapturedCallback() {
+                    @Override
+                    public void onCaptureSuccess(@NonNull ImageProxy image) {
+                        Image mediaImage = image.getImage();
+                        if (mediaImage != null) {
+                            InputImage inputImage = InputImage.fromMediaImage(mediaImage, image.getImageInfo().getRotationDegrees());
+                            code[0] = QRCodeController.scanQRCode(inputImage);
+                        }
+                    }
+                });
+        return code[0];
     }
 }

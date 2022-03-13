@@ -30,6 +30,13 @@ public class QRCode {
         this.comments = new ArrayList<Comment>();
     }
 
+    public QRCode(String content) {
+        this.content = content;
+        this.id = SHA256(content);
+        this.score = generateScore(id);
+        this.comments = new ArrayList<Comment>();
+    }
+
     // TODO: implement the SHA-256 algorithm and the scoring of the hash
     private String SHA256(String content) {
         return content;
@@ -76,5 +83,9 @@ public class QRCode {
     public void removeComment(Comment c) {
         if(comments.contains(c))
             comments.remove(c);
+    }
+
+    public void setGeolocation(Location geolocation) {
+        this.geolocation = geolocation;
     }
 }
