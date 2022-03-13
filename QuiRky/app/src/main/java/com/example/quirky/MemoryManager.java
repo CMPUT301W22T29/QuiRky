@@ -74,6 +74,14 @@ public class MemoryManager {
         return dir.exists();
     }
 
+    public boolean delete() {
+        for(String file : dir.list()) {
+            File f = new File(dir, file);
+            f.delete();
+        }
+        return dir.delete();
+    }
+
     /**
      * Make a folder in the files directory named after the ID of the android device
      */

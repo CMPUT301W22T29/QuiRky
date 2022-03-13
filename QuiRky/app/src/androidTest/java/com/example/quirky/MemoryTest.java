@@ -18,10 +18,11 @@ import java.io.File;
 public class MemoryTest {
     MemoryManager mm;
     File dir, f;
+    Context ct;
 
-    @Before
+    @BeforeClass
     public void setup() {
-        Context ct = getApplicationContext();
+        ct = getApplicationContext();
         dir = getApplicationContext().getFilesDir();
 
         // Empty the local memory 
@@ -35,17 +36,37 @@ public class MemoryTest {
             }
             f.delete();
         }
+    }
+
+    @Before
+    public void reset() {
+        dir = new File(ct.getFilesDir(), "Test");
         mm = new MemoryManager(ct, "Test");
+        f = null;
     }
 
     @Test
     public void TestDirectoryMake() {
+        // Assert it's empty
         assertFalse(mm.exist());
         mm.make();
+        // Assert the folder now exists
         assertTrue(mm.exist());
 
+        // Check that the delete worked
+        assertTrue(mm.delete());
+        // Assert the directory is now gone
+        assertFalse(mm.exist());
+    }
 
-        // do something
+    @Test
+    public void TestWrite() {
+        return;
+    }
+
+    @Test
+    public void TestRead() {
+        return;
     }
 
     @AfterClass
