@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class changeName extends AppCompatActivity {
+public class EditProfileActivity extends AppCompatActivity {
     EditText userName;  //username that can be changed by user
     Button save,cancel; // save button to save changed username, cancel then cancel the change
     SharedPreferences sp;
@@ -40,7 +40,7 @@ public class changeName extends AppCompatActivity {
                 //if userName is unique in database:
                 editor.putString("name",nameStr);  //we need database here to check unique
                 editor.commit();
-                Toast.makeText(changeName.this,"Username Saved",Toast.LENGTH_LONG).show();
+                Toast.makeText(EditProfileActivity.this,"Username Saved",Toast.LENGTH_LONG).show();
 
             }
         });
@@ -49,7 +49,7 @@ public class changeName extends AppCompatActivity {
 
     }
     public void backToProfile(){
-        Intent intent1 = new Intent(this, MyProfile1.class);
+        Intent intent1 = new Intent(this, ProfileViewerActivity.class);
         startActivity(intent1);
     }
 }

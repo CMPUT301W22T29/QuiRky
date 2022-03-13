@@ -21,7 +21,7 @@ public class ViewCommentActivity extends AppCompatActivity {
 
 //    FirebaseDatabase firebaseDatabase; // Suspect Code will need to review how the Firebase database works.
 
-    DatabaseManager DM;
+    DatabaseController DM;
 
     // Need to retrieve the Comments that were made for that QR code.
     // Also still need to show the comments.

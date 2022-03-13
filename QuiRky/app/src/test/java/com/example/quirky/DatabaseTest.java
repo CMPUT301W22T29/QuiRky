@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 public class DatabaseTest {
 
-    DatabaseManager dm;
+    DatabaseController dm;
     String data;
     Comment c;
     Profile p;
@@ -14,7 +14,7 @@ public class DatabaseTest {
 
     @Before
     public void setup() {
-        dm = new DatabaseManager();
+        dm = new DatabaseController();
         data = "";
         c = null; p = null; q = null;
     }
