@@ -12,7 +12,11 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;//Tile source factory used for manipulating the map
 
-
+/*
+source: https://osmdroid.github.io/osmdroid/How-to-use-the-osmdroid-library.html
+author: osmdroid team : https://github.com/osmdroid/osmdroid
+Publish Date:2019-09-27
+ */
 public class MapActivity extends AppCompatActivity {
     MapView nearbymap = null;
     @Override
