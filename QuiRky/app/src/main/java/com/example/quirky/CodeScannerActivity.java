@@ -1,9 +1,7 @@
 package com.example.quirky;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.view.PreviewView;
@@ -13,6 +11,7 @@ public class CodeScannerActivity extends AppCompatActivity {
     private CameraController cameraController;
 
     @Override
+    @androidx.camera.core.ExperimentalGetImage
     protected void onCreate(Bundle savedInstanceState) {
         // TODO: Adjust the xml so that it matches the new fragment layout better (eg. there's currently two different back buttons)
         super.onCreate(savedInstanceState);
@@ -22,7 +21,7 @@ public class CodeScannerActivity extends AppCompatActivity {
         cameraController.startCameraPreview(previewView.createSurfaceProvider(), this);
         Button scan_button = findViewById(R.id.scan_button);
         scan_button.setOnClickListener(view -> {
-            cameraController.captureQRCode(this);
+            cameraController.captureQRCodes(this);
         });
     }
 }

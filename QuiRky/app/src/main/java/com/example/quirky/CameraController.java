@@ -8,14 +8,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.Image;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageCapture;
-import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
-import androidx.camera.core.UseCase;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -34,11 +33,6 @@ public class CameraController {
     private Preview preview;
     private ImageCapture imageCapture;
     private CameraSelector cameraSelector;
-    //private static CameraController instance;
-
-    /*public static CameraController getInstance() {
-        return instance;
-    }*/
 
     protected static boolean hasCameraPermission(Context context) {
         return ContextCompat.checkSelfPermission(
@@ -63,7 +57,6 @@ public class CameraController {
         imageCapture = new ImageCapture.Builder().build();
         cameraSelector = new CameraSelector.Builder()
                 .requireLensFacing(CameraSelector.LENS_FACING_BACK).build();
-        //instance = this;
     }
 
     public void startCameraPreview(Preview.SurfaceProvider surfaceProvider, Context context) {
@@ -81,19 +74,26 @@ public class CameraController {
         }, ContextCompat.getMainExecutor(context));
     }
 
-    public QRCode captureQRCode(Context context) {
-        final QRCode[] code = new QRCode[1];
+    @androidx.camera.core.ExperimentalGetImage
+    public ArrayList<QRCode> captureQRCodes(Context context) {
+        Log.d("captureQRCode", "enter method"); //TODO: get rid of.
+        ArrayList<QRCode> codes = new ArrayList<>();
         imageCapture.takePicture(ContextCompat.getMainExecutor(context),
                 new ImageCapture.OnImageCapturedCallback() {
                     @Override
                     public void onCaptureSuccess(@NonNull ImageProxy image) {
+                        Log.d("captureQRCode", "onCaptureSuccess"); //TODO: get rid of.
                         Image mediaImage = image.getImage();
                         if (mediaImage != null) {
+                            Log.d("captureQRCode", "mediaImage != null");   //TODO: get rid of.
                             InputImage inputImage = InputImage.fromMediaImage(mediaImage, image.getImageInfo().getRotationDegrees());
-                            code[0] = QRCodeController.scanQRCode(inputImage);
+                            codes.addAll(QRCodeController.scanQRCodes(inputImage));
                         }
+                        image.close();
+                        Log.d("captureQRCode", "close image");  //TODO: get rid of.
                     }
                 });
-        return code[0];
+        Log.d("captureQRCode", "exit method");  //TODO: get rid of.
+        return codes;
     }
 }

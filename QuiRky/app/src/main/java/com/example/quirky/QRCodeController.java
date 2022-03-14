@@ -1,5 +1,7 @@
 package com.example.quirky;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -12,6 +14,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class QRCodeController {
@@ -20,25 +23,24 @@ public class QRCodeController {
 
     // TODO: Everything.
 
-    public static QRCode scanQRCode(InputImage inputImage) {
-        final QRCode[] code = new QRCode[1];
-        Task<List<Barcode>> result = codeScanner.process(inputImage).addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
-            @Override
-            public void onSuccess(List<Barcode> barcodes) {
-                // Construct a QRCode with the scanned raw data
-                code[0] = new QRCode(barcodes.get(0).getRawValue());
+    public static ArrayList<QRCode> scanQRCodes(InputImage inputImage) {
+        Log.d("scanQRCode", "enter method");    //TODO: get rid of.
+        ArrayList<QRCode> codes = new ArrayList<>();
+        Task<List<Barcode>> result = codeScanner.process(inputImage).addOnSuccessListener(barcodes -> {
+            Log.d("scanQRCode", "onSuccess");   //TODO: get rid of.
+            // Construct a QRCode with the scanned raw data
+            for (Barcode barcode: barcodes) {
+                codes.add(new QRCode(barcode.getRawValue()));
+                Log.d("scanQRCode", codes.get(0).getContent()); //TODO: get rid of.
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 //TODO: Do something, possibly bring up a fragment saying to try retaking the picture.
-            }
-        }).addOnCompleteListener(new OnCompleteListener<List<Barcode>>() {
-            @Override
-            public void onComplete(@NonNull Task<List<Barcode>> task) {
-                inputImage.getMediaImage().close();
+                Log.d("scanQRCode", "onFailure");   //TODO: get rid of.
             }
         });
-        return code[0];
+        Log.d("scanQRCode", "exit method"); //TODO: get rid of.
+        return codes;
     }
 }
