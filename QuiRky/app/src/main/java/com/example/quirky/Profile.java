@@ -2,6 +2,10 @@ package com.example.quirky;
 
 import java.util.ArrayList;
 
+/**
+ * @author Jonathen Adsit
+ * Model class that stores a user's name, contact information, and id's of the qrcodes they scanned
+ */
 public class Profile {
     private String uname;
     private String email;
@@ -51,11 +55,22 @@ public class Profile {
         return scanned;
     }
 
+    /**
+     * Adds a QRCode to the list of scanned QRCodes
+     * @param qrId
+     *      - The ID of the QRCode the player has scanned
+     */
     public void addScanned(String qrId) {
         scanned.add(qrId);
     }
 
+    /**
+     * Removes a QRCode from the list of scanned QRCodes. Does nothing if the id is not in the array.
+     * @param qrId
+     *      - The ID of the QRCode the player wants to delete
+     */
     public void removeScanned(String qrId) {
-        scanned.remove(qrId);
+        if(scanned.contains(qrId))
+            scanned.remove(qrId);
     }
 }
