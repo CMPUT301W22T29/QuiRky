@@ -44,7 +44,7 @@ public class MemoryManager {
     public MemoryManager(Context ct, String id) {
         this.ct = ct;
         this.id = id;
-        this.dir = new File(ct.getFilesDir(), id);
+        this.dir = new File(this.ct.getFilesDir(), id);
     }
 
     /**
@@ -52,7 +52,7 @@ public class MemoryManager {
      * @param ct
      *  - Context to get the files directory
      * @throws AssertionError
-     *  - Will throw an assertion error if the user's folder does not already exist in memory
+     *  - Will throw an assertion error if the user's folder does not yet exist in memory
      */
     public MemoryManager(Context ct) throws AssertionError {
         this.ct = ct;
@@ -75,9 +75,13 @@ public class MemoryManager {
     }
 
     public boolean delete() {
-        for(String file : dir.list()) {
-            File f = new File(dir, file);
-            f.delete();
+        try {
+            for (String file : dir.list()) {
+                File f = new File(dir, file);
+                f.delete();
+            }
+        } catch(NullPointerException e) {
+            e.printStackTrace();
         }
         return dir.delete();
     }
@@ -124,9 +128,8 @@ public class MemoryManager {
             return data;
         } catch (IOException e) {
             e.printStackTrace();
+            return "\0";
         }
-
-        return ""; // This return statement will never be reached. It exists so AndroidStudio will stop complaining.
     }
 
     /**
@@ -135,8 +138,10 @@ public class MemoryManager {
      *      - The name of the file to write to
      * @param data
      *      - The string to write to the file.
+     * @return
+     *      - A boolean that identifies if the write was successful
      */
-    public void write(String location, String data) {
+    public Boolean write(String location, String data) {
         File file = new File(dir, location);
         FileOutputStream fos;
 
@@ -150,8 +155,10 @@ public class MemoryManager {
             fos.write( data.getBytes()  );
 
             fos.close();
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
     }
 }

@@ -20,18 +20,22 @@ public class MemoryTest {
     File dir, f;
     Context ct;
 
-    @BeforeClass
-    public void setup() {
+    @Ignore("FIXME: @BeforeClass and @AfterClass want clearMem() to be static, but then it can't use context and therefore access files")
+    //@BeforeClass
+    //@AfterClass
+    public void clearMem() {
         ct = getApplicationContext();
         dir = getApplicationContext().getFilesDir();
 
-        // Empty the local memory 
-        for(String s: dir.list()) {
-            f = new File(dir, s);
+        // Empty the local memory. Naive double loop approach to clear every directory.
+        for(String directory: dir.list()) {
+            if(directory == null) break;
+            f = new File(dir, directory);
             if(f.isDirectory()) {
-                for(String t : f.list()) {
-                    File x = new File(f, t);
-                    x.delete();
+                for(String filename : f.list()) {
+                    if(filename == null) break;
+                    File file = new File(f, filename);
+                    file.delete();
                 }
             }
             f.delete();
@@ -40,6 +44,7 @@ public class MemoryTest {
 
     @Before
     public void reset() {
+        ct = getApplicationContext();
         dir = new File(ct.getFilesDir(), "Test");
         mm = new MemoryManager(ct, "Test");
         f = null;
@@ -48,29 +53,20 @@ public class MemoryTest {
     @Test
     public void TestDirectoryMake() {
         // Assert it's empty
-        assertFalse(mm.exist());
+        assertFalse("Test directory already exists!", mm.exist());
         mm.make();
         // Assert the folder now exists
-        assertTrue(mm.exist());
+        assertTrue("The folder was not made correctly!", mm.exist());
 
-        // Check that the delete worked
-        assertTrue(mm.delete());
         // Assert the directory is now gone
-        assertFalse(mm.exist());
+        assertFalse("The folder deletion did not work!", mm.exist());
     }
 
     @Test
-    public void TestWrite() {
-        return;
-    }
+    public void TestReadWriteHappyPath() {
+        if(!mm.exist()) mm.make();
+        assertTrue(mm.write("sample", "data"));
 
-    @Test
-    public void TestRead() {
-        return;
-    }
-
-    @AfterClass
-    private void delete() {
-        // delete the user folder
+        assertEquals("The read value was not equal to the written value","sample", mm.read("sample"));
     }
 }

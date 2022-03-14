@@ -5,6 +5,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
+/**
+ * @author Jonathen Adsit: SHA256(), iSHA256(), & score()
+ * A controller class to compute the data and do the work that QRCode needs. Currently computes a SHA256 hash of a string, and scores a string.
+ * TODO: Sean put your @author name in this javadoc once you write the functions you were planning on putting here
+ *
+ */
 public class QRCodeController {
     // TODO: Everything.
 
