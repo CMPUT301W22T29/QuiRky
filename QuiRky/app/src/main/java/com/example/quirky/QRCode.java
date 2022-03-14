@@ -1,3 +1,18 @@
+/*
+ * QRCode.java
+ *
+ * Version 0.1.1
+ * Version History:
+ *      Version 0.1.0 -- QRCode instances can be constructed
+ *      Version 0.1.1 -- Geolocations may be set in retrospect.
+ *
+ * Date (v0.1.1): March 14, 2022
+ *
+ * Copyright (c) 2022. CMPUT301W22T29
+ * Subject to MIT License
+ * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
+ */
+
 package com.example.quirky;
 
 import android.location.Location;
@@ -6,7 +21,12 @@ import java.util.ArrayList;
 
 /**
  * @author Jonathen Adsit
- * This model class represents a QR Code. It holds the QRCode's content, hash, score, location, image(?), and comments
+ * This model class represents a QR Code. It holds the <code>QRCode</code>'s content, hash, score, location, image(?), and comments
+ *
+ * Known Issues:
+ *      - <code>SHA256()</code> does not actually generate an SHA hash yet (v0.1.1)
+ *      - QR Codes contain the content of the code as a raw unencrypted string, which is probably
+ *        bad for security and privacy, and contradicts US 08.0X.01. (v0.1.1)
  */
 public class QRCode {
     private final String content, id; // id is hash of content.
@@ -30,6 +50,12 @@ public class QRCode {
         this.comments = new ArrayList<Comment>();
     }
 
+    /**
+     * Initialize this <code>QRCode</code> with only the content.
+     * @param content
+     *          - The content of the <code>QRCode</code> retrieved from the barcode in the
+     *            <code>QRCodeController.scanQRCodes()</code> method.
+     */
     public QRCode(String content) {
         this.content = content;
         this.id = SHA256(content);

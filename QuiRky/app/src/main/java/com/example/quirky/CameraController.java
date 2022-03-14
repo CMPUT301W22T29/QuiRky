@@ -1,3 +1,18 @@
+/*
+ * CameraController.java
+ *
+ * Version 0.2.0
+ * Version History:
+ *      Version 0.1.0 -- Camera Previewing Works
+ *      Version 0.2.0 -- QR Code Photo Capturing Works
+ *
+ * Date (v0.2.0): March 14, 2022
+ *
+ * Copyright (c) 2022. CMPUT301W22T29
+ * Subject to MIT License
+ * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
+ */
+
 // Much help received from https://medium.com/swlh/introduction-to-androids-camerax-with-java-ca384c522c5
 // TODO: Figure out if needs better citation.
 
@@ -26,6 +41,21 @@ import com.google.mlkit.vision.common.InputImage;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Manages all android camera functionality in quirky.
+ * <p>
+ * Has methods for checking and requesting camera permissions, starting camera previews, which can
+ * be implemented graphically with an android camera preview view, and capturing images, which can be
+ * analyzed for QR codes in the QRCodeController class.
+ * This class is intended to be used as a singleton, only one instance should be running at a time.
+ *
+ * @author Sean Meyers
+ * @version 0.2.0
+ * @see androidx.camera.core
+ * @see CodeScannerActivity
+ * @see QRCode
+ * @see QRCodeController
+ */
 public class CameraController {
     private static final String[] CAMERA_PERMISSION = new String[]{Manifest.permission.CAMERA};
     private static final int CAMERA_REQUEST_CODE = 10;

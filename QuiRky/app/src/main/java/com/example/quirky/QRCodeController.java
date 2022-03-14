@@ -1,12 +1,24 @@
+/*
+ * QRCodeController.java
+ *
+ * Version 0.1.0
+ * Version History:
+ *      Version 0.1.0 -- QRCodes can be constructed from input images
+ *
+ * Date (v0.1.0): March 14, 2022
+ *
+ * Copyright (c) 2022. CMPUT301W22T29
+ * Subject to MIT License
+ * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
+ */
+
 package com.example.quirky;
 
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
@@ -17,6 +29,18 @@ import com.google.mlkit.vision.common.InputImage;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Manages QRCode functionality. TODO: Finish the javadoc.
+ * <p>
+ *
+ * @author Sean Meyers
+ * @version 0.1.0
+ * @see androidx.camera.core
+ * @see CameraController
+ * @see CodeScannerActivity
+ * @see com.google.mlkit.vision
+ * @see QRCode
+ */
 public class QRCodeController {
     private static final BarcodeScanner codeScanner = BarcodeScanning.getClient(
             new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build());
