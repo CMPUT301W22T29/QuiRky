@@ -46,10 +46,6 @@
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         <activity
-            android:name=".MapActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity" />
-        <activity
             android:name=".CodeScannerActivity"
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />
