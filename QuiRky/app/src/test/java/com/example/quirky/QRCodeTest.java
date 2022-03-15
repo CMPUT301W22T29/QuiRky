@@ -22,7 +22,10 @@ public class QRCodeTest {
     @Test
     public void TestCommentAdd() {
         qr.addComment(c);
-        assertTrue(qr.getComments().contains(c));
+
+        assertTrue("Add comment did not properly add!", qr.getComments().contains(c));
+        assertEquals("Comment did not contain the right message!", "content", qr.getComments().get(0).getContent());
+        assertEquals("Comment did not contain the right user!", "user", qr.getComments().get(0).getUname());
     }
 
     @Test
@@ -32,5 +35,17 @@ public class QRCodeTest {
         assertEquals(1, qr.getComments().size());
         qr.removeComment(c);
         assertEquals(0, qr.getComments().size());
+    }
+
+    @Test(expected=AssertionError.class)
+    public void AddNull() {
+        c = null;
+        qr.addComment(c);
+    }
+
+    @Test
+    public void RemoveNull() {
+        c = null;
+        qr.removeComment(c);    // TODO: consider what the result is when we do ArrayList.exists(null)
     }
 }

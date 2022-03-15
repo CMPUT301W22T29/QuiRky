@@ -96,7 +96,7 @@ public class StartingPageActivity extends AppCompatActivity {
 
         bottom.setText("Nearby QR Codes");
         bottom.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, MapActivity.class);
             startActivity(i);
         });
     }
