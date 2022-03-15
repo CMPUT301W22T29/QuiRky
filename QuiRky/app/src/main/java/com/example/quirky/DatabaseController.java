@@ -98,6 +98,7 @@ public class DatabaseController {
      * @param qrCodeId
      *      - The id field of the QRCode that holds the desired comments
      * @return
+     *      - A task that the calling activity must set a listener for to get the data they need.
      */
     public Task<QuerySnapshot> readComments(String qrCodeId) {
         collection = db.collection("QRcode").document(qrCodeId).collection("comments");

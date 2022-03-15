@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
- * @author Jonathen Adsit: SHA256(), iSHA256(), & score()
+ * @author Jonathen Adsit
  * A controller class to compute the data and do the work that QRCode needs. Currently computes a SHA256 hash of a string, and scores a string.
  * TODO: Sean put your @author name in this javadoc once you write the functions you were planning on putting here
  *
@@ -23,7 +23,7 @@ public class QRCodeController {
      * @return
      *      - The hash, stored as a string.
      */
-    public String SHA256(String content) {
+    public static String SHA256(String content) {
         try {
             // MessageDigest code taken from
             // https://stackoverflow.com/a/5531479
@@ -48,10 +48,9 @@ public class QRCodeController {
      * @return
      *      - The hash, stored as a integer.
      * @deprecated
-     *      - Currently undetermined if we need this content
+     *      - Decided that we wanted to store the hash as either a byte[] or a String, not a int or long.
      */
-    // FIXME: currently a ~50digit hash number is too large to represent as an integer, or even a long. How do we represent a hash as a number type?
-    public int iSHA256(String content) {
+    public static int iSHA256(String content) {
         try {
             // MessageDigest code taken from
             // https://stackoverflow.com/a/5531479
@@ -78,7 +77,7 @@ public class QRCodeController {
      * @return
      *      - The score of the hash
      */
-    public int score(String hash) {
+    public static int score(String hash) {
         int sum = 0;
         for(int i = 0; i < hash.length(); i++)
             sum += hash.charAt(i);

@@ -1,10 +1,10 @@
 package com.example.quirky;
 
 import org.junit.*;
+import org.osmdroid.util.GeoPoint;
 
 import static org.junit.Assert.*;
 
-import android.location.Location;
 
 import java.util.Date;
 
@@ -15,7 +15,7 @@ public class QRCodeTest {
 
     @Before
     public void setup() {
-        qr = new QRCode("content", new Location("location"));
+        qr = new QRCode("content", new GeoPoint(0.0, 0.0), null);
         c = new Comment("content", "user", new Date());
     }
 
