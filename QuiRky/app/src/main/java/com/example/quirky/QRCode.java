@@ -90,6 +90,9 @@ public class QRCode {
         return comments;
     }
 
+    //TODO: Look into whether the Non-nullable tag would work better than an assertion
+    //TODO: Consider whether we should move this to the QRCodeController class, since we should be
+    //      able to modify arraylists as long as we can get a reference to them with a getter.
     /**
      * Adds a comment to the array. Throws an assertion error if the parameter is null.
      * @param c
@@ -100,6 +103,8 @@ public class QRCode {
         comments.add(c);
     }
 
+    //TODO: Consider whether we should move this to the QRCodeController class, since we should be
+    //      able to modify arraylists as long as we can get a reference to them with a getter.
     /**
      * Removes a comment from the array. If the comment does not exist in the array, do nothing.
      * @param c

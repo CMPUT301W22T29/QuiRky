@@ -154,4 +154,13 @@ public class QRCodeController {
             sum += hash.charAt(i);
         return sum%100;
     }
+
+    public int iScore(byte[] hash) {
+        int sum = 0;
+        for (byte eachByteIn: hash) {
+            sum += (int) eachByteIn;
+        }
+        return sum % 100; // Actually, wouldn't returning just the sum w/out the modulo be better,
+                          // that way our leaderboard isn't saturated with a bunch of 99s or whatever
+    }
 }
