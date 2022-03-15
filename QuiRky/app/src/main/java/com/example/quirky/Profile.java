@@ -13,6 +13,18 @@ public class Profile {
 
     // Array list of QRCode id's to track which codes the user has scanned. TODO: determine if the array should hold QRCodes or just their id's.
     private ArrayList<String> scanned;
+
+    /**
+     * Constructor to be used when all fields are known. Typically used when reading from the database, or getting the user's profile from memory
+     * @param uname
+     *      - The player's username
+     * @param email
+     *      - The player's email
+     * @param phone
+     *      - The player's phone number
+     * @param scanned
+     *      - The id's of QRCodes the player has scanned
+     */
     public Profile(String uname, String email, String phone, ArrayList<String> scanned) {
         this.uname = uname;
         this.email = email;
@@ -20,6 +32,12 @@ public class Profile {
         this.scanned = scanned;
     }
 
+    /**
+     * Constructor to be used when only the username is known. Typically used when creating the user's profile upon logging in for the first time.
+     * All other fields are set empty.
+     * @param uname
+     *      - The player's username.
+     */
     public Profile(String uname) {
         this.uname = uname;
         this.scanned = new ArrayList<>();

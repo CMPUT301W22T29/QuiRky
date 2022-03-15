@@ -1,6 +1,33 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/activity_details.xml" value="0.25" />
+        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/activity_setting.xml" value="0.18645833333333334" />
+        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/activity_settings.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/activity_starting_page.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/kyrie/Desktop/CMPUT301/QuiRky/QuiRky/app/src/main/res/layout/activity_community.xml" value="0.33" />
+        <entry key="..\:/Users/kyrie/Desktop/CMPUT301/QuiRky/QuiRky/app/src/main/res/layout/activity_main.xml" value="0.5" />
+        <entry key="..\:/Users/kyrie/Desktop/CMPUT301/QuiRky/QuiRky/app/src/main/res/layout/activity_qrcodes.xml" value="0.33" />
+        <entry key="..\:/Users/kyrie/Desktop/CMPUT301/QuiRky/QuiRky/app/src/main/res/layout/activity_setting.xml" value="0.5" />
+        <entry key="..\:/Users/kyrie/Desktop/CMPUT301/QuiRky/QuiRky/app/src/main/res/layout/activity_starting_page.xml" value="0.33" />
+        <entry key="..\:/draco/Documents/School/Winter2022/CMPUT301/Project/QuiRky/QuiRky/app/src/main/res/layout/activity_change_name.xml" value="0.25" />
+        <entry key="..\:/draco/Documents/School/Winter2022/CMPUT301/Project/QuiRky/QuiRky/app/src/main/res/layout/activity_code_scanner.xml" value="0.3625" />
+        <entry key="..\:/draco/Documents/School/Winter2022/CMPUT301/Project/QuiRky/QuiRky/app/src/main/res/layout/activity_main.xml" value="0.3625" />
+        <entry key="..\:/draco/Documents/School/Winter2022/CMPUT301/Project/QuiRky/QuiRky/app/src/main/res/layout/activity_my_profile1.xml" value="0.25" />
+        <entry key="..\:/draco/Documents/School/Winter2022/CMPUT301/Project/QuiRky/QuiRky/app/src/main/res/layout/activity_my_qrcode.xml" value="0.3625" />
+        <entry key="..\:/draco/Documents/School/Winter2022/CMPUT301/Project/QuiRky/QuiRky/app/src/main/res/layout/activity_other_player_profile.xml" value="0.25" />
+        <entry key="..\:/draco/Documents/School/Winter2022/CMPUT301/Project/QuiRky/QuiRky/app/src/main/res/layout/activity_qrcodes.xml" value="0.3625" />
+        <entry key="..\:/draco/Documents/School/Winter2022/CMPUT301/Project/QuiRky/QuiRky/app/src/main/res/layout/activity_setting.xml" value="0.3625" />
+        <entry key="..\:/draco/Documents/School/Winter2022/CMPUT301/Project/QuiRky/QuiRky/app/src/main/res/layout/activity_starting_page.xml" value="0.3625" />
+        <entry key="..\:/draco/Documents/School/Winter2022/CMPUT301/Project/QuiRky/QuiRky/app/src/main/res/layout/activity_view_comment.xml" value="0.23697916666666666" />
+        <entry key="..\:/draco/Documents/School/Winter2022/CMPUT301/Project/QuiRky/QuiRky/app/src/main/res/layout/activity_view_qr.xml" value="0.23697916666666666" />
+        <entry key="..\:/draco/Documents/School/Winter2022/CMPUT301/Project/QuiRky/QuiRky/app/src/main/res/layout/input_uname_login_fragment.xml" value="0.23697916666666666" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

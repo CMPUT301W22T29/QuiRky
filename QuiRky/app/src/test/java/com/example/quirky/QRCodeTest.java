@@ -1,11 +1,12 @@
 package com.example.quirky;
 
 import org.junit.*;
+import org.osmdroid.util.GeoPoint;
 
 import static org.junit.Assert.*;
 
-import android.location.Location;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 public class QRCodeTest {
@@ -14,8 +15,8 @@ public class QRCodeTest {
     Comment c;
 
     @Before
-    public void setup() {
-        qr = new QRCode("content", new Location("location"));
+    public void setup() throws NoSuchAlgorithmException {
+        qr = new QRCode("content", new GeoPoint(0.0, 0.0), null);
         c = new Comment("content", "user", new Date());
     }
 

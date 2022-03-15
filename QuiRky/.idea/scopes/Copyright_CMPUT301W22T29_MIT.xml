@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Copyright CMPUT301W22T29 MIT" pattern="file[QuiRky.app]:src/main/java/com/example/quirky/*" />
+</component>
