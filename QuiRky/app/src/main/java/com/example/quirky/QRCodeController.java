@@ -52,7 +52,7 @@ public class QRCodeController {
     private static final BarcodeScanner codeScanner = BarcodeScanning.getClient(
             new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build());
 
-    public static ArrayList<QRCode> scanQRCodes(InputImage inputImage) {
+    public static ArrayList<QRCode> scanQRCodes(InputImage inputImage) throws NoSuchAlgorithmException {
         Log.d("scanQRCode", "enter method");    //TODO: get rid of.
         ArrayList<QRCode> codes = new ArrayList<>();
         Task<List<Barcode>> result = codeScanner.process(inputImage).addOnSuccessListener(barcodes -> {
@@ -79,54 +79,15 @@ public class QRCodeController {
      * @return
      *      - The hash, stored as a string.
      */
-    public static String SHA256(String content) {
-        try {
-            // MessageDigest code taken from
-            // https://stackoverflow.com/a/5531479
-            // By user:
-            // https://stackoverflow.com/users/22656/jon-skeet
-            // Published
-            // April 3, 2011
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(content.getBytes(StandardCharsets.UTF_8));
-
-            return Arrays.toString(hash);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return ""; // This return statement should never be used, but android studio is complaining so here it is anyways.
-    }
-
-    /**
-     * Returns the SHA-256 Hash of a string as an integer
-     * @param content
-     *      - The string to be hashed
-     * @return
-     *      - The hash, stored as a integer.
-     * @deprecated
-     *      - Decided that we wanted to store the hash as either a byte[] or a String, not a int or long.
-     */
-
-    // FIXME: currently a ~50digit hash number is too large to represent as an integer, or even a long. How do we represent a hash as a number type?
-    // TODO: In order to represent the hash as a number type, we need to use an array of bytes,
-    //       probably the best way to do this is to use a fixed size byte[32] array. Could also use
-    //       Byte[32] instead. I'm not sure which would be better, probably doesn't matter much.
-    public static int iSHA256(String content) {
-        try {
-            // MessageDigest code taken from
-            // https://stackoverflow.com/a/5531479
-            // By user:
-            // https://stackoverflow.com/users/22656/jon-skeet
-            // Published
-            // April 3, 2011
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(content.getBytes(StandardCharsets.UTF_8));
-
-            return Integer.valueOf(Arrays.toString(hash), 16);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return 0; // This return statement should never be used, but android studio is complaining so here it is anyways.
+    public static byte[] SHA256(String content) throws NoSuchAlgorithmException {
+        // MessageDigest code taken from
+        // https://stackoverflow.com/a/5531479
+        // By user:
+        // https://stackoverflow.com/users/22656/jon-skeet
+        // Published
+        // April 3, 2011
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        return md.digest(content.getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -137,19 +98,12 @@ public class QRCodeController {
      * @return
      *      - The score of the hash
      */
-    public static int score(String hash) {
-        int sum = 0;
-        for(int i = 0; i < hash.length(); i++)
-            sum += hash.charAt(i);
-        return sum%100;
-    }
-
-    public int iScore(byte[] hash) {
+    public static int score(byte[] hash) {
         int sum = 0;
         for (byte eachByteIn: hash) {
             sum += (int) eachByteIn;
         }
-        return sum % 100; // Actually, wouldn't returning just the sum w/out the modulo be better,
+        return -(sum % 100); // Actually, wouldn't returning just the sum w/out the modulo be better,
                           // that way our leaderboard isn't saturated with a bunch of 99s or whatever
     }
 }
