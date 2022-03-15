@@ -10,7 +10,12 @@ import java.util.Date;
  */
 public class Comment {
     private String content, uname;
-    private final Date timestamp;
+    private Date timestamp;
+
+    /**
+     * Empty constructor because Firestore tutorial told me to...
+     */
+    public Comment() {}
 
     public Comment(String content, String uname, Date timestamp) {
         this.content = content;

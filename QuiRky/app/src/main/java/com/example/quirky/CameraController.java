@@ -118,12 +118,7 @@ public class CameraController {
                         if (mediaImage != null) {
                             Log.d("captureQRCode", "mediaImage != null");   //TODO: get rid of.
                             InputImage inputImage = InputImage.fromMediaImage(mediaImage, image.getImageInfo().getRotationDegrees());
-                            try {
                                 codes.addAll(QRCodeController.scanQRCodes(inputImage));
-                            } catch (NoSuchAlgorithmException e) {
-                                e.printStackTrace();
-                                throw new RuntimeException(e.getMessage(), e.getCause());
-                            }
                         }
                         image.close();
                         Log.d("captureQRCode", "close image");  //TODO: get rid of.

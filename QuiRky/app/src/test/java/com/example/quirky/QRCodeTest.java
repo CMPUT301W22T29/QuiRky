@@ -15,7 +15,7 @@ public class QRCodeTest {
     Comment c;
 
     @Before
-    public void setup() throws NoSuchAlgorithmException {
+    public void setup() {
         qr = new QRCode("content", new GeoPoint(0.0, 0.0), null);
         c = new Comment("content", "user", new Date());
     }

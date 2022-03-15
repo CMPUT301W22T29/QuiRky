@@ -3,18 +3,14 @@ package com.example.quirky;
 import android.util.Log;
 
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+import androidx.annotation.NonNull;
 
-import java.util.ArrayList;
-import java.util.Date;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,119 +24,45 @@ import java.util.Map;
  *      Has two inner collections:
  *          - comments:
  *              Holds a document for each comment the QRCode has
- *          - images:
+ *          - images: (?), verify this is how it will be stored
  *              Holds an image for each player that scanned the code and chose to save the image.
  */
 public class DatabaseController {
+    private final String TAG = "DatabaseController says: ";
     private final FirebaseFirestore db;
     private CollectionReference collection;
+    private final OnCompleteListener writeListener;
 
-    private List<DocumentSnapshot> docs;
-
-    private final OnSuccessListener<Void> writeSuccess;
-    private final OnFailureListener writeFail;
-
-    private final String TAG = "DatabaseController says: ";
-
-    // Default constructor
     public DatabaseController() {
-        db = FirebaseFirestore.getInstance();
-        writeSuccess = docref -> Log.d(TAG, "The write was successful.");
-        writeFail = e -> Log.d(TAG, "The write operation failed. ", e);
+        this.db = FirebaseFirestore.getInstance();
+        this.writeListener = task -> {
+            if(task.isSuccessful())
+                Log.d(TAG, "Last write was a success");
+            else
+                Log.d(TAG, "Last write was a fail"); // TODO: find a way to determine what the last write was. Should be easy.
+        };
+    }
+
+    public void writeComment(Comment c, String id) {
+        collection = db.collection("QRcodes");
+        Map<String, Object> data = new HashMap<>();
+
+        // We update the 'exists' field in the QRCode's document, because a document in Firestore needs at least one field in order to exist.
+        // The 'exists' field only exists because we want to ensure the QRCode document exists.
+        data.put("exists", true);
+        collection.document(id).update(data);
+
+        collection = collection.document(id).collection("comments");
+        collection.document(c.getTimestamp().toString()).set(c).addOnCompleteListener(writeListener);
+    }
+
+    public void writeQRCode(QRCode qr) {
+        collection = db.collection("QRcodes");
+        collection.document(qr.getId()).set(qr).addOnCompleteListener(writeListener);
+    }
+
+    public void writeProfile(Profile p) {
         collection = db.collection("users");
-    }
-
-    /**
-     * Write comment writes a comment object to FireStore
-     * @param comment
-     *      - The comment object to be written
-     * @param qrId
-     *      - The QRCode the comment is written under
-     */
-    public void writeComment(Comment comment, String qrId) {
-        collection = db.collection("QRcodes").document(qrId).collection("comments");
-        HashMap<String, String> data = new HashMap<>();
-        data.put("content", comment.getContent());
-        data.put("user", comment.getUname());
-        data.put("timestamp", comment.getTimestamp().toString());
-        collection.document(comment.getTimestamp().toString()).set(data).addOnSuccessListener(writeSuccess).addOnFailureListener(writeFail);
-    }
-
-    /**
-     * Write a user's profile to FireStore
-     * @param p
-     *      - The profile object to be written
-     */
-    public void writeUser(Profile p) {
-
-        assert (p != null);
-
-        collection = db.collection("users");
-
-        String name = p.getUname();
-        String email = p.getEmail();
-        String phone = p.getPhone();
-
-        HashMap<String, String> data = new HashMap<>();
-        data.put("name", name);
-        data.put("email", email);
-        data.put("phone", phone);
-
-        collection.document(name).set(data)
-                .addOnSuccessListener(writeSuccess)
-                .addOnFailureListener(writeFail);
-    }
-
-    /**
-     * readComments() begins the read process from FireStore. Because this takes time, a task is returned.
-     * The calling class must set a listener to the Task that calls getComments() to get the data it wants.
-     *
-     * @param qrCodeId
-     *      - The id field of the QRCode that holds the desired comments
-     * @return
-     *      - A task that the calling activity must set a listener for to get the data they need.
-     */
-    public Task<QuerySnapshot> readComments(String qrCodeId) {
-        collection = db.collection("QRcode").document(qrCodeId).collection("comments");
-        return collection.get();
-    }
-
-    /**
-     * getComments() is the second half of the read process, once the Task is complete the caller uses getComments() to actually get the data.
-     * @param task
-     *      - The task returned to by readComments(). If this is called with a different task, method will not work properly.
-     * @return
-     *      - All comments written to the QRCode stored in a ArrayList
-     */
-    public ArrayList<Comment> getComments(Task<QuerySnapshot> task) {
-        // FIXME: android studio says following line may produce null pointer exception. Consider how.
-        List<DocumentSnapshot> docs = task.getResult().getDocuments();
-
-        // Here we assume docs is a filled List of Document Snapshots
-        ArrayList<Comment> comments = new ArrayList<>();
-        for(int i = 0; i < docs.size(); i++) {
-            String content = docs.get(i).getString("contents");
-            String user = docs.get(i).getString("user");
-            Date timestamp = docs.get(i).getDate("timestamp");
-
-            comments.add(new Comment(content, user, timestamp));
-        }
-
-        return comments;
-    }
-
-
-    /**
-     * A mock comment reader to be used until the actual comment reading works properly.
-     * @return
-     *      - An arraylist of hardcoded comments.
-     */
-    public ArrayList<Comment> MockReadComments(String qrCodeId) {
-        ArrayList<Comment> c = new ArrayList<>();
-        c.add(new Comment("This is a comment on: " + qrCodeId, "Sum Guy", new Date()));
-        c.add(new Comment("This is comment 2 on: " + qrCodeId, "Guy 2", new Date()));
-        c.add(new Comment("I found this QRCode on a bench in a public park!", "Raymart", new Date()));
-
-        return c;
+        collection.document(p.getUname()).set(p).addOnCompleteListener(writeListener);
     }
 }

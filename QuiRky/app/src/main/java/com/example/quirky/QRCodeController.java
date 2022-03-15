@@ -52,19 +52,14 @@ public class QRCodeController {
     private static final BarcodeScanner codeScanner = BarcodeScanning.getClient(
             new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build());
 
-    public static ArrayList<QRCode> scanQRCodes(InputImage inputImage) throws NoSuchAlgorithmException {
+    public static ArrayList<QRCode> scanQRCodes(InputImage inputImage) {
         Log.d("scanQRCode", "enter method");    //TODO: get rid of.
         ArrayList<QRCode> codes = new ArrayList<>();
         Task<List<Barcode>> result = codeScanner.process(inputImage).addOnSuccessListener(barcodes -> {
             Log.d("scanQRCode", "onSuccess");   //TODO: get rid of.
             // Construct a QRCode with the scanned raw data
             for (Barcode barcode: barcodes) {
-                try {
                     codes.add(new QRCode(barcode.getRawValue()));
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e.getMessage(), e.getCause());
-                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -84,15 +79,24 @@ public class QRCodeController {
      * @return
      *      - The hash, stored as a string.
      */
-    public static byte[] SHA256(String content) throws NoSuchAlgorithmException {
+    public static String SHA256(String content) {
         // MessageDigest code taken from
         // https://stackoverflow.com/a/5531479
         // By user:
         // https://stackoverflow.com/users/22656/jon-skeet
         // Published
         // April 3, 2011
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        return md.digest(content.getBytes(StandardCharsets.UTF_8));
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] temp = md.digest(content.getBytes(StandardCharsets.UTF_8));
+
+            return Arrays.toString(temp);
+            // return new String(temp, StandardCharsets.US_ASCII);
+            // return new String(temp, StandardCharsets.UTF_8);    See: https://utf8-chartable.de/unicode-utf8-table.pl, should have a character for negative byte values
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage(), e.getCause());
+        }
     }
 
     /**
@@ -103,10 +107,10 @@ public class QRCodeController {
      * @return
      *      - The score of the hash
      */
-    public static int score(byte[] hash) {
+    public static int score(String hash) {
         int sum = 0;
-        for (byte eachByteIn: hash) {
-            sum += (int) eachByteIn;
+        for (int i = 0; i < hash.length(); i++) {
+            sum += hash.charAt(i);
         }
         return -(sum % 100); // Actually, wouldn't returning just the sum w/out the modulo be better,
                           // that way our leaderboard isn't saturated with a bunch of 99s or whatever
