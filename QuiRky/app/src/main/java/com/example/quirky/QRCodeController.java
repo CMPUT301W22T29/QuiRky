@@ -59,7 +59,12 @@ public class QRCodeController {
             Log.d("scanQRCode", "onSuccess");   //TODO: get rid of.
             // Construct a QRCode with the scanned raw data
             for (Barcode barcode: barcodes) {
-                codes.add(new QRCode(barcode.getRawValue()));
+                try {
+                    codes.add(new QRCode(barcode.getRawValue()));
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException(e.getMessage(), e.getCause());
+                }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
