@@ -15,7 +15,8 @@
 
 package com.example.quirky;
 
-import android.location.Location;
+import org.osmdroid.util.GeoPoint;
+import android.media.Image;
 
 import java.util.ArrayList;
 
@@ -29,28 +30,50 @@ import java.util.ArrayList;
  *      - Each new <code>QRCode</code> instance instantiates a <code>QRCodeController</code> instance. bad. (v0.2.0)
  */
 public class QRCode {
-    private final String content, id; // id is hash of content.
+    private final String id; // id is hash of content.
     private final int score;
-    private Location geolocation;
+    private GeoPoint geolocation;
+    private Image photo;                  // TODO: determine what datatype the photo will use. Not sure how to contain it in this class. Will also need to update constructor
     private ArrayList<Comment> comments;
 
-    // FIXME: Should QRCode have an instance of it's controller in itself? For 'content' and 'id' to be declared as final, they must be initialized in the constuctor, requiring QRCode to have a QRCodeController
     //TODO: Use static methods in QRCodeController so you don't need an instance, either that or use a singleton with a getInstance method.
-
-    public QRCode(String content, Location geolocation, ArrayList<Comment> comments) {
-        QRCodeController qrcc = new QRCodeController();
-        this.content = content;
-        this.id = qrcc.SHA256(content);
-        this.score = qrcc.score(id);
+    /**
+     * The constructor to be used when the QRCode has comments on it. This constructor likely be called when the QRCode already exists in the Database.
+     * If the user does not want to save their geolocation or photo, constructor can be called with these values null.
+     * If the user does not want to save the content of the code, the constructor can be called with Boolean saveContent == False.
+     * @param content
+     *      - The content of the QRCode. This is mandatory, as it is used to find the QRCode's hash and score
+     * @param geolocation
+     *      - The location of the QRCode
+     * @param photo
+     *      - The photo of the QRCode. This is currently an Integer, and will need to be updated once we find how to store a Photo.
+     * @param comments
+     *      - The comments that have been posted on the QRCode, in an ArrayList<>
+     */
+    public QRCode(String content, GeoPoint geolocation, Image photo, ArrayList<Comment> comments) {
+        this.id = QRCodeController.SHA256(content);
+        this.score = QRCodeController.score(id);
+        this.photo = photo;
         this.geolocation = geolocation;
         this.comments = comments;
     }
 
-    public QRCode(String content, Location geolocation) {
-        QRCodeController qrcc = new QRCodeController();
-        this.content = content;
-        this.id = qrcc.SHA256(content);
-        this.score = qrcc.score(id);
+    /**
+     * The constructor to be used when the QRCode has no comments yet. This constructor likely be called when this is the first time the code has been scanned by any user.
+     * If the user does not want to save their geolocation or photo, constructor can be called with these values null.
+     * If the user does not want to save the content of the code, the constructor can be called with Boolean saveContent == False.
+     * The comments field will be initialised to an empty ArrayList.
+     * @param content
+     *      - The content of the QRCode. This is mandatory, as it is used to find the QRCode's hash and score
+     * @param geolocation
+     *      - The location of the QRCode
+     * @param photo
+     *      - The photo of the QRCode. This is currently an Integer, and will need to be updated once we find how to store a Photo.
+     */
+    public QRCode(String content, GeoPoint geolocation, Image photo) {
+        this.id = QRCodeController.SHA256(content);
+        this.score = QRCodeController.score(id);
+        this.photo = photo;
         this.geolocation = geolocation;
         this.comments = new ArrayList<>();
     }
@@ -62,16 +85,9 @@ public class QRCode {
      *            <code>QRCodeController.scanQRCodes()</code> method.
      */
     public QRCode(String content) {
-        QRCodeController qrcc = new QRCodeController();     //TODO: prolly doesn't need this
-        this.content = content;
-        this.id = qrcc.SHA256(content);
-        this.score = qrcc.score(id);
+        this.id = QRCodeController.SHA256(content);
+        this.score = QRCodeController.score(id);
         this.comments = new ArrayList<>();
-        this.geolocation = new Location("place");
-    }
-
-    public String getContent() {
-        return content;
     }
 
     public String getId() {
@@ -82,7 +98,7 @@ public class QRCode {
         return score;
     }
 
-    public Location getGeolocation() {
+    public GeoPoint getGeolocation() {
         return geolocation;
     }
 
@@ -115,7 +131,7 @@ public class QRCode {
             comments.remove(c);
     }
 
-    public void setGeolocation(Location geolocation) {
+    public void setGeolocation(GeoPoint geolocation) {
         this.geolocation = geolocation;
     }
 }
