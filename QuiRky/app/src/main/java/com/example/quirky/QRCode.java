@@ -18,6 +18,7 @@ package com.example.quirky;
 import org.osmdroid.util.GeoPoint;
 import android.media.Image;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 /**
@@ -30,7 +31,7 @@ import java.util.ArrayList;
  *      - Each new <code>QRCode</code> instance instantiates a <code>QRCodeController</code> instance. bad. (v0.2.0)
  */
 public class QRCode {
-    private final String id; // id is hash of content.
+    private final byte[] id; // id is hash of content.
     private final int score;
     private GeoPoint geolocation;
     private Image photo;                  // TODO: determine what datatype the photo will use. Not sure how to contain it in this class. Will also need to update constructor
@@ -50,7 +51,7 @@ public class QRCode {
      * @param comments
      *      - The comments that have been posted on the QRCode, in an ArrayList<>
      */
-    public QRCode(String content, GeoPoint geolocation, Image photo, ArrayList<Comment> comments) {
+    public QRCode(String content, GeoPoint geolocation, Image photo, ArrayList<Comment> comments) throws NoSuchAlgorithmException {
         this.id = QRCodeController.SHA256(content);
         this.score = QRCodeController.score(id);
         this.photo = photo;
@@ -70,7 +71,7 @@ public class QRCode {
      * @param photo
      *      - The photo of the QRCode. This is currently an Integer, and will need to be updated once we find how to store a Photo.
      */
-    public QRCode(String content, GeoPoint geolocation, Image photo) {
+    public QRCode(String content, GeoPoint geolocation, Image photo) throws NoSuchAlgorithmException {
         this.id = QRCodeController.SHA256(content);
         this.score = QRCodeController.score(id);
         this.photo = photo;
@@ -84,13 +85,13 @@ public class QRCode {
      *          - The content of the <code>QRCode</code> retrieved from the barcode in the
      *            <code>QRCodeController.scanQRCodes()</code> method.
      */
-    public QRCode(String content) {
+    public QRCode(String content) throws NoSuchAlgorithmException {
         this.id = QRCodeController.SHA256(content);
         this.score = QRCodeController.score(id);
         this.comments = new ArrayList<>();
     }
 
-    public String getId() {
+    public byte[] getId() {
         return id;
     }
 
@@ -107,8 +108,6 @@ public class QRCode {
     }
 
     //TODO: Look into whether the Non-nullable tag would work better than an assertion
-    //TODO: Consider whether we should move this to the QRCodeController class, since we should be
-    //      able to modify arraylists as long as we can get a reference to them with a getter.
     /**
      * Adds a comment to the array. Throws an assertion error if the parameter is null.
      * @param c
@@ -119,8 +118,6 @@ public class QRCode {
         comments.add(c);
     }
 
-    //TODO: Consider whether we should move this to the QRCodeController class, since we should be
-    //      able to modify arraylists as long as we can get a reference to them with a getter.
     /**
      * Removes a comment from the array. If the comment does not exist in the array, do nothing.
      * @param c

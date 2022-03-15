@@ -38,6 +38,7 @@ import androidx.lifecycle.LifecycleOwner;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.common.InputImage;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -105,7 +106,7 @@ public class CameraController {
     }
 
     @androidx.camera.core.ExperimentalGetImage
-    public ArrayList<QRCode> captureQRCodes(Context context) {
+    public ArrayList<QRCode> captureQRCodes(Context context) throws NoSuchAlgorithmException {
         Log.d("captureQRCode", "enter method"); //TODO: get rid of.
         ArrayList<QRCode> codes = new ArrayList<>();
         imageCapture.takePicture(ContextCompat.getMainExecutor(context),
