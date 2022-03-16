@@ -57,8 +57,11 @@ public class DatabaseController {
     }
 
     public void writeQRCode(QRCode qr) {
+        if(qr == null)
+            throw new RuntimeException(TAG + "You can't pass a null value to the write method!\t\t<---");
+        String s = qr.getId();
         collection = db.collection("QRcodes");
-        collection.document(qr.getId()).set(qr).addOnCompleteListener(writeListener);
+        collection.document(s).set(qr).addOnCompleteListener(writeListener);
     }
 
     public void writeProfile(Profile p) {

@@ -50,7 +50,7 @@ public class QRCode {
      * @param comments
      *      - The comments that have been posted on the QRCode, in an ArrayList<>
      */
-    public QRCode(String content, GeoPoint geolocation, Image photo, ArrayList<Comment> comments) throws NoSuchAlgorithmException {
+    public QRCode(String content, GeoPoint geolocation, Image photo, ArrayList<Comment> comments) {
         this.id = QRCodeController.SHA256(content);
         this.score = QRCodeController.score(id);
         this.photo = photo;
