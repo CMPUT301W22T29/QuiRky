@@ -20,12 +20,17 @@ import java.util.Map;
  *  - users
  *      Holds a document for each player holding their unique username, contact information, etc.
  *  - QRcodes
- *      Holds a document for each QRCode that has been scanned with the app, holding it's content, hash, score, location...
- *      Has two inner collections:
- *          - comments:
- *              Holds a document for each comment the QRCode has
- *          - images: (?), verify this is how it will be stored
- *              Holds an image for each player that scanned the code and chose to save the image.
+ *      Has a document for each QRCode that has been scanned with the app.
+ *          Each document contains:
+ *              - The score of the QRCode
+ *              - Two inner collections:
+ *                  - comments:
+ *                      Holds a document for each comment the QRCode has.
+ *                      The documents has 3 fields: content, user, and time
+ *                  - userdata:
+ *                      Holds a document for each user that has scanned this code.
+ *                      The document contains: the photo the user took, and the location the user found the code.
+ *
  */
 public class DatabaseController {
     private final String TAG = "DatabaseController says: ";
@@ -40,7 +45,7 @@ public class DatabaseController {
             if(task.isSuccessful())
                 Log.d(TAG, "Last write was a success");
             else
-                Log.d(TAG, "Last write was a fail"); // TODO: find a way to determine what the last write was. Should be easy.
+                Log.d(TAG, "Last write was a fail, cause: " + task.getException().getMessage()); // TODO: find a way to determine what the last write was. Should be easy.
         };
 
         this.deleteListener = task -> {
@@ -54,24 +59,12 @@ public class DatabaseController {
     public void addComment(Comment c, String id) {
         collection = db.collection("QRcodes");
 
-        // We update the 'exists' field in the QRCode's document, because a document in Firestore needs at least one field in order to exist.
-        // The 'exists' field only exists because we want to ensure the QRCode document exists.
-        Map<String, Object> data = new HashMap<>();
-        data.put("exists", true);
-        collection.document(id).update(data);
-
         collection = collection.document(id).collection("comments");
         collection.document(c.getId()).set(c).addOnCompleteListener(writeListener);
     }
 
     public void removeComment(Comment c, String id) {   // TODO: consider making this method take the comment's id, rather than the object itself.
         collection = db.collection("QRcodes");
-
-        // We update the 'exists' field in the QRCode's document, because a document in Firestore needs at least one field in order to exist.
-        // The 'exists' field only exists because we want to ensure the QRCode document exists.
-        Map<String, Object> data = new HashMap<>();
-        data.put("exists", true);
-        collection.document(id).update(data);
 
         collection = collection.document(id).collection("comments");
         collection.document(c.getId()).delete().addOnCompleteListener(deleteListener);
@@ -91,7 +84,7 @@ public class DatabaseController {
         collection = db.collection("QRcodes");
         doc = collection.document(qr.getId());
         // Add to the batch
-        batch.update(doc, data);
+        batch.set(doc, data);
 
         collection = doc.collection("comments");
         // Add the comments to the batch. Skip any null comments.
@@ -113,11 +106,21 @@ public class DatabaseController {
 
         // Issue the batch write
         batch.commit().addOnCompleteListener(writeListener);
+    }
 
+    public void deleteQRCode(QRCode qr) {
+        collection = db.collection("QRCodes");
+        collection.document(qr.getId()).delete().addOnCompleteListener(deleteListener);
     }
 
     public void writeProfile(Profile p) {
         collection = db.collection("users");
         collection.document(p.getUname()).set(p).addOnCompleteListener(writeListener);
     }
+
+    public void deleteProfile(Profile p) {
+        collection = db.collection("users");
+        collection.document(p.getUname()).delete().addOnCompleteListener(deleteListener);
+    }
+
 }

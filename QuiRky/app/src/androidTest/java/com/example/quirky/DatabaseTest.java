@@ -5,6 +5,8 @@ import org.osmdroid.util.GeoPoint;
 
 import static org.junit.Assert.*;
 
+import android.content.Context;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.security.NoSuchAlgorithmException;
@@ -16,21 +18,20 @@ public class DatabaseTest {
     Comment c;
     Profile p;
     QRCode qr;
-    GeoPoint gp;
-    Date date;
+    Context ct;
 
     @Before
     public void setup() {
+        ct = ct.getApplicationContext();
         dc = new DatabaseController(FirebaseFirestore.getInstance());
         c = null; p = null; qr = null;
-        gp = new GeoPoint(10.0, 10.0);
-        date = new Date(823465789);
     }
 
     // Can not test that the write was successful without manually checking the database online.
     @Test
     public void writeComment() {
-        c = new Comment("content1", "user1", date);
+        Date d = new Date(823465789);
+        c = new Comment("content1", "user1", d);
         dc.addComment(c, "sample1");
     }
 
@@ -42,6 +43,7 @@ public class DatabaseTest {
 
     @Test
     public void writeQRCode() throws NoSuchAlgorithmException {
+        GeoPoint gp = new GeoPoint(10.0, 10.0);
         qr = new QRCode("sample1", gp, null, new ArrayList<>());
         dc.writeQRCode(qr);
     }

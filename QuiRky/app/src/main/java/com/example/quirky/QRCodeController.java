@@ -30,7 +30,6 @@ import com.google.mlkit.vision.common.InputImage;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,9 +89,9 @@ public class QRCodeController {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] temp = md.digest(content.getBytes(StandardCharsets.UTF_8));
 
-            return Arrays.toString(temp);
+            // return Arrays.toString(temp);
             // return new String(temp, StandardCharsets.US_ASCII);
-            // return new String(temp, StandardCharsets.UTF_8);    See: https://utf8-chartable.de/unicode-utf8-table.pl, should have a character for negative byte values
+            return new String(temp, StandardCharsets.UTF_8);    //See: https://utf8-chartable.de/unicode-utf8-table.pl, should have a character for negative byte values
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage(), e.getCause());
