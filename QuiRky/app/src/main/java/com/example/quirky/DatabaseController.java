@@ -156,11 +156,7 @@ public class DatabaseController {
 
     public Profile getProfile(Task<DocumentSnapshot> task) {
         DocumentSnapshot doc = task.getResult();
+        if(doc.getData() == null) return null;
         return doc.toObject(Profile.class);
     }
-
-    public ArrayList<Comment> readComments(String id) {
-
-    }
-
 }
