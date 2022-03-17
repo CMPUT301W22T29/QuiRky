@@ -3,13 +3,13 @@ package com.example.quirky;
 import android.util.Log;
 
 
-import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,36 +32,88 @@ public class DatabaseController {
     private final FirebaseFirestore db;
     private CollectionReference collection;
     private final OnCompleteListener writeListener;
+    private final OnCompleteListener deleteListener;
 
-    public DatabaseController() {
-        this.db = FirebaseFirestore.getInstance();
+    public DatabaseController(FirebaseFirestore db) {
+        this.db = db;
         this.writeListener = task -> {
             if(task.isSuccessful())
                 Log.d(TAG, "Last write was a success");
             else
                 Log.d(TAG, "Last write was a fail"); // TODO: find a way to determine what the last write was. Should be easy.
         };
+
+        this.deleteListener = task -> {
+            if(task.isSuccessful())
+                Log.d(TAG, "Deletion from database success!");
+            else
+                Log.d(TAG, "Deletion from database failed!!"); // TODO: find a way to determine what the last write was. Should be easy.
+        };
     }
 
-    public void writeComment(Comment c, String id) {
+    public void addComment(Comment c, String id) {
         collection = db.collection("QRcodes");
-        Map<String, Object> data = new HashMap<>();
 
         // We update the 'exists' field in the QRCode's document, because a document in Firestore needs at least one field in order to exist.
         // The 'exists' field only exists because we want to ensure the QRCode document exists.
+        Map<String, Object> data = new HashMap<>();
         data.put("exists", true);
         collection.document(id).update(data);
 
         collection = collection.document(id).collection("comments");
-        collection.document(c.getTimestamp().toString()).set(c).addOnCompleteListener(writeListener);
+        collection.document(c.getId()).set(c).addOnCompleteListener(writeListener);
+    }
+
+    public void removeComment(Comment c, String id) {   // TODO: consider making this method take the comment's id, rather than the object itself.
+        collection = db.collection("QRcodes");
+
+        // We update the 'exists' field in the QRCode's document, because a document in Firestore needs at least one field in order to exist.
+        // The 'exists' field only exists because we want to ensure the QRCode document exists.
+        Map<String, Object> data = new HashMap<>();
+        data.put("exists", true);
+        collection.document(id).update(data);
+
+        collection = collection.document(id).collection("comments");
+        collection.document(c.getId()).delete().addOnCompleteListener(deleteListener);
     }
 
     public void writeQRCode(QRCode qr) {
-        if(qr == null)
-            throw new RuntimeException(TAG + "You can't pass a null value to the write method!\t\t<---");
-        String s = qr.getId();
+        assert(qr != null) : "You can't write a null object to the database!";
+
+        // A batch write: a group of write operations to be done at once. Create the batch
+        WriteBatch batch = db.batch();
+        DocumentReference doc;
+
+        // The Score field
+        Map<String, Object> data = new HashMap<>();
+        data.put("score", qr.getScore());
+        // Set the location
         collection = db.collection("QRcodes");
-        collection.document(s).set(qr).addOnCompleteListener(writeListener);
+        doc = collection.document(qr.getId());
+        // Add to the batch
+        batch.update(doc, data);
+
+        collection = doc.collection("comments");
+        // Add the comments to the batch. Skip any null comments.
+        for(Comment c : qr.getComments()) {
+            if(c==null) continue;
+            batch.set(collection.document(c.getId()), c);
+        }
+
+        // Add the geolocation & photo to the batch
+        collection = doc.collection("userdata");
+        String user = "user"; // TODO: find a way to get the current user's username without context
+        doc = collection.document(user);
+
+        data = new HashMap<>();
+        data.put("location", qr.getGeolocation());
+        data.put("photo", 3); // TODO: write the photo correctly.
+
+        batch.set(doc, data);
+
+        // Issue the batch write
+        batch.commit().addOnCompleteListener(writeListener);
+
     }
 
     public void writeProfile(Profile p) {

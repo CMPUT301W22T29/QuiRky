@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Button;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 public class MainActivity extends AppCompatActivity implements InputUnameLoginFragment.LoginFragListener {
 
     DatabaseController dm;
@@ -16,6 +18,8 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dm = new DatabaseController(FirebaseFirestore.getInstance());
 
         Button getStarted = findViewById(R.id.getStarted);
         Button settings = findViewById(R.id.setting);
@@ -74,5 +78,9 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
     private void startHubActivity() {
         Intent i = new Intent(this, StartingPageActivity.class);
         startActivity(i);
+    }
+
+    private void test() {
+        QRCode qr = new QRCode("I am qr code!");
     }
 }

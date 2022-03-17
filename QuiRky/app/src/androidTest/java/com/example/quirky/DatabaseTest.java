@@ -5,6 +5,8 @@ import org.osmdroid.util.GeoPoint;
 
 import static org.junit.Assert.*;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,7 +21,7 @@ public class DatabaseTest {
 
     @Before
     public void setup() {
-        dc = new DatabaseController();
+        dc = new DatabaseController(FirebaseFirestore.getInstance());
         c = null; p = null; qr = null;
         gp = new GeoPoint(10.0, 10.0);
         date = new Date(823465789);
@@ -29,7 +31,7 @@ public class DatabaseTest {
     @Test
     public void writeComment() {
         c = new Comment("content1", "user1", date);
-        dc.writeComment(c, "sample1");
+        dc.addComment(c, "sample1");
     }
 
     @Test

@@ -56,12 +56,7 @@ public class MemoryManager {
      */
     public MemoryManager(Context ct) throws AssertionError {
         this.ct = ct;
-
-        String[] temp = ct.getFilesDir().list();
-        assert temp != null : "Something went wrong with the memory reader!";
-        assert temp.length > 0 : "Cannot use the empty constructor if the user's file has not been created yet!";
-        this.id = temp[0];
-
+        this.id = this.getUser();
         this.dir = new File(ct.getFilesDir(), id);
     }
 
@@ -160,5 +155,12 @@ public class MemoryManager {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public String getUser() {
+        String[] temp = ct.getFilesDir().list();
+        assert temp != null : "Something went wrong with the memory reader!";
+        assert temp.length > 0 : "Cannot use the empty constructor if the user's file has not been created yet!";
+        return temp[0];
     }
 }
