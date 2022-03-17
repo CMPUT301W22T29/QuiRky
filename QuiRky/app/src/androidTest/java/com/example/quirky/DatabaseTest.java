@@ -9,7 +9,6 @@ import android.content.Context;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -23,7 +22,7 @@ public class DatabaseTest {
     @Before
     public void setup() {
         ct = ct.getApplicationContext();
-        dc = new DatabaseController(FirebaseFirestore.getInstance());
+        dc = new DatabaseController(FirebaseFirestore.getInstance(), ct);
         c = null; p = null; qr = null;
     }
 
@@ -42,7 +41,7 @@ public class DatabaseTest {
     }
 
     @Test
-    public void writeQRCode() throws NoSuchAlgorithmException {
+    public void writeQRCode() {
         GeoPoint gp = new GeoPoint(10.0, 10.0);
         qr = new QRCode("sample1", gp, null, new ArrayList<>());
         dc.writeQRCode(qr);

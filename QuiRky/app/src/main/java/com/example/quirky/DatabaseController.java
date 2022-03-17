@@ -1,15 +1,22 @@
 package com.example.quirky;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,15 +39,34 @@ import java.util.Map;
  *                      The document contains: the photo the user took, and the location the user found the code.
  *
  */
+
+// Reading & Writing Custom Objects to FireStore taken from:
+// https://youtu.be/jJnm3YKfAUI
+// Made By:
+// https://www.youtube.com/channel/UC_Fh8kvtkVPkeihBs42jGcA
+// Published April 15, 2018
 public class DatabaseController {
     private final String TAG = "DatabaseController says: ";
+
     private final FirebaseFirestore db;
+    private final Context ct;
+
     private CollectionReference collection;
     private final OnCompleteListener writeListener;
     private final OnCompleteListener deleteListener;
+    private OnCompleteListener readListener;
+    private Object result;
 
-    public DatabaseController(FirebaseFirestore db) {
+    private Profile tempP;
+    private Comment tempC;
+    private QRCode tempQR;
+
+    public DatabaseController(FirebaseFirestore db, Context ct) {
         this.db = db;
+
+        assert ct instanceof AppCompatActivity : "Oh boy this is an error message but tbh I have no idea whay i'm doing.";
+        this.ct = ct;
+
         this.writeListener = task -> {
             if(task.isSuccessful())
                 Log.d(TAG, "Last write was a success");
@@ -121,6 +147,20 @@ public class DatabaseController {
     public void deleteProfile(Profile p) {
         collection = db.collection("users");
         collection.document(p.getUname()).delete().addOnCompleteListener(deleteListener);
+    }
+
+    public Task<DocumentSnapshot> readProfile(String username) {
+        collection = db.collection("users");
+        return collection.document(username).get();
+    }
+
+    public Profile getProfile(Task<DocumentSnapshot> task) {
+        DocumentSnapshot doc = task.getResult();
+        return doc.toObject(Profile.class);
+    }
+
+    public ArrayList<Comment> readComments(String id) {
+
     }
 
 }

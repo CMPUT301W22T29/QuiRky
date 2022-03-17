@@ -1,12 +1,17 @@
 package com.example.quirky;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.Button;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity implements InputUnameLoginFragment.LoginFragListener {
@@ -19,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dm = new DatabaseController(FirebaseFirestore.getInstance());
+        dm = new DatabaseController(FirebaseFirestore.getInstance(), this);
 
         Button getStarted = findViewById(R.id.getStarted);
         Button settings = findViewById(R.id.setting);
@@ -32,7 +37,15 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
 
     @Override
     public void confirm(String uname) {
-        // TODO: Database read to check this username does not already exist
+        dm.readProfile(uname).addOnCompleteListener(task -> {
+            if(!task.isSuccessful()) {
+                task.getException().printStackTrace();
+            } else {
+                Profile p = dm.getProfile(task);
+                Log.d("MainActivity: ", "Read was successful and the user's name is: " + p.getUname());
+            }
+        });
+
         Profile p = new Profile(uname);
         writeUser(p);
         startHubActivity();
@@ -72,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         mm.write("email", "");
         mm.write("phone", "");
 
-        // dm.writeUser(user); Commented out so it is at least runnable.
+        dm.writeProfile(user);
     }
 
     private void startHubActivity() {
@@ -81,6 +94,14 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
     }
 
     private void test() {
-        QRCode qr = new QRCode("I am qr code!");
+        // EXAMPLE CASE OF READING FROM FIRESTORE:
+        dm.readProfile("sample").addOnCompleteListener(task -> {
+            if(!task.isSuccessful()) {
+                task.getException().printStackTrace();
+            } else {
+                Profile p = dm.getProfile(task);
+                Log.d("MainActivity: ", "Read was successful and the user's name is: " + p.getUname());
+            }
+        });
     }
 }
