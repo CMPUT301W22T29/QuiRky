@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         https://stackoverflow.com/users/166712/anthony-forloney
         Published May 7 2010
         */
-        // FIXME: this method may sometimes return null I think? But also a rare case? may need to find another method to id a device
+        // FIXME: this may need to go in a controller? But cannot use 'this.getContentResolver' outside an activity
         String id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
         mm = new MemoryManager(this, id);
 
@@ -67,13 +67,6 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         mm.write("name", user.getUname());
         mm.write("email", "");
         mm.write("phone", "");
-
-
-        /* FIXME: can't write user to database because dm.writeUser produces a null pointer exception.
-            except that I have two seperate tests confirming that the profile is not null...
-        */
-
-        assert(user != null);
 
         // dm.writeUser(user); Commented out so it is at least runnable.
     }

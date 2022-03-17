@@ -1,49 +1,97 @@
+/*
+ * QRCode.java
+ *
+ * Version 0.2.0
+ * Version History:
+ *      Version 0.1.0 -- QRCode instances can be constructed
+ *      Version 0.2.0 -- Methods that shouldn't go in model classes were moved to QRCodeController.java
+ *
+ * Date (v0.2.0): March 14, 2022
+ *
+ * Copyright (c) 2022. CMPUT301W22T29
+ * Subject to MIT License
+ * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
+ */
+
 package com.example.quirky;
 
-import android.location.Location;
+import org.osmdroid.util.GeoPoint;
+import android.media.Image;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 /**
  * @author Jonathen Adsit
- * This model class represents a QR Code. It holds the QRCode's content, hash, score, location, image(?), and comments
+ * This model class represents a QR Code. It holds the <code>QRCode</code>'s content, hash, score, location, and comments
+ *
+ * Known Issues:
+ *      - QR Codes contain the content of the code as a raw unencrypted string, which is probably
+ *        bad for security and privacy, and contradicts US 08.0X.01. (v0.1.1)
+ *      - Each new <code>QRCode</code> instance instantiates a <code>QRCodeController</code> instance. bad. (v0.2.0)
  */
 public class QRCode {
-    private final String content, id; // id is hash of content.
+    private final byte[] id; // id is hash of content.
     private final int score;
-    private Location geolocation;
+    private GeoPoint geolocation;
+    private Image photo;                  // TODO: determine what datatype the photo will use. Not sure how to contain it in this class. Will also need to update constructor
     private ArrayList<Comment> comments;
 
-    public QRCode(String content, Location geolocation, ArrayList<Comment> comments) {
-        this.content = content;
-        this.id = SHA256(content);
-        this.score = generateScore(id);
+    //TODO: Use static methods in QRCodeController so you don't need an instance, either that or use a singleton with a getInstance method.
+    /**
+     * The constructor to be used when the QRCode has comments on it. This constructor likely be called when the QRCode already exists in the Database.
+     * If the user does not want to save their geolocation or photo, constructor can be called with these values null.
+     * If the user does not want to save the content of the code, the constructor can be called with Boolean saveContent == False.
+     * @param content
+     *      - The content of the QRCode. This is mandatory, as it is used to find the QRCode's hash and score
+     * @param geolocation
+     *      - The location of the QRCode
+     * @param photo
+     *      - The photo of the QRCode. This is currently an Integer, and will need to be updated once we find how to store a Photo.
+     * @param comments
+     *      - The comments that have been posted on the QRCode, in an ArrayList<>
+     */
+    public QRCode(String content, GeoPoint geolocation, Image photo, ArrayList<Comment> comments) throws NoSuchAlgorithmException {
+        this.id = QRCodeController.SHA256(content);
+        this.score = QRCodeController.score(id);
+        this.photo = photo;
         this.geolocation = geolocation;
         this.comments = comments;
     }
 
-    public QRCode(String content, Location geolocation) {
-        this.content = content;
-        this.id = SHA256(content);
-        this.score = generateScore(id);
+    /**
+     * The constructor to be used when the QRCode has no comments yet. This constructor likely be called when this is the first time the code has been scanned by any user.
+     * If the user does not want to save their geolocation or photo, constructor can be called with these values null.
+     * If the user does not want to save the content of the code, the constructor can be called with Boolean saveContent == False.
+     * The comments field will be initialised to an empty ArrayList.
+     * @param content
+     *      - The content of the QRCode. This is mandatory, as it is used to find the QRCode's hash and score
+     * @param geolocation
+     *      - The location of the QRCode
+     * @param photo
+     *      - The photo of the QRCode. This is currently an Integer, and will need to be updated once we find how to store a Photo.
+     */
+    public QRCode(String content, GeoPoint geolocation, Image photo) throws NoSuchAlgorithmException {
+        this.id = QRCodeController.SHA256(content);
+        this.score = QRCodeController.score(id);
+        this.photo = photo;
         this.geolocation = geolocation;
-        this.comments = new ArrayList<Comment>();
+        this.comments = new ArrayList<>();
     }
 
-    // TODO: implement the SHA-256 algorithm and the scoring of the hash
-    private String SHA256(String content) {
-        return content;
+    /**
+     * Initialize this <code>QRCode</code> with only the content.
+     * @param content
+     *          - The content of the <code>QRCode</code> retrieved from the barcode in the
+     *            <code>QRCodeController.scanQRCodes()</code> method.
+     */
+    public QRCode(String content) throws NoSuchAlgorithmException {
+        this.id = QRCodeController.SHA256(content);
+        this.score = QRCodeController.score(id);
+        this.comments = new ArrayList<>();
     }
 
-    private int generateScore(String content) {
-        return 0;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public String getId() {
+    public byte[] getId() {
         return id;
     }
 
@@ -51,7 +99,7 @@ public class QRCode {
         return score;
     }
 
-    public Location getGeolocation() {
+    public GeoPoint getGeolocation() {
         return geolocation;
     }
 
@@ -59,12 +107,14 @@ public class QRCode {
         return comments;
     }
 
+    //TODO: Look into whether the Non-nullable tag would work better than an assertion
     /**
-     * Adds a comment to the array
+     * Adds a comment to the array. Throws an assertion error if the parameter is null.
      * @param c
      *      - The comment to be added
      */
-    public void addComment(Comment c) {
+    public void addComment(Comment c) throws AssertionError {
+        assert c != null : "Can not add a null object to the list!";
         comments.add(c);
     }
 
@@ -76,5 +126,9 @@ public class QRCode {
     public void removeComment(Comment c) {
         if(comments.contains(c))
             comments.remove(c);
+    }
+
+    public void setGeolocation(GeoPoint geolocation) {
+        this.geolocation = geolocation;
     }
 }

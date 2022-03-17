@@ -5,16 +5,17 @@ package com.example.quirky;
 
 import java.util.Date;
 
-// This will add the comment to the firebase Database.
+/**
+ * Represents a comment. Holds the message, author, and time it was posted.
+ */
 public class Comment {
     private String content, uname;
-    private Date timestamp;
+    private final Date timestamp;
 
     public Comment(String content, String uname, Date timestamp) {
         this.content = content;
         this.uname = uname;
         this.timestamp = timestamp;
-
     }
 
     public String getContent() {
