@@ -33,6 +33,11 @@ public class Profile {
     }
 
     /**
+     * Empty constructor because Firebase tutorial told me to...
+     */
+    public Profile() {}
+
+    /**
      * Constructor to be used when only the username is known. Typically used when creating the user's profile upon logging in for the first time.
      * All other fields are set empty.
      * @param uname

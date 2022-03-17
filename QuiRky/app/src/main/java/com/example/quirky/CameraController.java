@@ -38,7 +38,6 @@ import androidx.lifecycle.LifecycleOwner;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.common.InputImage;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -118,12 +117,7 @@ public class CameraController {
                         if (mediaImage != null) {
                             Log.d("captureQRCode", "mediaImage != null");   //TODO: get rid of.
                             InputImage inputImage = InputImage.fromMediaImage(mediaImage, image.getImageInfo().getRotationDegrees());
-                            try {
                                 codes.addAll(QRCodeController.scanQRCodes(inputImage));
-                            } catch (NoSuchAlgorithmException e) {
-                                e.printStackTrace();
-                                throw new RuntimeException(e.getMessage(), e.getCause());
-                            }
                         }
                         image.close();
                         Log.d("captureQRCode", "close image");  //TODO: get rid of.

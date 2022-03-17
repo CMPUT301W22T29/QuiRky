@@ -31,13 +31,12 @@ import java.util.ArrayList;
  *      - Each new <code>QRCode</code> instance instantiates a <code>QRCodeController</code> instance. bad. (v0.2.0)
  */
 public class QRCode {
-    private final byte[] id; // id is hash of content.
-    private final int score;
+    private String id; // id is hash of content.
+    private int score;
     private GeoPoint geolocation;
     private Image photo;                  // TODO: determine what datatype the photo will use. Not sure how to contain it in this class. Will also need to update constructor
     private ArrayList<Comment> comments;
 
-    //TODO: Use static methods in QRCodeController so you don't need an instance, either that or use a singleton with a getInstance method.
     /**
      * The constructor to be used when the QRCode has comments on it. This constructor likely be called when the QRCode already exists in the Database.
      * If the user does not want to save their geolocation or photo, constructor can be called with these values null.
@@ -51,7 +50,7 @@ public class QRCode {
      * @param comments
      *      - The comments that have been posted on the QRCode, in an ArrayList<>
      */
-    public QRCode(String content, GeoPoint geolocation, Image photo, ArrayList<Comment> comments) throws NoSuchAlgorithmException {
+    public QRCode(String content, GeoPoint geolocation, Image photo, ArrayList<Comment> comments) {
         this.id = QRCodeController.SHA256(content);
         this.score = QRCodeController.score(id);
         this.photo = photo;
@@ -71,7 +70,7 @@ public class QRCode {
      * @param photo
      *      - The photo of the QRCode. This is currently an Integer, and will need to be updated once we find how to store a Photo.
      */
-    public QRCode(String content, GeoPoint geolocation, Image photo) throws NoSuchAlgorithmException {
+    public QRCode(String content, GeoPoint geolocation, Image photo) {
         this.id = QRCodeController.SHA256(content);
         this.score = QRCodeController.score(id);
         this.photo = photo;
@@ -85,13 +84,20 @@ public class QRCode {
      *          - The content of the <code>QRCode</code> retrieved from the barcode in the
      *            <code>QRCodeController.scanQRCodes()</code> method.
      */
-    public QRCode(String content) throws NoSuchAlgorithmException {
+    public QRCode(String content) {
         this.id = QRCodeController.SHA256(content);
         this.score = QRCodeController.score(id);
         this.comments = new ArrayList<>();
+        this.photo = null;
+        this.geolocation = null;
     }
 
-    public byte[] getId() {
+    /**
+     * Empty constructor because FireStore tutorial told me to...
+     */
+    public QRCode() {}
+
+    public String getId() {
         return id;
     }
 
@@ -107,7 +113,6 @@ public class QRCode {
         return comments;
     }
 
-    //TODO: Look into whether the Non-nullable tag would work better than an assertion
     /**
      * Adds a comment to the array. Throws an assertion error if the parameter is null.
      * @param c

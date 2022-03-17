@@ -38,13 +38,13 @@ Root directory is getApplicationContext.getFilesDir().
 public class MemoryManager {
 
     private final File dir;
-    private final String id;
+    private final String user;
     private final Context ct;
 
-    public MemoryManager(Context ct, String id) {
+    public MemoryManager(Context ct, String user) {
         this.ct = ct;
-        this.id = id;
-        this.dir = new File(this.ct.getFilesDir(), id);
+        this.user = user;
+        this.dir = new File(this.ct.getFilesDir(), user);
     }
 
     /**
@@ -60,9 +60,9 @@ public class MemoryManager {
         String[] temp = ct.getFilesDir().list();
         assert temp != null : "Something went wrong with the memory reader!";
         assert temp.length > 0 : "Cannot use the empty constructor if the user's file has not been created yet!";
-        this.id = temp[0];
 
-        this.dir = new File(ct.getFilesDir(), id);
+        this.user = temp[0];
+        this.dir = new File(ct.getFilesDir(), user);
     }
 
     /**
@@ -160,5 +160,9 @@ public class MemoryManager {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public String getUser() {
+        return this.user;
     }
 }
