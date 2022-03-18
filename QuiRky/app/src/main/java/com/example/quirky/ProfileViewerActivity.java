@@ -2,54 +2,44 @@ package com.example.quirky;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-//There will be an import of database
-
 public class ProfileViewerActivity extends AppCompatActivity {
-    private Button backBt, changeUName;
+
+    Intent i;
+    Profile p;
+    private Button changeProfile;
+    private TextView title, email, phone, rank1, rank2, rank3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_profile);
-        TextView editableName;
-        editableName = findViewById(R.id.editableName);
+        setContentView(R.layout.activity_view_profile);
+        i = getParentActivityIntent();  // FIXME: Determine if this works. Been so long since I did intent passing...
+        p = i.getExtras().getParcelable("profile");
 
-        SharedPreferences sp = getApplicationContext().getSharedPreferences("UserNamePre", Context.MODE_PRIVATE);
-        String Username = sp.getString("Username","");
+        title = findViewById(R.id.profile_name);
+        email = findViewById(R.id.email2);
+        phone = findViewById(R.id.phone2);
+        rank1 = findViewById(R.id.rank_points_field);
+        rank2 = findViewById(R.id.rank_scanned_field);
+        rank3 = findViewById(R.id.rank_largest_field);
+        changeProfile = findViewById(R.id.change_profile_button);
 
-        editableName.setText(Username);
-
-
-        backBt = (Button)findViewById(R.id.back2);
-        backBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                returnToPrev();
-            }
-        });
-        changeUName = (Button) findViewById(R.id.change_a_new_one);
-        changeUName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                changeUserName();
-            }
-        });
-    }
-    public void returnToPrev(){ //to previous page
-        Intent intent1 = new Intent(this, MainActivity.class);
-        startActivity(intent1);
-    }
-    public void changeUserName(){
-        Intent intent2 = new Intent(this, EditProfileActivity.class);
-        startActivity(intent2);
+        title.setText(p.getUname());
+        email.setText(p.getEmail());
+        phone.setText(p.getPhone());
+        rank1.setText(p.getRankingPoints());
+        rank2.setText(p.getRankingScanned());
+        rank3.setText(p.getRankingBiggestCode());
+        changeProfile.setOnClickListener(view -> changeProfile());
     }
 
-
+    public void changeProfile() {
+        Intent intent = new Intent(this, EditProfileActivity.class);
+        startActivity(intent);
+    }
 }

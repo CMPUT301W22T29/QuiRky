@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
+import java.util.ArrayList;
+
 public class StartingPageActivity extends AppCompatActivity {
     private Button QRButton, ProfileButton, CommunityButton;
     private Button top, mid, bottom;
@@ -64,7 +66,10 @@ public class StartingPageActivity extends AppCompatActivity {
     private void setProfileLayout() {
         top.setText("My Profile");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, ProfileViewerActivity.class);    // TODO: implement the activity this should direct to
+            // FIXME: passing hardcoded profile, not reading from memory!
+            Profile p = new Profile("JJ", "jj@jj.jj", "1-800-jj-jjjj", new ArrayList<>());
+            Intent i = new Intent(this, ProfileViewerActivity.class);
+            i.putExtra("profile", p);
             startActivity(i);
         });
 
@@ -84,7 +89,7 @@ public class StartingPageActivity extends AppCompatActivity {
     private void setCommunityLayout() {
         top.setText("Search Other Users");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, PlayerSearchActivity.class);
             startActivity(i);
         });
 

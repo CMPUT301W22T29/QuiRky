@@ -5,18 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements InputUnameLoginFragment.LoginFragListener {
 
     DatabaseController dm;
-    MemoryManager mm;
+    MemoryController mm;
     String id;
 
     /*
@@ -35,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
 
         // FIXME: this may need to go in a controller? But cannot use 'this.getContentResolver' outside an activity
         id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        mm = new MemoryManager(this, id);
+        mm = new MemoryController(this, id);
 
         Button getStarted = findViewById(R.id.getStarted);
         Button settings = findViewById(R.id.setting);
@@ -54,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
             } else {
                 // dm.getProfile(task) will return null if the profile does not exist yet.
                 if(dm.getProfile(task) != null) {
-                    Toast.makeText(this, "This username already exists!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "This username already exists!", Toast.LENGTH_LONG).show();
                     login();
                 } else {
                     Profile p = new Profile(uname);
@@ -94,18 +92,5 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
     private void startHubActivity() {
         Intent i = new Intent(this, StartingPageActivity.class);
         startActivity(i);
-    }
-
-    private void test() {
-        // EXAMPLE CASE OF READING FROM FIRESTORE:
-        dm.readProfile("IDONOTEXIST").addOnCompleteListener(task -> {
-            if(!task.isSuccessful()) {
-                task.getException().printStackTrace();
-            } else {
-                Map<String, Object> data = task.getResult().getData();
-                if(data == null)
-                Log.d("MainActivity: ", "Read was successful and the data is null ");
-            }
-        });
     }
 }

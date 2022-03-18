@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -27,6 +28,11 @@ public class QRAdapter extends RecyclerView.Adapter<QRAdapter.QRViewHolder> {
     private ArrayList<Drawable> photos;
     private ArrayList<String> data;
     Context ct;
+    RecyclerListener listener;
+
+    public interface RecyclerListener {
+        public void OnClickListItem(int position);
+    }
 
     /**
      * Constructor for the adapter.
@@ -35,7 +41,6 @@ public class QRAdapter extends RecyclerView.Adapter<QRAdapter.QRViewHolder> {
      * @param ct Context because it does things that helps the adapter do stuff. Duh.
      */
     public QRAdapter(ArrayList<Drawable> photos, ArrayList<String> data, Context ct) {
-        assert photos.size() == data.size() : "You must pass two arrays of the same size to the QRCode adapter!";
         this.photos = photos;
         this.data = data;
         this.ct = ct;
@@ -46,12 +51,13 @@ public class QRAdapter extends RecyclerView.Adapter<QRAdapter.QRViewHolder> {
      * Hey I don't know how it works! I just know how to do it.
      */
     public class QRViewHolder extends RecyclerView.ViewHolder {
-        ImageView image; TextView text;
+        ImageView image; TextView text; ConstraintLayout background;
         public QRViewHolder(@NonNull View itemView) {
             super(itemView);
 
             image = itemView.findViewById(R.id.recycler_image_item);
             text = itemView.findViewById(R.id.recycler_text_item);
+            background = itemView.findViewById(R.id.recycler_item_background);
         }
     }
 
@@ -71,8 +77,12 @@ public class QRAdapter extends RecyclerView.Adapter<QRAdapter.QRViewHolder> {
      * Obviously this method is the binder. Like, who wouldn't understand that?
      */
     public void onBindViewHolder(@NonNull QRViewHolder holder, int position) {
-        holder.image.setImageDrawable(photos.get(position));
-        holder.text.setText(data.get(position));
+        if(position < data.size())
+            holder.text.setText(data.get(position));
+        if(position < photos.size())
+            holder.image.setImageDrawable(photos.get(position));
+
+        holder.background.setOnClickListener(view -> listener.OnClickListItem(position));
     }
 
     @Override

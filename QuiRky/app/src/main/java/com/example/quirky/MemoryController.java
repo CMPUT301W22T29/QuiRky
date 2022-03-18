@@ -35,13 +35,13 @@ Root directory is getApplicationContext.getFilesDir().
  *  email
  *  phone
  */
-public class MemoryManager {
+public class MemoryController {
 
     private final File dir;
     private final String user;
     private final Context ct;
 
-    public MemoryManager(Context ct, String user) {
+    public MemoryController(Context ct, String user) {
         this.ct = ct;
         this.user = user;
         this.dir = new File(this.ct.getFilesDir(), user);
@@ -54,7 +54,7 @@ public class MemoryManager {
      * @throws AssertionError
      *  - Will throw an assertion error if the user's folder does not yet exist in memory
      */
-    public MemoryManager(Context ct) throws AssertionError {
+    public MemoryController(Context ct) throws AssertionError {
         this.ct = ct;
 
         String[] temp = ct.getFilesDir().list();
@@ -162,6 +162,10 @@ public class MemoryManager {
         }
     }
 
+    /**
+     * Getter for the username of the app holder
+     * @return user's username
+     */
     public String getUser() {
         return this.user;
     }
