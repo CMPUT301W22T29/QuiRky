@@ -18,7 +18,6 @@ package com.example.quirky;
 import org.osmdroid.util.GeoPoint;
 import android.media.Image;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 /**
@@ -97,18 +96,34 @@ public class QRCode {
      */
     public QRCode() {}
 
+    /**
+     * Getter for ID
+     * @return The ID of the qrcode
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Getter for score
+     * @return The score of the qrcode
+     */
     public int getScore() {
         return score;
     }
 
+    /**
+     * Getter for location
+     * @return The location of the qrcode as a Geopoint
+     */
     public GeoPoint getGeolocation() {
         return geolocation;
     }
 
+    /**
+     * Getter for the comments on the QRCode
+     * @return ArrayList containing each comment on the qrcode
+     */
     public ArrayList<Comment> getComments() {
         return comments;
     }
@@ -133,6 +148,10 @@ public class QRCode {
             comments.remove(c);
     }
 
+    /**
+     * Setter for geolocation
+     * @param geolocation The geolocation to set the qrcode to.
+     */
     public void setGeolocation(GeoPoint geolocation) {
         this.geolocation = geolocation;
     }
