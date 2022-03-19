@@ -1,5 +1,7 @@
 package com.example.quirky;
 
+import static androidx.camera.core.CameraX.getContext;
+
 import android.content.Context;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -10,8 +12,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -23,17 +28,27 @@ import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /*
 source: https://osmdroid.github.io/osmdroid/How-to-use-the-osmdroid-library.html
 author: osmdroid team : https://github.com/osmdroid/osmdroid
 Publish Date:2019-09-27
  */
+/*source:https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime*/
 public class MapActivity extends AppCompatActivity {
     MapView nearbymap = null;
     private MyLocationNewOverlay locationOverlay;
     private LocationManager mLocMgr;
+    final private int REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS = 124;
+
+
+
 
     @Override
+
+
     protected void onCreate(Bundle savedInstanceState) {
        
         super.onCreate(savedInstanceState);
@@ -82,7 +97,11 @@ public class MapActivity extends AppCompatActivity {
 
 
     }
-    
+
+
+
+
+
     public void onResume(){
         super.onResume();
         nearbymap.onResume();
