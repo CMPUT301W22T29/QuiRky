@@ -66,8 +66,10 @@ public class StartingPageActivity extends AppCompatActivity {
     private void setProfileLayout() {
         top.setText("My Profile");
         top.setOnClickListener(view -> {
-            // FIXME: passing hardcoded profile, not reading from memory!
-            Profile p = new Profile("JJ", "jj@jj.jj", "1-800-jj-jjjj", new ArrayList<>());
+
+            MemoryController mc = new MemoryController(this);
+            Profile p = mc.read();
+
             Intent i = new Intent(this, ProfileViewerActivity.class);
             i.putExtra("profile", p);
             startActivity(i);

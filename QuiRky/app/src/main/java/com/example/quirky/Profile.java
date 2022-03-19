@@ -1,7 +1,6 @@
 package com.example.quirky;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,7 +9,7 @@ import java.util.ArrayList;
  * @author Jonathen Adsit
  * Model class that stores a user's name, contact information, and id's of the qrcodes they scanned
  */
-public class Profile implements Parcelable {
+public class Profile implements Serializable {
     private String uname, email, phone;
 
     // rankingScanned: Leaderboard ranking of number of QRCodes scanned
@@ -202,41 +201,4 @@ public class Profile implements Parcelable {
         rankingBiggestCode = in.readInt();
         scanned = in.createStringArrayList();
     }
-
-    /**
-     * Write the profile into a parcel
-     * @param dest Probably the parcel to write the profile's data to
-     * @param flags No idea.
-     */
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(uname);
-        dest.writeString(email);
-        dest.writeString(phone);
-        dest.writeInt(rankingScanned);
-        dest.writeInt(rankingPoints);
-        dest.writeInt(rankingBiggestCode);
-        dest.writeStringList(scanned);
-    }
-
-    /**
-     * Mandatory function for implementing Parcelable. No special fields in class so does nothing.
-     * @return Hard coded 0
-     */
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<Profile> CREATOR = new Creator<Profile>() {
-        @Override
-        public Profile createFromParcel(Parcel in) {
-            return new Profile(in);
-        }
-
-        @Override
-        public Profile[] newArray(int size) {
-            return new Profile[size];
-        }
-    };
 }

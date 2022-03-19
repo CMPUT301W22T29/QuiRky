@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -18,8 +19,8 @@ public class ProfileViewerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_profile);
-        i = getParentActivityIntent();  // FIXME: Determine if this works. Been so long since I did intent passing...
-        p = i.getExtras().getParcelable("profile");
+        i = getIntent();
+        p = i.getParcelableExtra("profile");
 
         title = findViewById(R.id.profile_name);
         email = findViewById(R.id.email2);
@@ -32,10 +33,20 @@ public class ProfileViewerActivity extends AppCompatActivity {
         title.setText(p.getUname());
         email.setText(p.getEmail());
         phone.setText(p.getPhone());
-        rank1.setText(p.getRankingPoints());
-        rank2.setText(p.getRankingScanned());
-        rank3.setText(p.getRankingBiggestCode());
-        changeProfile.setOnClickListener(view -> changeProfile());
+        rank1.setText(String.valueOf(p.getRankingPoints()));
+        rank2.setText(String.valueOf(p.getRankingScanned()));
+        rank3.setText(String.valueOf(p.getRankingBiggestCode()));
+
+        //MemoryController mc = new MemoryController(this);
+        //String appholder = mc.getUser();
+        String appholder = p.getUname(); // TODO: Refactor MC to get username of appholder more easily.
+
+        // If the user is viewing their own profile, show the profile button
+        if(appholder == p.getUname()) {
+            changeProfile.setOnClickListener(view -> changeProfile());
+        } else {
+            changeProfile.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void changeProfile() {

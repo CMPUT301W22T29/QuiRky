@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -14,8 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class MainActivity extends AppCompatActivity implements InputUnameLoginFragment.LoginFragListener {
 
     DatabaseController dm;
-    MemoryController mm;
-    String id;
+    MemoryController mc;
 
     /*
     Code for getting unique device ID taken from:
@@ -30,10 +29,6 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         setContentView(R.layout.activity_main);
 
         dm = new DatabaseController(FirebaseFirestore.getInstance(), this);
-
-        // FIXME: this may need to go in a controller? But cannot use 'this.getContentResolver' outside an activity
-        id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        mm = new MemoryController(this, id);
 
         Button getStarted = findViewById(R.id.getStarted);
         Button settings = findViewById(R.id.setting);
@@ -56,7 +51,11 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
                     login();
                 } else {
                     Profile p = new Profile(uname);
-                    writeUser(p);
+
+                    mc = new MemoryController(this, uname);
+                    mc.write(p);
+                    dm.writeProfile(p);
+
                     startHubActivity();
                 }
             }
@@ -64,8 +63,8 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
     }
 
     private void login() {
-        // mm.exist() checks if the user has logged in on this device before
-        if(!mm.exist()) {
+        // mm.exists() checks if the user has logged in on this device before
+        if(!MemoryController.exists()) {
             // If the user has not logged in yet, show the fragment that asks for a username
             // This fragment's listener will call the write user method
             InputUnameLoginFragment frag = new InputUnameLoginFragment();
@@ -78,15 +77,6 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
     private void startSettingsActivity() {
         Intent i = new Intent(this, SettingsActivity.class);
         startActivity(i);
-    }
-
-    private void writeUser(Profile user) {
-        mm.make();
-        mm.write("name", user.getUname());
-        mm.write("email", "");
-        mm.write("phone", "");
-
-        dm.writeProfile(user);
     }
 
     private void startHubActivity() {
