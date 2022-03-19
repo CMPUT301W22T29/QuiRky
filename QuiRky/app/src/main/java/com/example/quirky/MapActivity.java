@@ -66,20 +66,20 @@ public class MapActivity extends AppCompatActivity {
             return;
         }
         Location location = mLocMgr.getLastKnownLocation(String.valueOf(provider));
+        GeoPoint startPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
+        mapController.setCenter(startPoint);
+        Marker qrmarker = new Marker(nearbymap);
+        qrmarker.setPosition(startPoint);
+        qrmarker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_BOTTOM);
+        nearbymap.getOverlays().add(qrmarker);
+        qrmarker.setTitle("Current location");
         //provider.addLocationSource(LocationManager.NETWORK_PROVIDER);
         //locationOverlay = new MyLocationNewOverlay(provider, nearbymap);
         //locationOverlay.enableFollowLocation();
         //nearbymap.getOverlayManager().add(locationOverlay);
-        GeoPoint startPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
-        mapController.setCenter(startPoint);
         //set a marker on our current location
-        //Marker qrmarker = new Marker(nearbymap);
-        //qrmarker.setPosition(startPoint);
-        //qrmarker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_BOTTOM);
-        //nearbymap.getOverlays().add(qrmarker);
-        //qrmarker.setTitle("Current location");
-        // use this to assign QR codes images to our marker
-        // qrmarker.setImage();
+
+
 
 
 
