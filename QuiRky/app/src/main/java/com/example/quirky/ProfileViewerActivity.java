@@ -15,6 +15,7 @@ import android.widget.TextView;
 public class ProfileViewerActivity extends AppCompatActivity {
     private Button backBt, changeUName;
     @Override
+    // One added comment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_profile);
