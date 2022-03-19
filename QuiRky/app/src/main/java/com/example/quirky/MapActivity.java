@@ -21,6 +21,7 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Overlay;
 import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 /*
 source: https://osmdroid.github.io/osmdroid/How-to-use-the-osmdroid-library.html
@@ -29,6 +30,9 @@ Publish Date:2019-09-27
  */
 public class MapActivity extends AppCompatActivity {
     MapView nearbymap = null;
+    private MyLocationNewOverlay locationOverlay;
+    private LocationManager mLocMgr;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
        
@@ -61,7 +65,6 @@ public class MapActivity extends AppCompatActivity {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        LocationManager mLocMgr = null;
         Location location = mLocMgr.getLastKnownLocation(String.valueOf(provider));
         GeoPoint startPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
         mapController.setCenter(startPoint);
@@ -85,26 +88,7 @@ public class MapActivity extends AppCompatActivity {
         nearbymap.onResume();
 
     }
-    //Tracks location changes
-    public class MyLocationListener implements LocationListener {
 
-        public void onLocationChanged(Location location) {
-            GeoPoint currentLocation = new GeoPoint(location);
-            displayMyCurrentLocationOverlay();
-        }
-
-        private void displayMyCurrentLocationOverlay() {
-        }
-
-        public void onProviderDisabled(String provider) {
-        }
-
-        public void onProviderEnabled(String provider) {
-        }
-
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-    }
     public void onPause(){
         super.onPause();
         nearbymap.onPause();  //Compass
