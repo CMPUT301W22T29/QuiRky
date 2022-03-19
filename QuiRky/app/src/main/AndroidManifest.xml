@@ -58,6 +58,14 @@
             android:parentActivityName=".StartingPageActivity" />
         <activity
             android:name=".SettingsActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".ViewQRActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".ViewCommentsActivity"
+            android:exported="false">
+        </activity>
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         <activity
@@ -90,5 +98,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>
