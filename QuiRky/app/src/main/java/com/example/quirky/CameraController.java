@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.Image;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.camera.core.CameraSelector;
@@ -74,10 +75,16 @@ public class CameraController {
     /* Requests permissions.
        Returns true if permissions were granted.
      */
-    protected static boolean requestCameraPermission(Context context) {
+    protected static void requestCameraPermission(Context context) {
         ActivityCompat.requestPermissions(
                                         (Activity) context, CAMERA_PERMISSION, CAMERA_REQUEST_CODE);
-        return hasCameraPermission(context);
+    }
+
+    protected static boolean cameraPermissionGranted(
+                      int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        return (requestCode == CAMERA_REQUEST_CODE)
+                && (permissions == CAMERA_PERMISSION)
+                && (grantResults[0] == PackageManager.PERMISSION_GRANTED);
     }
 
     public CameraController(Context context) {
@@ -96,7 +103,8 @@ public class CameraController {
                 try {
                     ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
                     preview.setSurfaceProvider(surfaceProvider);
-                    cameraProvider.bindToLifecycle((LifecycleOwner) context, cameraSelector, imageCapture, preview);
+                    cameraProvider.bindToLifecycle(
+                                    (LifecycleOwner) context, cameraSelector, imageCapture, preview);
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -116,8 +124,9 @@ public class CameraController {
                         Image mediaImage = image.getImage();
                         if (mediaImage != null) {
                             Log.d("captureQRCode", "mediaImage != null");   //TODO: get rid of.
-                            InputImage inputImage = InputImage.fromMediaImage(mediaImage, image.getImageInfo().getRotationDegrees());
-                                codes.addAll(QRCodeController.scanQRCodes(inputImage));
+                            InputImage inputImage = InputImage.fromMediaImage(
+                                             mediaImage, image.getImageInfo().getRotationDegrees());
+                            QRCodeController.scanQRCodes(inputImage, codes, context);
                         }
                         image.close();
                         Log.d("captureQRCode", "close image");  //TODO: get rid of.

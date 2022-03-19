@@ -1,10 +1,14 @@
 package com.example.quirky;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class StartingPageActivity extends AppCompatActivity {
     private Button QRButton, ProfileButton, CommunityButton;
@@ -47,11 +51,25 @@ public class StartingPageActivity extends AppCompatActivity {
         mid.setOnClickListener(view -> {
             if (CameraController.hasCameraPermission(this)) {
                 startCodeScannerActivity();
-            } else if (CameraController.requestCameraPermission(this)) {
-                startCodeScannerActivity();
+            } else {
+                CameraController.requestCameraPermission(this);
+                Context context = this;
+                new ActivityCompat.OnRequestPermissionsResultCallback() {
+                    @Override
+                    public void onRequestPermissionsResult(int requestCode,
+                                                           @NonNull String[] permissions,
+                                                           @NonNull int[] grantResults) {
+                        if (CameraController.cameraPermissionGranted(
+                                                          requestCode, permissions, grantResults)) {
+                            startCodeScannerActivity();
+                        } else {
+                            Toast.makeText(context,
+                                    "Please allow camera permissions to scan QR codes.",
+                                                                          Toast.LENGTH_LONG).show();
+                        }
+                    }
+                };
             }
-            //Intent i = new Intent(this, CodeScannerActivity.class);
-            //startActivity(i);
         });
 
         bottom.setText("Generate Codes");

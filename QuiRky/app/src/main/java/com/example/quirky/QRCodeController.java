@@ -15,7 +15,9 @@
 
 package com.example.quirky;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -51,14 +53,31 @@ public class QRCodeController {
     private static final BarcodeScanner codeScanner = BarcodeScanning.getClient(
             new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build());
 
-    public static ArrayList<QRCode> scanQRCodes(InputImage inputImage) {
+    public static ArrayList<QRCode> scanQRCodes(InputImage inputImage, ArrayList<QRCode> codes, Context context) {
         Log.d("scanQRCode", "enter method");    //TODO: get rid of.
-        ArrayList<QRCode> codes = new ArrayList<>();
+        //ArrayList<QRCode> codes = new ArrayList<>();
         Task<List<Barcode>> result = codeScanner.process(inputImage).addOnSuccessListener(barcodes -> {
             Log.d("scanQRCode", "onSuccess");   //TODO: get rid of.
             // Construct a QRCode with the scanned raw data
             for (Barcode barcode: barcodes) {
-                    codes.add(new QRCode(barcode.getRawValue()));
+                String value = barcode.getRawValue();
+                codes.add(new QRCode(value));
+                //codes.add(new QRCode(barcode.getRawValue()));
+                if (value != null) {
+                Log.d("scanQRCode", "value: " + value);   //TODO: get rid of.
+                } else {
+                    Log.d("scanQRCode", "value: null");   //TODO: get rid of.
+                }
+            }
+            if (codes.size() == 0) {
+                Log.d("scanQRCode", "codes.size() == 0");   //TODO: get rid of.
+                String text
+                        = "Could not find any QR codes. Move closer or further and try scanning again.";
+                Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+            } else {
+                Log.d("scanQRCode", "codes.size() > 0");   //TODO: get rid of.
+                Toast.makeText(context, "Scanned " + codes.size() + " code(s)!",
+                                                                        Toast.LENGTH_LONG).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
