@@ -75,6 +75,7 @@ public class MemoryController {
      *  - Will throw an assertion error if the user's folder does not yet exist in memory
      */
     public MemoryController(Context ct) {
+        assert exists() : "Can not use constructor MemoryController(Context ct) if the user is not already made in memory";
         MemoryController.dir = ct.getFilesDir();
         this.user = readUser();
     }

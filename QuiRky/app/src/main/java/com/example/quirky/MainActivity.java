@@ -11,7 +11,10 @@ import android.widget.Toast;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.QuerySnapshot;
 public class MainActivity extends AppCompatActivity implements InputUnameLoginFragment.LoginFragListener {
+    public static final String EXTRA_MESSAGE = "com.example.QuiRky.MESSAGE";
 
     DatabaseController dm;
     MemoryController mc;
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         settings.setOnClickListener(view -> startSettingsActivity());
         quit.setOnClickListener(view -> finishAffinity());
     }
+
 
     @Override
     public void confirm(String uname) {
