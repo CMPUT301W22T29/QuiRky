@@ -3,6 +3,7 @@
 package com.example.quirky;
 
 
+import android.content.Context;
 import android.content.Intent;
 
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.security.Timestamp;
 import java.util.ArrayList;
@@ -48,6 +50,7 @@ public class ViewCommentsActivity extends AppCompatActivity {
     ArrayList<Comment> commentDataList;
     CommentList commentAdapter;
     DatabaseController DM;
+    Context ct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,20 +58,21 @@ public class ViewCommentsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_comment);
         ImageView QRCodeImage;
         QRCodeImage = findViewById(R.id.QRCodeImmage_Comment);
-//        QRCodeImage.setImageResource(0); // This is going to have to be something in order to view Image.
+//      QRCodeImage.setImageResource(0); // This is going to have to be something in order to view Image.
 
         Intent intent = getIntent();
 
-        // If we are switching intents from a fragment. How are we supposed to identify
-        // the specific fragment? Or could we just switch from a frangement and pass taht
-        // as an intent (the fragment)
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE); // Needs to be changed
-        System.out.println("It worked."+message);
+        ct = getApplicationContext();
+        DM = new DatabaseController(FirebaseFirestore.getInstance(), ct);
+
+        // Has to be getting it from Fragment
+        String qrCodeId = intent.getStringExtra(MainActivity.EXTRA_MESSAGE); // Needs to be changed
         commentDataList = new ArrayList<>();
+
 
         // Reading Comments from the data doesn't really work well rn.
         // But the intention is that it will return an array of comments.
-//      commentDataList = DM.readComments(qrID); // How would this work?
+        String message = "";
         commentDataList = readComments(message);
 
         commentAdapter = new CommentList(this, commentDataList);
@@ -79,7 +83,6 @@ public class ViewCommentsActivity extends AppCompatActivity {
         Save = (Button) findViewById(R.id.button_save);
         Cancel = (Button) findViewById(R.id.button_cancel);
 
-        // initialized intent
         Save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,13 +119,15 @@ public class ViewCommentsActivity extends AppCompatActivity {
      */
     public void save(String qrCodeID) {
         String uName; // Should be retrieved from profile. How would I retrieve the User Name?
+        // MemoryManager will return the userName but not rn. It will get fixed in the future.
         uName = "John Doe"; // Default Variable for now
 
         EditText editTextComment = (EditText) findViewById(R.id.editText_comment);
         String content = editTextComment.getText().toString();
         Comment comment = new Comment(content, uName, new Date());
         DM.addComment(comment, qrCodeID);
-        finish();
+        commentAdapter.notifyDataSetChanged();
+        finish(); // Prolly don't have to finish right away
     }
 
 

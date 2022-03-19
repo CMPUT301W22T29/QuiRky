@@ -11,13 +11,19 @@ import java.util.Date;
  */
 public class Comment implements Comparable<Comment>{
 
-    private String content, uname;
+    private String content, uname, id;
     private Date timestamp;
+
+    /**
+     * Empty constructor because Firestore tutorial told me to...
+     */
+    public Comment() {}
 
     public Comment(String content, String uname, Date timestamp) {
         this.content = content;
         this.uname = uname;
         this.timestamp = timestamp;
+        this.id = QRCodeController.SHA256(content); // FIXME: Comment should definitely not make a method call to QRCodeController... Make a comment controller i guess..
     }
 
     /**
@@ -46,4 +52,7 @@ public class Comment implements Comparable<Comment>{
         return timestamp;
     }
 
+    public String getId() {
+        return this.id;
+    }
 }
