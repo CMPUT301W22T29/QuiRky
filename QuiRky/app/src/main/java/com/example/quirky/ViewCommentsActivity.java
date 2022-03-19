@@ -47,7 +47,7 @@ public class ViewCommentsActivity extends AppCompatActivity {
     RecyclerView commentList;
     ArrayList<Comment> commentDataList;
     CommentList commentAdapter;
-    DatabaseManager DM;
+    DatabaseController DM;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +121,7 @@ public class ViewCommentsActivity extends AppCompatActivity {
         EditText editTextComment = (EditText) findViewById(R.id.editText_comment);
         String content = editTextComment.getText().toString();
         Comment comment = new Comment(content, uName, new Date());
-        DM.writeComment(comment, qrCodeID);
+        DM.addComment(comment, qrCodeID);
         finish();
     }
 

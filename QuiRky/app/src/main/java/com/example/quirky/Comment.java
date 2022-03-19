@@ -46,9 +46,4 @@ public class Comment implements Comparable<Comment>{
         return timestamp;
     }
 
-    // Would prolly be good if the user wants to change user name but not
-    // needed for this assignment
-    public void setUname(String uname) {
-        this.uname = uname;
-    }
 }

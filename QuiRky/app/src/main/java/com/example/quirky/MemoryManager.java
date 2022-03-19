@@ -1,5 +1,5 @@
 package com.example.quirky;
-import android.annotation.SuppressLint;
+
 import android.content.Context;
 
 import java.io.File;
@@ -8,10 +8,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-/* TODO: consider if the folder that stores the user's profile information should...
-        be named after the device id
-        or simply be called the profile folder
- */
 /*
 Root directory is getApplicationContext.getFilesDir().
     Subdirectory in root directory named after the device's ID
@@ -28,30 +24,82 @@ Root directory is getApplicationContext.getFilesDir().
             name
             email
             phone
-        preferences
-            geolocation (some user settings we want to save)
-            somethingelse
 */
+
+/**
+ * @author Jonathen Adsit
+ * MemoryController: manages reading & writing from local memory.
+ * In memory there is only one directory, named after the hardware ID of the device
+ * In this directory there is one file each to save the following user information:
+ *  name
+ *  email
+ *  phone
+ */
 public class MemoryManager {
 
-    private File dir;
-    private final String id;
+    private final File dir;
+    private final String user;
     private final Context ct;
 
-    @SuppressLint("HardwareIds")
-    public MemoryManager(Context ct, String id) {
+    public MemoryManager(Context ct, String user) {
         this.ct = ct;
-        this.id = id;
-        this.dir = new File(ct.getFilesDir(), id);
+        this.user = user;
+        this.dir = new File(this.ct.getFilesDir(), user);
     }
 
+    /**
+     * Constructor assumes the user's folder already exists in memory
+     * @param ct
+     *  - Context to get the files directory
+     * @throws AssertionError
+     *  - Will throw an assertion error if the user's folder does not yet exist in memory
+     */
+    public MemoryManager(Context ct) throws AssertionError {
+        this.ct = ct;
+
+        String[] temp = ct.getFilesDir().list();
+        assert temp != null : "Something went wrong with the memory reader!";
+        assert temp.length > 0 : "Cannot use the empty constructor if the user's file has not been created yet!";
+
+        this.user = temp[0];
+        this.dir = new File(ct.getFilesDir(), user);
+    }
+
+    /**
+     * Checks if the user's folder exists in memory yet
+     * @return
+     *      Boolean representing whether the folder exists
+     */
     public boolean exist() {
         return dir.exists();
     }
-    public void make() { dir.mkdir(); }
 
-    // Read a file from memory.
-    // Uses: read("name"), read("email"), or read("phone").
+    public boolean delete() {
+        try {
+            for (String file : dir.list()) {
+                File f = new File(dir, file);
+                f.delete();
+            }
+        } catch(NullPointerException e) {
+            e.printStackTrace();
+        }
+        return dir.delete();
+    }
+
+    /**
+     * Make a folder in the files directory named after the ID of the android device
+     */
+    public void make() {
+        dir.mkdir();
+    }
+
+    /**
+     * Read a file in the user's folder. Reads the entire file as one string.
+     * @param field
+     *      - Name of the file to be read
+     * @return
+     *      - The string read from the file.
+     */
     public String read(String field) {
         File file = new File(dir, field);
         FileInputStream fis;
@@ -80,15 +128,25 @@ public class MemoryManager {
             return data;
         } catch (IOException e) {
             e.printStackTrace();
+            return "\0";
         }
-
-        return ""; // This return statement will never be reached. It exists so AndroidStudio will stop complaining.
     }
 
-    // Write a string to local memory
-    public void write(String location, String data) {
+    /**
+     * Write a single string to a file in local memory. Write operation overwrites any existing data.
+     * @param location
+     *      - The name of the file to write to
+     * @param data
+     *      - The string to write to the file.
+     * @return
+     *      - A boolean that identifies if the write was successful
+     */
+    public Boolean write(String location, String data) {
         File file = new File(dir, location);
         FileOutputStream fos;
+
+        if(file.exists())
+            file.delete();
 
         try {
             file.createNewFile();
@@ -97,35 +155,14 @@ public class MemoryManager {
             fos.write( data.getBytes()  );
 
             fos.close();
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
-    // Sets the folder to a given folder. Presumably this will only be called with setFolder("preferences")
-    public void setFolder(String dir) {
-        this.dir = new File(ct.getFilesDir(), dir);
-        this.dir.mkdir();
-    }
-
-    // Sets the folder back to the profile folder
-    public void setFolder() {
-        this.dir = new File(ct.getFilesDir(), id);
-    }
-
-    // Delete the user's folder from local memory
-    public void delete() {
-        File file;
-
-        file = new File(dir, "name");
-        file.delete();
-
-        file = new File(dir, "email");
-        file.delete();
-
-        file = new File(dir, "phone");
-        file.delete();
-
-        dir.delete();
+    public String getUser() {
+        return this.user;
     }
 }

@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-public class myStats extends AppCompatActivity {
+public class MyStatsActivity extends AppCompatActivity {
     private Button backBt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
