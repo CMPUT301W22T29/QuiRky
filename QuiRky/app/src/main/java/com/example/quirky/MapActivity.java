@@ -3,6 +3,9 @@ package com.example.quirky;
 import android.content.Context;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
+
+import android.location.Location;
+import android.location.LocationListener;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +27,9 @@ public class MapActivity extends AppCompatActivity {
     MapView nearbymap = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+       
         super.onCreate(savedInstanceState);
+
         //Initialize the osmdroid configuration which can be done through
         Context cxt = getApplicationContext();
         Configuration.getInstance().load(cxt, PreferenceManager.getDefaultSharedPreferences(cxt));
@@ -62,10 +67,31 @@ public class MapActivity extends AppCompatActivity {
 
 
     }
+    
     public void onResume(){
         super.onResume();
         nearbymap.onResume();
 
+    }
+    //Tracks location changes
+    public class MyLocationListener implements LocationListener {
+
+        public void onLocationChanged(Location location) {
+            GeoPoint currentLocation = new GeoPoint(location);
+            displayMyCurrentLocationOverlay();
+        }
+
+        private void displayMyCurrentLocationOverlay() {
+        }
+
+        public void onProviderDisabled(String provider) {
+        }
+
+        public void onProviderEnabled(String provider) {
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
     }
     public void onPause(){
         super.onPause();
