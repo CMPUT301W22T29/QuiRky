@@ -4,22 +4,37 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.util.Log;
 import android.widget.Button;
+import android.widget.Toast;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.QuerySnapshot;
 
 /**
  * This is the activity that shows once the app is opened
  */
 public class MainActivity extends AppCompatActivity implements InputUnameLoginFragment.LoginFragListener {
+    public static final String EXTRA_MESSAGE = "com.example.QuiRky.MESSAGE";
 
-    DatabaseManager dm;
-    MemoryManager mm;
+    DatabaseController dm;
+    MemoryController mc;
 
-
+    /*
+    Code for getting unique device ID taken from:
+    https://stackoverflow.com/a/2785493
+    Written by user:
+    https://stackoverflow.com/users/166712/anthony-forloney
+    Published May 7 2010
+    */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dm = new DatabaseController(FirebaseFirestore.getInstance(), this);
 
         Button getStarted = findViewById(R.id.getStarted);
         Button settings = findViewById(R.id.setting);
@@ -29,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         settings.setOnClickListener(view -> startSettingsActivity());
         quit.setOnClickListener(view -> finishAffinity());
     }
+    
     /**
      * This method is to let user to confirm the info after the user have wrote the info and starts the HubActivity
      * @param uname
@@ -36,28 +52,32 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
      */
     @Override
     public void confirm(String uname) {
-        // TODO: Database read to check this username does not already exist
-        Profile p = new Profile(uname);
-        writeUser(p);
-        startHubActivity();
+        dm.readProfile(uname).addOnCompleteListener(task -> {
+            if(!task.isSuccessful()) {
+                task.getException().printStackTrace();
+            } else {
+                // dm.getProfile(task) will return null if the profile does not exist yet.
+                if(dm.getProfile(task) != null) {
+                    Toast.makeText(this, "This username already exists!", Toast.LENGTH_LONG).show();
+                    login();
+                } else {
+                    Profile p = new Profile(uname);
+
+                    mc = new MemoryController(this, uname);
+                    mc.write(p);
+                    dm.writeProfile(p);
+
+                    startHubActivity();
+                }
+            }
+        });
     }
     /**
      * This is the login function to prompt user to input username and password
      */
     private void login() {
-        /*
-        Code for getting unique device ID taken from:
-        https://stackoverflow.com/a/2785493
-        Written by user:
-        https://stackoverflow.com/users/166712/anthony-forloney
-        Published May 7 2010
-        */
-        // FIXME: this method may sometimes return null I think? But also a rare case? may need to find another method to id a device
-        String id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        mm = new MemoryManager(this, id);
-
-        // mm.exist() checks if the user has logged in on this device before
-        if(!mm.exist()) {
+        // mm.exists() checks if the user has logged in on this device before
+        if(!MemoryController.exists()) {
             // If the user has not logged in yet, show the fragment that asks for a username
             // This fragment's listener will call the write user method
             InputUnameLoginFragment frag = new InputUnameLoginFragment();
@@ -73,29 +93,7 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         Intent i = new Intent(this, SettingsActivity.class);
         startActivity(i);
     }
-    /**
-     * todo
-     * @param user
-     * the user that it writes about
-     */
-    private void writeUser(Profile user) {
-        mm.make();
-        mm.write("name", user.getUname());
-        mm.write("email", "");
-        mm.write("phone", "");
-
-
-        /* FIXME: can't write user to database because dm.writeUser produces a null pointer exception.
-            except that I have two seperate tests confirming that the profile is not null...
-        */
-
-        assert(user != null);
-
-        // dm.writeUser(user); Commented out so it is at least runnable.
-    }
-    /**
-     * This function is to start the HubActivity which directs to StartingPageActivity.class
-     */
+    
     private void startHubActivity() {
         Intent i = new Intent(this, StartingPageActivity.class);
         startActivity(i);

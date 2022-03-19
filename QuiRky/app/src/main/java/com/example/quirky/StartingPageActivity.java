@@ -1,14 +1,12 @@
 package com.example.quirky;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
+import java.util.ArrayList;
+
 /**
  * This is the activity that has different areas user may want to go to, after the user logins
  */
@@ -70,13 +68,18 @@ public class StartingPageActivity extends AppCompatActivity {
     private void setProfileLayout() {
         top.setText("My Profile");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, MyProfile1.class);    // TODO: implement the activity this should direct to
+
+            MemoryController mc = new MemoryController(this);
+            Profile p = mc.read();
+
+            Intent i = new Intent(this, ProfileViewerActivity.class);
+            i.putExtra("profile", p);
             startActivity(i);
         });
 
         mid.setText("My Stats");
         mid.setOnClickListener(view -> {
-            Intent i = new Intent(this, myStats.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, MyStatsActivity.class);    // TODO: implement the activity this should direct to
             startActivity(i);
         });
 
@@ -90,7 +93,7 @@ public class StartingPageActivity extends AppCompatActivity {
     private void setCommunityLayout() {
         top.setText("Search Other Users");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, PlayerSearchActivity.class);
             startActivity(i);
         });
 
@@ -102,7 +105,7 @@ public class StartingPageActivity extends AppCompatActivity {
 
         bottom.setText("Nearby QR Codes");
         bottom.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, MapActivity.class);
             startActivity(i);
         });
     }

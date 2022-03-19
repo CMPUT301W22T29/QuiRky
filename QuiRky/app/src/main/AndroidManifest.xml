@@ -3,10 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.quirky">
 
-    <uses-feature android:name="android.hardware.camera.any"
+    <uses-feature
+        android:name="android.hardware.camera.any"
         tools:ignore="UnsupportedTvHardware" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -16,6 +22,32 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuiRky">
 
+        <activity
+            android:name=".PlayerSearchActivity"
+            android:exported="false" />
+
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="barcode" />
+        <!--
+             TODO: Before you run your application, you need a Google Maps API key.
+
+             To get one, follow the directions here:
+
+                https://developers.google.com/maps/documentation/android-sdk/get-api-key
+
+             Once you have your API key (it starts with "AIza"), define a new property in your
+             project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
+             "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="YOUR_API_KEY" />
+
+        <activity
+            android:name=".MapActivity"
+            android:exported="false"
+            android:label="@string/title_activity_map" />
         <activity
             android:name=".StartingPageActivity"
             android:exported="false"
@@ -28,28 +60,30 @@
             android:name=".SettingsActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
-	<activity
+        <activity
+            android:name=".ViewQRActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".ViewCommentsActivity"
+            android:exported="false"/>
+        <activity
             android:name=".GenerateActivity"
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />
         <activity
-            android:name=".otherPlayerProfile"
+            android:name=".EditProfileActivity"
             android:exported="false"
-            android:parentActivityName=".StartingPageActivity" />
-        <activity
-            android:name=".changeName"
-            android:exported="false"
-            android:parentActivityName=".MyProfile1" />
+            android:parentActivityName=".ProfileViewerActivity" />
         <activity
             android:name=".MyQRCode"
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />
         <activity
-            android:name=".myStats"
+            android:name=".MyStatsActivity"
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />
         <activity
-            android:name=".MyProfile1"
+            android:name=".ProfileViewerActivity"
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />
         <activity
@@ -57,9 +91,9 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

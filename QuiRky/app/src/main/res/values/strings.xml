@@ -56,4 +56,5 @@
     <string name="generate_by_url_link">generate by URL Link</string>
     <string name="generate">Generate</string>
     <string name="button">Button</string>
+    <string name="title_activity_map">MapActivity</string>
 </resources>
