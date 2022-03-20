@@ -25,7 +25,7 @@ Data Storage is as follows:
  * MemoryController: manages reading & writing from local memory.
  * There are two files MemoryController reads & writes to:
  *      One is the profile file. Here the Profile object representing the app-holder is stored.
- *      The other file is the name file, which stores the name of the profile seperately, for ease of access.
+ *      The other is the name file, which stores the name of the profile seperately, for ease of access.
  */
 public class MemoryController {
 

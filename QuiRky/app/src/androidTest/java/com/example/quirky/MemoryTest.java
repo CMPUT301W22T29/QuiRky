@@ -5,6 +5,8 @@ import android.content.Context;
 import org.junit.*;
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+
 // Code for getting context in a Unit Test taken from:
 // https://stackoverflow.com/a/56514421
 // Written by
@@ -81,6 +83,12 @@ public class MemoryTest {
 
         assertEquals(p, result);
 
-        // TODO: create more cases
+        p = new Profile("Second test", "abc", "123", new ArrayList<>());
+        p.setRankingPoints(5);
+
+        mc.write(p);
+        result = mc.read();
+
+        assertEquals(p, result);
     }
 }
