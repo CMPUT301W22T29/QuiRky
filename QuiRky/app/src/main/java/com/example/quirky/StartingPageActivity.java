@@ -1,12 +1,18 @@
 package com.example.quirky;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.Toast;
 
-public class StartingPageActivity extends AppCompatActivity {
+public class StartingPageActivity extends AppCompatActivity
+                                      implements ActivityCompat.OnRequestPermissionsResultCallback {
     private Button QRButton, ProfileButton, CommunityButton;
     private Button top, mid, bottom;
 
@@ -36,6 +42,20 @@ public class StartingPageActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                                                      @NonNull int[] grantResults) {
+        if (CameraController.requestingCameraPermissions(requestCode)) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startCodeScannerActivity();
+            } else {
+                Toast.makeText(this,"Please allow camera permissions to scan QR codes.",
+                                                                          Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
     private void setQRlayout() {
         top.setText("Manage Codes");
         top.setOnClickListener(view -> {
@@ -47,11 +67,9 @@ public class StartingPageActivity extends AppCompatActivity {
         mid.setOnClickListener(view -> {
             if (CameraController.hasCameraPermission(this)) {
                 startCodeScannerActivity();
-            } else if (CameraController.requestCameraPermission(this)) {
-                startCodeScannerActivity();
+            } else {
+                CameraController.requestCameraPermission(this);
             }
-            //Intent i = new Intent(this, CodeScannerActivity.class);
-            //startActivity(i);
         });
 
         bottom.setText("Generate Codes");
@@ -64,7 +82,12 @@ public class StartingPageActivity extends AppCompatActivity {
     private void setProfileLayout() {
         top.setText("My Profile");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, ProfileViewerActivity.class);    // TODO: implement the activity this should direct to
+
+            MemoryController mc = new MemoryController(this);
+            Profile p = mc.read();
+
+            Intent i = new Intent(this, ProfileViewerActivity.class);
+            i.putExtra("profile", p);
             startActivity(i);
         });
 
@@ -84,7 +107,7 @@ public class StartingPageActivity extends AppCompatActivity {
     private void setCommunityLayout() {
         top.setText("Search Other Users");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, PlayerSearchActivity.class);
             startActivity(i);
         });
 
