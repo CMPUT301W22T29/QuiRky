@@ -66,7 +66,7 @@ public class ViewCommentsActivity extends AppCompatActivity {
         DM = new DatabaseController(FirebaseFirestore.getInstance(), ct);
 
         // Has to be getting it from Fragment
-        String qrCodeId = intent.getStringExtra(MainActivity.EXTRA_MESSAGE); // Needs to be changed
+        String qrCodeId = intent.getStringExtra("qrCodeId"); // Needs to be changed
         commentDataList = new ArrayList<>();
 
 

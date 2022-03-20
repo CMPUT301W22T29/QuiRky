@@ -49,23 +49,13 @@ public class DatabaseController {
     private final String TAG = "DatabaseController says: ";
 
     private final FirebaseFirestore db;
-    private final Context ct;
 
     private CollectionReference collection;
     private final OnCompleteListener writeListener;
     private final OnCompleteListener deleteListener;
-    private OnCompleteListener readListener;
-    private Object result;
-
-    private Profile tempP;
-    private Comment tempC;
-    private QRCode tempQR;
 
     public DatabaseController(FirebaseFirestore db, Context ct) {
         this.db = db;
-
-        assert ct instanceof AppCompatActivity : "Oh boy this is an error message but tbh I have no idea whay i'm doing.";
-        this.ct = ct;
 
         this.writeListener = task -> {
             if(task.isSuccessful())

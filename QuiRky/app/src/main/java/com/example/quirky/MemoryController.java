@@ -10,19 +10,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /*
-Root directory is getApplicationContext.getFilesDir().
-    Subdirectory in root directory named after the player's chosen username
-    Several files in this directory holding information about the user's profile
-    Files include:
-        email: holds user's email
-        phone: holds user's cell number
-    This will likely be updated when we determine what we want to store.
+Data Storage is as follows:
+    Context.getFilesDir()    (directory)
+        player_data          (directory)
+            name             (file)
+                The player's username stored separately for ease of access
 
-    Diagram:
-    context.getFilesDir()
-        player1     (username)
-            email
-            phone
+            profile          (file)
+                Stores the serialized Profile object representing the player
 */
 
 /**
@@ -34,74 +29,45 @@ Root directory is getApplicationContext.getFilesDir().
  */
 public class MemoryController {
 
-    private static File dir;
-    private String user;
+    private final File dir;
 
     /**
-     * Constructor that takes in the app-holder's username. Only to be used when logging in with the app for the first time.
-     * If the user already exists in memory, calling this constructor with a new username will overwrite the name stored in the name file.
+     * MemoryController Constructor. Gets the directory for the app's files using the passed context.
      * @param ct Context to get the files directory
-     * @param user Username of the app-holder
-     */
-    public MemoryController(Context ct, String user) {
-        MemoryController.dir = ct.getFilesDir();
-        this.user = user;
-
-        // Delete the name file in memory, if it exists
-        File file = new File(dir, "name");
-        if(file.exists())
-            file.delete();
-
-        // Write to the name file the app-holder's username
-        try {
-            file.createNewFile();
-            FileOutputStream fos = new FileOutputStream(file, false);
-
-            fos.write(user.getBytes());
-
-            fos.flush();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
-     * Constructor assumes the user's folder already exists in memory
-     * @param ct
-     *  - Context to get the files directory
-     * @throws AssertionError
-     *  - Will throw an assertion error if the user's folder does not yet exist in memory
      */
     public MemoryController(Context ct) {
-        assert exists() : "Can not use constructor MemoryController(Context ct) if the user is not already made in memory";
-        MemoryController.dir = ct.getFilesDir();
-        this.user = readUser();
+        this.dir = new File(ct.getFilesDir(), "player_data");
+        if(!dir.exists())
+            dir.mkdir();
     }
 
     /**
      * Write a profile to local memory
      * @param p The profile to be written to local memory. Will overwrite any existing data.
-     * @return Boolean, representing if the write was successful.
+     * @return True if the write was successful, false otherwise
      */
     public Boolean write(Profile p) {
 
         assert p != null : "A null object was passed to MemoryController.write(Profile p)!";
         File file = new File(dir, "profile");
+
         if(file.exists())
             file.delete();
 
         try {
             file.createNewFile();
 
+            /*
+            ObjectOutputStream code taken from
+            https://www.youtube.com/watch?v=4vEBgNFvuIw
+            Made by:
+            https://www.youtube.com/channel/UCicaZPOiZ3WLvfI3i9OQwUg
+            Published December 1, 2015
+             */
             FileOutputStream fos = new FileOutputStream(file, false);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
 
             oos.writeObject(p);
-
-            oos.flush();
-            fos.flush();
 
             oos.close();
             fos.close();
@@ -122,6 +88,14 @@ public class MemoryController {
         Profile p;
 
         try {
+
+            /*
+            ObjectInputStream code taken from:
+            https://www.youtube.com/watch?v=vzfSQVkmgBw
+            By Author:
+            https://www.youtube.com/channel/UCicaZPOiZ3WLvfI3i9OQwUg
+            Published Dec 1, 2015
+             */
             FileInputStream fis = new FileInputStream(file);
             ObjectInputStream ois = new ObjectInputStream(fis);
 
@@ -138,13 +112,14 @@ public class MemoryController {
     }
 
     /**
-     * Read the app-holder's username from memory. Used only by the constructor
+     * Read the app-holder's username from memory.
      * @return user's username
      */
-    private String readUser() {
+    public String readUser() {
         File file = new File(dir, "name");
 
-        String uname;
+        String user;
+
         FileInputStream fis;
         try {
             fis = new FileInputStream(file);
@@ -165,7 +140,7 @@ public class MemoryController {
             fis.read(temp);
 
             // Construct a string from the byte[]
-            uname = new String(temp);
+            user = new String(temp);
 
             fis.close();
         } catch (IOException e) {
@@ -173,18 +148,38 @@ public class MemoryController {
             throw new RuntimeException("Error reading from local memory!");
         }
 
-        return uname;
+        return user;
     }
 
     /**
-     * Getter for the username of the app-holder
-     * @return Username of the app user
+     * Write a username to memory. Will overwrite any data already stored in the 'name' file.
+     * @param user The new username to write
      */
-    public String getUser() {
-        return this.user;
+    public void writeUser(String user) {
+        // Delete the name file in memory, if it exists
+        File file = new File(dir, "name");
+        if(file.exists())
+            file.delete();
+
+        // Write to the name file the app-holder's username
+        try {
+            file.createNewFile();
+            FileOutputStream fos = new FileOutputStream(file, false);
+
+            fos.write(user.getBytes());
+
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static Boolean exists() {
+    /**
+     * Checks if the 'name' file under the directory /player_data exists
+     * @return True if the file exists, false otherwise.
+     */
+    public Boolean exists() {
         File file = new File(dir, "name");
         return file.exists();
     }
