@@ -41,20 +41,6 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         getStarted.setOnClickListener(view -> login());
         settings.setOnClickListener(view -> startSettingsActivity());
         quit.setOnClickListener(view -> finishAffinity());
-
-        // Temporary for Testing
-        Button qrActivity = findViewById(R.id.button2);
-        qrActivity.setOnClickListener(view -> qrActivityLaunch());
-
-    }
-
-    private void qrActivityLaunch() {
-        Intent intent = new Intent(this, ViewQRActivity.class);
-        String message = "Sample QR Code ID"; // This needs to be a specific QR code Id.
-
-        intent.putExtra("comment", message);
-
-        startActivity(intent);
     }
 
     @Override
