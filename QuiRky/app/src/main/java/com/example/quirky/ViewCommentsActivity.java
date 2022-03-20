@@ -117,7 +117,8 @@ public class ViewCommentsActivity extends AppCompatActivity {
     /**
      * When clicked the comment, uname and time will be saved to the database
      * under a document field of a specific QR Code
-     *
+     * @param qrCodeID - The specific QRCode Id so the comment can be stored
+     *                 in the specific document for the QRCode in the database
      */
     public void save(String qrCodeID) {
         String uName; // Should be retrieved from profile. How would I retrieve the User Name?

@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
     MemoryManager mm;
     String id;
 
+
     /*
     Code for getting unique device ID taken from:
     https://stackoverflow.com/a/2785493
@@ -61,6 +62,10 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
 
     private void qrActivityLaunch() {
         Intent intent = new Intent(this, ViewQRActivity.class);
+        String message = "Sample QR Code ID"; // This needs to be a specific QR code Id.
+
+        intent.putExtra("comment", message);
+
         startActivity(intent);
     }
 
