@@ -82,7 +82,12 @@ public class StartingPageActivity extends AppCompatActivity
     private void setProfileLayout() {
         top.setText("My Profile");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, ProfileViewerActivity.class);    // TODO: implement the activity this should direct to
+
+            MemoryController mc = new MemoryController(this);
+            Profile p = mc.read();
+
+            Intent i = new Intent(this, ProfileViewerActivity.class);
+            i.putExtra("profile", p);
             startActivity(i);
         });
 
@@ -102,7 +107,7 @@ public class StartingPageActivity extends AppCompatActivity
     private void setCommunityLayout() {
         top.setText("Search Other Users");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, PlayerSearchActivity.class);
             startActivity(i);
         });
 

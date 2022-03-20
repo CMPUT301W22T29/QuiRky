@@ -16,7 +16,7 @@ import java.io.File;
 // https://stackoverflow.com/users/7098269/ehsan
 // Published June 9, 2019
 public class MemoryTest {
-    MemoryManager mm;
+    MemoryController mm;
     File dir, f;
     Context ct;
 
@@ -46,7 +46,7 @@ public class MemoryTest {
     public void reset() {
         ct = getApplicationContext();
         dir = new File(ct.getFilesDir(), "Test");
-        mm = new MemoryManager(ct, "Test");
+        mm = new MemoryController(ct, "Test");
         f = null;
     }
 

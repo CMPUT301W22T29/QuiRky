@@ -1,6 +1,3 @@
-// Author: Raymart
-// Contact me Through discord for any questions
-
 package com.example.quirky;
 
 //import static com.google.firebase.firestore.FieldValue.delete;
@@ -12,12 +9,14 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-
 /**
  * This class is of the Activity for when you're clicking on one of the listed items in "Your QR Codes" or
  * "nearby QR code" in "MAP" Activity, as seen on the Project Part 2 Miro.
  * */
 public class ViewQRActivity extends AppCompatActivity {
+
+//    public static final String EXTRA_MESSAGE = "com.example.QuiRky.MESSAGE";
+
     private Button Comment;
     private Button ElseQRCode;
     private Button SetPrivate;
@@ -74,8 +73,15 @@ public class ViewQRActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Opens the Comment Activity Intent.
+     */
     public void comment() {
-        Intent intent = new Intent(this, ViewCommentActivity.class);
+        Intent intent = new Intent(this, ViewCommentsActivity.class);
+
+        String message = "Sample QR Code ID"; // This needs to be a specific QR code Id.
+        intent.putExtra("comment", message);
+
         startActivity(intent);
     }
 

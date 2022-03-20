@@ -1,17 +1,23 @@
 package com.example.quirky;
 
+import android.os.Parcel;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * @author Jonathen Adsit
  * Model class that stores a user's name, contact information, and id's of the qrcodes they scanned
  */
-public class Profile {
-    private String uname;
-    private String email;
-    private String phone;
+public class Profile implements Serializable {
+    private String uname, email, phone;
 
-    // Array list of QRCode id's to track which codes the user has scanned. TODO: determine if the array should hold QRCodes or just their id's.
+    // rankingScanned: Leaderboard ranking of number of QRCodes scanned
+    // rankingPoints: Leaderboard ranking of number of points accumulated
+    // rankingBiggestCode: Leaderboard ranking of largest single QRCode scanned
+    private int rankingScanned, rankingPoints, rankingBiggestCode;
+
+    // Array list of QRCode id's to track which codes the user has scanned.
     private ArrayList<String> scanned;
 
     /**
@@ -30,12 +36,11 @@ public class Profile {
         this.email = email;
         this.phone = phone;
         this.scanned = scanned;
-    }
 
-    /**
-     * Empty constructor because Firebase tutorial told me to...
-     */
-    public Profile() {}
+        this.rankingScanned = -1;
+        this.rankingPoints = -1;
+        this.rankingBiggestCode = -1;
+    }
 
     /**
      * Constructor to be used when only the username is known. Typically used when creating the user's profile upon logging in for the first time.
@@ -48,32 +53,70 @@ public class Profile {
         this.scanned = new ArrayList<>();
         this.email = "";
         this.phone = "";
+
+        this.rankingScanned = -1;
+        this.rankingPoints = -1;
+        this.rankingBiggestCode = -1;
     }
 
+    /**
+     * Empty constructor because Firebase tutorial told me to...
+     */
+    public Profile() {}
+
+
+    /**
+     * Username getter
+     * @return username
+     */
     public String getUname() {
         return uname;
     }
 
+    /**
+     * Setter for username
+     * @param uname New username
+     */
     public void setUname(String uname) {
         this.uname = uname;
     }
 
+    /**
+     * Email getter
+     * @return player's email
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Email setter
+     * @param email player's new email
+     */
     public void setEmail(String email) {
         this.email = email;
     }
 
+    /**
+     * Cell number getter
+     * @return player's number
+     */
     public String getPhone() {
         return phone;
     }
 
+    /**
+     * Cell number setter
+     * @param phone player's new phone number
+     */
     public void setPhone(String phone) {
         this.phone = phone;
     }
 
+    /**
+     * Getter for QRCodes scanned by player
+     * @return ArrayList of QRCode id's scanned by the player
+     */
     public ArrayList<String> getScanned() {
         return scanned;
     }
@@ -95,5 +138,67 @@ public class Profile {
     public void removeScanned(String qrId) {
         if(scanned.contains(qrId))
             scanned.remove(qrId);
+    }
+
+    /**
+     * Getter for getRankingScanned
+     * @return The position of the player in the global leaderboards for number of QRCodes scanned
+     */
+    public int getRankingScanned() {
+        return rankingScanned;
+    }
+
+    /**
+     * Setter for rankingScanned
+     * @param rankingScanned The new rank in the leadboard
+     */
+    public void setRankingScanned(int rankingScanned) {
+        this.rankingScanned = rankingScanned;
+    }
+
+    /**
+     * Getter for rankingPoints
+     * @return The profile's rankingPoints
+     */
+    public int getRankingPoints() {
+        return rankingPoints;
+    }
+
+    /**
+     * Setter for rankingPoints
+     * @param rankingPoints The profile's new rank
+     */
+    public void setRankingPoints(int rankingPoints) {
+        this.rankingPoints = rankingPoints;
+    }
+
+    /**
+     * Getter for ranking in largest scoring QRCode scanned
+     * @return Player's rank
+     */
+    public int getRankingBiggestCode() {
+        return rankingBiggestCode;
+    }
+
+    /**
+     * Setter for ranking in largest scoring QRCode scanned
+     * @param rankingBiggestCode Player's new rank
+     */
+    public void setRankingBiggestCode(int rankingBiggestCode) {
+        this.rankingBiggestCode = rankingBiggestCode;
+    }
+
+    /**
+     * Constructor from a Parcel. Typically used when passing between activities
+     * @param in A parcel containing a profile
+     */
+    protected Profile(Parcel in) {
+        uname = in.readString();
+        email = in.readString();
+        phone = in.readString();
+        rankingScanned = in.readInt();
+        rankingPoints = in.readInt();
+        rankingBiggestCode = in.readInt();
+        scanned = in.createStringArrayList();
     }
 }
