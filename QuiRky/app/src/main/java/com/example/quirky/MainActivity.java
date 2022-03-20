@@ -52,8 +52,17 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         getStarted.setOnClickListener(view -> login());
         settings.setOnClickListener(view -> startSettingsActivity());
         quit.setOnClickListener(view -> finishAffinity());
+
+        // Temporary for Testing
+        Button qrActivity = findViewById(R.id.button2);
+        qrActivity.setOnClickListener(view -> qrActivityLaunch());
+
     }
 
+    private void qrActivityLaunch() {
+        Intent intent = new Intent(this, ViewQRActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     public void confirm(String uname) {

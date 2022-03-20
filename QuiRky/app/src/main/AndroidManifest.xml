@@ -49,10 +49,6 @@
             android:exported="false"
             android:label="@string/title_activity_map" />
         <activity
-            android:name=".StartingPageActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity" />
-        <activity
             android:name=".CodeScannerActivity"
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />

@@ -38,7 +38,7 @@
         app:layout_constraintTop_toBottomOf="@+id/text_qrCodeSelected" />
 
     <fragment
-        android:id="@+id/Qr_Fragment"
+        android:id="@+id/qr_fragment"
         android:layout_width="376dp"
         android:layout_height="346dp"
         android:layout_marginStart="16dp"
