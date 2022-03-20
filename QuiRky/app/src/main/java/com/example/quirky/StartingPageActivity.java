@@ -43,7 +43,7 @@ public class StartingPageActivity extends AppCompatActivity {
     private void setQRlayout() {
         top.setText("Manage Codes");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement activity that views player's qr codes
+            Intent i = new Intent(this, ManageCodesActivity.class);
             startActivity(i);
         });
 
@@ -54,8 +54,6 @@ public class StartingPageActivity extends AppCompatActivity {
             } else if (CameraController.requestCameraPermission(this)) {
                 startCodeScannerActivity();
             }
-            //Intent i = new Intent(this, CodeScannerActivity.class);
-            //startActivity(i);
         });
 
         bottom.setText("Generate Codes");
