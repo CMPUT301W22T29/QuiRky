@@ -5,8 +5,9 @@
  * Version History:
  *      Version 0.1.0 -- QRCodes can be constructed from input images
  *      Version 0.2.0 -- Can compute hashes and scores from strings
+ *      Version 0.2.1 -- Scanning qr codes now pops toast with info about the scan results.
  *
- * Date (v0.2.0): March 14, 2022
+ * Date (v0.2.1): March 19, 2022
  *
  * Copyright (c) 2022. CMPUT301W22T29
  * Subject to MIT License
@@ -38,7 +39,7 @@ import java.util.List;
  *
  * @author Sean Meyers
  * @author Jonathen Adsit
- * @version 0.2.0
+ * @version 0.2.1
  * @see androidx.camera.core
  * @see CameraController
  * @see CodeScannerActivity
@@ -49,6 +50,17 @@ public class QRCodeController {
     private static final BarcodeScanner codeScanner = BarcodeScanning.getClient(
             new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build());
 
+    /**
+     * Analyzes an image for qr codes, and constructs <code>QRCode</code>s from their data.
+     *
+     * @param inputImage
+     *      - The image to analyze.
+     * @param codes
+     *      - The list in which the <code>QRCode</code>s will be stored once they are constructed.
+     * @param context
+     *      - The activity that the user is interacting with to capture QR code images.
+     * @see CameraController
+     */
     public static void scanQRCodes(InputImage inputImage, ArrayList<QRCode> codes, Context context) {
         Task<List<Barcode>> result = codeScanner.process(inputImage)
                 .addOnSuccessListener(barcodes -> {
