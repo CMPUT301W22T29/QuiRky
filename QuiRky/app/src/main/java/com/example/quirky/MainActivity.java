@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
     DatabaseController dm;
     MemoryController mc;
 
+
     /*
     Code for getting unique device ID taken from:
     https://stackoverflow.com/a/2785493
@@ -41,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         settings.setOnClickListener(view -> startSettingsActivity());
         quit.setOnClickListener(view -> finishAffinity());
     }
-
 
     @Override
     public void confirm(String uname) {

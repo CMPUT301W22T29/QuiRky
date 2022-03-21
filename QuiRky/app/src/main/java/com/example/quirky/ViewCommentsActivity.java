@@ -66,7 +66,9 @@ public class ViewCommentsActivity extends AppCompatActivity {
         DM = new DatabaseController(FirebaseFirestore.getInstance(), ct);
 
         // Has to be getting it from Fragment
-        String qrCodeId = intent.getStringExtra(MainActivity.EXTRA_MESSAGE); // Needs to be changed
+        String qrCodeId = intent.getStringExtra(ViewQRFragment.EXTRA_MESSAGE);
+        System.out.println(qrCodeId);
+
         commentDataList = new ArrayList<>();
 
 
@@ -115,7 +117,8 @@ public class ViewCommentsActivity extends AppCompatActivity {
     /**
      * When clicked the comment, uname and time will be saved to the database
      * under a document field of a specific QR Code
-     *
+     * @param qrCodeID - The specific QRCode Id so the comment can be stored
+     *                 in the specific document for the QRCode in the database
      */
     public void save(String qrCodeID) {
         String uName; // Should be retrieved from profile. How would I retrieve the User Name?
