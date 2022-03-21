@@ -8,6 +8,7 @@ package com.example.quirky;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,11 +29,7 @@ public class QRAdapter extends RecyclerView.Adapter<QRAdapter.QRViewHolder> {
     private ArrayList<Drawable> photos;
     private ArrayList<String> data;
     Context ct;
-    RecyclerListener listener;
-
-    public interface RecyclerListener {
-        public void OnClickListItem(int position);
-    }
+    RecyclerClickerListener listener;
 
     /**
      * Constructor for the adapter.
@@ -40,10 +37,11 @@ public class QRAdapter extends RecyclerView.Adapter<QRAdapter.QRViewHolder> {
      * @param data The array of string objects
      * @param ct Context because it does things that helps the adapter do stuff. Duh.
      */
-    public QRAdapter(ArrayList<Drawable> photos, ArrayList<String> data, Context ct) {
+    public QRAdapter(ArrayList<String> data, ArrayList<Drawable> photos,  Context ct, RecyclerClickerListener listener) {
         this.photos = photos;
         this.data = data;
         this.ct = ct;
+        this.listener = listener;
     }
 
     /**
@@ -82,7 +80,10 @@ public class QRAdapter extends RecyclerView.Adapter<QRAdapter.QRViewHolder> {
         if(position < photos.size())
             holder.image.setImageDrawable(photos.get(position));
 
-        holder.background.setOnClickListener(view -> listener.OnClickListItem(position));
+        holder.background.setOnClickListener(view -> {
+            Log.d("Adapter says:", "Clicked on item " + position);
+            listener.OnClickListItem(holder.getAdapterPosition());
+        });
     }
 
     @Override

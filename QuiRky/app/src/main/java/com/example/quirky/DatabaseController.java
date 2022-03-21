@@ -1,12 +1,8 @@
 package com.example.quirky;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -14,6 +10,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
@@ -146,7 +143,20 @@ public class DatabaseController {
 
     public Profile getProfile(Task<DocumentSnapshot> task) {
         DocumentSnapshot doc = task.getResult();
-        if(doc.getData() == null) return null;
+        if(doc.getData() == null) {
+            Log.d(TAG, "getProfile() returned a null Profile");
+            return null;
+        }
         return doc.toObject(Profile.class);
+    }
+
+    public Task<QuerySnapshot> startUserSearchQuery(String search) {
+        collection = db.collection("users");
+        return collection.whereGreaterThanOrEqualTo("uname", search).get();
+    }
+
+    public ArrayList<Profile> getUserSearchQuery(Task<QuerySnapshot> task) {
+        QuerySnapshot result = task.getResult();
+        return (ArrayList<Profile>) result.toObjects(Profile.class); // FIXME: this line may not do what I'm hoping it does. May break everything...
     }
 }

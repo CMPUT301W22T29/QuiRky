@@ -20,7 +20,7 @@ public class ProfileViewerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_profile);
         i = getIntent();
-        p = i.getParcelableExtra("profile");
+        p = (Profile) i.getSerializableExtra("profile");
 
         title = findViewById(R.id.profile_name);
         email = findViewById(R.id.email2);
