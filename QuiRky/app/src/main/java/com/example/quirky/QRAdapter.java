@@ -44,6 +44,13 @@ public class QRAdapter extends RecyclerView.Adapter<QRAdapter.QRViewHolder> {
         this.listener = listener;
     }
 
+    public QRAdapter(ArrayList<String> data, ArrayList<Drawable> photos,  Context ct) {
+        this.photos = photos;
+        this.data = data;
+        this.ct = ct;
+        this.listener = null;
+    }
+
     /**
      * Helper subclass. It does things that help the other things do the things.
      * Hey I don't know how it works! I just know how to do it.
@@ -80,7 +87,8 @@ public class QRAdapter extends RecyclerView.Adapter<QRAdapter.QRViewHolder> {
         if(position < photos.size())
             holder.image.setImageDrawable(photos.get(position));
 
-        holder.background.setOnClickListener(view -> {
+        if(listener != null)
+            holder.background.setOnClickListener(view -> {
             Log.d("Adapter says:", "Clicked on item " + position);
             listener.OnClickListItem(holder.getAdapterPosition());
         });
