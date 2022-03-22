@@ -16,7 +16,11 @@
 package com.example.quirky;
 
 import org.osmdroid.util.GeoPoint;
+
+import android.graphics.Bitmap;
 import android.media.Image;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.ArrayList;
 
@@ -29,11 +33,11 @@ import java.util.ArrayList;
  *        bad for security and privacy, and contradicts US 08.0X.01. (v0.1.1)
  *      - Each new <code>QRCode</code> instance instantiates a <code>QRCodeController</code> instance. bad. (v0.2.0)
  */
-public class QRCode {
+public class QRCode implements Parcelable {
     private String id; // id is hash of content.
     private int score;
     private GeoPoint geolocation;
-    private Image photo;                  // TODO: determine what datatype the photo will use. Not sure how to contain it in this class. Will also need to update constructor
+    private Bitmap photo;                  // TODO: determine what datatype the photo will use. Not sure how to contain it in this class. Will also need to update constructor
     private ArrayList<Comment> comments;
 
     /**
@@ -49,7 +53,7 @@ public class QRCode {
      * @param comments
      *      - The comments that have been posted on the QRCode, in an ArrayList<>
      */
-    public QRCode(String content, GeoPoint geolocation, Image photo, ArrayList<Comment> comments) {
+    public QRCode(String content, GeoPoint geolocation, Bitmap photo, ArrayList<Comment> comments) {
         this.id = QRCodeController.SHA256(content);
         this.score = QRCodeController.score(id);
         this.photo = photo;
@@ -69,7 +73,7 @@ public class QRCode {
      * @param photo
      *      - The photo of the QRCode. This is currently an Integer, and will need to be updated once we find how to store a Photo.
      */
-    public QRCode(String content, GeoPoint geolocation, Image photo) {
+    public QRCode(String content, GeoPoint geolocation, Bitmap photo) {
         this.id = QRCodeController.SHA256(content);
         this.score = QRCodeController.score(id);
         this.photo = photo;
@@ -155,4 +159,41 @@ public class QRCode {
     public void setGeolocation(GeoPoint geolocation) {
         this.geolocation = geolocation;
     }
+
+
+
+
+
+    protected QRCode(Parcel in) {
+        id = in.readString();
+        score = in.readInt();
+        geolocation = in.readParcelable(GeoPoint.class.getClassLoader());
+        photo = in.readParcelable(Bitmap.class.getClassLoader());
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeInt(score);
+        dest.writeParcelable(geolocation, flags);
+        dest.writeParcelable(photo, flags);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<QRCode> CREATOR = new Creator<QRCode>() {
+        @Override
+        public QRCode createFromParcel(Parcel in) {
+            return new QRCode(in);
+        }
+
+        @Override
+        public QRCode[] newArray(int size) {
+            return new QRCode[size];
+        }
+    };
+
 }

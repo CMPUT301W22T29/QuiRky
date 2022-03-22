@@ -22,8 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 /**
- * QRCode adapter takes in two ArrayLists: one for drawable objects & one for strings, and maps them to
- * the layout file for the QRCode adapter in qr_recycler_items.xml
+ * An Adapter for RecyclerViews that takes in two ArrayLists: one for drawable objects & one for strings,
+ * and maps them to the layout file for the QRCode adapter in qr_recycler_items.xml
  */
 public class QRAdapter extends RecyclerView.Adapter<QRAdapter.QRViewHolder> {
     private ArrayList<Drawable> photos;

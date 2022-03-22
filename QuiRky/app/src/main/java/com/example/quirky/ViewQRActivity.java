@@ -1,82 +1,70 @@
 package com.example.quirky;
 
-//import static com.google.firebase.firestore.FieldValue.delete;
-
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 /**
  * This class is of the Activity for when you're clicking on one of the listed items in "Your QR Codes" or
  * "nearby QR code" in "MAP" Activity, as seen on the Project Part 2 Miro.
  * */
-public class ViewQRActivity extends AppCompatActivity {
+public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentListener {
 
-//    public static final String EXTRA_MESSAGE = "com.example.QuiRky.MESSAGE";
+    ImageView image;
+    TextView scoreText;
+    Fragment buttonsFrag, playersFrag;
+    Bitmap photo;
 
-    private Button Comment;
-    private Button ElseQRCode;
-    private Button SetPrivate;
-    private Button Delete;
-    private Button Location; // But may not be a button because the location description has to
-    // change depending on where the location is.
+    Intent i;
+    QRCode qr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_qr);
 
-        Comment = findViewById(R.id.button_comments);
-        ElseQRCode = findViewById(R.id.button_who_else_has_this_code);
-        SetPrivate = findViewById(R.id.button_set_private);
-        Delete = findViewById(R.id.button_delete);
-        Location = findViewById(R.id.button_location); // would be better if it was a clickable text
+        i = getIntent();
+        qr = i.getParcelableExtra("code");
 
+        image = findViewById(R.id.imageView2);
+        scoreText = findViewById(R.id.text_showScore);
 
-        // initialized intent
-        Comment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                comment();
-            }
-        });
+        buttonsFrag = new ViewQRButtonsFragment();
+        playersFrag = new ViewQRScannersFragment();
 
-        ElseQRCode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                elseQRCode();
-            }
-        });
+        scoreText.setText(String.valueOf(qr.getScore()));
 
-        SetPrivate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setPrivate();
-            }
-        });
+        // image.setImageDrawable(R.drawable.temp); TODO: fix me
 
-        Delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                delete();
-            }
-        });
-
-        Location.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                location();
-            }
-        });
+        changeFragment(buttonsFrag);
     }
 
     /**
-     * Opens the Comment Activity Intent.
+     * Changes the fragment in the FrameLayout
+     * @param frag The fragment to place in the layout
      */
-    public void comment() {
+    @Override
+    public void changeFragment(Fragment frag) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.view_qr_frame, frag);
+        ft.commit();
+    }
+
+    /**
+     * Opens the Comment Activity. This will be called when the user clicks the Comments button in the fragment
+     */
+    @Override
+    public void commentsButton() {
         Intent intent = new Intent(this, ViewCommentsActivity.class);
 
         String message = "Sample QR Code ID"; // This needs to be a specific QR code Id.
@@ -85,10 +73,16 @@ public class ViewQRActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // Planning on expanding
-    public void elseQRCode() {     }
-    public void setPrivate() {     }
-    public void delete() {     }
-    public void location() {     }
+    @Override
+    public void privateButton() {
+        // Reconsider the Set Private button in this UI. Why does it exists? What does it do?
+        // Perhaps it removes the GeoLocation and Image associated with the displayed QRCode?
+    }
 
+    @Override
+    public void deleteButton() {
+        // Delete button will remove the QRCode from the list of QRCodes the player has scanned.
+        // It will also remove the GeoLocation and Image from the database
+        // This button should also probably start up another activity, like StartingPageActivity
+    }
 }
