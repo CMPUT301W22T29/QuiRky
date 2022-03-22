@@ -5,7 +5,7 @@
     <string name="error_fragment">Error Fragment</string>
     <string name="personal_settings">Personal Settings</string>
 
-        <!-- Error messages -->
+    <!-- Error messages -->
     <string name="error_fragment_message">An error occurred</string>
     <string name="dismiss_error">Dismiss</string>
 
