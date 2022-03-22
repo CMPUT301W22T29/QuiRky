@@ -11,14 +11,26 @@ import org.osmdroid.config.Configuration;
 
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.nfc.Tag;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -26,6 +38,8 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;//Tile source fact
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+
+import java.util.function.Consumer;
 
 
 /*
@@ -40,7 +54,8 @@ public class MapActivity extends AppCompatActivity {
     private LocationManager mLocMgr;
     private static final String[] LOCATION_PERMISSION = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
     public static final int LOCATION_REQUEST_CODE = 99;
-    private Object showExplanation;
+    private LocationListener locationListener;
+    private FusedLocationProviderClient fusedLocationProviderClient;
 
 
     /*private void ShowLocationStatus() {
@@ -54,15 +69,16 @@ public class MapActivity extends AppCompatActivity {
         }
     }*/
 
+    @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Initialize the osmdroid configuration which can be done through
         Context cxt = getApplicationContext();
         Configuration.getInstance().load(cxt, PreferenceManager.getDefaultSharedPreferences(cxt));
-
         //Create a map
         setContentView(R.layout.activity_map_layout);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         GpsMyLocationProvider provider = new GpsMyLocationProvider(this);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -70,33 +86,11 @@ public class MapActivity extends AppCompatActivity {
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
             return;
         } else {
-            Toast.makeText(MapActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            setmap();
         }
-        Location location = mLocMgr.requestLocationUpdates(provider,5000,5,this);
-        setmap(location);
+
     }
-    public void setmap(Location location) {
-        nearbymap = (MapView) findViewById(R.id.map);
-        nearbymap.setTileSource(TileSourceFactory.MAPNIK);
-        //Make the map can zoom in or out
-        nearbymap.setBuiltInZoomControls(true);
-        nearbymap.setMultiTouchControls(true);
-        IMapController mapController = nearbymap.getController();
-        mapController.setZoom(15);
-        //Get current location automatically
-        GeoPoint startPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
-        mapController.setCenter(startPoint);
-        Marker qrmarker = new Marker(nearbymap);
-        qrmarker.setPosition(startPoint);
-        qrmarker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_BOTTOM);
-        nearbymap.getOverlays().add(qrmarker);
-        qrmarker.setTitle("Current location");
-        //provider.addLocationSource(LocationManager.NETWORK_PROVIDER);
-        //locationOverlay = new MyLocationNewOverlay(provider, nearbymap);
-        //locationOverlay.enableFollowLocation();
-        //nearbymap.getOverlayManager().add(locationOverlay);
-        //set a marker on our current location
-    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 
@@ -105,12 +99,56 @@ public class MapActivity extends AppCompatActivity {
             case LOCATION_REQUEST_CODE:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     Toast.makeText(MapActivity.this, "Permission Granted!", Toast.LENGTH_SHORT).show();
+                    setmap();
 
                 } else{
                     Toast.makeText(MapActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
                 }
         }
     }
+    public void setmap() {
+        nearbymap = (MapView) findViewById(R.id.map);
+        nearbymap.setTileSource(TileSourceFactory.MAPNIK);
+        //Make the map can zoom in or out
+        nearbymap.setBuiltInZoomControls(true);
+        nearbymap.setMultiTouchControls(true);
+        IMapController mapController = nearbymap.getController();
+        mapController.setZoom(15);
+        @SuppressLint("MissingPermission") Task<Location> locationTask = fusedLocationProviderClient.getLastLocation();
+        locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if(location != null){
+                    GeoPoint startPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
+                    mapController.setCenter(startPoint);
+                } else {
+                    Log.d("OnSuccess","Location is null");
+                }
+
+            }
+        });
+        locationTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Failure: " , e.getLocalizedMessage());
+
+            }
+        });
+        //Get current location automatically
+        /*GeoPoint startPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
+        mapController.setCenter(startPoint);
+        Marker qrmarker = new Marker(nearbymap);
+        qrmarker.setPosition(startPoint);
+        qrmarker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_BOTTOM);
+        nearbymap.getOverlays().add(qrmarker);
+        qrmarker.setTitle("Current location");*/
+        //provider.addLocationSource(LocationManager.NETWORK_PROVIDER);
+        //locationOverlay = new MyLocationNewOverlay(provider, nearbymap);
+        //locationOverlay.enableFollowLocation();
+        //nearbymap.getOverlayManager().add(locationOverlay);
+        //set a marker on our current location
+    }
+
 
     public void onResume(){
         super.onResume();
