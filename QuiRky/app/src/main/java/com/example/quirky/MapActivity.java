@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -24,11 +25,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -45,37 +41,28 @@ author: osmdroid team : https://github.com/osmdroid/osmdroid
 Publish Date:2019-09-27
  */
 /*source:https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime*/
-public class MapActivity extends AppCompatActivity {
-    MapView nearbymap = null;
+public class MapActivity extends AppCompatActivity implements LocationListener{
+    private MapView nearbymap = null;
     private MyLocationNewOverlay locationOverlay;
-    private LocationManager mLocMgr;
+    private LocationManager locationManager;
     private static final String[] LOCATION_PERMISSION = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
     public static final int LOCATION_REQUEST_CODE = 99;
-    private FusedLocationProviderClient fusedLocationProviderClient;
+    //Context context;
 
 
-    /*private void ShowLocationStatus() {
-        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
-            }
-        } else {
-            Toast.makeText(MapActivity.this, "Permission is Granted", Toast.LENGTH_SHORT).show();
-        }
-    }*/
 
-    @RequiresApi(api = Build.VERSION_CODES.R)
+    @RequiresApi(api = VERSION_CODES.BASE)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //Initialize the osmdroid configuration which can be done through
         Context cxt = getApplicationContext();
-        Configuration.getInstance().load(cxt, PreferenceManager.getDefaultSharedPreferences(cxt));
+        Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
         //Create a map
-        setContentView(R.layout.activity_map_layout);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        GpsMyLocationProvider provider = new GpsMyLocationProvider(this);
+        //setContentView(R.layout.activity_map_layout);
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
@@ -102,7 +89,9 @@ public class MapActivity extends AppCompatActivity {
                 }
         }
     }
+    @SuppressLint("MissingPermission")
     public void setmap() {
+        setContentView(R.layout.activity_map_layout);
         nearbymap = (MapView) findViewById(R.id.map);
         nearbymap.setTileSource(TileSourceFactory.MAPNIK);
         //Make the map can zoom in or out
@@ -110,26 +99,14 @@ public class MapActivity extends AppCompatActivity {
         nearbymap.setMultiTouchControls(true);
         IMapController mapController = nearbymap.getController();
         mapController.setZoom(15);
-        @SuppressLint("MissingPermission") Task<Location> locationTask = fusedLocationProviderClient.getLastLocation();
-        locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if(location != null){
-                    GeoPoint startPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
-                    mapController.setCenter(startPoint);
-                } else {
-                    Log.d("OnSuccess","Location is null");
-                }
+        if(locationManager == null){
+            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        }
+        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,1000,this);
 
-            }
-        });
-        locationTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d("Failure: " , e.getLocalizedMessage());
+        }
 
-            }
-        });
         //Get current location automatically
         /*GeoPoint startPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
         mapController.setCenter(startPoint);
@@ -143,6 +120,14 @@ public class MapActivity extends AppCompatActivity {
         //locationOverlay.enableFollowLocation();
         //nearbymap.getOverlayManager().add(locationOverlay);
         //set a marker on our current location
+    }
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        nearbymap = (MapView) findViewById(R.id.map);
+        IMapController mapController = nearbymap.getController();
+        GeoPoint startPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
+        mapController.setCenter(startPoint);
     }
 
 
