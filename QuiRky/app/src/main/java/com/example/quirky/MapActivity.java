@@ -64,12 +64,15 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
             return;
         } else {
-            setmap();
+            try {
+                setmap();
+            }catch(NullPointerException ex){
+            }
         }
 
     }
@@ -92,18 +95,26 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
     @SuppressLint("MissingPermission")
     public void setmap() {
         setContentView(R.layout.activity_map_layout);
+        IMapController mapController = null;
         nearbymap = (MapView) findViewById(R.id.map);
-        nearbymap.setTileSource(TileSourceFactory.MAPNIK);
+        try{
+            nearbymap.setTileSource(TileSourceFactory.MAPNIK);
+            nearbymap.setBuiltInZoomControls(true);
+            nearbymap.setMultiTouchControls(true);
+            mapController = nearbymap.getController();
+            mapController.setZoom(20);
+        }catch(NullPointerException exception){
+
+        }
+
         //Make the map can zoom in or out
-        nearbymap.setBuiltInZoomControls(true);
-        nearbymap.setMultiTouchControls(true);
-        IMapController mapController = nearbymap.getController();
-        mapController.setZoom(15);
+
+
         if(locationManager == null){
             locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         }
         if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,1000,this);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,10000,1000,this);
 
         }
 
@@ -125,21 +136,43 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
     @Override
     public void onLocationChanged(@NonNull Location location) {
         nearbymap = (MapView) findViewById(R.id.map);
-        IMapController mapController = nearbymap.getController();
-        GeoPoint startPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
-        mapController.setCenter(startPoint);
+        IMapController mapController = null;
+        Marker qrmarker = null;
+        try{
+            mapController = nearbymap.getController();
+            GeoPoint startPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
+            mapController.setCenter(startPoint);
+            mapController.setZoom(20);
+            qrmarker = new Marker(nearbymap);
+            qrmarker.setPosition(startPoint);
+            qrmarker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_BOTTOM);
+            nearbymap.getOverlays().add(qrmarker);
+            qrmarker.setTitle("Current location");
+        }catch(NullPointerException ex3){
+
+        }
+
+
     }
 
 
     public void onResume(){
         super.onResume();
-        nearbymap.onResume();
+        try {
+            nearbymap.onResume();
+        }catch(NullPointerException ex1){
+
+        }
 
     }
 
     public void onPause(){
         super.onPause();
-        nearbymap.onPause();  //Compass
+        try{
+            nearbymap.onPause();  //Compass
+        }catch(NullPointerException ex2){
+
+        }
     }
 
 }
