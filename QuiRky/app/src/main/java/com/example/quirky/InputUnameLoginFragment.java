@@ -18,7 +18,7 @@ public class InputUnameLoginFragment extends DialogFragment {
     private LoginFragListener listener;
 
     public interface LoginFragListener {
-        void confirm(String uname);
+        void OnClickConfirm(String uname);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class InputUnameLoginFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String uname = input.getText().toString();
-                        listener.confirm(uname);
+                        listener.OnClickConfirm(uname);
                     }
                 })
                 .create();
