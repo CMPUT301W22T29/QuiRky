@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -43,7 +44,8 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
 
         scoreText.setText(String.valueOf(qr.getScore()));
 
-        // image.setImageDrawable(R.drawable.temp); TODO: fix me
+        photo = BitmapFactory.decodeResource(getResources(), R.drawable.temp);
+        image.setImageBitmap(photo);
 
         changeFragment(buttonsFrag);
     }

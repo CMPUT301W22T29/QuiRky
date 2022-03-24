@@ -7,8 +7,10 @@
 package com.example.quirky;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +22,17 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 
 public class ViewQRScannersFragment extends Fragment {
 
-    private ViewQRFragmentListener listener;
+    private ViewQRFragmentListener fragmentListener;
+    private RecyclerClickerListener recyclerListener;
     private Button back;
     private RecyclerView list;
     private ArrayList<String> players;
@@ -37,9 +45,9 @@ public class ViewQRScannersFragment extends Fragment {
         super.onAttach(ct);
 
         if(ct instanceof ViewQRFragmentListener)
-            listener = (ViewQRFragmentListener) ct;
+            fragmentListener = (ViewQRFragmentListener) ct;
         else
-            throw new RuntimeException(ct.toString() + " must implement ViewQRFragmentListener");
+            throw new RuntimeException(ct + " must implement ViewQRFragmentListener");
     }
 
     @Override
@@ -60,15 +68,23 @@ public class ViewQRScannersFragment extends Fragment {
         players.add("Player2");
         players.add("player3");
 
-        adapter = new QRAdapter(players, images, getActivity());
+        recyclerListener = position -> startViewPlayerActivity(players.get(position));
+
+        adapter = new QRAdapter(players, images, getActivity(), recyclerListener);
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.changeFragment(new ViewQRButtonsFragment());
-            }
+        back.setOnClickListener(view1 -> fragmentListener.changeFragment(new ViewQRButtonsFragment()));
+    }
+
+    private void startViewPlayerActivity(String username) {
+        Log.d("ViewQRCodes Fragment Says", "You clicked on this username: " + username);
+        DatabaseController dc = new DatabaseController(FirebaseFirestore.getInstance(), getActivity());
+        dc.readProfile(username).addOnCompleteListener(task -> {
+            Profile p = dc.getProfile(task);
+            Intent i = new Intent(getContext(), ProfileViewerActivity.class);
+            i.putExtra("profile", p);
+            startActivity(i);
         });
     }
 }

@@ -41,7 +41,7 @@ public class StartingPageActivity extends AppCompatActivity {
     private void setQRlayout() {
         top.setText("Manage Codes");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, ViewQRActivity.class);    // TODO: implement activity that views player's qr codes
+            Intent i = new Intent(this, MainActivity.class);    // TODO: implement activity that views player's qr codes
             QRCode qr = new QRCode("this is my content");
             i.putExtra("code", qr);
             startActivity(i);

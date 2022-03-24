@@ -159,4 +159,14 @@ public class DatabaseController {
         QuerySnapshot result = task.getResult();
         return (ArrayList<Profile>) result.toObjects(Profile.class); // FIXME: this line may not do what I'm hoping it does. May break everything...
     }
+
+    public Task<DocumentSnapshot> readQRCode(String id) {
+        collection = db.collection("QRcodes");
+        return collection.document(id).get();
+    }
+
+    public QRCode getQRCode(Task<DocumentSnapshot> task) {
+        DocumentSnapshot doc = task.getResult();
+        return new QRCode(doc.getId(), (int) doc.get("score"));
+    }
 }

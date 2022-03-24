@@ -95,6 +95,14 @@ public class QRCode implements Parcelable {
         this.geolocation = null;
     }
 
+    public QRCode(String id, int score) {
+        this.id = id;
+        this.score = score;
+        this.comments = new ArrayList<>();
+        this.photo = null;
+        this.geolocation = null;
+    }
+
     /**
      * Empty constructor because FireStore tutorial told me to...
      */
