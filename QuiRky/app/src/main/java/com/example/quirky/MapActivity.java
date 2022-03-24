@@ -1,6 +1,8 @@
 package com.example.quirky;
 
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -51,7 +53,6 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
 
 
 
-    @RequiresApi(api = VERSION_CODES.BASE)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,15 +65,18 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
-            return;
+
         } else {
-            try {
-                setmap();
-            }catch(NullPointerException ex){
-            }
+                try{
+                    setmap();
+                } catch(NullPointerException ex1){
+
+                }
+
         }
 
     }
@@ -84,11 +88,8 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
         switch (requestCode) {
             case LOCATION_REQUEST_CODE:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Toast.makeText(MapActivity.this, "Permission Granted!", Toast.LENGTH_SHORT).show();
                     setmap();
 
-                } else{
-                    Toast.makeText(MapActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
                 }
         }
     }
@@ -96,16 +97,13 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
     public void setmap() {
         setContentView(R.layout.activity_map_layout);
         IMapController mapController = null;
-        nearbymap = (MapView) findViewById(R.id.map);
-        try{
-            nearbymap.setTileSource(TileSourceFactory.MAPNIK);
-            nearbymap.setBuiltInZoomControls(true);
-            nearbymap.setMultiTouchControls(true);
-            mapController = nearbymap.getController();
-            mapController.setZoom(20);
-        }catch(NullPointerException exception){
+        nearbymap = (MapView) findViewById(R.id.map1);
+        mapController = nearbymap.getController();
+        nearbymap.setTileSource(TileSourceFactory.MAPNIK);
+        nearbymap.setBuiltInZoomControls(true);
+        nearbymap.setMultiTouchControls(true);
+        mapController.setZoom((double)15);
 
-        }
 
         //Make the map can zoom in or out
 
@@ -114,7 +112,7 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
             locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         }
         if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,10000,1000,this);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0,this);
 
         }
 
@@ -135,44 +133,46 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        nearbymap = (MapView) findViewById(R.id.map);
+        Toast.makeText(this,"Request Location",Toast.LENGTH_SHORT).show();
+        nearbymap = (MapView) findViewById(R.id.map1);
         IMapController mapController = null;
         Marker qrmarker = null;
-        try{
-            mapController = nearbymap.getController();
-            GeoPoint startPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
-            mapController.setCenter(startPoint);
-            mapController.setZoom(20);
-            qrmarker = new Marker(nearbymap);
-            qrmarker.setPosition(startPoint);
-            qrmarker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_BOTTOM);
-            nearbymap.getOverlays().add(qrmarker);
-            qrmarker.setTitle("Current location");
-        }catch(NullPointerException ex3){
+        mapController = nearbymap.getController();
+        GeoPoint startPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
+        mapController.setCenter(startPoint);
+        qrmarker = new Marker(nearbymap);
+        qrmarker.setPosition(startPoint);
+        qrmarker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_BOTTOM);
+        nearbymap.getOverlays().add(qrmarker);
+        qrmarker.setTitle("Current location");
 
-        }
 
 
     }
 
 
     public void onResume(){
+        nearbymap = (MapView) findViewById(R.id.map);
         super.onResume();
-        try {
+        try{
             nearbymap.onResume();
-        }catch(NullPointerException ex1){
+        } catch(NullPointerException exa){
 
         }
+
+
 
     }
 
     public void onPause(){
+        nearbymap = (MapView) findViewById(R.id.map);
         super.onPause();
         try{
             nearbymap.onPause();  //Compass
-        }catch(NullPointerException ex2){
+        } catch(NullPointerException exb) {
 
         }
+
     }
 
 }
