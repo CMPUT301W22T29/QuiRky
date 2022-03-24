@@ -46,7 +46,7 @@ public class CodeScannerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_code_scanner);
         previewView = findViewById(R.id.previewView);
         cameraController = new CameraController(this);
-        cameraController.startCameraPreview(previewView.createSurfaceProvider(), this);
+        cameraController.startCamera(previewView.createSurfaceProvider(), this);
         Button scan_button = findViewById(R.id.scan_button);
         scan_button.setOnClickListener(view -> {
             cameraController.captureQRCodes(this);
