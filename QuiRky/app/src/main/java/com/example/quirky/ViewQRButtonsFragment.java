@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +26,7 @@ import androidx.fragment.app.Fragment;
 public class ViewQRButtonsFragment extends Fragment {
 
     Button comments, players, setprivate, delete;
+    TextView location;
 
     private ViewQRFragmentListener listener;
 
@@ -35,7 +37,7 @@ public class ViewQRButtonsFragment extends Fragment {
         if(ct instanceof ViewQRFragmentListener)
             listener = (ViewQRFragmentListener) ct;
         else
-            throw new RuntimeException(ct.toString() + " must implement ViewQRFragmentListener");
+            throw new RuntimeException(ct + " must implement ViewQRFragmentListener");
     }
 
     @Override
@@ -51,6 +53,9 @@ public class ViewQRButtonsFragment extends Fragment {
         players = v.findViewById(R.id.other_scanners_button);
         setprivate = v.findViewById(R.id.private_qr_button);
         delete = v.findViewById(R.id.delete_qr_button);
+        location = v.findViewById(R.id.qr_location_textbox);
+
+        location.setText("Edmonton, lat:9.239486, long: 1/2");
 
         comments.setOnClickListener(view -> listener.commentsButton());
         players.setOnClickListener(view -> listener.changeFragment(new ViewQRScannersFragment()));
