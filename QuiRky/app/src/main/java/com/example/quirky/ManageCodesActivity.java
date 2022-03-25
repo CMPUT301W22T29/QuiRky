@@ -6,6 +6,7 @@
 
 package com.example.quirky;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -32,21 +33,34 @@ import com.example.quirky.databinding.ActivityManageCodesBinding;
 import java.util.ArrayList;
 
 public class ManageCodesActivity extends AppCompatActivity {
-    ToggleButton arrangementOrder;
-    RecyclerView qr_list;
-    QRAdapter QRCodeAdapter;
-    ArrayList<QRCode> QRCodeDataList;
-
+    private ToggleButton arrangementOrder;
+    private RecyclerView qr_list;
+    private QRAdapter QRCodeAdapter;
+    private ArrayList<QRCode> QRCodeDataList;
+    private RecyclerClickerListener recyclerListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_codes);
         arrangementOrder = findViewById(R.id.toggleButton);
         qr_list = findViewById(R.id.qr_list);
-        ArrayList<String> strings = new ArrayList<>();
+        ArrayList<String> points = new ArrayList<>();
         ArrayList<Drawable> photos = new ArrayList<>();
-        QRCodeAdapter = new QRAdapter(photos,strings,this);
+        Intent intent = new Intent(this, ViewQRActivity.class);
+        recyclerListener = new RecyclerClickerListener(){
+            @Override
+            public void OnClickListItem(int position){
+                intent.putExtra("item",position);
+                startActivity(intent);
+            }
+        };
+        points.add("test1");
+        points.add("test2");
+        points.add("test3");
+        QRCodeAdapter = new QRAdapter(points,photos,this,recyclerListener);
+
         QRCodeDataList = new ArrayList<>();
+
         qr_list.setAdapter(QRCodeAdapter);
 
         arrangementOrder.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

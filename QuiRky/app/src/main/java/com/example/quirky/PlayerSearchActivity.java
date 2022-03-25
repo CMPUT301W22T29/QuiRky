@@ -45,7 +45,7 @@ public class PlayerSearchActivity extends AppCompatActivity implements QRAdapter
 
         dc = new DatabaseController(FirebaseFirestore.getInstance(), this);
         photos = new ArrayList<>(); usernames = new ArrayList<>();
-        adapter = new QRAdapter(photos, usernames, this);
+        adapter = new QRAdapter( usernames, photos,this);
 
         button.setOnClickListener(view -> {
             circle.setVisibility(View.VISIBLE);
