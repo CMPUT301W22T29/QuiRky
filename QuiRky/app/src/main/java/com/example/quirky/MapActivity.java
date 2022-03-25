@@ -112,7 +112,7 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
             locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         }
         if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,5000,0,this);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0,this);
 
         }
 
@@ -131,14 +131,17 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
         //set a marker on our current location
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        Toast.makeText(this,"Request Location",Toast.LENGTH_SHORT).show();
+
         nearbymap = (MapView) findViewById(R.id.map1);
         IMapController mapController = null;
         Marker qrmarker = null;
         mapController = nearbymap.getController();
-        GeoPoint startPoint = new GeoPoint(location.getLatitude(),location.getLongitude());
+        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Toast.makeText(this,"Current Location:"+String.valueOf(location.getLatitude())+","+String.valueOf(location.getLongitude()),Toast.LENGTH_LONG).show();
+        GeoPoint startPoint = new GeoPoint((double)location.getLatitude(),(double)location.getLongitude());
         mapController.setCenter(startPoint);
         qrmarker = new Marker(nearbymap);
         qrmarker.setPosition(startPoint);
