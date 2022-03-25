@@ -42,11 +42,11 @@
         android:textOff="high to low"
         android:textOn="low to high"/>
 
-    </LinearLayout>>
-    <ListView
-        android:id="@+id/qrCode_List"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    </LinearLayout>
 
-    </ListView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/qr_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </LinearLayout>
