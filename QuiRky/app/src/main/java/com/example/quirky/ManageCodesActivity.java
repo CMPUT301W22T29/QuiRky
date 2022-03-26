@@ -15,6 +15,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -32,6 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.quirky.databinding.ActivityManageCodesBinding;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class ManageCodesActivity extends AppCompatActivity {
     private ToggleButton arrangementOrder;
@@ -48,18 +50,27 @@ public class ManageCodesActivity extends AppCompatActivity {
         ArrayList<String> points = new ArrayList<>();
         ArrayList<Drawable> photos = new ArrayList<>();
         Intent intent = new Intent(this, ViewQRActivity.class);
+
         recyclerListener = new RecyclerClickerListener(){
             @Override
             public void OnClickListItem(int position){
-                intent.putExtra("item",position);
+                intent.putExtra("code",position);
                 startActivity(intent);
             }
         };
+        /*/points.add("test1");
         points.add("test1");
         points.add("test1");
         points.add("test1");
-        points.add("test1");
+        */
+        QRCode qr1 = new QRCode("test1");
+        QRCode qr2 = new QRCode("test2");
+        QRCode qr3 = new QRCode("test3");
 
+        points.add(String.valueOf(qr1.getScore()));
+        points.add(String.valueOf(qr2.getScore()));
+        points.add(String.valueOf(qr3.getScore()));
+        
         QRCodeAdapter = new QRAdapter(points, photos,this, recyclerListener);
 
         QRCodeDataList = new ArrayList<>();
@@ -70,11 +81,28 @@ public class ManageCodesActivity extends AppCompatActivity {
 
         arrangementOrder.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
+                if(isChecked) {
                     // The toggle is enabled, display lowest to highest
+                    Log.d("is working","lowest");
+                    points.sort(new Comparator<String>() {
+                        @Override
+                        public int compare(String s, String t1) {
+                            return (Integer.valueOf(s) - Integer.valueOf(t1));
+                        }
+                    });
+                    QRCodeAdapter.notifyDataSetChanged();
                 } else {
                     // The toggle is disabled, display highest to lowest
+                    Log.d("is working","highest");
+                    points.sort(new Comparator<String>() {
+                        @Override
+                        public int compare(String s, String t1) {
+                            return (Integer.valueOf(t1) - Integer.valueOf(s));
+                        }
+                    });
+                    QRCodeAdapter.notifyDataSetChanged();
                 }
+
             }
         });
 
