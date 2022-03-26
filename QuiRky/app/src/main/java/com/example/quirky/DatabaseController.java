@@ -169,4 +169,9 @@ public class DatabaseController {
         DocumentSnapshot doc = task.getResult();
         return new QRCode(doc.getId(), (int) doc.get("score"));
     }
+
+
+
+
+    // Callback interface
 }
