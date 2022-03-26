@@ -19,7 +19,6 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
     DatabaseController dm;
     MemoryController mc;
 
-
     /*
     Code for getting unique device ID taken from:
     https://stackoverflow.com/a/2785493
