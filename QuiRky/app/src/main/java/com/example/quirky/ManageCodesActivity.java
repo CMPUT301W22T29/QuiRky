@@ -26,6 +26,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.quirky.databinding.ActivityManageCodesBinding;
@@ -36,7 +37,7 @@ public class ManageCodesActivity extends AppCompatActivity {
     private ToggleButton arrangementOrder;
     private RecyclerView qr_list;
     private QRAdapter QRCodeAdapter;
-    private ArrayList<QRCode> QRCodeDataList;
+    private ArrayList<String> QRCodeDataList;
     private RecyclerClickerListener recyclerListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +56,17 @@ public class ManageCodesActivity extends AppCompatActivity {
             }
         };
         points.add("test1");
-        points.add("test2");
-        points.add("test3");
-        QRCodeAdapter = new QRAdapter(points,photos,this,recyclerListener);
+        points.add("test1");
+        points.add("test1");
+        points.add("test1");
+
+        QRCodeAdapter = new QRAdapter(points, photos,this, recyclerListener);
 
         QRCodeDataList = new ArrayList<>();
 
         qr_list.setAdapter(QRCodeAdapter);
+
+        qr_list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         arrangementOrder.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
