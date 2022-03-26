@@ -89,9 +89,9 @@ public class QRAdapter extends RecyclerView.Adapter<QRAdapter.QRViewHolder> {
 
         if(listener != null)
             holder.background.setOnClickListener(view -> {
-                Log.d("Adapter says:", "Clicked on item " + position);
-                listener.OnClickListItem(holder.getAdapterPosition());
-            });
+            Log.d("Adapter says:", "Clicked on item " + position);
+            listener.OnClickListItem(holder.getAdapterPosition());
+        });
     }
 
     @Override

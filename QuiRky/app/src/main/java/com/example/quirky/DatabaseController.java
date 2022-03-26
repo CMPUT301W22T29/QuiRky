@@ -1,12 +1,8 @@
 package com.example.quirky;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -14,6 +10,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
@@ -49,23 +46,13 @@ public class DatabaseController {
     private final String TAG = "DatabaseController says: ";
 
     private final FirebaseFirestore db;
-    private final Context ct;
 
     private CollectionReference collection;
     private final OnCompleteListener writeListener;
     private final OnCompleteListener deleteListener;
-    private OnCompleteListener readListener;
-    private Object result;
-
-    private Profile tempP;
-    private Comment tempC;
-    private QRCode tempQR;
 
     public DatabaseController(FirebaseFirestore db, Context ct) {
         this.db = db;
-
-        assert ct instanceof AppCompatActivity : "Oh boy this is an error message but tbh I have no idea whay i'm doing.";
-        this.ct = ct;
 
         this.writeListener = task -> {
             if(task.isSuccessful())
@@ -156,7 +143,30 @@ public class DatabaseController {
 
     public Profile getProfile(Task<DocumentSnapshot> task) {
         DocumentSnapshot doc = task.getResult();
-        if(doc.getData() == null) return null;
+        if(doc.getData() == null) {
+            Log.d(TAG, "getProfile() returned a null Profile");
+            return null;
+        }
         return doc.toObject(Profile.class);
+    }
+
+    public Task<QuerySnapshot> startUserSearchQuery(String search) {
+        collection = db.collection("users");
+        return collection.whereGreaterThanOrEqualTo("uname", search).get();
+    }
+
+    public ArrayList<Profile> getUserSearchQuery(Task<QuerySnapshot> task) {
+        QuerySnapshot result = task.getResult();
+        return (ArrayList<Profile>) result.toObjects(Profile.class); // FIXME: this line may not do what I'm hoping it does. May break everything...
+    }
+
+    public Task<DocumentSnapshot> readQRCode(String id) {
+        collection = db.collection("QRcodes");
+        return collection.document(id).get();
+    }
+
+    public QRCode getQRCode(Task<DocumentSnapshot> task) {
+        DocumentSnapshot doc = task.getResult();
+        return new QRCode(doc.getId(), (int) doc.get("score"));
     }
 }

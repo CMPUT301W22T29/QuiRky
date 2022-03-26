@@ -3,6 +3,7 @@ package com.example.quirky;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -17,7 +18,6 @@ import com.google.firebase.firestore.QuerySnapshot;
  * This is the activity that shows once the app is opened
  */
 public class MainActivity extends AppCompatActivity implements InputUnameLoginFragment.LoginFragListener {
-    public static final String EXTRA_MESSAGE = "com.example.QuiRky.MESSAGE";
 
     DatabaseController dm;
     MemoryController mc;
@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         setContentView(R.layout.activity_main);
 
         dm = new DatabaseController(FirebaseFirestore.getInstance(), this);
+        mc = new MemoryController(this);
 
         Button getStarted = findViewById(R.id.getStarted);
         Button settings = findViewById(R.id.setting);
@@ -44,27 +45,39 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         settings.setOnClickListener(view -> startSettingsActivity());
         quit.setOnClickListener(view -> finishAffinity());
     }
-    
+
+    private void login() {
+        // mc.exists() checks if the user has logged in with the app before
+        if(!mc.exists()) {
+            InputUnameLoginFragment frag = new InputUnameLoginFragment();
+            frag.show(getSupportFragmentManager(), "GET_UNAME");
+            // Once the fragment is closed, the method OnClickConfirm() is called.
+        } else {
+            startHubActivity();
+        }
+    }
+
     /**
      * This method is to let user to confirm the info after the user have wrote the info and starts the HubActivity
      * @param uname
      * User name which it stores
      */
     @Override
-    public void confirm(String uname) {
+    public void OnClickConfirm(String uname) {
+        // Read from the database to check if this username is already taken.
         dm.readProfile(uname).addOnCompleteListener(task -> {
             if(!task.isSuccessful()) {
                 task.getException().printStackTrace();
             } else {
-                // dm.getProfile(task) will return null if the profile does not exist yet.
                 if(dm.getProfile(task) != null) {
                     Toast.makeText(this, "This username already exists!", Toast.LENGTH_LONG).show();
+                    // Restart the process by calling login()
                     login();
                 } else {
                     Profile p = new Profile(uname);
 
-                    mc = new MemoryController(this, uname);
                     mc.write(p);
+                    mc.writeUser(uname);
                     dm.writeProfile(p);
 
                     startHubActivity();
@@ -72,23 +85,6 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
             }
         });
     }
-    /**
-     * This is the login function to prompt user to input username and password
-     */
-    private void login() {
-        // mm.exists() checks if the user has logged in on this device before
-        if(!MemoryController.exists()) {
-            // If the user has not logged in yet, show the fragment that asks for a username
-            // This fragment's listener will call the write user method
-            InputUnameLoginFragment frag = new InputUnameLoginFragment();
-            frag.show(getSupportFragmentManager(), "GET_UNAME");
-        } else {
-            startHubActivity();
-        }
-    }
-    /**
-     * This function is to start the setting activity which directs to setting
-     */
     private void startSettingsActivity() {
         Intent i = new Intent(this, SettingsActivity.class);
         startActivity(i);

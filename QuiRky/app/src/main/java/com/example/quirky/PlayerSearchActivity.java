@@ -7,74 +7,107 @@
 package com.example.quirky;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
-public class PlayerSearchActivity extends AppCompatActivity implements QRAdapter.RecyclerListener {
+public class PlayerSearchActivity extends AppCompatActivity {
 
-    QRAdapter adapter;
-    DatabaseController dc;
-    ArrayList<Drawable> photos;
-    ArrayList<String> usernames;
-    RecyclerView list;
+    private final String TAG = "PlayerSearchActivity says";
 
-    ImageButton button;
-    EditText input;
-    ProgressBar circle;
+    private DatabaseController dc;
+    private ArrayList<String> usernames;
+    private ArrayList<Drawable> photos;
+
+    private QRAdapter adapter;
+
+    private RecyclerView list;
+    private ImageButton button;
+    private EditText input;
+    private ProgressBar circle;
+
+    private RecyclerClickerListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_search);
 
+        dc = new DatabaseController(FirebaseFirestore.getInstance(), this);
+
+        usernames = new ArrayList<>();
+        photos = new ArrayList<>();
+
         button = findViewById(R.id.commit_search_button);
         input = findViewById(R.id.search_input_field);
         circle = findViewById(R.id.search_progress_bar);
         list = findViewById(R.id.search_user_list);
 
-        dc = new DatabaseController(FirebaseFirestore.getInstance(), this);
-        photos = new ArrayList<>(); usernames = new ArrayList<>();
-        adapter = new QRAdapter( usernames, photos,this);
 
-        button.setOnClickListener(view -> {
-            circle.setVisibility(View.VISIBLE);
-            String username = input.getText().toString();
-            if(username.length() == 0)
-                return;
-            // TODO: make a unique read function in dc that queries for similar usernames
-            dc.readProfile(username).addOnCompleteListener(task -> {
-                Profile p = dc.getProfile(task);
-                usernames.add(p.getUname());
-                adapter.notifyDataSetChanged();
+        listener = new RecyclerClickerListener() {
+            @Override
+            public void OnClickListItem(int position) {
+                Log.d(TAG, "Listener received item position" + position);
+                String user = usernames.get(position);
+                dc.readProfile(user).addOnCompleteListener(task -> {
+                    Profile p = dc.getProfile(task);
+                    assert p != null : "Something went wrong in the profile read!";
+                    startViewProfileActivity(p);
+                });
+            }
+        };
 
-                circle.setVisibility(View.INVISIBLE);
-            });
-        });
+
+        adapter = new QRAdapter(usernames, photos, this, listener);
+        list.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        list.setAdapter(adapter);
+
+        button.setOnClickListener(view -> { QueryDatabase(); });
     }
 
-    @Override
-    public void OnClickListItem(int position) {
-        String user = usernames.get(position);
-        dc.readProfile(user).addOnCompleteListener(task -> {
-            Profile p = dc.getProfile(task);
-            assert p != null : "Something went wrong in the profile read!";
-            startViewProfileActivity(p);
+    public void QueryDatabase() {
+        circle.setVisibility(View.VISIBLE);
+        usernames.clear();
+        String username = input.getText().toString();
+
+        if(username.length() == 0)
+            return;
+
+        // Start the Query and set an on complete listener.
+        dc.startUserSearchQuery(username)
+                .addOnCompleteListener(task -> {
+            ArrayList<Profile> results = dc.getUserSearchQuery(task);
+
+            if(results.size() == 0) {
+                Toast.makeText(PlayerSearchActivity.this, "No results found!", Toast.LENGTH_LONG).show();
+
+            } else {
+                for(Profile p : results) {
+                    if(p == null) continue;
+                    usernames.add(p.getUname());
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            circle.setVisibility(View.INVISIBLE);
         });
     }
 
     private void startViewProfileActivity(Profile p) {
-        Intent i = new Intent(this, MainActivity.class);
+        Intent i = new Intent(this, ProfileViewerActivity.class);
         i.putExtra("profile", p);
         startActivity(i);
     }
