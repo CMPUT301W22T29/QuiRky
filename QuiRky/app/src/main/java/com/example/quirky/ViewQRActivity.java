@@ -9,11 +9,20 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 
 /**
  * This class is of the Activity for when you're clicking on one of the listed items in "Your QR Codes" or
@@ -26,7 +35,11 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
     Fragment buttonsFrag, playersFrag;
     Bitmap photo;
 
+    DatabaseController dc;
+    ArrayList<String> players;
+
     Intent i;
+    String qrid;
     QRCode qr;
 
     @Override
@@ -34,8 +47,13 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_qr);
 
+        dc = new DatabaseController(FirebaseFirestore.getInstance(), this);
+
         i = getIntent();
-        qr = i.getParcelableExtra("code");
+        qrid = i.getStringExtra("code");
+
+        dc.readQRCode(qrid).addOnCompleteListener(task -> qr = dc.getQRCode(task));
+        dc.readQRCodeUserData(qrid).addOnCompleteListener(task -> players = dc.getQRCodeScanners(task));
 
         image = findViewById(R.id.imageView2);
         scoreText = findViewById(R.id.text_showScore);
@@ -61,6 +79,11 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.view_qr_frame, frag);
         ft.commit();
+    }
+
+    @Override
+    public ArrayList<String> getPlayers() {
+        return players;
     }
 
     /**

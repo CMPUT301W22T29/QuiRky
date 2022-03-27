@@ -1,6 +1,7 @@
 package com.example.quirky;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 
@@ -47,6 +48,9 @@ import java.util.Map;
 public class DatabaseController {
     private final String TAG = "DatabaseController says: ";
 
+    /* ~~~~~~~~~~~~~~~~~~~~~
+        TODO: Look into AtomicReference<>
+       ~~~~~~~~~~~~~~~~~~~~~ */
     private final FirebaseFirestore db;
     private final Context ct;
 
@@ -95,87 +99,38 @@ public class DatabaseController {
         Profile p = mc.read();
         String user = mc.readUser();
 
-        // A batch write: a group of write operations to be done at once. Create the batch
+        // A batch write: a group of write operations to be done at once.
+        // Batches are not written immediately. Can add many operations to a batch, then commit all writes at once.
         WriteBatch batch = db.batch();
         DocumentReference doc;
 
-        // The Score field
-        Map<String, Object> data = new HashMap<>();
-        data.put("score", qr.getScore());
-        // Set the location
+        // Set the document location
         collection = db.collection("QRcodes");
         doc = collection.document(qr.getId());
-        // Add to the batch
+
+        // Write the score of the QRCode
+        Map<String, Object> data = new HashMap<>();
+        data.put("score", qr.getScore());
         batch.set(doc, data);
 
-        collection = doc.collection("comments");
         // Add the comments to the batch. Skip any null comments.
+        collection = doc.collection("comments");
         for(Comment c : qr.getComments()) {
             if(c==null) continue;
             batch.set(collection.document(c.getId()), c);
         }
 
+        /* TODO: Writing these fields should be in a seperate method
         // Add the geolocation & photo to the batch
         collection = doc.collection("userdata");
         doc = collection.document(user);
 
         data = new HashMap<>();
         data.put("location", null);
-        data.put("photo", null); // TODO: write the photo correctly.
+        data.put("photo", null);
 
         batch.set(doc, data);
-
-        // Update the player's profile to include this QRCode as one they have scanned.
-        p.addScanned(qr.getId());
-        ArrayList<String> scanned = p.getScanned();
-        mc.write(p);
-
-        collection = db.collection("users");
-        doc = collection.document(user);
-        batch.update(doc, "scanned", scanned);
-
-
-        // Issue the batch write
-        batch.commit().addOnCompleteListener(writeListener);
-    }
-
-    public void writeQRCode(QRCode qr, GeoPoint g) {
-        assert(qr != null) : "You can't write a null object to the database!";
-
-        // Get the user from memory
-        MemoryController mc = new MemoryController(this.ct);
-        Profile p = mc.read();
-        String user = mc.readUser();
-
-        // A batch write: a group of write operations to be done at once. Create the batch
-        WriteBatch batch = db.batch();
-        DocumentReference doc;
-
-        // The Score field
-        Map<String, Object> data = new HashMap<>();
-        data.put("score", qr.getScore());
-        // Set the location
-        collection = db.collection("QRcodes");
-        doc = collection.document(qr.getId());
-        // Add to the batch
-        batch.set(doc, data);
-
-        collection = doc.collection("comments");
-        // Add the comments to the batch. Skip any null comments.
-        for(Comment c : qr.getComments()) {
-            if(c==null) continue;
-            batch.set(collection.document(c.getId()), c);
-        }
-
-        // Add the geolocation & photo to the batch
-        collection = doc.collection("userdata");
-        doc = collection.document(user);
-
-        data = new HashMap<>();
-        data.put("location", g);
-        data.put("photo", 3); // TODO: write the photo correctly.
-
-        batch.set(doc, data);
+        */
 
         // Update the player's profile to include this QRCode as one they have scanned.
         p.addScanned(qr.getId());
@@ -239,6 +194,45 @@ public class DatabaseController {
         DocumentSnapshot doc = task.getResult();
         return new QRCode(doc.getId(), (int) doc.get("score"));
     }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    public Task<QuerySnapshot> readQRCodeUserData(String qrcode) {
+        collection = db.collection("QRCodes").document(qrcode).collection("userdata");
+        return collection.get();
+    }
+
+    public ArrayList<GeoPoint> getQRCodeLocations(Task<QuerySnapshot> task) {
+        QuerySnapshot query = task.getResult();
+        ArrayList<GeoPoint> locations = new ArrayList<>();
+        for(DocumentSnapshot doc : query.getDocuments()) {
+            if(doc == null) continue;
+            locations.add((GeoPoint) doc.get("location"));      // FIXME: this will 1000% crash, need to think about how to get a GeoPoint object from a lat & long in firestore
+
+        }
+        return locations;
+    }
+
+    public ArrayList<Drawable> getQRCodePhotos(Task<QuerySnapshot> task) {
+        QuerySnapshot query = task.getResult();
+        ArrayList<Drawable> photos = new ArrayList<>();
+        for(DocumentSnapshot doc : query.getDocuments()) {
+            if(doc == null) continue;
+            photos.add((Drawable) doc.get("photo"));        // FIXME: this will 1000% crash, need to think about how store Drawables to FireStore
+
+        }
+        return photos;
+    }
+
+    public ArrayList<String> getQRCodeScanners(Task<QuerySnapshot> task) {
+        QuerySnapshot query = task.getResult();
+        ArrayList<String> photos = new ArrayList<>();
+        for(DocumentSnapshot doc : query.getDocuments()) {
+            if(doc == null) continue;
+            photos.add(doc.getId());
+        }
+        return photos;
+    }
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 
 
