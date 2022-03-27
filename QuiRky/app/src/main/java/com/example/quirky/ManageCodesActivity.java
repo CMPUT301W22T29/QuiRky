@@ -70,7 +70,7 @@ public class ManageCodesActivity extends AppCompatActivity {
         points.add(String.valueOf(qr1.getScore()));
         points.add(String.valueOf(qr2.getScore()));
         points.add(String.valueOf(qr3.getScore()));
-        
+
         QRCodeAdapter = new QRAdapter(points, photos,this, recyclerListener);
 
         QRCodeDataList = new ArrayList<>();
