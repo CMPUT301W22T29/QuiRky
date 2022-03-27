@@ -49,7 +49,7 @@ public class DatabaseController {
     private final String TAG = "DatabaseController says: ";
 
     /* ~~~~~~~~~~~~~~~~~~~~~
-        TODO: Look into AtomicReference<>
+        TODO: Look into AtomicReference<>, or Callback Interfaces
        ~~~~~~~~~~~~~~~~~~~~~ */
     private final FirebaseFirestore db;
     private final Context ct;
@@ -77,6 +77,11 @@ public class DatabaseController {
         };
     }
 
+    /**
+     * Add a comment to a QRCode in the databse
+     * @param c The comment to write
+     * @param id The QRCode the comment is written on
+     */
     public void addComment(Comment c, String id) {
         collection = db.collection("QRcodes");
 
@@ -84,6 +89,11 @@ public class DatabaseController {
         collection.document(c.getId()).set(c).addOnCompleteListener(writeListener);
     }
 
+    /**
+     * Remove a Comment from a QRCode
+     * @param c The comment to be removed
+     * @param id The id of the QRCode the comment is on
+     */
     public void removeComment(Comment c, String id) {   // TODO: consider making this method take the comment's id, rather than the object itself.
         collection = db.collection("QRcodes");
 
@@ -91,6 +101,10 @@ public class DatabaseController {
         collection.document(c.getId()).delete().addOnCompleteListener(deleteListener);
     }
 
+    /**
+     * Write a QRCode to the database. Will also add the QRCode to the account of the app-holder
+     * @param qr The QRCode to be written
+     */
     public void writeQRCode(QRCode qr) {
         assert(qr != null) : "You can't write a null object to the database!";
 
@@ -146,26 +160,50 @@ public class DatabaseController {
         batch.commit().addOnCompleteListener(writeListener);
     }
 
+    /**
+     * Delete a QRCode completely from the Database. Only the Owner should be able to do this.
+     * TODO: Implement a method to remove a QRCode from a players profile
+     * @param qr The QRCode to delete
+     */
     public void deleteQRCode(QRCode qr) {
         collection = db.collection("QRCodes");
         collection.document(qr.getId()).delete().addOnCompleteListener(deleteListener);
     }
 
+    /**
+     * Write a new profile to the Database.
+     * @param p The profile to be written
+     */
     public void writeProfile(Profile p) {
         collection = db.collection("users");
         collection.document(p.getUname()).set(p).addOnCompleteListener(writeListener);
     }
 
+    /**
+     * Delete an account from the Database. Only the Owner should be able to do this.
+     * @param p The profile to be deleted
+     */
     public void deleteProfile(Profile p) {
         collection = db.collection("users");
         collection.document(p.getUname()).delete().addOnCompleteListener(deleteListener);
     }
 
+    /**
+     * Begin reading a profile from the Database.
+     * This is an Asynchronous operation, and such this method not return the result. The result can be obtained from getProfile()
+     * @param username The username of the profile to be read
+     * @return A task representing the read operation. This must be passed to getProfile(task)
+     */
     public Task<DocumentSnapshot> readProfile(String username) {
         collection = db.collection("users");
         return collection.document(username).get();
     }
 
+    /**
+     * Get the results of the readProfile(). This method should only be called once the Task returned from ReadProfile has completed.
+     * @param task The task returned from readProfile(). Calling with any other task will result in errors.
+     * @return The profile with the username given to readProfile(). Will return null if the username does not exist.
+     */
     public Profile getProfile(Task<DocumentSnapshot> task) {
         DocumentSnapshot doc = task.getResult();
         if(doc.getData() == null) {
@@ -175,24 +213,51 @@ public class DatabaseController {
         return doc.toObject(Profile.class);
     }
 
+    /**
+     * Begin querying the database for profiles with a similar username to the given string.
+     * This is an Asynchronous operation, and such this method not return the result. The result can be obtained from getProfile()
+     * @param search The string to search for similar usernames with
+     * @return A task representing the read operation. This must be passed to getUserSearchQuery(task)
+     */
     public Task<QuerySnapshot> startUserSearchQuery(String search) {
         collection = db.collection("users");
         return collection.whereGreaterThanOrEqualTo("uname", search).get();
     }
 
+    /**
+     * Get the results of the startUserSearchQuery(); This method should only be called once the Task returned from it has completed.
+     * @param task The task returned from startUserSearchQuery(). Calling with any other task will result in errors.
+     * @return An ArrayList of profiles with usernames similar to the string given to startUserSearchQuery().
+     */
     public ArrayList<Profile> getUserSearchQuery(Task<QuerySnapshot> task) {
         QuerySnapshot result = task.getResult();
         return (ArrayList<Profile>) result.toObjects(Profile.class);
     }
 
+    /**
+     * Begin reading a QRCode from the database.
+     * This is an Asynchronous operation, and such this method not return the result. The result can be obtained from getProfile()
+     * @param id The id of the QRCode to be read
+     * @return A task representing the read operation. This must be passed to getQRCode(task)
+     */
     public Task<DocumentSnapshot> readQRCode(String id) {
         collection = db.collection("QRcodes");
         return collection.document(id).get();
     }
 
+    /**
+     * Get the results of the readQRCode(); This method should only be called once the Task returned from it has completed.
+     * @param task The task returned from readQRCode(). Calling with any other task will result in errors.
+     * @return The QRCode with the ID that was passed to readQRCode(). Returns null if such a QRCode does not exist in the database
+     */
     public QRCode getQRCode(Task<DocumentSnapshot> task) {
         DocumentSnapshot doc = task.getResult();
-        return new QRCode(doc.getId(), (int) doc.get("score"));
+        try {
+            return new QRCode(doc.getId(), (int) doc.get("score"));
+        } catch (NullPointerException e) {
+            Log.d(TAG, "getQRCode returned a Null object");
+            return null;
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
@@ -234,7 +299,4 @@ public class DatabaseController {
     }
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-
-
-    // Callback interface
 }
