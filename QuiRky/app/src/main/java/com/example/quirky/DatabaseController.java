@@ -13,6 +13,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
+import org.osmdroid.util.GeoPoint;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,6 +48,7 @@ public class DatabaseController {
     private final String TAG = "DatabaseController says: ";
 
     private final FirebaseFirestore db;
+    private final Context ct;
 
     private CollectionReference collection;
     private final OnCompleteListener writeListener;
@@ -53,6 +56,7 @@ public class DatabaseController {
 
     public DatabaseController(FirebaseFirestore db, Context ct) {
         this.db = db;
+        this.ct = ct;
 
         this.writeListener = task -> {
             if(task.isSuccessful())
@@ -86,6 +90,11 @@ public class DatabaseController {
     public void writeQRCode(QRCode qr) {
         assert(qr != null) : "You can't write a null object to the database!";
 
+        // Get the user from memory
+        MemoryController mc = new MemoryController(this.ct);
+        Profile p = mc.read();
+        String user = mc.readUser();
+
         // A batch write: a group of write operations to be done at once. Create the batch
         WriteBatch batch = db.batch();
         DocumentReference doc;
@@ -108,14 +117,75 @@ public class DatabaseController {
 
         // Add the geolocation & photo to the batch
         collection = doc.collection("userdata");
-        String user = "user"; // TODO: find a way to get the current user's username without context
         doc = collection.document(user);
 
         data = new HashMap<>();
-        data.put("location", qr.getGeolocation());
+        data.put("location", null);
+        data.put("photo", null); // TODO: write the photo correctly.
+
+        batch.set(doc, data);
+
+        // Update the player's profile to include this QRCode as one they have scanned.
+        p.addScanned(qr.getId());
+        ArrayList<String> scanned = p.getScanned();
+        mc.write(p);
+
+        collection = db.collection("users");
+        doc = collection.document(user);
+        batch.update(doc, "scanned", scanned);
+
+
+        // Issue the batch write
+        batch.commit().addOnCompleteListener(writeListener);
+    }
+
+    public void writeQRCode(QRCode qr, GeoPoint g) {
+        assert(qr != null) : "You can't write a null object to the database!";
+
+        // Get the user from memory
+        MemoryController mc = new MemoryController(this.ct);
+        Profile p = mc.read();
+        String user = mc.readUser();
+
+        // A batch write: a group of write operations to be done at once. Create the batch
+        WriteBatch batch = db.batch();
+        DocumentReference doc;
+
+        // The Score field
+        Map<String, Object> data = new HashMap<>();
+        data.put("score", qr.getScore());
+        // Set the location
+        collection = db.collection("QRcodes");
+        doc = collection.document(qr.getId());
+        // Add to the batch
+        batch.set(doc, data);
+
+        collection = doc.collection("comments");
+        // Add the comments to the batch. Skip any null comments.
+        for(Comment c : qr.getComments()) {
+            if(c==null) continue;
+            batch.set(collection.document(c.getId()), c);
+        }
+
+        // Add the geolocation & photo to the batch
+        collection = doc.collection("userdata");
+        doc = collection.document(user);
+
+        data = new HashMap<>();
+        data.put("location", g);
         data.put("photo", 3); // TODO: write the photo correctly.
 
         batch.set(doc, data);
+
+        // Update the player's profile to include this QRCode as one they have scanned.
+        p.addScanned(qr.getId());
+        ArrayList<String> scanned = p.getScanned();
+        mc.write(p);
+
+        collection = db.collection("users");
+        doc = collection.document(user);
+        batch.update(doc, "scanned", scanned);
+
 
         // Issue the batch write
         batch.commit().addOnCompleteListener(writeListener);
@@ -157,7 +227,7 @@ public class DatabaseController {
 
     public ArrayList<Profile> getUserSearchQuery(Task<QuerySnapshot> task) {
         QuerySnapshot result = task.getResult();
-        return (ArrayList<Profile>) result.toObjects(Profile.class); // FIXME: this line may not do what I'm hoping it does. May break everything...
+        return (ArrayList<Profile>) result.toObjects(Profile.class);
     }
 
     public Task<DocumentSnapshot> readQRCode(String id) {
@@ -169,7 +239,6 @@ public class DatabaseController {
         DocumentSnapshot doc = task.getResult();
         return new QRCode(doc.getId(), (int) doc.get("score"));
     }
-
 
 
 

@@ -42,8 +42,7 @@ public class DatabaseTest {
 
     @Test
     public void writeQRCode() {
-        GeoPoint gp = new GeoPoint(10.0, 10.0);
-        qr = new QRCode("sample1", gp, null, new ArrayList<>());
+        qr = new QRCode("sample1", new ArrayList<>());
         dc.writeQRCode(qr);
     }
 }
