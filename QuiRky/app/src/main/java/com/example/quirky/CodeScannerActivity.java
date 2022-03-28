@@ -15,11 +15,20 @@
 
 package com.example.quirky;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.view.PreviewView;
+
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.osmdroid.util.GeoPoint;
+
+import java.util.ArrayList;
 
 /**
  * Previews camera feed and allows scanning QR codes.
@@ -36,20 +45,56 @@ import androidx.camera.view.PreviewView;
  */
 public class CodeScannerActivity extends AppCompatActivity {
     private PreviewView previewView;
+    private Button scan_button;
+
     private CameraController cameraController;
+
+    private final String TAG = "CodeScannerActivity says";
 
     @Override
     @androidx.camera.core.ExperimentalGetImage
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO: Adjust the xml so that it matches the new fragment layout better (eg. there's currently two different back buttons)
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_code_scanner);
+
         previewView = findViewById(R.id.previewView);
+        scan_button = findViewById(R.id.scan_button);
+
         cameraController = new CameraController(this);
         cameraController.startCamera(previewView.createSurfaceProvider(), this);
-        Button scan_button = findViewById(R.id.scan_button);
         scan_button.setOnClickListener(view -> {
-            cameraController.captureQRCodes(this);
+            scan();
         });
+    }
+
+    @androidx.camera.core.ExperimentalGetImage
+    public void scan() {
+        ArrayList<QRCode> results = cameraController.captureQRCodes(this);
+        if(results.size() == 0) {
+            Log.d(TAG, "No QRCodes were scanned");
+            return;
+        } else if (results.size() > 1) {
+            Log.d(TAG, "Multiple QRCodes were scanned?");
+            return;
+        }
+
+        scan_button.setVisibility(View.INVISIBLE);
+
+        // TODO: Find a way to get the Image taken from the CameraController. Static Public Image in Cameracontroler?
+        // TODO: Get the current location of the phone
+        save(results.get(0), null, null);
+
+    }
+
+    public void save(QRCode qr, GeoPoint gp, Bitmap image) {
+        DatabaseController dc = new DatabaseController(FirebaseFirestore.getInstance(), this);
+        dc.writeQRCode(qr);
+
+        if(gp != null) {
+            // dc.saveLocation(qrcode, location);
+        }
+        if(image != null) {
+            // dc.saveImage(qrcode, image);
+        }
     }
 }
