@@ -161,6 +161,32 @@ public class DatabaseController {
     }
 
     /**
+     * Create or Update the Location a player scanned a QRCode
+     * @param qrid The ID of the QRCode
+     * @param user The User who scanned the code
+     * @param location The location the user scanned the code
+     */
+    public void writeQRCodeLocation(String qrid, String user, GeoPoint location) {
+        collection = db.collection("QRcodes").document(qrid).collection("userdata");
+        Map<String, Object> data = new HashMap<>();
+        data.put("location", location);
+        collection.document(user).update(data).addOnCompleteListener(writeListener);
+    }
+
+    /**
+     * Create or Update the Photo a player took of a QRCode
+     * @param qrid The ID of the QRCode
+     * @param user The User who scanned the code
+     * @param photo The photo the user took of the QRCode
+     */
+    public void writeQRCodePhoto(String qrid, String user, Drawable photo) {
+        collection = db.collection("QRcodes").document(qrid).collection("userdata");
+        Map<String, Object> data = new HashMap<>();
+        data.put("photo", photo);
+        collection.document(user).update(data).addOnCompleteListener(writeListener);
+    }
+
+    /**
      * Delete a QRCode completely from the Database. Only the Owner should be able to do this.
      * TODO: Implement a method to remove a QRCode from a players profile
      * @param qr The QRCode to delete
@@ -261,11 +287,26 @@ public class DatabaseController {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    /**
+     * Begin reading the userdata of a QRCode from the database.
+     * This is an Asynchronous operation, and such this method not return the result. The result can be obtained from getProfile()
+     * @param qrcode The ID of the QRCode in question
+     * @return A task representing the read operation. This can be passed to one of the following methods to get user-specific data about the QRCode
+     *          1. getQRCodeLocations(task), to get all the locations the QRCode has been scanned at
+     *          2. getQRCodePhotos(task), to get all the photos users have taken of the QRCode
+     *          3. getQRCodeScanners, to get the usernames of all players who have scanned the QRCode
+     */
     public Task<QuerySnapshot> readQRCodeUserData(String qrcode) {
         collection = db.collection("QRCodes").document(qrcode).collection("userdata");
         return collection.get();
     }
 
+    /**
+     * Get all the photos players have taken of a QRCode
+     * @param task The task returned by readQRCodeUserData(). Calling with any other task will result in errors.
+     * @return A list of GeoPoints objects, every place the QRCode has been scanned.
+     */
     public ArrayList<GeoPoint> getQRCodeLocations(Task<QuerySnapshot> task) {
         QuerySnapshot query = task.getResult();
         ArrayList<GeoPoint> locations = new ArrayList<>();
@@ -277,6 +318,11 @@ public class DatabaseController {
         return locations;
     }
 
+    /**
+     * Get all the photos players have taken of a QRCode
+     * @param task The task returned by readQRCodeUserData(). Calling with any other task will result in errors.
+     * @return A list of drawable objects
+     */
     public ArrayList<Drawable> getQRCodePhotos(Task<QuerySnapshot> task) {
         QuerySnapshot query = task.getResult();
         ArrayList<Drawable> photos = new ArrayList<>();
@@ -288,15 +334,19 @@ public class DatabaseController {
         return photos;
     }
 
+    /**
+     * Get the users who have scanned the QRCode
+     * @param task The task returned by readQRCodeUserData(). Calling with any other task will result in errors.
+     * @return A list of strings, the usernames of players who scanned the code.
+     */
     public ArrayList<String> getQRCodeScanners(Task<QuerySnapshot> task) {
         QuerySnapshot query = task.getResult();
-        ArrayList<String> photos = new ArrayList<>();
+        ArrayList<String> scanners = new ArrayList<>();
         for(DocumentSnapshot doc : query.getDocuments()) {
             if(doc == null) continue;
-            photos.add(doc.getId());
+            scanners.add(doc.getId());
         }
-        return photos;
+        return scanners;
     }
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
 }
