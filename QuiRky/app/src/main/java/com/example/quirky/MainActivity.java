@@ -78,6 +78,13 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         });
     }
 
+    @Override
+    public void LoginByQR() {
+        Intent i = new Intent(this, CodeScannerActivity.class);
+        startActivity(i);
+        // TODO: Currently LoginByQR just starts the camera activity, and does not do any logging in shenanigans.
+    }
+
     private void startSettingsActivity() {
         Intent i = new Intent(this, SettingsActivity.class);
         startActivity(i);

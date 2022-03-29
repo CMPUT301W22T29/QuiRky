@@ -63,10 +63,7 @@ public class ViewQRScannersFragment extends Fragment {
         list = view.findViewById(R.id.other_players_who_have_scanned_this_particular_qr_code_list);
 
         // Temporary filling of ArrayList
-        players = new ArrayList<>();
-        players.add("Player1");
-        players.add("Player2");
-        players.add("player3");
+        players = fragmentListener.getPlayers();
 
         recyclerListener = position -> startViewPlayerActivity(players.get(position));
 
