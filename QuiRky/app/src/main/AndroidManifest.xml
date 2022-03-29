@@ -18,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuiRky">
         <activity
+            android:name=".QRCodeController"
+            android:exported="false" />
+        <activity
             android:name=".GenerateActivity"
             android:exported="false" />
         <activity
