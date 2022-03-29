@@ -58,8 +58,8 @@ public class DatabaseController {
     private final OnCompleteListener writeListener;
     private final OnCompleteListener deleteListener;
 
-    public DatabaseController(FirebaseFirestore db, Context ct) {
-        this.db = db;
+    public DatabaseController(Context ct) {
+        this.db = FirebaseFirestore.getInstance();
         this.ct = ct;
 
         this.writeListener = task -> {
@@ -256,6 +256,26 @@ public class DatabaseController {
      * @return An ArrayList of profiles with usernames similar to the string given to startUserSearchQuery().
      */
     public ArrayList<Profile> getUserSearchQuery(Task<QuerySnapshot> task) {
+        QuerySnapshot result = task.getResult();
+        return (ArrayList<Profile>) result.toObjects(Profile.class);
+    }
+
+    /**
+     * Begin reading the entire 'users' collection from the database
+     * This is an Asynchronous operation, and such this method not return the result. The result can be obtained from getProfile()
+     * @return A task representing the read operation. This must be passed to getAllProfiles(task)
+     */
+    public Task<QuerySnapshot> readAllProfiles() {
+        collection = db.collection("users");
+        return collection.get();
+    }
+
+    /**
+     * Get the results of the readAllProfiles(); This method should only be called once the Task returned from it has completed.
+     * @param task The task returned from readAllProfiles(). Calling with any other task will result in errors.
+     * @return An ArrayList of all profiles in the database
+     */
+    public ArrayList<Profile> getAllProfiles(Task<QuerySnapshot> task) {
         QuerySnapshot result = task.getResult();
         return (ArrayList<Profile>) result.toObjects(Profile.class);
     }

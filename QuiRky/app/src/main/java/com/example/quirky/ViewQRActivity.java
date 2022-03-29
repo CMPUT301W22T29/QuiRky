@@ -47,7 +47,7 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_qr);
 
-        dc = new DatabaseController(FirebaseFirestore.getInstance(), this);
+        dc = new DatabaseController(this);
 
         i = getIntent();
         qrid = i.getStringExtra("code");

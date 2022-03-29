@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dm = new DatabaseController(FirebaseFirestore.getInstance(), this);
+        dm = new DatabaseController(this);
         mc = new MemoryController(this);
 
         Button getStarted = findViewById(R.id.getStarted);
