@@ -21,6 +21,8 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.view.PreviewView;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 /**
  * Previews camera feed and allows scanning QR codes.
  * <p>
@@ -37,6 +39,7 @@ import androidx.camera.view.PreviewView;
 public class CodeScannerActivity extends AppCompatActivity {
     private PreviewView previewView;
     private CameraController cameraController;
+    private DatabaseController databaseController;
 
     @Override
     @androidx.camera.core.ExperimentalGetImage
@@ -48,6 +51,9 @@ public class CodeScannerActivity extends AppCompatActivity {
         cameraController = new CameraController(this);
         cameraController.startCamera(previewView.createSurfaceProvider(), this);
         Button scan_button = findViewById(R.id.scan_button);
+
+        //databaseController = new DatabaseController(FirebaseFirestore.getInstance(), this);
+
         scan_button.setOnClickListener(view -> {
             cameraController.captureQRCodes(this);
         });
