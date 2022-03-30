@@ -8,12 +8,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.QuerySnapshot;
+
+/**
+ * This is the activity that shows once the app is opened
+ */
 public class MainActivity extends AppCompatActivity implements InputUnameLoginFragment.LoginFragListener {
 
     DatabaseController dm;
@@ -54,6 +57,11 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         }
     }
 
+    /**
+     * This method is to let user to confirm the info after the user have wrote the info and starts the HubActivity
+     * @param uname
+     * User name which it stores
+     */
     @Override
     public void OnClickConfirm(String uname) {
         // Read from the database to check if this username is already taken.
@@ -83,13 +91,14 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         Intent i = new Intent(this, CodeScannerActivity.class);
         startActivity(i);
         // TODO: Currently LoginByQR just starts the camera activity, and does not do any logging in shenanigans.
+        // TODO: Make sure permissions and stuff aren't buggered by this.
     }
 
     private void startSettingsActivity() {
         Intent i = new Intent(this, SettingsActivity.class);
         startActivity(i);
     }
-
+    
     private void startHubActivity() {
         Intent i = new Intent(this, StartingPageActivity.class);
         startActivity(i);
