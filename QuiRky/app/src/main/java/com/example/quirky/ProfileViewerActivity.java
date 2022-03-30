@@ -33,16 +33,15 @@ public class ProfileViewerActivity extends AppCompatActivity {
         title.setText(p.getUname());
         email.setText(p.getEmail());
         phone.setText(p.getPhone());
-        rank1.setText(String.valueOf(p.getRankingPoints()));
-        rank2.setText(String.valueOf(p.getRankingScanned()));
-        rank3.setText(String.valueOf(p.getRankingBiggestCode()));
+        rank1.setText(String.valueOf(p.getPointsOfScannedCodes()));
+        rank2.setText(String.valueOf(p.getNumberCodesScanned()));
+        rank3.setText(String.valueOf(p.getPointsOfLargestCodes()));
 
-        //MemoryController mc = new MemoryController(this);
-        //String appholder = mc.getUser();
-        String appholder = p.getUname(); // TODO: Refactor MC to get username of appholder more easily.
+        MemoryController mc = new MemoryController(this);
+        String appholder = mc.readUser();
 
         // If the user is viewing their own profile, show the profile button
-        if(appholder == p.getUname()) {
+        if( appholder.equals( p.getUname() ) ) {
             changeProfile.setOnClickListener(view -> changeProfile());
         } else {
             changeProfile.setVisibility(View.INVISIBLE);

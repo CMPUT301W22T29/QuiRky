@@ -46,7 +46,7 @@ public class PlayerSearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_search);
 
-        dc = new DatabaseController(FirebaseFirestore.getInstance(), this);
+        dc = new DatabaseController(this);
 
         usernames = new ArrayList<>();
         photos = new ArrayList<>();

@@ -36,8 +36,6 @@ import java.util.ArrayList;
 public class QRCode implements Parcelable {
     private String id; // id is hash of content.
     private int score;
-    private GeoPoint geolocation;
-    private Bitmap photo;                  // TODO: determine what datatype the photo will use. Not sure how to contain it in this class. Will also need to update constructor
     private ArrayList<Comment> comments;
 
     /**
@@ -46,39 +44,13 @@ public class QRCode implements Parcelable {
      * If the user does not want to save the content of the code, the constructor can be called with Boolean saveContent == False.
      * @param content
      *      - The content of the QRCode. This is mandatory, as it is used to find the QRCode's hash and score
-     * @param geolocation
-     *      - The location of the QRCode
-     * @param photo
-     *      - The photo of the QRCode. This is currently an Integer, and will need to be updated once we find how to store a Photo.
      * @param comments
      *      - The comments that have been posted on the QRCode, in an ArrayList<>
      */
-    public QRCode(String content, GeoPoint geolocation, Bitmap photo, ArrayList<Comment> comments) {
+    public QRCode(String content, ArrayList<Comment> comments) {
         this.id = QRCodeController.SHA256(content);
         this.score = QRCodeController.score(id);
-        this.photo = photo;
-        this.geolocation = geolocation;
         this.comments = comments;
-    }
-
-    /**
-     * The constructor to be used when the QRCode has no comments yet. This constructor likely be called when this is the first time the code has been scanned by any user.
-     * If the user does not want to save their geolocation or photo, constructor can be called with these values null.
-     * If the user does not want to save the content of the code, the constructor can be called with Boolean saveContent == False.
-     * The comments field will be initialised to an empty ArrayList.
-     * @param content
-     *      - The content of the QRCode. This is mandatory, as it is used to find the QRCode's hash and score
-     * @param geolocation
-     *      - The location of the QRCode
-     * @param photo
-     *      - The photo of the QRCode. This is currently an Integer, and will need to be updated once we find how to store a Photo.
-     */
-    public QRCode(String content, GeoPoint geolocation, Bitmap photo) {
-        this.id = QRCodeController.SHA256(content);
-        this.score = QRCodeController.score(id);
-        this.photo = photo;
-        this.geolocation = geolocation;
-        this.comments = new ArrayList<>();
     }
 
     /**
@@ -91,16 +63,22 @@ public class QRCode implements Parcelable {
         this.id = QRCodeController.SHA256(content);
         this.score = QRCodeController.score(id);
         this.comments = new ArrayList<>();
-        this.photo = null;
-        this.geolocation = null;
     }
 
+    /**
+     * Initialize a QRCode with an assigned ID. To be used when reading from Firestore? A
+     * @param id The ID of the QRCode
+     */
     public QRCode(String id, int score) {
         this.id = id;
         this.score = score;
         this.comments = new ArrayList<>();
-        this.photo = null;
-        this.geolocation = null;
+    }
+
+    public QRCode(String id, int score, ArrayList<Comment> comments) {
+        this.id = id;
+        this.score = score;
+        this.comments = comments;
     }
 
     /**
@@ -122,14 +100,6 @@ public class QRCode implements Parcelable {
      */
     public int getScore() {
         return score;
-    }
-
-    /**
-     * Getter for location
-     * @return The location of the qrcode as a Geopoint
-     */
-    public GeoPoint getGeolocation() {
-        return geolocation;
     }
 
     /**
@@ -161,30 +131,22 @@ public class QRCode implements Parcelable {
     }
 
     /**
-     * Setter for geolocation
-     * @param geolocation The geolocation to set the qrcode to.
+     * Set the comments on the QRCode
+     * @param comments An arraylist of comments
      */
-    public void setGeolocation(GeoPoint geolocation) {
-        this.geolocation = geolocation;
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
     }
-
-
-
-
 
     protected QRCode(Parcel in) {
         id = in.readString();
         score = in.readInt();
-        geolocation = in.readParcelable(GeoPoint.class.getClassLoader());
-        photo = in.readParcelable(Bitmap.class.getClassLoader());
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
         dest.writeInt(score);
-        dest.writeParcelable(geolocation, flags);
-        dest.writeParcelable(photo, flags);
     }
 
     @Override

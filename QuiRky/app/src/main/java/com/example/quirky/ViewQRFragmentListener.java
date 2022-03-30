@@ -8,9 +8,12 @@ package com.example.quirky;
 
 import androidx.fragment.app.Fragment;
 
+import java.util.ArrayList;
+
 public interface ViewQRFragmentListener {
     void changeFragment(Fragment frag);
     void commentsButton();
     void privateButton();
     void deleteButton();
+    ArrayList<String> getPlayers();
 }
