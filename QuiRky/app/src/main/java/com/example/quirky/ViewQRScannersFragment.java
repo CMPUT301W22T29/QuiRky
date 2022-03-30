@@ -63,10 +63,7 @@ public class ViewQRScannersFragment extends Fragment {
         list = view.findViewById(R.id.other_players_who_have_scanned_this_particular_qr_code_list);
 
         // Temporary filling of ArrayList
-        players = new ArrayList<>();
-        players.add("Player1");
-        players.add("Player2");
-        players.add("player3");
+        players = fragmentListener.getPlayers();
 
         recyclerListener = position -> startViewPlayerActivity(players.get(position));
 
@@ -79,7 +76,7 @@ public class ViewQRScannersFragment extends Fragment {
 
     private void startViewPlayerActivity(String username) {
         Log.d("ViewQRCodes Fragment Says", "You clicked on this username: " + username);
-        DatabaseController dc = new DatabaseController(FirebaseFirestore.getInstance(), getActivity());
+        DatabaseController dc = new DatabaseController(getActivity());
         dc.readProfile(username).addOnCompleteListener(task -> {
             Profile p = dc.getProfile(task);
             Intent i = new Intent(getContext(), ProfileViewerActivity.class);

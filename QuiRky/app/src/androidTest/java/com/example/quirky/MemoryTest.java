@@ -18,7 +18,7 @@ public class MemoryTest {
 
     @Before
     public void setup() {
-        //ct = getContext();      // TODO: Find how to get context in this class
+        ct = ct.getApplicationContext();      // TODO: follow this https://stackoverflow.com/questions/2095695/android-unit-tests-requiring-context
         mc = new MemoryController(ct);
     }
 
@@ -84,7 +84,7 @@ public class MemoryTest {
         assertEquals(p, result);
 
         p = new Profile("Second test", "abc", "123", new ArrayList<>());
-        p.setRankingPoints(5);
+        p.setPointsOfScannedCodes(5);
 
         mc.write(p);
         result = mc.read();

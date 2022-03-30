@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dm = new DatabaseController(FirebaseFirestore.getInstance(), this);
+        dm = new DatabaseController(this);
         mc = new MemoryController(this);
 
         Button getStarted = findViewById(R.id.getStarted);
@@ -76,6 +76,13 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
                 }
             }
         });
+    }
+
+    @Override
+    public void LoginByQR() {
+        Intent i = new Intent(this, CodeScannerActivity.class);
+        startActivity(i);
+        // TODO: Currently LoginByQR just starts the camera activity, and does not do any logging in shenanigans.
     }
 
     private void startSettingsActivity() {

@@ -12,10 +12,10 @@ import java.util.ArrayList;
 public class Profile implements Serializable {
     private String uname, email, phone;
 
-    // rankingScanned: Leaderboard ranking of number of QRCodes scanned
-    // rankingPoints: Leaderboard ranking of number of points accumulated
-    // rankingBiggestCode: Leaderboard ranking of largest single QRCode scanned
-    private int rankingScanned, rankingPoints, rankingBiggestCode;
+    // numberCodesScanned: the number of QRCodes the player has scanned
+    // pointsOfScannedCodes: the sum of points of all QRCodes the player has scanned
+    // pointsOfLargestCode: the points of the largest code the player has scanned
+    private int numberCodesScanned, pointsOfScannedCodes, pointsOfLargestCodes;
 
     // Array list of QRCode id's to track which codes the user has scanned.
     private ArrayList<String> scanned;
@@ -37,9 +37,9 @@ public class Profile implements Serializable {
         this.phone = phone;
         this.scanned = scanned;
 
-        this.rankingScanned = -1;
-        this.rankingPoints = -1;
-        this.rankingBiggestCode = -1;
+        this.numberCodesScanned = -1;
+        this.pointsOfScannedCodes = -1;
+        this.pointsOfLargestCodes = -1;
     }
 
     /**
@@ -54,9 +54,9 @@ public class Profile implements Serializable {
         this.email = "";
         this.phone = "";
 
-        this.rankingScanned = -1;
-        this.rankingPoints = -1;
-        this.rankingBiggestCode = -1;
+        this.numberCodesScanned = -1;
+        this.pointsOfScannedCodes = -1;
+        this.pointsOfLargestCodes = -1;
     }
 
     /**
@@ -144,48 +144,48 @@ public class Profile implements Serializable {
      * Getter for getRankingScanned
      * @return The position of the player in the global leaderboards for number of QRCodes scanned
      */
-    public int getRankingScanned() {
-        return rankingScanned;
+    public int getNumberCodesScanned() {
+        return numberCodesScanned;
     }
 
     /**
      * Setter for rankingScanned
-     * @param rankingScanned The new rank in the leadboard
+     * @param numberCodesScanned The new rank in the leadboard
      */
-    public void setRankingScanned(int rankingScanned) {
-        this.rankingScanned = rankingScanned;
+    public void setNumberCodesScanned(int numberCodesScanned) {
+        this.numberCodesScanned = numberCodesScanned;
     }
 
     /**
      * Getter for rankingPoints
      * @return The profile's rankingPoints
      */
-    public int getRankingPoints() {
-        return rankingPoints;
+    public int getPointsOfScannedCodes() {
+        return pointsOfScannedCodes;
     }
 
     /**
      * Setter for rankingPoints
-     * @param rankingPoints The profile's new rank
+     * @param pointsOfScannedCodes The profile's new rank
      */
-    public void setRankingPoints(int rankingPoints) {
-        this.rankingPoints = rankingPoints;
+    public void setPointsOfScannedCodes(int pointsOfScannedCodes) {
+        this.pointsOfScannedCodes = pointsOfScannedCodes;
     }
 
     /**
      * Getter for ranking in largest scoring QRCode scanned
      * @return Player's rank
      */
-    public int getRankingBiggestCode() {
-        return rankingBiggestCode;
+    public int getPointsOfLargestCodes() {
+        return pointsOfLargestCodes;
     }
 
     /**
      * Setter for ranking in largest scoring QRCode scanned
-     * @param rankingBiggestCode Player's new rank
+     * @param pointsOfLargestCodes Player's new rank
      */
-    public void setRankingBiggestCode(int rankingBiggestCode) {
-        this.rankingBiggestCode = rankingBiggestCode;
+    public void setPointsOfLargestCodes(int pointsOfLargestCodes) {
+        this.pointsOfLargestCodes = pointsOfLargestCodes;
     }
 
     /**
@@ -196,9 +196,9 @@ public class Profile implements Serializable {
         uname = in.readString();
         email = in.readString();
         phone = in.readString();
-        rankingScanned = in.readInt();
-        rankingPoints = in.readInt();
-        rankingBiggestCode = in.readInt();
+        numberCodesScanned = in.readInt();
+        pointsOfScannedCodes = in.readInt();
+        pointsOfLargestCodes = in.readInt();
         scanned = in.createStringArrayList();
     }
 }
