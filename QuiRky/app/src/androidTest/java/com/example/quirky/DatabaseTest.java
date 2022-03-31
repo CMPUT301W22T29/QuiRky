@@ -22,7 +22,7 @@ public class DatabaseTest {
     @Before
     public void setup() {
         ct = ct.getApplicationContext();
-        dc = new DatabaseController(FirebaseFirestore.getInstance(), ct);
+        dc = new DatabaseController(ct);
         c = null; p = null; qr = null;
     }
 

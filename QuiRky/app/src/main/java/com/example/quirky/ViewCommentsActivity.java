@@ -63,7 +63,7 @@ public class ViewCommentsActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         ct = getApplicationContext();
-        DM = new DatabaseController(FirebaseFirestore.getInstance(), ct);
+        DM = new DatabaseController(ct);
 
         // Has to be getting it from Fragment
       

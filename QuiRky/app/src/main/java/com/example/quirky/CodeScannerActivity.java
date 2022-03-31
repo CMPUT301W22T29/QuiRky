@@ -130,7 +130,7 @@ public class CodeScannerActivity extends AppCompatActivity {
     }
 
     public void save(QRCode qr, GeoPoint gp, Bitmap image) {
-        DatabaseController dc = new DatabaseController(FirebaseFirestore.getInstance(), this);
+        DatabaseController dc = new DatabaseController(this);
         dc.writeQRCode(qr);
 
         if(gp != null) {

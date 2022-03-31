@@ -9,8 +9,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Button;
+import java.util.ArrayList;
 import android.widget.Toast;
 
+/**
+ * This is the activity that has different areas user may want to go to, after the user logins
+ */
 public class StartingPageActivity extends AppCompatActivity
                                       implements ActivityCompat.OnRequestPermissionsResultCallback {
     private Button QRButton, ProfileButton, CommunityButton;
@@ -59,9 +63,7 @@ public class StartingPageActivity extends AppCompatActivity
     private void setQRlayout() {
         top.setText("Manage Codes");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, ViewQRActivity.class);    // TODO: implement activity that views player's qr codes
-            QRCode qr = new QRCode("this is my content");
-            i.putExtra("code", qr);
+            Intent i = new Intent(this, ManageCodesActivity.class);
             startActivity(i);
         });
 
