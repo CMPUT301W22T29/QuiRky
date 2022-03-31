@@ -166,9 +166,8 @@ public class CameraController {
      * @see QRCodeController
      */
     @androidx.camera.core.ExperimentalGetImage
-    public ArrayList<QRCode> captureQRCodes(Context context) {
-        ArrayList<QRCode> codes = new ArrayList<>();
-
+    public void captureQRCodes(Context context, CodeList<QRCode> codes) {
+        // TODO: edit javadoc
         imageCapture.takePicture(ContextCompat.getMainExecutor(context),
                 new ImageCapture.OnImageCapturedCallback() {
                     @Override
@@ -182,7 +181,5 @@ public class CameraController {
                         image.close();
                     }
                 });
-
-        return codes;
     }
 }
