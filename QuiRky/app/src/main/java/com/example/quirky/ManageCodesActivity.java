@@ -58,11 +58,7 @@ public class ManageCodesActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         };
-        /*/points.add("test1");
-        points.add("test1");
-        points.add("test1");
-        points.add("test1");
-        */
+
         QRCode qr1 = new QRCode("test1");
         QRCode qr2 = new QRCode("test2");
         QRCode qr3 = new QRCode("test3");

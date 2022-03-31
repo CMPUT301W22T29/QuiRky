@@ -191,9 +191,9 @@ public class DatabaseController {
      * TODO: Implement a method to remove a QRCode from a players profile
      * @param qr The QRCode to delete
      */
-    public void deleteQRCode(QRCode qr) {
+    public void deleteQRCode(String qr) {
         collection = db.collection("QRCodes");
-        collection.document(qr.getId()).delete().addOnCompleteListener(deleteListener);
+        collection.document(qr).delete().addOnCompleteListener(deleteListener);
     }
 
     /**
