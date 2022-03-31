@@ -306,8 +306,7 @@ public class DatabaseController {
         }
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
+    /* - - The Methods in this block are related to each other - - */
     /**
      * Begin reading the userdata of a QRCode from the database.
      * This is an Asynchronous operation, and such this method not return the result. The result can be obtained from getProfile()
@@ -369,4 +368,45 @@ public class DatabaseController {
         return scanners;
     }
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    /**
+     * Write a hash code to the Database that a player can use to log in with.
+     * @param hash The hash to be scanned that will log in a player.
+     * @param user The account the hash will log the player into.
+     */
+    public void writeLoginHash(String hash, String user) {
+        collection = db.collection("users");
+        collection.document(user).update("loginhash", hash).addOnCompleteListener(writeListener);
+    }
+
+    /**
+     * Begin searching the database for the account with the specified login hash.
+     * This is an Asynchronous operation, and such this method not return the result. The result can be obtained from getProfile()
+     * @param hash The password of the account to be logged into.
+     * @return A task representing the read operation. This must be passed to getProfileWithHash() once the task completes.
+     */
+    public Task<QuerySnapshot> readLoginHash(String hash) {
+        collection = db.collection("users");
+        return collection.whereEqualTo("loginhash", hash).get();
+    }
+
+    /**
+     * Get the account with the hash passed to by readLoginHash().
+     * @param task The task returned by readLoginHash(). Calling with any other task will result in errors.
+     * @return The account with the hash password passed to readLoginHash(). If no account has such password, return null.
+     */
+    public Profile getProfileWithHash(Task<QuerySnapshot> task) {
+        QuerySnapshot results = task.getResult();
+
+        if(results.isEmpty()) {
+            Log.d(TAG, "readLoginHash did not find any users with that password! Returned null!");
+            return null;
+        }
+        else if (results.size() > 1) {
+            Log.d(TAG, "For some reason there are multiple profiles with the same password. readLoginHash() returned null.");
+            return null;
+        }
+
+        return results.toObjects(Profile.class).get(0);
+    }
 }
