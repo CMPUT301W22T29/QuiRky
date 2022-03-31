@@ -19,14 +19,17 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class LeaderBoardController {
-    private Context ct;
     private DatabaseController dc;
     private ArrayList<Profile> players;
 
     public LeaderBoardController(Context ct) {
-        this.ct = ct;
         this.dc = new DatabaseController(ct);
         readAllPlayers();
+    }
+
+    // Constructor with Dependency Injection for testing purposes.
+    public LeaderBoardController(ArrayList<Profile> players) {
+        this.players = players;
     }
 
     private void readAllPlayers() {
@@ -84,5 +87,9 @@ public class LeaderBoardController {
         assert players != null : "Somehow the players have not yet been initialized!";
         sortPlayersByLargestScanned();
         return players;
+    }
+
+    public int findPlayer(Profile p) {
+        return players.indexOf(p);
     }
 }
