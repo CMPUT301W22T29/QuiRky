@@ -1,23 +1,32 @@
 package com.example.quirky;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.QuerySnapshot;
-public class MainActivity extends AppCompatActivity implements InputUnameLoginFragment.LoginFragListener {
+
+/**
+ * This is the activity that shows once the app is opened
+ */
+public class MainActivity extends AppCompatActivity implements
+                                                 InputUnameLoginFragment.LoginFragListener,
+                                                 ActivityCompat.OnRequestPermissionsResultCallback {
 
     DatabaseController dm;
     MemoryController mc;
+    private CameraActivitiesController cameraActivitiesController;
 
     /*
     Code for getting unique device ID taken from:
@@ -30,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        cameraActivitiesController = new CameraActivitiesController(this, true);
 
         dm = new DatabaseController(this);
         mc = new MemoryController(this);
@@ -54,6 +65,11 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         }
     }
 
+    /**
+     * This method is to let user to confirm the info after the user have wrote the info and starts the HubActivity
+     * @param uname
+     * User name which it stores
+     */
     @Override
     public void OnClickConfirm(String uname) {
         // Read from the database to check if this username is already taken.
@@ -78,10 +94,16 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         });
     }
 
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                                                      @NonNull int[] grantResults) {
+        cameraActivitiesController.getCameraPermissionRequestResult(requestCode, grantResults);
+    }
+
     @Override
     public void LoginByQR() {
-        Intent i = new Intent(this, CodeScannerActivity.class);
-        startActivity(i);
+        cameraActivitiesController.startCodeScannerActivity();
         // TODO: Currently LoginByQR just starts the camera activity, and does not do any logging in shenanigans.
     }
 
@@ -89,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         Intent i = new Intent(this, SettingsActivity.class);
         startActivity(i);
     }
-
+    
     private void startHubActivity() {
         Intent i = new Intent(this, StartingPageActivity.class);
         startActivity(i);

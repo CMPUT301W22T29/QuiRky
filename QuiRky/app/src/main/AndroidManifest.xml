@@ -24,6 +24,20 @@
         <activity
             android:name=".LeaderBoardActivity"
             android:exported="false" />
+	<activity
+            android:name=".delete_Players"
+            android:exported="false" />
+        <activity
+            android:name=".delete_QRCodes"
+            android:exported="false" />
+        <activity
+            android:name=".OwnerMenu"
+            android:exported="false" />
+        <activity
+            android:name=".ManageCodesActivity"
+            android:exported="false"
+            android:label="@string/title_activity_manage_codes"
+            android:theme="@style/Theme.QuiRky.NoActionBar" />
 
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
@@ -98,5 +112,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

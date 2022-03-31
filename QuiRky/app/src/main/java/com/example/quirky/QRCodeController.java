@@ -61,7 +61,8 @@ public class QRCodeController {
      *      - The activity that the user is interacting with to capture QR code images.
      * @see CameraController
      */
-    public static void scanQRCodes(InputImage inputImage, ArrayList<QRCode> codes, Context context) {
+    public static void scanQRCodes(InputImage inputImage, CodeList<QRCode> codes, Context context) {
+        // TODO: edit javadoc
         Task<List<Barcode>> result = codeScanner.process(inputImage)
                 .addOnSuccessListener(barcodes -> {
                     // Construct a QRCode with the scanned raw data
@@ -72,9 +73,6 @@ public class QRCodeController {
                         String text
                                 = "Could not find any QR codes. Move closer or further and try scanning again.";
                         Toast.makeText(context, text, Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(context, "Scanned " + codes.size() + " code(s)!",
-                                                                          Toast.LENGTH_LONG).show();
                     }
                 });
     }
@@ -121,5 +119,6 @@ public class QRCodeController {
         }
         return -(sum % 100); // Actually, wouldn't returning just the sum w/out the modulo be better,
                           // that way our leaderboard isn't saturated with a bunch of 99s or whatever
+                            // TODO: As fun as having negative scores sounds, probably best off to return the absolute value.
     }
 }

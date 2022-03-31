@@ -9,17 +9,24 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Button;
+import java.util.ArrayList;
 import android.widget.Toast;
 
-public class StartingPageActivity extends AppCompatActivity
-                                      implements ActivityCompat.OnRequestPermissionsResultCallback {
+/**
+ * This is the activity that has different areas user may want to go to, after the user logins
+ */
+public class StartingPageActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+
     private Button QRButton, ProfileButton, CommunityButton;
     private Button top, mid, bottom;
+    private CameraActivitiesController cameraActivitiesController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_starting_page);
+
+        cameraActivitiesController = new CameraActivitiesController(this, false);
 
         QRButton = findViewById(R.id.hub_qr_codes);
         ProfileButton = findViewById(R.id.hub_profile_button);
@@ -36,47 +43,28 @@ public class StartingPageActivity extends AppCompatActivity
         setQRlayout();
     }
 
-    private void startCodeScannerActivity() {
-        assert CameraController.hasCameraPermission(this);
-        Intent intent = new Intent(this, CodeScannerActivity.class);
-        startActivity(intent);
-    }
-
     @SuppressLint("MissingSuperCall")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                                                       @NonNull int[] grantResults) {
-        if (CameraController.requestingCameraPermissions(requestCode)) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startCodeScannerActivity();
-            } else {
-                Toast.makeText(this,"Please allow camera permissions to scan QR codes.",
-                                                                          Toast.LENGTH_LONG).show();
-            }
-        }
+        cameraActivitiesController.getCameraPermissionRequestResult(requestCode, grantResults);
     }
 
     private void setQRlayout() {
         top.setText("Manage Codes");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, ViewQRActivity.class);    // TODO: implement activity that views player's qr codes
-            QRCode qr = new QRCode("this is my content");
-            i.putExtra("code", qr);
+            Intent i = new Intent(this, ManageCodesActivity.class);
             startActivity(i);
         });
 
         mid.setText("Scan Codes");
         mid.setOnClickListener(view -> {
-            if (CameraController.hasCameraPermission(this)) {
-                startCodeScannerActivity();
-            } else {
-                CameraController.requestCameraPermission(this);
-            }
+            cameraActivitiesController.startCodeScannerActivity();
         });
 
         bottom.setText("Generate Codes");
         bottom.setOnClickListener(view -> {
-            Intent i = new Intent(this, GenerateActivity.class);    // TODO: implement generate qrcodes activity
+            Intent i = new Intent(this, GenerateActivity.class);
             startActivity(i);
         });
     }
@@ -95,7 +83,7 @@ public class StartingPageActivity extends AppCompatActivity
 
         mid.setText("My Stats");
         mid.setOnClickListener(view -> {
-            Intent i = new Intent(this, MyStatsActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, MyStatsActivity.class);
             startActivity(i);
         });
 
