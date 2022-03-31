@@ -73,10 +73,6 @@ public class QRCodeController {
                         String text
                                 = "Could not find any QR codes. Move closer or further and try scanning again.";
                         Toast.makeText(context, text, Toast.LENGTH_LONG).show();
-                    } else {
-                        //TODO: Remove
-                        Toast.makeText(context, "Scanned " + codes.size() + " code(s)!",
-                                                                          Toast.LENGTH_LONG).show();
                     }
                 });
     }
@@ -123,5 +119,6 @@ public class QRCodeController {
         }
         return -(sum % 100); // Actually, wouldn't returning just the sum w/out the modulo be better,
                           // that way our leaderboard isn't saturated with a bunch of 99s or whatever
+                            // TODO: As fun as having negative scores sounds, probably best off to return the absolute value.
     }
 }
