@@ -123,12 +123,16 @@ public class Profile implements Serializable {
 
     /**
      * Adds a QRCode to the list of scanned QRCodes. Updates stats to reflect the added code.
-     * @param qrId
-     *      - The ID of the QRCode the player has scanned
+     * Does nothing if the player already has this QRCode.
+     * @param qrId The ID of the QRCode the player has scanned
+     * @return Whether the QRCode was actually added or not.
      */
-    public void addScanned(String qrId) {
+    public boolean addScanned(String qrId) {
+        if(scanned.contains(qrId))
+            return false;
         scanned.add(qrId);
         updateStats();
+        return true;
     }
 
     /**
@@ -177,19 +181,5 @@ public class Profile implements Serializable {
         this.numberCodesScanned = ProfileController.calculateTotalScanned(this);
         this.pointsOfScannedCodes = ProfileController.calculateTotalPoints(this);
         this.pointsOfLargestCodes = ProfileController.calculateGreatestScore(this);
-    }
-
-    /**
-     * Constructor from a Parcel. Typically used when passing between activities
-     * @param in A parcel containing a profile
-     */
-    protected Profile(Parcel in) {
-        uname = in.readString();
-        email = in.readString();
-        phone = in.readString();
-        numberCodesScanned = in.readInt();
-        pointsOfScannedCodes = in.readInt();
-        pointsOfLargestCodes = in.readInt();
-        scanned = in.createStringArrayList();
     }
 }

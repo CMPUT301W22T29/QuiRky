@@ -39,6 +39,11 @@ public class MainActivity extends AppCompatActivity implements
         dm = new DatabaseController(this);
         mc = new MemoryController(this);
 
+        /* Temporary code for debugging login functionality.
+        QRCode qr = new QRCode("abc123");
+        dm.writeLoginHash(qr.getId(), "JJ");
+        */
+
         Button getStarted = findViewById(R.id.getStarted);
         Button settings = findViewById(R.id.setting);
         Button quit = findViewById(R.id.quit);
