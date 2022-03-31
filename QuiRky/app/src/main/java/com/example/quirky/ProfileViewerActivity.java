@@ -50,6 +50,7 @@ public class ProfileViewerActivity extends AppCompatActivity {
 
     public void changeProfile() {
         Intent intent = new Intent(this, EditProfileActivity.class);
+        intent.putExtra("profile", p);
         startActivity(intent);
     }
 }

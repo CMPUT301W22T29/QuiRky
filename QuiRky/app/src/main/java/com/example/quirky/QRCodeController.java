@@ -97,6 +97,8 @@ public class QRCodeController {
 
             // return Arrays.toString(temp);
             // return new String(temp, StandardCharsets.US_ASCII);
+            String unedited = new String(temp, StandardCharsets.UTF_8);
+
             return new String(temp, StandardCharsets.UTF_8);    //See: https://utf8-chartable.de/unicode-utf8-table.pl, should have a character for negative byte values
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();

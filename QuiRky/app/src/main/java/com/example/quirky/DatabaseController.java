@@ -207,11 +207,11 @@ public class DatabaseController {
 
     /**
      * Delete an account from the Database. Only the Owner should be able to do this.
-     * @param p The profile to be deleted
+     * @param username The username of the profile to delete
      */
-    public void deleteProfile(Profile p) {
+    public void deleteProfile(String username) {
         collection = db.collection("users");
-        collection.document(p.getUname()).delete().addOnCompleteListener(deleteListener);
+        collection.document(username).delete().addOnCompleteListener(deleteListener);
     }
 
     /**
@@ -408,5 +408,14 @@ public class DatabaseController {
         }
 
         return results.toObjects(Profile.class).get(0);
+    }
+
+    public Task<DocumentSnapshot> startCheckProfileExists(String username) {
+        collection = db.collection("users");
+        return collection.document(username).get();
+    }
+
+    public boolean checkProfileExists(Task<DocumentSnapshot> task) {
+        return task.getResult().getData() == null;
     }
 }

@@ -89,7 +89,7 @@
         <activity
             android:name=".EditProfileActivity"
             android:exported="false"
-            android:parentActivityName=".ProfileViewerActivity" />
+            android:parentActivityName=".StartingPageActivity" />
         <activity
             android:name=".MyQRCode"
             android:exported="false"
