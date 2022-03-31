@@ -21,7 +21,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
     private RecyclerView list;
     private QRAdapter adapter;
 
-    private final Profile user;
+    private Profile user;
     private ArrayList<Profile> players;
     private ArrayList<String> data = new ArrayList<>(); // For use with the adapter
     private LeaderBoardController lbc;
@@ -29,15 +29,13 @@ public class LeaderBoardActivity extends AppCompatActivity {
     private Boolean showTopPlayers;
 
 
-    public LeaderBoardActivity() {
-        MemoryController mc = new MemoryController(this);
-        user = mc.read();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leader_board);
+
+        MemoryController mc = new MemoryController(this);
+        user = mc.read();
 
         list = findViewById(R.id.leaderboard_list);
 
@@ -55,13 +53,13 @@ public class LeaderBoardActivity extends AppCompatActivity {
         myRank.setOnClickListener(view -> showTopPlayers = false);
         topRanks.setOnClickListener(view -> showTopPlayers = true);
 
-        lbc = new LeaderBoardController(this);
         adapter = new QRAdapter(data, new ArrayList<>(), this);
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         showTopPlayers = true;
-        sortByPoints();
+        lbc = new LeaderBoardController(this);
+        lbc.readAllPlayers().addOnCompleteListener(task -> sortByPoints());
     }
 
     private void sortByPoints() {
@@ -81,6 +79,17 @@ public class LeaderBoardActivity extends AppCompatActivity {
 
     private void updateDisplay() {
         data.clear();
+
+
+        if(players.size() <= 10) {
+            for(Profile p : players) {
+                if(p == null) continue;
+                data.add(p.getUname());
+            }
+            adapter.notifyDataSetChanged();
+            return;
+        }
+
         if(showTopPlayers) {
             // Show the Top 10 players on the leaderboard
             for(int i = 0; i < 10; i++) {

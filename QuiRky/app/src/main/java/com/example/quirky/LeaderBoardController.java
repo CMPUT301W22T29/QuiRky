@@ -21,10 +21,10 @@ import java.util.Comparator;
 public class LeaderBoardController {
     private DatabaseController dc;
     private ArrayList<Profile> players;
+    private final String ErrorTag = "You must call readAllPlayers() before you can sort the players!";
 
     public LeaderBoardController(Context ct) {
         this.dc = new DatabaseController(ct);
-        readAllPlayers();
     }
 
     // Constructor with Dependency Injection for testing purposes.
@@ -32,13 +32,15 @@ public class LeaderBoardController {
         this.players = players;
     }
 
-    private void readAllPlayers() {
-        dc.readAllProfiles().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    public Task<QuerySnapshot> readAllPlayers() {
+        Task<QuerySnapshot> read = dc.readAllProfiles();
+        read.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 players = dc.getAllProfiles(task);
             }
         });
+        return read;
     }
 
     private void sortPlayersByPoints() {

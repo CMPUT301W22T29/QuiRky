@@ -51,6 +51,7 @@ public class CodeScannerActivity extends AppCompatActivity {
 
     private CameraController cameraController;
     private DatabaseController dc;
+    MemoryController mc;
 
     private Boolean login;
 
@@ -79,6 +80,7 @@ public class CodeScannerActivity extends AppCompatActivity {
         cameraController.startCamera(previewView.createSurfaceProvider(), this);
 
         dc = new DatabaseController(this);
+        mc = new MemoryController(this);
 
         scan_button.setOnClickListener(view -> scan());
     }
@@ -142,7 +144,6 @@ public class CodeScannerActivity extends AppCompatActivity {
         }
 
         Toast.makeText(this, "Logging in as: " + p.getUname(), Toast.LENGTH_LONG).show();
-        MemoryController mc = new MemoryController(this);
         mc.write(p);
         mc.writeUser(p.getUname());
 
@@ -152,6 +153,13 @@ public class CodeScannerActivity extends AppCompatActivity {
 
     public void save(QRCode qr, GeoPoint gp, Bitmap image) {
         dc.writeQRCode(qr);
+        Profile p = mc.read();
+
+        p.addScanned(qr.getId());
+
+        // Update the local memory and database, because the player's statistics have changed.
+        mc.write(p);
+        dc.writeProfile(p);
 
         if(gp != null) {
             // dc.saveLocation(qrcode, location);

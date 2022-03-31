@@ -54,9 +54,9 @@ public class Profile implements Serializable {
         this.email = "";
         this.phone = "";
 
-        this.numberCodesScanned = -1;
-        this.pointsOfScannedCodes = -1;
-        this.pointsOfLargestCodes = -1;
+        this.numberCodesScanned = 0;
+        this.pointsOfScannedCodes = 0;
+        this.pointsOfLargestCodes = 0;
     }
 
     /**
@@ -122,22 +122,26 @@ public class Profile implements Serializable {
     }
 
     /**
-     * Adds a QRCode to the list of scanned QRCodes
+     * Adds a QRCode to the list of scanned QRCodes. Updates stats to reflect the added code.
      * @param qrId
      *      - The ID of the QRCode the player has scanned
      */
     public void addScanned(String qrId) {
         scanned.add(qrId);
+        updateStats();
     }
 
     /**
      * Removes a QRCode from the list of scanned QRCodes. Does nothing if the id is not in the array.
+     * Also updates the profile's stats to reflect the added code.
      * @param qrId
      *      - The ID of the QRCode the player wants to delete
      */
     public void removeScanned(String qrId) {
-        if(scanned.contains(qrId))
+        if(scanned.contains(qrId)) {
             scanned.remove(qrId);
+            updateStats();
+        }
     }
 
     /**
@@ -148,13 +152,6 @@ public class Profile implements Serializable {
         return numberCodesScanned;
     }
 
-    /**
-     * Setter for numberCodesScanned
-     * @param numberCodesScanned The number of codes the player has scanned in the leadboard
-     */
-    public void setNumberCodesScanned(int numberCodesScanned) {
-        this.numberCodesScanned = numberCodesScanned;
-    }
 
     /**
      * Getter for pointsOfScannedCodes
@@ -164,13 +161,6 @@ public class Profile implements Serializable {
         return pointsOfScannedCodes;
     }
 
-    /**
-     * Setter for pointsOfScannedCodes
-     * @param pointsOfScannedCodes The profile's sum of points
-     */
-    public void setPointsOfScannedCodes(int pointsOfScannedCodes) {
-        this.pointsOfScannedCodes = pointsOfScannedCodes;
-    }
 
     /**
      * Getter for pointsOfLargestCodes
@@ -181,11 +171,12 @@ public class Profile implements Serializable {
     }
 
     /**
-     * Setter for pointsOfLargestCodes
-     * @param pointsOfLargestCodes Point value of player's largest QRCode
+     * Call the ProfileController to update the player's statistics.
      */
-    public void setPointsOfLargestCodes(int pointsOfLargestCodes) {
-        this.pointsOfLargestCodes = pointsOfLargestCodes;
+    public void updateStats() {
+        this.numberCodesScanned = ProfileController.calculateTotalScanned(this);
+        this.pointsOfScannedCodes = ProfileController.calculateTotalPoints(this);
+        this.pointsOfLargestCodes = ProfileController.calculateGreatestScore(this);
     }
 
     /**

@@ -28,13 +28,7 @@ public class MainActivity extends AppCompatActivity implements
     MemoryController mc;
     private CameraActivitiesController cameraActivitiesController;
 
-    /*
-    Code for getting unique device ID taken from:
-    https://stackoverflow.com/a/2785493
-    Written by user:
-    https://stackoverflow.com/users/166712/anthony-forloney
-    Published May 7 2010
-    */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void LoginByQR() {
         cameraActivitiesController.startCodeScannerActivity();
-        // TODO: Currently LoginByQR just starts the camera activity, and does not do any logging in shenanigans.
     }
 
     private void startSettingsActivity() {
