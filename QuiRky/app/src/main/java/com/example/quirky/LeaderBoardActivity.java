@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
 
     private final Profile user;
     private ArrayList<Profile> players;
-    private ArrayList<String> data; // For use with the adapter
+    private ArrayList<String> data = new ArrayList<>(); // For use with the adapter
     private LeaderBoardController lbc;
 
     private Boolean showTopPlayers;
