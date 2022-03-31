@@ -15,7 +15,7 @@ import androidx.fragment.app.FragmentActivity;
  */
 public class SettingsActivity extends AppCompatActivity {
     private Switch locationSwitch;
-    private Switch gallerySwitch;
+
     private Button ownerSetting;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -23,7 +23,7 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setting);
 
         locationSwitch = (Switch) findViewById(R.id.locationSwitch);
-        gallerySwitch = (Switch) findViewById(R.id.gallerySwitch);
+
         ownerSetting = findViewById(R.id.goToOwnerSetting);
         Intent i = new Intent(this,OwnerMenu.class);
 
@@ -36,15 +36,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
-        gallerySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    // The toggle is enabled
-                } else {
-                    // The toggle is disabled
-                }
-            }
-        });
+
 
         ownerSetting.setOnClickListener(new View.OnClickListener() {
             @Override
