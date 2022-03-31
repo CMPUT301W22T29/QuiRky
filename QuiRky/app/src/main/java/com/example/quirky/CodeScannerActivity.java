@@ -15,6 +15,7 @@
 
 package com.example.quirky;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -76,45 +77,56 @@ public class CodeScannerActivity extends AppCompatActivity {
         scan_button.setOnClickListener(view -> scan());
     }
 
+    //TODO: javadocs, maybe.
     @androidx.camera.core.ExperimentalGetImage
     public void scan() {
-        ArrayList<QRCode> results = cameraController.captureQRCodes(this);
-        if(results.size() == 0) {
-            Log.d(TAG, "No QRCodes were scanned");
-            return;
-        } else if (results.size() > 1) {
-            Log.d(TAG, "Multiple QRCodes were scanned?");
-            return;
-        }
+        Context context = this;
+        CodeList<QRCode> codes = new CodeList<>();
+        codes.setOnCodeAddedListener(new OnCodeAddedListener<QRCode>() {
+            @Override
+            public void onCodeAdded(CodeList<QRCode> codeList) {
+                //TODO: Fragment stuff
 
-        setVisibility(false);
+                if(codeList.size() == 0) {
+                    Log.d(TAG, "No QRCodes were scanned");
+                    return;
+                } else if (codeList.size() > 1) {
+                    Log.d(TAG, "Multiple QRCodes were scanned?");
+                    return;
+                }
 
-        save_button.setOnClickListener(view -> {
-            GeoPoint gp;
-            Bitmap photo;
-            if(location_switch.isChecked()) {
-                gp = null;
-                // GeoPoint gp = results.get(0).getLocation(); TODO: Figure out how to get location from inside the listener
-            } else {
-                gp = null;
+                setVisibility(false);
+
+                save_button.setOnClickListener(view -> {
+                    GeoPoint gp;
+                    Bitmap photo;
+                    if(location_switch.isChecked()) {
+                        gp = null;
+                        // GeoPoint gp = results.get(0).getLocation(); TODO: Figure out how to get location from inside the listener
+                    } else {
+                        gp = null;
+                    }
+
+                    if(photo_switch.isChecked()) {
+                        photo = null;
+                        // photo = results.get(0).getLocation(); // TODO: Figure out how to get the photo of the code
+                        //FIXME: Need to direct to a new photo capture activity, rather than saving the image of the QRCode
+                    } else {
+                        photo = null;
+                    }
+
+                    save(codeList.get(0), gp, photo);
+                    Toast.makeText(context, "QRCode saved!", Toast.LENGTH_LONG).show();
+                    setVisibility(true);
+                });
+
+                cancel_button.setOnClickListener(view -> {
+                    save_button.setOnClickListener(null);
+                    setVisibility(true);
+                });
             }
-
-            if(photo_switch.isChecked()) {
-                photo = null;
-                // photo = results.get(0).getLocation(); // TODO: Figure out how to get the photo of the code
-            } else {
-                photo = null;
-            }
-
-            save(results.get(0), gp, photo);
-            Toast.makeText(this, "QRCode saved!", Toast.LENGTH_LONG).show();
-            setVisibility(true);
         });
-
-        cancel_button.setOnClickListener(view -> {
-            save_button.setOnClickListener(null);
-            setVisibility(true);
-        });
+        cameraController.captureQRCodes(this, codes);
     }
 
     public void save(QRCode qr, GeoPoint gp, Bitmap image) {

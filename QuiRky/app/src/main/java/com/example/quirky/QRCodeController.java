@@ -61,7 +61,8 @@ public class QRCodeController {
      *      - The activity that the user is interacting with to capture QR code images.
      * @see CameraController
      */
-    public static void scanQRCodes(InputImage inputImage, ArrayList<QRCode> codes, Context context) {
+    public static void scanQRCodes(InputImage inputImage, CodeList<QRCode> codes, Context context) {
+        // TODO: edit javadoc
         Task<List<Barcode>> result = codeScanner.process(inputImage)
                 .addOnSuccessListener(barcodes -> {
                     // Construct a QRCode with the scanned raw data
@@ -73,6 +74,7 @@ public class QRCodeController {
                                 = "Could not find any QR codes. Move closer or further and try scanning again.";
                         Toast.makeText(context, text, Toast.LENGTH_LONG).show();
                     } else {
+                        //TODO: Remove
                         Toast.makeText(context, "Scanned " + codes.size() + " code(s)!",
                                                                           Toast.LENGTH_LONG).show();
                     }
