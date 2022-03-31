@@ -37,9 +37,9 @@ public class Profile implements Serializable {
         this.phone = phone;
         this.scanned = scanned;
 
-        this.numberCodesScanned = -1;
-        this.pointsOfScannedCodes = -1;
-        this.pointsOfLargestCodes = -1;
+        this.numberCodesScanned = ProfileController.calculateTotalScanned(this);
+        this.pointsOfScannedCodes = ProfileController.calculateTotalPoints(this);
+        this.pointsOfLargestCodes = ProfileController.calculateGreatestScore(this);
     }
 
     /**
@@ -141,48 +141,48 @@ public class Profile implements Serializable {
     }
 
     /**
-     * Getter for getRankingScanned
-     * @return The position of the player in the global leaderboards for number of QRCodes scanned
+     * Getter for numberCodesScanned
+     * @return The number of codes the player has scanned
      */
     public int getNumberCodesScanned() {
         return numberCodesScanned;
     }
 
     /**
-     * Setter for rankingScanned
-     * @param numberCodesScanned The new rank in the leadboard
+     * Setter for numberCodesScanned
+     * @param numberCodesScanned The number of codes the player has scanned in the leadboard
      */
     public void setNumberCodesScanned(int numberCodesScanned) {
         this.numberCodesScanned = numberCodesScanned;
     }
 
     /**
-     * Getter for rankingPoints
-     * @return The profile's rankingPoints
+     * Getter for pointsOfScannedCodes
+     * @return The profile's sum of points
      */
     public int getPointsOfScannedCodes() {
         return pointsOfScannedCodes;
     }
 
     /**
-     * Setter for rankingPoints
-     * @param pointsOfScannedCodes The profile's new rank
+     * Setter for pointsOfScannedCodes
+     * @param pointsOfScannedCodes The profile's sum of points
      */
     public void setPointsOfScannedCodes(int pointsOfScannedCodes) {
         this.pointsOfScannedCodes = pointsOfScannedCodes;
     }
 
     /**
-     * Getter for ranking in largest scoring QRCode scanned
-     * @return Player's rank
+     * Getter for pointsOfLargestCodes
+     * @return Point value of player's largest QRCode
      */
     public int getPointsOfLargestCodes() {
         return pointsOfLargestCodes;
     }
 
     /**
-     * Setter for ranking in largest scoring QRCode scanned
-     * @param pointsOfLargestCodes Player's new rank
+     * Setter for pointsOfLargestCodes
+     * @param pointsOfLargestCodes Point value of player's largest QRCode
      */
     public void setPointsOfLargestCodes(int pointsOfLargestCodes) {
         this.pointsOfLargestCodes = pointsOfLargestCodes;
