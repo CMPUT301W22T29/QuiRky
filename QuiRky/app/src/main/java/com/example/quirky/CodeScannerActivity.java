@@ -127,7 +127,6 @@ public class CodeScannerActivity extends AppCompatActivity {
             }
 
             save(codeList.get(0), gp, photo);
-            Toast.makeText(this, "QRCode saved!", Toast.LENGTH_LONG).show();
             setVisibility(true);
         });
 
@@ -155,7 +154,10 @@ public class CodeScannerActivity extends AppCompatActivity {
         dc.writeQRCode(qr);
         Profile p = mc.read();
 
-        p.addScanned(qr.getId());
+        if(! p.addScanned(qr.getId()) ) {
+            Toast.makeText(this, "You already have that QRCode!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Update the local memory and database, because the player's statistics have changed.
         mc.write(p);
@@ -167,6 +169,9 @@ public class CodeScannerActivity extends AppCompatActivity {
         if(image != null) {
             // dc.saveImage(qrcode, image);
         }
+
+        Toast.makeText(this, "QRCode saved!", Toast.LENGTH_LONG).show();
+
     }
 
     /**
