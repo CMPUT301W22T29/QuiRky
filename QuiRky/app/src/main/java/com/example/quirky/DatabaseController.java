@@ -134,18 +134,6 @@ public class DatabaseController {
             batch.set(collection.document(c.getId()), c);
         }
 
-        /* TODO: Writing these fields should be in a seperate method
-        // Add the geolocation & photo to the batch
-        collection = doc.collection("userdata");
-        doc = collection.document(user);
-
-        data = new HashMap<>();
-        data.put("location", null);
-        data.put("photo", null);
-
-        batch.set(doc, data);
-        */
-
         // Update the player's profile to include this QRCode as one they have scanned.
         p.addScanned(qr.getId());
         ArrayList<String> scanned = p.getScanned();
@@ -304,6 +292,26 @@ public class DatabaseController {
             Log.d(TAG, "getQRCode returned a Null object");
             return null;
         }
+    }
+
+    /**
+     * Begin reading every QRCode from the database. This is an asynchronous operation and as such does not return the data.
+     * @return A task representing the read operation. Pass this task to getAllQRCodes() to get the data, once the task completes.
+     */
+    public Task<QuerySnapshot> readAllQRCodes() {
+        collection = db.collection("QRcodes");
+        return collection.get();
+    }
+
+    /**
+     * Finish reading every QRCode from the database.
+     * @param task The task returned by readAllQRCodes. Calling with any other task will result in errors.
+     * @return An ArrayList containing every QRCode in the database.
+     */
+    public ArrayList<QRCode> getAllQRCodes(Task<QuerySnapshot> task) {
+        QuerySnapshot result = task.getResult();
+        return (ArrayList<QRCode>) result.toObjects(QRCode.class);
+
     }
 
     /* - - The Methods in this block are related to each other - - */
