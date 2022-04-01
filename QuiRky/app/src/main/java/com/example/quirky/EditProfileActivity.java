@@ -78,6 +78,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void write(Boolean newUsername) {
         mc.write(p);
+        mc.writeUser(p.getUname());
         dc.writeProfile(p);
 
         if(newUsername) {
@@ -89,7 +90,6 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void exit() {
-        Intent i = new Intent(this, StartingPageActivity.class);
-        startActivity(i);
+        finish();
     }
 }

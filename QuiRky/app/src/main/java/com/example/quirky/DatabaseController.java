@@ -45,12 +45,11 @@ import java.util.Map;
 // Made By:
 // https://www.youtube.com/channel/UC_Fh8kvtkVPkeihBs42jGcA
 // Published April 15, 2018
+@SuppressWarnings({"unchecked", "ConstantConditions"})
 public class DatabaseController {
     private final String TAG = "DatabaseController says: ";
 
-    /* ~~~~~~~~~~~~~~~~~~~~~
-        TODO: Look into AtomicReference<>, or Callback Interfaces
-       ~~~~~~~~~~~~~~~~~~~~~ */
+
     private final FirebaseFirestore db;
     private final Context ct;
 
@@ -78,7 +77,7 @@ public class DatabaseController {
     }
 
     /**
-     * Add a comment to a QRCode in the databse
+     * Add a comment to a QRCode in the database
      * @param c The comment to write
      * @param id The QRCode the comment is written on
      */
@@ -418,11 +417,21 @@ public class DatabaseController {
         return results.toObjects(Profile.class).get(0);
     }
 
+    /**
+     * Start checking if a user exists in the database. This is an asynchronous operation, and as such this method will not return the data.
+     * @param username The username to check for
+     * @return A task representing the read operation. Pass this to checkProfileExists() once the task completes
+     */
     public Task<DocumentSnapshot> startCheckProfileExists(String username) {
         collection = db.collection("users");
         return collection.document(username).get();
     }
 
+    /**
+     * Check if a user exists in the database.
+     * @param task The task returned by startCheckProfileExists(). Calling with any other task will result in errors.
+     * @return True if the user exists in the database. False otherwise.
+     */
     public boolean checkProfileExists(Task<DocumentSnapshot> task) {
         return task.getResult().getData() == null;
     }
