@@ -6,8 +6,10 @@ import androidx.core.app.ActivityCompat;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.Toast;
 
 /**
  * This is the activity that has different areas user may want to go to, after the user logins
@@ -45,6 +47,15 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                                                       @NonNull int[] grantResults) {
         cameraActivitiesController.getCameraPermissionRequestResult(requestCode, grantResults);
+        if (MapController.requestingLocationPermissions(requestCode)) {
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(this, "Permission Granted!", Toast.LENGTH_SHORT).show();
+                Intent in = new Intent(this, MapActivity.class);
+                startActivity(in);
+            } else{
+                Toast.makeText(this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void setQRlayout() {
@@ -106,8 +117,12 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
 
         bottom.setText("Nearby QR Codes");
         bottom.setOnClickListener(view -> {
-            Intent i = new Intent(this, MapActivity.class);
-            startActivity(i);
+            if (MapController.hasLocationPermissions(this)) {
+                Intent intent = new Intent(this, MapActivity.class);
+                startActivity(intent);
+            } else {
+                MapController.requestLocationPermission(this);
+            }
         });
     }
 }
