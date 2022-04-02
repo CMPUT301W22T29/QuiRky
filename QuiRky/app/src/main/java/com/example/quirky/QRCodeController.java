@@ -20,6 +20,7 @@ import static com.google.common.math.IntMath.pow;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,6 +48,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * A controller class that computes data needed by the <code>QRCode</code> model.
@@ -55,6 +57,7 @@ import java.util.List;
  *
  * @author Sean Meyers
  * @author Jonathen Adsit
+ * @author Dexter Dai
  * @version 0.2.1
  * @see androidx.camera.core
  * @see CameraController
@@ -159,7 +162,57 @@ public class QRCodeController {
     public static String hashCode(String rawValue) {
         return hash.hashString(rawValue, StandardCharsets.US_ASCII).toString();}
 
-    public QRCode getQrCodes(){
-        return getQrCodes();
+    public static String getRandomString(int length){
+        /**
+         * Generate the a Random QR code ImageView
+         *
+         * @param length
+         *      - Generate
+         * @param codes
+         *      - generated qr code
+         */
+        StringBuilder val = new StringBuilder();
+        Random random = new Random();
+        String finalString;
+        for (int i = 0; i<length;i++){
+            int chatTypa = random.nextInt(3);
+            switch (chatTypa){
+                case 0:
+                    val.append(random.nextInt(10));
+                    break;
+                case 1:
+                    val.append((char) (random.nextInt(26)+97));
+                    break;
+                //capital
+                case 2:
+                    val.append((char)(random.nextInt(26)+65));
+            }
+        }
+        finalString = val.toString();
+        return  finalString;
+    }
+    public static Bitmap generateQR(){
+        /**
+         * Generate the a Random QR code ImageView
+         *
+         * @param string
+         *      - The generated qr code based on this string
+         * @param codes
+         *      - generated qr code
+         */
+        String text = getRandomString(18);
+
+        Bitmap generatedQRCode = null;
+        MultiFormatWriter writer = new MultiFormatWriter();
+        try {
+            BitMatrix matrix = writer.encode(text, BarcodeFormat.QR_CODE, 400, 400);
+            BarcodeEncoder encoder = new BarcodeEncoder();
+            Bitmap bitmap = encoder.createBitmap(matrix);
+            generatedQRCode = bitmap;
+        }catch (WriterException e)
+        {
+            e.printStackTrace();
+        }
+        return generatedQRCode;
     }
 }

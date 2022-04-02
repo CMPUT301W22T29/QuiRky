@@ -1,5 +1,7 @@
 package com.example.quirky;
 
+import static com.example.quirky.QRCodeController.generateQR;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -33,7 +35,9 @@ public class GenerateActivity extends AppCompatActivity {
         qrImage = findViewById(R.id.qrfield);
 
         qrGeneraBtn1.setOnClickListener(v->{
-            generateQR();
+            Bitmap generated =null;
+            generated = QRCodeController.generateQR();
+            qrImage.setImageBitmap(generated);
         });
         getBack = findViewById(R.id.randomGenerBack);
         getBack.setOnClickListener(new View.OnClickListener() {
@@ -41,44 +45,7 @@ public class GenerateActivity extends AppCompatActivity {
             public void onClick(View view) {
                 returnToPre();
             }
-
     });
-
-    }
-    public static String getRandomString(int length){
-        StringBuilder val = new StringBuilder();
-        Random random = new Random();
-        String finalString;
-        for (int i = 0; i<length;i++){
-            int chatTypa = random.nextInt(3);
-            switch (chatTypa){
-                case 0:
-                    val.append(random.nextInt(10));
-                    break;
-                case 1:
-                    val.append((char) (random.nextInt(26)+97));
-                    break;
-                //capital
-                case 2:
-                    val.append((char)(random.nextInt(26)+65));
-            }
-        }
-        finalString = val.toString();
-        return  finalString;
-    }
-    private void generateQR(){
-        String text = getRandomString(18);
-        MultiFormatWriter writer = new MultiFormatWriter();
-        try {
-            BitMatrix matrix = writer.encode(text, BarcodeFormat.QR_CODE, 400, 400);
-            BarcodeEncoder encoder = new BarcodeEncoder();
-            Bitmap bitmap = encoder.createBitmap(matrix);
-
-            qrImage.setImageBitmap(bitmap);
-        }catch (WriterException e)
-        {
-            e.printStackTrace();
-        }
     }
     public void returnToPre() { //to previous page
         Intent intent1 = new Intent(this, StartingPageActivity.class);
