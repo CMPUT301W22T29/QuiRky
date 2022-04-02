@@ -127,8 +127,6 @@ public class QRCodeController {
         for (int i = 0; i < hash.length(); i++) {
             sum += hash.charAt(i);
         }
-        return -(sum % 100); // Actually, wouldn't returning just the sum w/out the modulo be better,
-                          // that way our leaderboard isn't saturated with a bunch of 99s or whatever
-                            // TODO: As fun as having negative scores sounds, probably best off to return the absolute value.
+        return sum % 100;
     }
 }
