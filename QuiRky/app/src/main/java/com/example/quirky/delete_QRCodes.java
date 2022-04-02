@@ -37,7 +37,18 @@ public class delete_QRCodes extends AppCompatActivity{
         no = findViewById(R.id.cancel);
         ArrayList<String> QRIDs = new ArrayList<>();
         ArrayList<Drawable> photos = new ArrayList<>();
+        dc.readAllQRCodes().addOnCompleteListener(task -> {
+            ArrayList<QRCode> qrCodes = new ArrayList<>();
+            qrCodes = dc.getAllQRCodes(task);
+            for(int i = 0; i < qrCodes.size(); i ++){
+                QRIDs.add(String.valueOf(qrCodes.get(i).getScore()));
+            }
+            set_QRCodeAdapter = new QRAdapter(QRIDs, photos, this, set_recyclerListener);
 
+            set_QRCODE_list.setAdapter(set_QRCodeAdapter);
+
+            set_QRCODE_list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        });
         set_recyclerListener = new RecyclerClickerListener(){
             @Override
             public void OnClickListItem(int position) {
@@ -60,24 +71,6 @@ public class delete_QRCodes extends AppCompatActivity{
                 });
             }
         };
-
-
-
-        QRCode qr1 = new QRCode("test1");
-        QRCode qr2 = new QRCode("test2");
-        QRCode qr3 = new QRCode("test3");
-
-        QRIDs.add(String.valueOf(qr1.getScore()));
-        QRIDs.add(String.valueOf(qr2.getScore()));
-        QRIDs.add(String.valueOf(qr3.getScore()));
-
-
-        set_QRCodeAdapter = new QRAdapter(QRIDs, photos, this, set_recyclerListener);
-
-        set_QRCODE_list.setAdapter(set_QRCodeAdapter);
-
-        set_QRCODE_list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-
     }
 }
 

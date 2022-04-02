@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
@@ -36,18 +37,29 @@ public class delete_Players extends AppCompatActivity {
         linearLayout1 = findViewById(R.id.linearLayout1);
         yes = findViewById(R.id.confirm);
         no = findViewById(R.id.cancel);
-
+        ArrayList<Drawable> photos = new ArrayList<>();
         ArrayList<String> Usernames = new ArrayList<>();
+        dc.readAllProfiles().addOnCompleteListener(task -> {
+            ArrayList<Profile> profiles = new ArrayList<>();
+            profiles = dc.getAllProfiles(task);
+            for(int i = 0; i < profiles.size(); i ++){
+                Usernames.add(profiles.get(i).getUname());
+            }
+            set_PlayerAdapter = new QRAdapter(Usernames, photos, this, set_recyclerListener);
 
-        /*set_recyclerListener = new RecyclerClickerListener(){
+            set_Player_list.setAdapter(set_PlayerAdapter);
+
+            set_Player_list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        });
+        set_recyclerListener = new RecyclerClickerListener(){
             @Override
             public void OnClickListItem(int position) {
                 linearLayout1.setVisibility(View.VISIBLE);
                 yes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        dc.deleteQRCode(QRIDs.get(position));
-                        QRIDs.remove(position);
+                        dc.deleteQRCode(Usernames.get(position));
+                        Usernames.remove(position);
                         linearLayout1.setVisibility(View.INVISIBLE);
                         set_PlayerAdapter.notifyDataSetChanged();
                     }
@@ -62,23 +74,6 @@ public class delete_Players extends AppCompatActivity {
             }
         };
 
-
-
-        QRCode qr1 = new QRCode("test1");
-        QRCode qr2 = new QRCode("test2");
-        QRCode qr3 = new QRCode("test3");
-
-        QRIDs.add(String.valueOf(qr1.getScore()));
-        QRIDs.add(String.valueOf(qr2.getScore()));
-        QRIDs.add(String.valueOf(qr3.getScore()));
-
-
-        set_Player_list = new QRAdapter(QRIDs, photos, this, set_recyclerListener);
-
-        set_Player_list.setAdapter(set_PlayerAdapter);
-
-        set_Player_list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        */
     }
 
 
