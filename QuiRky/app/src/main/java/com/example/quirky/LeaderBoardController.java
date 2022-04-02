@@ -19,23 +19,28 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class LeaderBoardController {
-    private Context ct;
     private DatabaseController dc;
     private ArrayList<Profile> players;
+    private final String ErrorTag = "You must call readAllPlayers() before you can sort the players!";
 
     public LeaderBoardController(Context ct) {
-        this.ct = ct;
         this.dc = new DatabaseController(ct);
-        readAllPlayers();
     }
 
-    private void readAllPlayers() {
-        dc.readAllProfiles().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    // Constructor with Dependency Injection for testing purposes.
+    public LeaderBoardController(ArrayList<Profile> players) {
+        this.players = players;
+    }
+
+    public Task<QuerySnapshot> readAllPlayers() {
+        Task<QuerySnapshot> read = dc.readAllProfiles();
+        read.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 players = dc.getAllProfiles(task);
             }
         });
+        return read;
     }
 
     private void sortPlayersByPoints() {
@@ -84,5 +89,9 @@ public class LeaderBoardController {
         assert players != null : "Somehow the players have not yet been initialized!";
         sortPlayersByLargestScanned();
         return players;
+    }
+
+    public int findPlayer(Profile p) {
+        return players.indexOf(p);
     }
 }

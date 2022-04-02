@@ -45,12 +45,11 @@ import java.util.Map;
 // Made By:
 // https://www.youtube.com/channel/UC_Fh8kvtkVPkeihBs42jGcA
 // Published April 15, 2018
+@SuppressWarnings({"unchecked", "ConstantConditions"})
 public class DatabaseController {
     private final String TAG = "DatabaseController says: ";
 
-    /* ~~~~~~~~~~~~~~~~~~~~~
-        TODO: Look into AtomicReference<>, or Callback Interfaces
-       ~~~~~~~~~~~~~~~~~~~~~ */
+
     private final FirebaseFirestore db;
     private final Context ct;
 
@@ -78,7 +77,7 @@ public class DatabaseController {
     }
 
     /**
-     * Add a comment to a QRCode in the databse
+     * Add a comment to a QRCode in the database
      * @param c The comment to write
      * @param id The QRCode the comment is written on
      */
@@ -133,18 +132,6 @@ public class DatabaseController {
             if(c==null) continue;
             batch.set(collection.document(c.getId()), c);
         }
-
-        /* TODO: Writing these fields should be in a seperate method
-        // Add the geolocation & photo to the batch
-        collection = doc.collection("userdata");
-        doc = collection.document(user);
-
-        data = new HashMap<>();
-        data.put("location", null);
-        data.put("photo", null);
-
-        batch.set(doc, data);
-        */
 
         // Update the player's profile to include this QRCode as one they have scanned.
         p.addScanned(qr.getId());
@@ -207,11 +194,11 @@ public class DatabaseController {
 
     /**
      * Delete an account from the Database. Only the Owner should be able to do this.
-     * @param p The profile to be deleted
+     * @param username The username of the profile to delete
      */
-    public void deleteProfile(Profile p) {
+    public void deleteProfile(String username) {
         collection = db.collection("users");
-        collection.document(p.getUname()).delete().addOnCompleteListener(deleteListener);
+        collection.document(username).delete().addOnCompleteListener(deleteListener);
     }
 
     /**
@@ -306,8 +293,27 @@ public class DatabaseController {
         }
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    /**
+     * Begin reading every QRCode from the database. This is an asynchronous operation and as such does not return the data.
+     * @return A task representing the read operation. Pass this task to getAllQRCodes() to get the data, once the task completes.
+     */
+    public Task<QuerySnapshot> readAllQRCodes() {
+        collection = db.collection("QRcodes");
+        return collection.get();
+    }
 
+    /**
+     * Finish reading every QRCode from the database.
+     * @param task The task returned by readAllQRCodes. Calling with any other task will result in errors.
+     * @return An ArrayList containing every QRCode in the database.
+     */
+    public ArrayList<QRCode> getAllQRCodes(Task<QuerySnapshot> task) {
+        QuerySnapshot result = task.getResult();
+        return (ArrayList<QRCode>) result.toObjects(QRCode.class);
+
+    }
+
+    /* - - The Methods in this block are related to each other - - */
     /**
      * Begin reading the userdata of a QRCode from the database.
      * This is an Asynchronous operation, and such this method not return the result. The result can be obtained from getProfile()
@@ -369,4 +375,64 @@ public class DatabaseController {
         return scanners;
     }
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    /**
+     * Write a hash code to the Database that a player can use to log in with.
+     * @param hash The hash to be scanned that will log in a player.
+     * @param user The account the hash will log the player into.
+     */
+    public void writeLoginHash(String hash, String user) {
+        collection = db.collection("users");
+        collection.document(user).update("loginhash", hash).addOnCompleteListener(writeListener);
+    }
+
+    /**
+     * Begin searching the database for the account with the specified login hash.
+     * This is an Asynchronous operation, and such this method not return the result. The result can be obtained from getProfile()
+     * @param hash The password of the account to be logged into.
+     * @return A task representing the read operation. This must be passed to getProfileWithHash() once the task completes.
+     */
+    public Task<QuerySnapshot> readLoginHash(String hash) {
+        collection = db.collection("users");
+        return collection.whereEqualTo("loginhash", hash).get();
+    }
+
+    /**
+     * Get the account with the hash passed to by readLoginHash().
+     * @param task The task returned by readLoginHash(). Calling with any other task will result in errors.
+     * @return The account with the hash password passed to readLoginHash(). If no account has such password, return null.
+     */
+    public Profile getProfileWithHash(Task<QuerySnapshot> task) {
+        QuerySnapshot results = task.getResult();
+
+        if(results.isEmpty()) {
+            Log.d(TAG, "readLoginHash did not find any users with that password! Returned null!");
+            return null;
+        }
+        else if (results.size() > 1) {
+            Log.d(TAG, "For some reason there are multiple profiles with the same password. readLoginHash() returned null.");
+            return null;
+        }
+
+        return results.toObjects(Profile.class).get(0);
+    }
+
+    /**
+     * Start checking if a user exists in the database. This is an asynchronous operation, and as such this method will not return the data.
+     * @param username The username to check for
+     * @return A task representing the read operation. Pass this to checkProfileExists() once the task completes
+     */
+    public Task<DocumentSnapshot> startCheckProfileExists(String username) {
+        collection = db.collection("users");
+        return collection.document(username).get();
+    }
+
+    /**
+     * Check if a user exists in the database.
+     * @param task The task returned by startCheckProfileExists(). Calling with any other task will result in errors.
+     * @return True if the user exists in the database. False otherwise.
+     */
+    public boolean checkProfileExists(Task<DocumentSnapshot> task) {
+        return task.getResult().getData() == null;
+    }
 }

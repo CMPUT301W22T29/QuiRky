@@ -67,13 +67,12 @@
         android:id="@+id/rank_points_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/phone1"
-        android:text="Points Ranking: "
-        android:textSize="20sp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        />
+        android:text="Points Acquired"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/phone1" />
     <TextView
         android:id="@+id/rank_points_field"
         android:layout_width="wrap_content"
@@ -89,13 +88,12 @@
         android:id="@+id/rank_scanned_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rank_points_text"
-        android:text="No. Scanned Ranking: "
-        android:textSize="20sp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        />
+        android:text="Codes Scanned"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rank_points_text" />
     <TextView
         android:id="@+id/rank_scanned_field"
         android:layout_width="wrap_content"
@@ -111,21 +109,24 @@
         android:id="@+id/rank_largest_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rank_scanned_text"
-        android:text="Largest Code Ranking: "
-        android:textSize="20sp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        />
+        android:text="Largest Code Scanned"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rank_scanned_text" />
+
     <TextView
         android:id="@+id/rank_largest_field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
         android:hint="Replace me in .java file"
         android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/rank_largest_text"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/rank_largest_text"
         app:layout_constraintTop_toBottomOf="@+id/rank_scanned_text" />
 

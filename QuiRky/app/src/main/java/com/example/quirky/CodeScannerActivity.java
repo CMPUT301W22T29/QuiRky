@@ -16,10 +16,9 @@
 
 package com.example.quirky;
 
-import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
@@ -28,11 +27,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.view.PreviewView;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import org.osmdroid.util.GeoPoint;
-
-import java.util.ArrayList;
 
 /**
  * Previews camera feed and allows scanning QR codes.
@@ -55,7 +50,8 @@ public class CodeScannerActivity extends AppCompatActivity {
     private Switch location_switch, photo_switch;
 
     private CameraController cameraController;
-    private DatabaseController databaseController;
+    private DatabaseController dc;
+    MemoryController mc;
 
     private Boolean login;
 
@@ -83,7 +79,8 @@ public class CodeScannerActivity extends AppCompatActivity {
         cameraController = new CameraController(this);
         cameraController.startCamera(previewView.createSurfaceProvider(), this);
 
-        //databaseController = new DatabaseController(FirebaseFirestore.getInstance(), this);
+        dc = new DatabaseController(this);
+        mc = new MemoryController(this);
 
         scan_button.setOnClickListener(view -> scan());
     }
@@ -91,14 +88,14 @@ public class CodeScannerActivity extends AppCompatActivity {
     //TODO: javadocs
     @androidx.camera.core.ExperimentalGetImage
     public void scan() {
-        //Boolean shouldLogin = false;
         CodeList<QRCode> codes = new CodeList<>();
         codes.setOnCodeAddedListener(new OnCodeAddedListener<QRCode>() {
 
             @Override
             public void onCodeAdded(CodeList<QRCode> codeList) {
                 if (login) {
-                    login(codeList);
+                    String password = codeList.get(0).getId();
+                    dc.readLoginHash(password).addOnCompleteListener(task -> login( dc.getProfileWithHash(task)) );
                 } else {
                     showSavingInterface(codeList);
                 }
@@ -116,7 +113,7 @@ public class CodeScannerActivity extends AppCompatActivity {
             Bitmap photo;
             if (location_switch.isChecked()) {
                 gp = null;
-                // GeoPoint gp = results.get(0).getLocation(); TODO: Figure out how to get location from inside the listener
+                // GeoPoint gp = MapController.getLocation(); TODO: Make a controller class that gets location.
             } else {
                 gp = null;
             }
@@ -130,7 +127,6 @@ public class CodeScannerActivity extends AppCompatActivity {
             }
 
             save(codeList.get(0), gp, photo);
-            Toast.makeText(this, "QRCode saved!", Toast.LENGTH_LONG).show();
             setVisibility(true);
         });
 
@@ -140,28 +136,32 @@ public class CodeScannerActivity extends AppCompatActivity {
         });
     }
 
-    private void login(CodeList<QRCode> codeList) {
+    private void login(Profile p) {
+        if (p == null) {
+            Toast.makeText(this, "That QRCode did not match any users!", Toast.LENGTH_LONG).show();
+            return;
+        }
 
-        // TODO: Jonathen, please look at.
+        Toast.makeText(this, "Logging in as: " + p.getUname(), Toast.LENGTH_LONG).show();
+        mc.write(p);
+        mc.writeUser(p.getUname());
 
-        /* TODO:    implement the following, possibly as a func in the db controller which should be called here:
-           get qr code hash from qr code in list
-           search firestore for player accounts with a login qr variable set to that hash
-                                Note: I recommend that this be a separate variable from where the usual qr codes are stored.
-           if it exists
-               log player in with that account
-                               Alternatively, display account info and a button to login, so they can choose not to log in if it's the wrong account or whatever.
-               set the login qr variable in firestore to null or something so that the login qr code can't be reused.
-           else
-               pop a toast that says they could not find an account with that code.
-         */
-
-        Toast.makeText(this, "Pretending to log in!", Toast.LENGTH_LONG).show();
+        Intent i = new Intent(this, StartingPageActivity.class);
+        startActivity(i);
     }
 
     public void save(QRCode qr, GeoPoint gp, Bitmap image) {
-        DatabaseController dc = new DatabaseController(this);
         dc.writeQRCode(qr);
+        Profile p = mc.read();
+
+        if(! p.addScanned(qr.getId()) ) {
+            Toast.makeText(this, "You already have that QRCode!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Update the local memory and database, because the player's statistics have changed.
+        mc.write(p);
+        dc.writeProfile(p);
 
         if(gp != null) {
             // dc.saveLocation(qrcode, location);
@@ -169,6 +169,9 @@ public class CodeScannerActivity extends AppCompatActivity {
         if(image != null) {
             // dc.saveImage(qrcode, image);
         }
+
+        Toast.makeText(this, "QRCode saved!", Toast.LENGTH_LONG).show();
+
     }
 
     /**

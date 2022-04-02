@@ -22,6 +22,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuiRky">
         <activity
+            android:name=".LeaderBoardActivity"
+            android:exported="false" />
+	<activity
             android:name=".delete_Players"
             android:exported="false" />
         <activity
@@ -86,7 +89,7 @@
         <activity
             android:name=".EditProfileActivity"
             android:exported="false"
-            android:parentActivityName=".ProfileViewerActivity" />
+            android:parentActivityName=".StartingPageActivity" />
         <activity
             android:name=".MyQRCode"
             android:exported="false"
@@ -109,5 +112,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

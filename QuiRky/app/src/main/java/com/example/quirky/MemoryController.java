@@ -79,6 +79,30 @@ public class MemoryController {
     }
 
     /**
+     * Write a username to memory. Will overwrite any data already stored in the 'name' file.
+     * @param user The new username to write
+     */
+    public void writeUser(String user) {
+        // Delete the name file in memory, if it exists
+        File file = new File(dir, "name");
+        if(file.exists())
+            file.delete();
+
+        // Write to the name file the app-holder's username
+        try {
+            file.createNewFile();
+            FileOutputStream fos = new FileOutputStream(file, false);
+
+            fos.write(user.getBytes());
+
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Read the Profile stored in memory.
      * @return The profile stored in memory
      */
@@ -152,34 +176,10 @@ public class MemoryController {
     }
 
     /**
-     * Write a username to memory. Will overwrite any data already stored in the 'name' file.
-     * @param user The new username to write
-     */
-    public void writeUser(String user) {
-        // Delete the name file in memory, if it exists
-        File file = new File(dir, "name");
-        if(file.exists())
-            file.delete();
-
-        // Write to the name file the app-holder's username
-        try {
-            file.createNewFile();
-            FileOutputStream fos = new FileOutputStream(file, false);
-
-            fos.write(user.getBytes());
-
-            fos.flush();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Checks if the 'name' file under the directory /player_data exists
+     * Checks if the 'name' file under the dir/player_data exists
      * @return True if the file exists, false otherwise.
      */
-    public Boolean exists() {
+    public boolean exists() {
         File file = new File(dir, "name");
         return file.exists();
     }

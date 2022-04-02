@@ -6,11 +6,8 @@ import androidx.core.app.ActivityCompat;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Button;
-import java.util.ArrayList;
-import android.widget.Toast;
 
 /**
  * This is the activity that has different areas user may want to go to, after the user logins
@@ -103,7 +100,7 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
 
         mid.setText("The Leaderboards");
         mid.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, LeaderBoardActivity.class);
             startActivity(i);
         });
 
