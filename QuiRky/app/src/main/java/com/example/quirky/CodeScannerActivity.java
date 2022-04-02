@@ -19,6 +19,7 @@ package com.example.quirky;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
@@ -151,15 +152,15 @@ public class CodeScannerActivity extends AppCompatActivity {
     }
 
     public void save(QRCode qr, GeoPoint gp, Bitmap image) {
-        dc.writeQRCode(qr);
         Profile p = mc.read();
 
-        if(! p.addScanned(qr.getId()) ) {
+        if(! p.addScanned(qr.getId())) {
             Toast.makeText(this, "You already have that QRCode!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Update the local memory and database, because the player's statistics have changed.
+        dc.writeQRCode(qr);
         mc.write(p);
         dc.writeProfile(p);
 
