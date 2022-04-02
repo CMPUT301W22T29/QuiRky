@@ -58,7 +58,7 @@ public class delete_Players extends AppCompatActivity {
                 yes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        dc.deleteQRCode(Usernames.get(position));
+                        dc.deleteProfile(Usernames.get(position));
                         Usernames.remove(position);
                         linearLayout1.setVisibility(View.INVISIBLE);
                         set_PlayerAdapter.notifyDataSetChanged();
