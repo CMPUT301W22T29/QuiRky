@@ -1,3 +1,4 @@
+
 package com.example.quirky;
 
 
@@ -139,5 +140,6 @@ public class MapActivity extends AppCompatActivity implements LocationListener {
         }
 
     }
+
 
 

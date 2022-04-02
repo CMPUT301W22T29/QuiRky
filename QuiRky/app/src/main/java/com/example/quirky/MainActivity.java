@@ -2,45 +2,42 @@ package com.example.quirky;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements InputUnameLoginFragment.LoginFragListener {
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.QuerySnapshot;
+
+/**
+ * This is the activity that shows once the app is opened
+ */
+public class MainActivity extends AppCompatActivity implements
+                                                 InputUnameLoginFragment.LoginFragListener,
+                                                 ActivityCompat.OnRequestPermissionsResultCallback {
 
     DatabaseController dm;
-    MemoryManager mm;
-    String id;
+    MemoryController mc;
+    private CameraActivitiesController cameraActivitiesController;
 
-    /*
-    Code for getting unique device ID taken from:
-    https://stackoverflow.com/a/2785493
-    Written by user:
-    https://stackoverflow.com/users/166712/anthony-forloney
-    Published May 7 2010
-    */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dm = new DatabaseController(FirebaseFirestore.getInstance(), this);
+        cameraActivitiesController = new CameraActivitiesController(this, true);
 
-        // FIXME: this may need to go in a controller? But cannot use 'this.getContentResolver' outside an activity
-        id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        mm = new MemoryManager(this, id);
+        dm = new DatabaseController(this);
+        mc = new MemoryController(this);
 
         Button getStarted = findViewById(R.id.getStarted);
         Button settings = findViewById(R.id.setting);
@@ -51,66 +48,62 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         quit.setOnClickListener(view -> finishAffinity());
     }
 
+    private void login() {
+        // mc.exists() checks if the user has logged in with the app before
+        if(!mc.exists()) {
+            InputUnameLoginFragment frag = new InputUnameLoginFragment();
+            frag.show(getSupportFragmentManager(), "GET_UNAME");
+            // Once the fragment is closed, the method OnClickConfirm() is called.
+        } else {
+            startHubActivity();
+        }
+    }
+
+    /**
+     * This method is to let user to confirm the info after the user have wrote the info and starts the HubActivity
+     * @param uname
+     * User name which it stores
+     */
     @Override
-    public void confirm(String uname) {
-        dm.readProfile(uname).addOnCompleteListener(task -> {
-            if(!task.isSuccessful()) {
-                task.getException().printStackTrace();
+    public void OnClickConfirm(String uname) {
+        // Read from the database to check if this username is already taken.
+        dm.startCheckProfileExists(uname).addOnCompleteListener(task -> {
+            if(dm.checkProfileExists(task)) {
+                Profile p = new Profile(uname);
+
+                mc.write(p);
+                mc.writeUser(uname);
+                dm.writeProfile(p);
+
+                startHubActivity();
+
             } else {
-                // dm.getProfile(task) will return null if the profile does not exist yet.
-                if(dm.getProfile(task) != null) {
-                    Toast.makeText(this, "This username already exists!", Toast.LENGTH_SHORT).show();
-                    login();
-                } else {
-                    Profile p = new Profile(uname);
-                    writeUser(p);
-                    startHubActivity();
-                }
+                Toast.makeText(this, "This username already exists!", Toast.LENGTH_LONG).show();
+                // Restart the process by calling login()
+                login();
             }
         });
     }
 
-    private void login() {
-        // mm.exist() checks if the user has logged in on this device before
-        if(!mm.exist()) {
-            // If the user has not logged in yet, show the fragment that asks for a username
-            // This fragment's listener will call the write user method
-            InputUnameLoginFragment frag = new InputUnameLoginFragment();
-            frag.show(getSupportFragmentManager(), "GET_UNAME");
-        } else {
-            startHubActivity();
-        }
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                                                      @NonNull int[] grantResults) {
+        cameraActivitiesController.getCameraPermissionRequestResult(requestCode, grantResults);
+    }
+
+    @Override
+    public void LoginByQR() {
+        cameraActivitiesController.startCodeScannerActivity();
     }
 
     private void startSettingsActivity() {
         Intent i = new Intent(this, SettingsActivity.class);
         startActivity(i);
     }
-
-    private void writeUser(Profile user) {
-        mm.make();
-        mm.write("name", user.getUname());
-        mm.write("email", "");
-        mm.write("phone", "");
-
-        dm.writeProfile(user);
-    }
-
+    
     private void startHubActivity() {
         Intent i = new Intent(this, StartingPageActivity.class);
         startActivity(i);
-    }
-
-    private void test() {
-        // EXAMPLE CASE OF READING FROM FIRESTORE:
-        dm.readProfile("IDONOTEXIST").addOnCompleteListener(task -> {
-            if(!task.isSuccessful()) {
-                task.getException().printStackTrace();
-            } else {
-                Map<String, Object> data = task.getResult().getData();
-                if(data == null)
-                Log.d("MainActivity: ", "Read was successful and the data is null ");
-            }
-        });
     }
 }

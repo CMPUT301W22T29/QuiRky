@@ -1,19 +1,29 @@
 package com.example.quirky;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
-public class StartingPageActivity extends AppCompatActivity {
+/**
+ * This is the activity that has different areas user may want to go to, after the user logins
+ */
+public class StartingPageActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+
     private Button QRButton, ProfileButton, CommunityButton;
     private Button top, mid, bottom;
+    private CameraActivitiesController cameraActivitiesController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_starting_page);
+
+        cameraActivitiesController = new CameraActivitiesController(this, false);
 
         QRButton = findViewById(R.id.hub_qr_codes);
         ProfileButton = findViewById(R.id.hub_profile_button);
@@ -30,33 +40,28 @@ public class StartingPageActivity extends AppCompatActivity {
         setQRlayout();
     }
 
-    private void startCodeScannerActivity() {
-        assert CameraController.hasCameraPermission(this);
-        Intent intent = new Intent(this, CodeScannerActivity.class);
-        startActivity(intent);
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                                                      @NonNull int[] grantResults) {
+        cameraActivitiesController.getCameraPermissionRequestResult(requestCode, grantResults);
     }
 
     private void setQRlayout() {
         top.setText("Manage Codes");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement activity that views player's qr codes
+            Intent i = new Intent(this, ManageCodesActivity.class);
             startActivity(i);
         });
 
         mid.setText("Scan Codes");
         mid.setOnClickListener(view -> {
-            if (CameraController.hasCameraPermission(this)) {
-                startCodeScannerActivity();
-            } else if (CameraController.requestCameraPermission(this)) {
-                startCodeScannerActivity();
-            }
-            //Intent i = new Intent(this, CodeScannerActivity.class);
-            //startActivity(i);
+            cameraActivitiesController.startCodeScannerActivity();
         });
 
         bottom.setText("Generate Codes");
         bottom.setOnClickListener(view -> {
-            Intent i = new Intent(this, GenerateActivity.class);    // TODO: implement generate qrcodes activity
+            Intent i = new Intent(this, GenerateActivity.class);
             startActivity(i);
         });
     }
@@ -64,13 +69,18 @@ public class StartingPageActivity extends AppCompatActivity {
     private void setProfileLayout() {
         top.setText("My Profile");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, ProfileViewerActivity.class);    // TODO: implement the activity this should direct to
+
+            MemoryController mc = new MemoryController(this);
+            Profile p = mc.read();
+
+            Intent i = new Intent(this, ProfileViewerActivity.class);
+            i.putExtra("profile", p);
             startActivity(i);
         });
 
         mid.setText("My Stats");
         mid.setOnClickListener(view -> {
-            Intent i = new Intent(this, MyStatsActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, MyStatsActivity.class);
             startActivity(i);
         });
 
@@ -84,13 +94,13 @@ public class StartingPageActivity extends AppCompatActivity {
     private void setCommunityLayout() {
         top.setText("Search Other Users");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, PlayerSearchActivity.class);
             startActivity(i);
         });
 
         mid.setText("The Leaderboards");
         mid.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, LeaderBoardActivity.class);
             startActivity(i);
         });
 

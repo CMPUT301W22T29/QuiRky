@@ -5,8 +5,9 @@
  * Version History:
  *      Version 0.1.0 -- QRCodes can be constructed from input images
  *      Version 0.2.0 -- Can compute hashes and scores from strings
+ *      Version 0.2.1 -- Scanning qr codes now pops toast with info about the scan results.
  *
- * Date (v0.2.0): March 14, 2022
+ * Date (v0.2.1): March 19, 2022
  *
  * Copyright (c) 2022. CMPUT301W22T29
  * Subject to MIT License
@@ -15,11 +16,10 @@
 
 package com.example.quirky;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
@@ -30,7 +30,6 @@ import com.google.mlkit.vision.common.InputImage;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,7 +39,7 @@ import java.util.List;
  *
  * @author Sean Meyers
  * @author Jonathen Adsit
- * @version 0.2.0
+ * @version 0.2.1
  * @see androidx.camera.core
  * @see CameraController
  * @see CodeScannerActivity
@@ -51,24 +50,31 @@ public class QRCodeController {
     private static final BarcodeScanner codeScanner = BarcodeScanning.getClient(
             new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build());
 
-    public static ArrayList<QRCode> scanQRCodes(InputImage inputImage) {
-        Log.d("scanQRCode", "enter method");    //TODO: get rid of.
-        ArrayList<QRCode> codes = new ArrayList<>();
-        Task<List<Barcode>> result = codeScanner.process(inputImage).addOnSuccessListener(barcodes -> {
-            Log.d("scanQRCode", "onSuccess");   //TODO: get rid of.
-            // Construct a QRCode with the scanned raw data
-            for (Barcode barcode: barcodes) {
-                    codes.add(new QRCode(barcode.getRawValue()));
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                //TODO: Do something, possibly bring up a fragment saying to try retaking the picture.
-                Log.d("scanQRCode", "onFailure");   //TODO: get rid of.
-            }
-        });
-        Log.d("scanQRCode", "exit method"); //TODO: get rid of.
-        return codes;
+    /**
+     * Analyzes an image for qr codes, and constructs <code>QRCode</code>s from their data.
+     *
+     * @param inputImage
+     *      - The image to analyze.
+     * @param codes
+     *      - The list in which the <code>QRCode</code>s will be stored once they are constructed.
+     * @param context
+     *      - The activity that the user is interacting with to capture QR code images.
+     * @see CameraController
+     */
+    public static void scanQRCodes(InputImage inputImage, CodeList<QRCode> codes, Context context) {
+        // TODO: edit javadoc
+        Task<List<Barcode>> result = codeScanner.process(inputImage)
+                .addOnSuccessListener(barcodes -> {
+                    // Construct a QRCode with the scanned raw data
+                    for (Barcode barcode: barcodes) {
+                        codes.add(new QRCode(barcode.getRawValue()));
+                    }
+                    if (codes.size() == 0) {
+                        String text
+                                = "Could not find any QR codes. Move closer or further and try scanning again.";
+                        Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+                    }
+                });
     }
     
     /**
@@ -89,9 +95,19 @@ public class QRCodeController {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] temp = md.digest(content.getBytes(StandardCharsets.UTF_8));
 
-            // return Arrays.toString(temp);
-            // return new String(temp, StandardCharsets.US_ASCII);
-            return new String(temp, StandardCharsets.UTF_8);    //See: https://utf8-chartable.de/unicode-utf8-table.pl, should have a character for negative byte values
+            // The byte[] is converted into a String using the UTF-8 character set.
+            // In Firestore, it is illegal for Documents and Collections to have '/' or '.' in their ID
+            // So the byte[] is parsed for these characters before it is turned to a string.
+            // This reduces the number of unique ID's, but only by a small amount.
+            for(int i = 0; i < temp.length; i++) {
+                if(temp[i] == 0x2f)   // 0x2f -> '/'
+                    temp[i] = 0x30;
+                if(temp[i] == 0x2e)   // 0x2e -> '.'
+                    temp[i] = 0x30;
+            }
+
+            // byte[] -> String using UTF_8 because that's the character set FireStore document names can use
+            return new String(temp, StandardCharsets.UTF_8);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage(), e.getCause());
@@ -113,5 +129,6 @@ public class QRCodeController {
         }
         return -(sum % 100); // Actually, wouldn't returning just the sum w/out the modulo be better,
                           // that way our leaderboard isn't saturated with a bunch of 99s or whatever
+                            // TODO: As fun as having negative scores sounds, probably best off to return the absolute value.
     }
 }

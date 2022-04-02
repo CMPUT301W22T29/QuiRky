@@ -5,8 +5,9 @@
  * Version History:
  *      Version 0.1.0 -- Camera Previewing Works
  *      Version 0.2.0 -- QR Code Photo Capturing Works
+ *      Version 0.2.1 -- Refined Permissions and QR Capturing
  *
- * Date (v0.2.0): March 14, 2022
+ * Date (v0.2.1): March 19, 2022
  *
  * Copyright (c) 2022. CMPUT301W22T29
  * Subject to MIT License
@@ -23,7 +24,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.Image;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.camera.core.CameraSelector;
@@ -50,7 +50,7 @@ import java.util.concurrent.ExecutionException;
  * This class is intended to be used as a singleton, only one instance should be running at a time.
  *
  * @author Sean Meyers
- * @version 0.2.0
+ * @version 0.2.1
  * @see androidx.camera.core
  * @see CodeScannerActivity
  * @see QRCode
@@ -64,6 +64,14 @@ public class CameraController {
     private ImageCapture imageCapture;
     private CameraSelector cameraSelector;
 
+    /**
+     * Check if the app has permission to use the camera.
+     *
+     * @param context
+     *      - The usual context. Just pass in the instance of the calling activity for this.
+     * @return
+     *      - true if the app has permission to access the camera, false otherwise.
+     */
     protected static boolean hasCameraPermission(Context context) {
         return ContextCompat.checkSelfPermission(
                 context,
@@ -71,17 +79,42 @@ public class CameraController {
         ) == PackageManager.PERMISSION_GRANTED;
     }
 
-    /* Requests permissions.
-       Returns true if permissions were granted.
+    /**
+     * Request the user for permission to use the camera.
+     *
+     * @param context
+     *      - The usual context. Just pass in the instance of the calling activity for this.
      */
-    protected static boolean requestCameraPermission(Context context) {
+    protected static void requestCameraPermission(Context context) {
         ActivityCompat.requestPermissions(
                                         (Activity) context, CAMERA_PERMISSION, CAMERA_REQUEST_CODE);
-        return hasCameraPermission(context);
     }
 
+    /**
+     * Checks if the permissions being requested are camera permissions.
+     *
+     * @param requestCode
+     *      - The request code of the permission request we are checking.
+     * @return
+     *      - true if permissions being requested are for the camera, false otherwise.
+     * @see com.example.quirky.StartingPageActivity
+     * @see ActivityCompat.OnRequestPermissionsResultCallback
+     */
+    protected static boolean requestingCameraPermissions(int requestCode) {
+        return (requestCode == CAMERA_REQUEST_CODE);
+    }
+
+    /**
+     * Initialize stuff needed to do camera things.
+     *
+     * This was designed such that it only be called once, do not instantiate multiple instances of
+     * this class at once, it is a singleton.
+     * TODO: May need an overhaul once image saving from other activities is implemented.
+     *
+     * @param context
+     */
     public CameraController(Context context) {
-        assert hasCameraPermission(context);    // I have no idea if this is a good idea or not.
+        assert hasCameraPermission(context);
         cameraProviderFuture = ProcessCameraProvider.getInstance(context);
         preview = new Preview.Builder().build();
         imageCapture = new ImageCapture.Builder().build();
@@ -89,14 +122,26 @@ public class CameraController {
                 .requireLensFacing(CameraSelector.LENS_FACING_BACK).build();
     }
 
-    public void startCameraPreview(Preview.SurfaceProvider surfaceProvider, Context context) {
+    /**
+     * Start the camera with the use cases initialized in the CameraController's constructor.
+     *
+     * @param surfaceProvider
+     *      - The surfaceProvider for the preview view. Necessary to display camera feed while
+     *        scanning.
+     * @param context
+     *      - The activity responsible for doing camera things, it should contain a preview view and
+     *        a button or something to capture images.
+     * @see CodeScannerActivity
+     */
+    public void startCamera(Preview.SurfaceProvider surfaceProvider, Context context) {
         cameraProviderFuture.addListener(new Runnable() {
             @Override
             public void run() {
                 try {
                     ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
                     preview.setSurfaceProvider(surfaceProvider);
-                    cameraProvider.bindToLifecycle((LifecycleOwner) context, cameraSelector, imageCapture, preview);
+                    cameraProvider.bindToLifecycle(
+                                    (LifecycleOwner) context, cameraSelector, imageCapture, preview);
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -104,26 +149,37 @@ public class CameraController {
         }, ContextCompat.getMainExecutor(context));
     }
 
+    /**
+     * Capture images and construct <code>QRCode</code> instances from all QR codes in the image.
+     *
+     * <code>QRCode</code> construction is done in <code>QRCodeController</code>.
+     * The returned <code>ArrayList</code> will be empty until QR code processing is done. This does not take
+     * long, but it is worth noting as it could affect whether operating on the list will do what is
+     * expected.
+     *
+     * @param context
+     *      - The activity that the user is interacting with to scan QR codes, same as in
+     *        <code>startCamera</code>.
+     * @return
+     *      - An <code>ArrayList</code> of <code>QRCode</code>s generated from codes found in the
+     *        captured image.
+     * @see QRCodeController
+     */
     @androidx.camera.core.ExperimentalGetImage
-    public ArrayList<QRCode> captureQRCodes(Context context) {
-        Log.d("captureQRCode", "enter method"); //TODO: get rid of.
-        ArrayList<QRCode> codes = new ArrayList<>();
+    public void captureQRCodes(Context context, CodeList<QRCode> codes) {
+        // TODO: edit javadoc
         imageCapture.takePicture(ContextCompat.getMainExecutor(context),
                 new ImageCapture.OnImageCapturedCallback() {
                     @Override
                     public void onCaptureSuccess(@NonNull ImageProxy image) {
-                        Log.d("captureQRCode", "onCaptureSuccess"); //TODO: get rid of.
                         Image mediaImage = image.getImage();
                         if (mediaImage != null) {
-                            Log.d("captureQRCode", "mediaImage != null");   //TODO: get rid of.
-                            InputImage inputImage = InputImage.fromMediaImage(mediaImage, image.getImageInfo().getRotationDegrees());
-                                codes.addAll(QRCodeController.scanQRCodes(inputImage));
+                            InputImage inputImage = InputImage.fromMediaImage(
+                                             mediaImage, image.getImageInfo().getRotationDegrees());
+                            QRCodeController.scanQRCodes(inputImage, codes, context);
                         }
                         image.close();
-                        Log.d("captureQRCode", "close image");  //TODO: get rid of.
                     }
                 });
-        Log.d("captureQRCode", "exit method");  //TODO: get rid of.
-        return codes;
     }
 }

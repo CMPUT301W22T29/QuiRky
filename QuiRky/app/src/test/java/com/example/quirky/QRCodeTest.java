@@ -16,7 +16,7 @@ public class QRCodeTest {
 
     @Before
     public void setup() {
-        qr = new QRCode("content", new GeoPoint(0.0, 0.0), null);
+        qr = new QRCode("content");
         c = new Comment("content", "user", new Date());
     }
 

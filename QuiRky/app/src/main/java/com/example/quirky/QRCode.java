@@ -16,9 +16,12 @@
 package com.example.quirky;
 
 import org.osmdroid.util.GeoPoint;
-import android.media.Image;
 
-import java.security.NoSuchAlgorithmException;
+import android.graphics.Bitmap;
+import android.media.Image;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
 /**
@@ -30,11 +33,9 @@ import java.util.ArrayList;
  *        bad for security and privacy, and contradicts US 08.0X.01. (v0.1.1)
  *      - Each new <code>QRCode</code> instance instantiates a <code>QRCodeController</code> instance. bad. (v0.2.0)
  */
-public class QRCode {
+public class QRCode implements Parcelable {
     private String id; // id is hash of content.
     private int score;
-    private GeoPoint geolocation;
-    private Image photo;                  // TODO: determine what datatype the photo will use. Not sure how to contain it in this class. Will also need to update constructor
     private ArrayList<Comment> comments;
 
     /**
@@ -43,39 +44,13 @@ public class QRCode {
      * If the user does not want to save the content of the code, the constructor can be called with Boolean saveContent == False.
      * @param content
      *      - The content of the QRCode. This is mandatory, as it is used to find the QRCode's hash and score
-     * @param geolocation
-     *      - The location of the QRCode
-     * @param photo
-     *      - The photo of the QRCode. This is currently an Integer, and will need to be updated once we find how to store a Photo.
      * @param comments
      *      - The comments that have been posted on the QRCode, in an ArrayList<>
      */
-    public QRCode(String content, GeoPoint geolocation, Image photo, ArrayList<Comment> comments) {
+    public QRCode(String content, ArrayList<Comment> comments) {
         this.id = QRCodeController.SHA256(content);
         this.score = QRCodeController.score(id);
-        this.photo = photo;
-        this.geolocation = geolocation;
         this.comments = comments;
-    }
-
-    /**
-     * The constructor to be used when the QRCode has no comments yet. This constructor likely be called when this is the first time the code has been scanned by any user.
-     * If the user does not want to save their geolocation or photo, constructor can be called with these values null.
-     * If the user does not want to save the content of the code, the constructor can be called with Boolean saveContent == False.
-     * The comments field will be initialised to an empty ArrayList.
-     * @param content
-     *      - The content of the QRCode. This is mandatory, as it is used to find the QRCode's hash and score
-     * @param geolocation
-     *      - The location of the QRCode
-     * @param photo
-     *      - The photo of the QRCode. This is currently an Integer, and will need to be updated once we find how to store a Photo.
-     */
-    public QRCode(String content, GeoPoint geolocation, Image photo) {
-        this.id = QRCodeController.SHA256(content);
-        this.score = QRCodeController.score(id);
-        this.photo = photo;
-        this.geolocation = geolocation;
-        this.comments = new ArrayList<>();
     }
 
     /**
@@ -88,8 +63,22 @@ public class QRCode {
         this.id = QRCodeController.SHA256(content);
         this.score = QRCodeController.score(id);
         this.comments = new ArrayList<>();
-        this.photo = null;
-        this.geolocation = null;
+    }
+
+    /**
+     * Initialize a QRCode with an assigned ID. To be used when reading from Firestore? A
+     * @param id The ID of the QRCode
+     */
+    public QRCode(String id, int score) {
+        this.id = id;
+        this.score = score;
+        this.comments = new ArrayList<>();
+    }
+
+    public QRCode(String id, int score, ArrayList<Comment> comments) {
+        this.id = id;
+        this.score = score;
+        this.comments = comments;
     }
 
     /**
@@ -97,18 +86,26 @@ public class QRCode {
      */
     public QRCode() {}
 
+    /**
+     * Getter for ID
+     * @return The ID of the qrcode
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Getter for score
+     * @return The score of the qrcode
+     */
     public int getScore() {
         return score;
     }
 
-    public GeoPoint getGeolocation() {
-        return geolocation;
-    }
-
+    /**
+     * Getter for the comments on the QRCode
+     * @return ArrayList containing each comment on the qrcode
+     */
     public ArrayList<Comment> getComments() {
         return comments;
     }
@@ -133,7 +130,40 @@ public class QRCode {
             comments.remove(c);
     }
 
-    public void setGeolocation(GeoPoint geolocation) {
-        this.geolocation = geolocation;
+    /**
+     * Set the comments on the QRCode
+     * @param comments An arraylist of comments
+     */
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
     }
+
+    protected QRCode(Parcel in) {
+        id = in.readString();
+        score = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeInt(score);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<QRCode> CREATOR = new Creator<QRCode>() {
+        @Override
+        public QRCode createFromParcel(Parcel in) {
+            return new QRCode(in);
+        }
+
+        @Override
+        public QRCode[] newArray(int size) {
+            return new QRCode[size];
+        }
+    };
+
 }
