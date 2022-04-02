@@ -160,9 +160,9 @@ public class CodeScannerActivity extends AppCompatActivity {
         }
 
         // Update the local memory and database, because the player's statistics have changed.
+        //mc.write(p);
+        //dc.writeProfile(p);
         dc.writeQRCode(qr);
-        mc.write(p);
-        dc.writeProfile(p);
 
         if(gp != null) {
             // dc.saveLocation(qrcode, location);
