@@ -1,28 +1,25 @@
+
 package com.example.quirky;
+
 import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
-import android.Manifest;
-
-import org.osmdroid.api.IMapController;
-import org.osmdroid.config.Configuration;
-
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build.VERSION_CODES;
+
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-
+import org.osmdroid.api.IMapController;
+import org.osmdroid.config.Configuration;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;//Tile source factory used for manipulating the map
@@ -52,14 +49,12 @@ mapcontroller.requestlocation();
 }
  */
 
-public class MapActivity extends AppCompatActivity implements LocationListener{
+public class MapActivity extends AppCompatActivity implements LocationListener {
     private MapView nearbymap = null;
     private MyLocationNewOverlay locationOverlay;
     private LocationManager locationManager;
-    private static final String[] LOCATION_PERMISSION = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
+    private static final String[] LOCATION_PERMISSION = new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION};
     public static final int LOCATION_REQUEST_CODE = 99;
-    //Context context;
-
 
 
     @Override
@@ -74,10 +69,9 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
-            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST_CODE);
+            requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
 
         } else {
             try{
@@ -85,23 +79,29 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
             } catch(NullPointerException ex1){
 
             }
-
-        }
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case LOCATION_REQUEST_CODE:
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    setmap();
-
-                }
         }
     }
+
+
+        @Override
+        public void onRequestPermissionsResult ( int requestCode, String permissions[], int[] grantResults){
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            switch (requestCode) {
+                case LOCATION_REQUEST_CODE:
+                    if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(MapActivity.this, "Permission Granted!", Toast.LENGTH_SHORT).show();
+                        setmap();
+
+                    } else {
+                        Toast.makeText(MapActivity.this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+                        setmap();
+
+                    }
+            }
+        }
+
+
+
     @SuppressLint("MissingPermission")
     public void setmap() {
         IMapController mapController = null;
@@ -161,30 +161,22 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
     }
 
 
-    public void onResume(){
-        nearbymap = (MapView) findViewById(R.id.map);
-        super.onResume();
-        try{
+
+        public void onResume () {
+            nearbymap = (MapView) findViewById(R.id.map1);
+            super.onResume();
             nearbymap.onResume();
-        } catch(NullPointerException exa){
-
         }
 
-
-
-    }
-
-    public void onPause(){
-        nearbymap = (MapView) findViewById(R.id.map);
-        super.onPause();
-        try{
+        public void onPause () {
+            nearbymap = (MapView) findViewById(R.id.map1);
+            super.onPause();
             nearbymap.onPause();  //Compass
-        } catch(NullPointerException exb) {
 
         }
 
     }
 
-}
+
 
 

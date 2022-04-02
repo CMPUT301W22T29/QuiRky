@@ -18,7 +18,8 @@ public class InputUnameLoginFragment extends DialogFragment {
     private LoginFragListener listener;
 
     public interface LoginFragListener {
-        void confirm(String uname);
+        void OnClickConfirm(String uname);
+        void LoginByQR();
     }
 
     @Override
@@ -42,13 +43,11 @@ public class InputUnameLoginFragment extends DialogFragment {
         return builder
                 .setView(view)
                 .setTitle("Username for Your Profile")
-                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        String uname = input.getText().toString();
-                        listener.confirm(uname);
-                    }
+                .setPositiveButton("Confirm", (dialogInterface, i) -> {
+                    String uname = input.getText().toString();
+                    listener.OnClickConfirm(uname);
                 })
+                .setNeutralButton("Login By QRCode", (dialogInterface, i) -> listener.LoginByQR())
                 .create();
     }
 }

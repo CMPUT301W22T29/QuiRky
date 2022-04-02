@@ -9,8 +9,9 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"  />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
@@ -20,7 +21,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.QuiRky">
+        <activity
+            android:name=".LeaderBoardActivity"
+            android:exported="false" />
+	<activity
+            android:name=".delete_Players"
+            android:exported="false" />
+        <activity
+            android:name=".delete_QRCodes"
+            android:exported="false" />
+        <activity
+            android:name=".OwnerMenu"
+            android:exported="false" />
+        <activity
+            android:name=".ManageCodesActivity"
+            android:exported="false"
+            android:label="@string/title_activity_manage_codes"
+            android:theme="@style/Theme.QuiRky.NoActionBar" />
 
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="barcode" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
@@ -37,14 +58,17 @@
             android:value="YOUR_API_KEY" />
 
         <activity
+            android:name=".PlayerSearchActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ViewQRActivity"
+            android:exported="false"
+            android:parentActivityName=".StartingPageActivity" />
+        <activity
             android:name=".MapActivity"
             android:exported="false"
             android:label="@string/title_activity_map"
             />
-        <activity
-            android:name=".StartingPageActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".CodeScannerActivity"
             android:exported="false"
@@ -54,13 +78,19 @@
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         <activity
+            android:name=".StartingPageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ViewCommentsActivity"
+            android:exported="false" />
+        <activity
             android:name=".GenerateActivity"
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />
         <activity
             android:name=".EditProfileActivity"
             android:exported="false"
-            android:parentActivityName=".ProfileViewerActivity" />
+            android:parentActivityName=".StartingPageActivity" />
         <activity
             android:name=".MyQRCode"
             android:exported="false"
@@ -83,5 +113,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>
