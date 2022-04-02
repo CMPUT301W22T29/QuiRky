@@ -107,7 +107,7 @@ public class QRCodeController {
             }
 
             // byte[] -> String using UTF_8 because that's the character set FireStore document names can use
-            return new String(temp, StandardCharsets.UTF_8);;
+            return new String(temp, StandardCharsets.UTF_8);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage(), e.getCause());
@@ -127,7 +127,7 @@ public class QRCodeController {
         for (int i = 0; i < hash.length(); i++) {
             sum += hash.charAt(i);
         }
-        return -(sum % 100); // Actually, wouldn't returning just the sum w/out the modulo be better,
+        return sum % 100; // Actually, wouldn't returning just the sum w/out the modulo be better,
                           // that way our leaderboard isn't saturated with a bunch of 99s or whatever
                             // TODO: As fun as having negative scores sounds, probably best off to return the absolute value.
     }
