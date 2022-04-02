@@ -1,10 +1,8 @@
 package com.example.quirky;
 
 
-import static android.content.ContentValues.TAG;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.Manifest;
 
@@ -146,9 +144,6 @@ public class MapController extends AppCompatActivity implements LocationListener
         qrmarker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_BOTTOM);
         nearbymap.getOverlays().add(qrmarker);
         qrmarker.setTitle("Current location");
-
-
-
     }
 
 
@@ -160,9 +155,6 @@ public class MapController extends AppCompatActivity implements LocationListener
         } catch(NullPointerException exa){
 
         }
-
-
-
     }
 
     public void onPause(){
@@ -171,7 +163,6 @@ public class MapController extends AppCompatActivity implements LocationListener
         try{
             nearbymap.onPause();  //Compass
         } catch(NullPointerException exb) {
-
         }
 
     }

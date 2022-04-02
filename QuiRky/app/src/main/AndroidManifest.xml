@@ -40,7 +40,7 @@
             android:name=".MapActivity"
             android:exported="false"
             android:label="@string/title_activity_map"
-            android:parentActivityName=".StartingPageActivity"/>
+            />
         <activity
             android:name=".StartingPageActivity"
             android:exported="false"
