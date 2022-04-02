@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2022. CMPUT301W22T29
+  ~ Subject to MIT License
+  ~ See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".delete_QRCodes"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_height="100dp"
+        android:textSize="40dp"
+        android:text="Delete QR Codes"
+        android:textAlignment="center"
+        app:layout_anchor="@+id/textView2"
+        app:layout_anchorGravity="bottom|center" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/qrCodes"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+</LinearLayout>
