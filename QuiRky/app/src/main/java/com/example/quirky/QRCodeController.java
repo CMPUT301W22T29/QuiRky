@@ -191,16 +191,15 @@ public class QRCodeController {
         finalString = val.toString();
         return  finalString;
     }
-    public static Bitmap generateQR(){
+    public static Bitmap generateQR(String text){
         /**
          * Generate the a Random QR code ImageView
          *
-         * @param string
+         * @param text
          *      - The generated qr code based on this string
          * @param codes
          *      - generated qr code
          */
-        String text = getRandomString(18);
 
         Bitmap generatedQRCode = null;
         MultiFormatWriter writer = new MultiFormatWriter();

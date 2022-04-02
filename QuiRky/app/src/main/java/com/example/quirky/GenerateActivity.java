@@ -34,9 +34,10 @@ public class GenerateActivity extends AppCompatActivity {
         qrGeneraBtn1 = findViewById(R.id.generateButton1);
         qrImage = findViewById(R.id.qrfield);
 
+
         qrGeneraBtn1.setOnClickListener(v->{
             Bitmap generated =null;
-            generated = QRCodeController.generateQR();
+            generated = QRCodeController.generateQR(QRCodeController.getRandomString(18));
             qrImage.setImageBitmap(generated);
         });
         getBack = findViewById(R.id.randomGenerBack);
