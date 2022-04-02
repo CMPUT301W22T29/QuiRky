@@ -39,14 +39,15 @@ public class ManageCodesActivity extends AppCompatActivity {
     private ToggleButton arrangementOrder;
     private RecyclerView qr_list;
     private QRAdapter QRCodeAdapter;
-    private ArrayList<String> QRCodeDataList;
     private RecyclerClickerListener recyclerListener;
+    private DatabaseController dc;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_codes);
         arrangementOrder = findViewById(R.id.toggleButton);
         qr_list = findViewById(R.id.qr_list);
+        dc = new DatabaseController(this);
         ArrayList<String> points = new ArrayList<>();
         ArrayList<Drawable> photos = new ArrayList<>();
         Intent intent = new Intent(this, ViewQRActivity.class);
@@ -58,22 +59,18 @@ public class ManageCodesActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         };
+        dc.readAllQRCodes().addOnCompleteListener(task -> {
+            ArrayList<QRCode> qrCodes = new ArrayList<>();
+            qrCodes = dc.getAllQRCodes(task);
+            for(int i = 0; i < qrCodes.size(); i ++){
+                points.add(String.valueOf(qrCodes.get(i).getScore()));
+            }
+            QRCodeAdapter = new QRAdapter(points, photos, this, recyclerListener);
 
-        QRCode qr1 = new QRCode("test1");
-        QRCode qr2 = new QRCode("test2");
-        QRCode qr3 = new QRCode("test3");
+            qr_list.setAdapter(QRCodeAdapter);
 
-        points.add(String.valueOf(qr1.getScore()));
-        points.add(String.valueOf(qr2.getScore()));
-        points.add(String.valueOf(qr3.getScore()));
-
-        QRCodeAdapter = new QRAdapter(points, photos,this, recyclerListener);
-
-        QRCodeDataList = new ArrayList<>();
-
-        qr_list.setAdapter(QRCodeAdapter);
-
-        qr_list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+            qr_list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        });
 
         arrangementOrder.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
