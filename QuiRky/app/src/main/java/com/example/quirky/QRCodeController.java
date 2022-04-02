@@ -107,7 +107,7 @@ public class QRCodeController {
             }
 
             // byte[] -> String using UTF_8 because that's the character set FireStore document names can use
-            return new String(temp, StandardCharsets.UTF_8);;
+            return new String(temp, StandardCharsets.UTF_8);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage(), e.getCause());

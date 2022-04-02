@@ -151,7 +151,7 @@ public class CodeScannerActivity extends AppCompatActivity {
     }
 
     public void save(QRCode qr, GeoPoint gp, Bitmap image) {
-        dc.writeQRCode(qr);
+        //dc.writeQRCode(qr);
         Profile p = mc.read();
 
         if(! p.addScanned(qr.getId()) ) {
@@ -160,8 +160,9 @@ public class CodeScannerActivity extends AppCompatActivity {
         }
 
         // Update the local memory and database, because the player's statistics have changed.
-        mc.write(p);
-        dc.writeProfile(p);
+        //mc.write(p);
+        //dc.writeProfile(p);
+        dc.writeQRCode(qr);
 
         if(gp != null) {
             // dc.saveLocation(qrcode, location);
