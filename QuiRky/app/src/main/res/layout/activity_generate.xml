@@ -10,21 +10,31 @@
         android:id="@+id/qrfield"
         android:layout_width="280dp"
         android:layout_height="339dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="72dp"
         android:contentDescription="qr code"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintHorizontal_bias="0.396"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="?attr/actionModeSelectAllDrawable" />
 
     <Button
         android:id="@+id/generateButton1"
-        android:layout_width="127dp"
-        android:layout_height="67dp"
-        android:layout_marginTop="56dp"
+        android:layout_width="155dp"
+        android:layout_height="95dp"
+        android:layout_marginTop="68dp"
         android:layout_marginEnd="140dp"
-        android:text="Generate"
+        android:text="@string/generate_random_code"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/qrfield" />
+
+    <Button
+        android:id="@+id/randomGenerBack"
+        android:layout_width="99dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

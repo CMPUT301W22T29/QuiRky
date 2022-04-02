@@ -2,6 +2,7 @@ package com.example.quirky;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.Image;
 import android.os.Bundle;
@@ -20,7 +21,7 @@ import java.util.Random;
 
 public class GenerateActivity extends AppCompatActivity {
 
-    Button qrGeneraBtn1;
+    Button qrGeneraBtn1, getBack;
     ImageView qrImage;
 
 
@@ -34,6 +35,14 @@ public class GenerateActivity extends AppCompatActivity {
         qrGeneraBtn1.setOnClickListener(v->{
             generateQR();
         });
+        getBack = findViewById(R.id.randomGenerBack);
+        getBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                returnToPre();
+            }
+
+    });
 
     }
     public static String getRandomString(int length){
@@ -49,6 +58,7 @@ public class GenerateActivity extends AppCompatActivity {
                 case 1:
                     val.append((char) (random.nextInt(26)+97));
                     break;
+                //capital
                 case 2:
                     val.append((char)(random.nextInt(26)+65));
             }
@@ -69,5 +79,9 @@ public class GenerateActivity extends AppCompatActivity {
         {
             e.printStackTrace();
         }
+    }
+    public void returnToPre() { //to previous page
+        Intent intent1 = new Intent(this, StartingPageActivity.class);
+        startActivity(intent1);
     }
 }
