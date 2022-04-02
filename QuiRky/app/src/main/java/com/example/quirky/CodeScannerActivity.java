@@ -155,6 +155,9 @@ public class CodeScannerActivity extends AppCompatActivity {
         Profile p = mc.read();
 
         if(! p.addScanned(qr.getId()) ) {
+            // FIXME: currently a bug in scanning QRCodes, it will always tell you that you already own the code, but the code is still added to your account.
+            // FIXME: If you actually do already have the QRCode, it will not add it to the account a second time.
+            // FIXME: I have no idea where the bug source is.
             Toast.makeText(this, "You already have that QRCode!", Toast.LENGTH_SHORT).show();
             return;
         }
