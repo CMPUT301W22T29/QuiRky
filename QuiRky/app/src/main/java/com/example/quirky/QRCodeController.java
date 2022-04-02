@@ -19,7 +19,14 @@ package com.example.quirky;
 import static com.google.common.math.IntMath.pow;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.Task;
 import com.google.common.hash.HashFunction;
@@ -29,6 +36,11 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -147,4 +159,7 @@ public class QRCodeController {
     public static String hashCode(String rawValue) {
         return hash.hashString(rawValue, StandardCharsets.US_ASCII).toString();}
 
+    public QRCode getQrCodes(){
+        return getQrCodes();
+    }
 }

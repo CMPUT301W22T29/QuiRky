@@ -16,8 +16,10 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.util.Random;
+
 public class GenerateActivity extends AppCompatActivity {
-    EditText userNameField;
+
     Button qrGeneraBtn1;
     ImageView qrImage;
 
@@ -26,8 +28,6 @@ public class GenerateActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generate);
-
-        userNameField = findViewById(R.id.userGenerate);
         qrGeneraBtn1 = findViewById(R.id.generateButton1);
         qrImage = findViewById(R.id.qrfield);
 
@@ -36,8 +36,28 @@ public class GenerateActivity extends AppCompatActivity {
         });
 
     }
+    public static String getRandomString(int length){
+        StringBuilder val = new StringBuilder();
+        Random random = new Random();
+        String finalString;
+        for (int i = 0; i<length;i++){
+            int chatTypa = random.nextInt(3);
+            switch (chatTypa){
+                case 0:
+                    val.append(random.nextInt(10));
+                    break;
+                case 1:
+                    val.append((char) (random.nextInt(26)+97));
+                    break;
+                case 2:
+                    val.append((char)(random.nextInt(26)+65));
+            }
+        }
+        finalString = val.toString();
+        return  finalString;
+    }
     private void generateQR(){
-        String text = userNameField.getText().toString().trim();
+        String text = getRandomString(18);
         MultiFormatWriter writer = new MultiFormatWriter();
         try {
             BitMatrix matrix = writer.encode(text, BarcodeFormat.QR_CODE, 400, 400);
