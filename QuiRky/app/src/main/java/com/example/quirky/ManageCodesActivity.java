@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class ManageCodesActivity extends AppCompatActivity {
+    private final String TAG = "ManageCodesActivity says";
+
     private ToggleButton arrangementOrder;
     private RecyclerView qr_list;
 
@@ -37,10 +39,15 @@ public class ManageCodesActivity extends AppCompatActivity {
 
         Profile p = (Profile) getIntent().getSerializableExtra("profile");
         codes = p.getScanned();
+        points = new ArrayList<>();
+        for(String id : codes) {
+            String score = String.valueOf( QRCodeController.score(id) );
+            points.add(score);
+        }
 
         arrangementOrder = findViewById(R.id.toggleButton);
         qr_list = findViewById(R.id.qr_list);
-        
+
         recyclerListener = new RecyclerClickerListener(){
             @Override
             public void OnClickListItem(int position){
@@ -83,6 +90,7 @@ public class ManageCodesActivity extends AppCompatActivity {
 
     private void startViewQRActivity(int position) {
         Intent i = new Intent(this, ViewQRActivity.class);
+        Log.d(TAG, "passed |{" + codes.get(position) + "}| to the activity");
         i.putExtra("code", codes.get(position));
         startActivity(i);
     }

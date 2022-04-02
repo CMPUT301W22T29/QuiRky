@@ -116,7 +116,7 @@ public class QRCodeController {
 
     /**
      * Calculate the score of a hash.
-     * Algorithm works as follows: The ASCII value of each character in the string is summed together, and then modulo 100.
+     * Algorithm works as follows: The ASCII value of each character in the string is summed together, and returned.
      * @param hash
      *      - The string to be scored
      * @return
@@ -127,6 +127,6 @@ public class QRCodeController {
         for (int i = 0; i < hash.length(); i++) {
             sum += hash.charAt(i);
         }
-        return sum % 100;
+        return sum;
     }
 }
