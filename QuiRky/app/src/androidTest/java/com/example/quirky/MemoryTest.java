@@ -84,7 +84,6 @@ public class MemoryTest {
         assertEquals(p, result);
 
         p = new Profile("Second test", "abc", "123", new ArrayList<>());
-        p.setPointsOfScannedCodes(5);
 
         mc.write(p);
         result = mc.read();

@@ -108,8 +108,6 @@ public class GenerateActivity extends AppCompatActivity {
                 } catch (WriterException e) {
                     e.printStackTrace();
                 }
-
-
             }
         });
     }

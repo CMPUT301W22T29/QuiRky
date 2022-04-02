@@ -1,7 +1,10 @@
 package com.example.quirky;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -17,22 +20,21 @@ import com.google.firebase.firestore.QuerySnapshot;
 /**
  * This is the activity that shows once the app is opened
  */
-public class MainActivity extends AppCompatActivity implements InputUnameLoginFragment.LoginFragListener {
+public class MainActivity extends AppCompatActivity implements
+                                                 InputUnameLoginFragment.LoginFragListener,
+                                                 ActivityCompat.OnRequestPermissionsResultCallback {
 
     DatabaseController dm;
     MemoryController mc;
+    private CameraActivitiesController cameraActivitiesController;
 
-    /*
-    Code for getting unique device ID taken from:
-    https://stackoverflow.com/a/2785493
-    Written by user:
-    https://stackoverflow.com/users/166712/anthony-forloney
-    Published May 7 2010
-    */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        cameraActivitiesController = new CameraActivitiesController(this, true);
 
         dm = new DatabaseController(this);
         mc = new MemoryController(this);
@@ -65,33 +67,34 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
     @Override
     public void OnClickConfirm(String uname) {
         // Read from the database to check if this username is already taken.
-        dm.readProfile(uname).addOnCompleteListener(task -> {
-            if(!task.isSuccessful()) {
-                task.getException().printStackTrace();
+        dm.startCheckProfileExists(uname).addOnCompleteListener(task -> {
+            if(dm.checkProfileExists(task)) {
+                Profile p = new Profile(uname);
+
+                mc.write(p);
+                mc.writeUser(uname);
+                dm.writeProfile(p);
+
+                startHubActivity();
+
             } else {
-                if(dm.getProfile(task) != null) {
-                    Toast.makeText(this, "This username already exists!", Toast.LENGTH_LONG).show();
-                    // Restart the process by calling login()
-                    login();
-                } else {
-                    Profile p = new Profile(uname);
-
-                    mc.write(p);
-                    mc.writeUser(uname);
-                    dm.writeProfile(p);
-
-                    startHubActivity();
-                }
+                Toast.makeText(this, "This username already exists!", Toast.LENGTH_LONG).show();
+                // Restart the process by calling login()
+                login();
             }
         });
     }
 
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                                                      @NonNull int[] grantResults) {
+        cameraActivitiesController.getCameraPermissionRequestResult(requestCode, grantResults);
+    }
+
     @Override
     public void LoginByQR() {
-        Intent i = new Intent(this, CodeScannerActivity.class);
-        startActivity(i);
-        // TODO: Currently LoginByQR just starts the camera activity, and does not do any logging in shenanigans.
-        // TODO: Make sure permissions and stuff aren't buggered by this.
+        cameraActivitiesController.startCodeScannerActivity();
     }
 
     private void startSettingsActivity() {

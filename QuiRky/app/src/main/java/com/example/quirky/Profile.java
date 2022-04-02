@@ -37,9 +37,9 @@ public class Profile implements Serializable {
         this.phone = phone;
         this.scanned = scanned;
 
-        this.numberCodesScanned = -1;
-        this.pointsOfScannedCodes = -1;
-        this.pointsOfLargestCodes = -1;
+        this.numberCodesScanned = ProfileController.calculateTotalScanned(this);
+        this.pointsOfScannedCodes = ProfileController.calculateTotalPoints(this);
+        this.pointsOfLargestCodes = ProfileController.calculateGreatestScore(this);
     }
 
     /**
@@ -54,9 +54,9 @@ public class Profile implements Serializable {
         this.email = "";
         this.phone = "";
 
-        this.numberCodesScanned = -1;
-        this.pointsOfScannedCodes = -1;
-        this.pointsOfLargestCodes = -1;
+        this.numberCodesScanned = 0;
+        this.pointsOfScannedCodes = 0;
+        this.pointsOfLargestCodes = 0;
     }
 
     /**
@@ -122,83 +122,64 @@ public class Profile implements Serializable {
     }
 
     /**
-     * Adds a QRCode to the list of scanned QRCodes
-     * @param qrId
-     *      - The ID of the QRCode the player has scanned
+     * Adds a QRCode to the list of scanned QRCodes. Updates stats to reflect the added code.
+     * Does nothing if the player already has this QRCode.
+     * @param qrId The ID of the QRCode the player has scanned
+     * @return Whether the QRCode was actually added or not.
      */
-    public void addScanned(String qrId) {
+    public boolean addScanned(String qrId) {
+        if(scanned.contains(qrId))
+            return false;
         scanned.add(qrId);
+        updateStats();
+        return true;
     }
 
     /**
      * Removes a QRCode from the list of scanned QRCodes. Does nothing if the id is not in the array.
+     * Also updates the profile's stats to reflect the added code.
      * @param qrId
      *      - The ID of the QRCode the player wants to delete
      */
     public void removeScanned(String qrId) {
-        if(scanned.contains(qrId))
+        if(scanned.contains(qrId)) {
             scanned.remove(qrId);
+            updateStats();
+        }
     }
 
     /**
-     * Getter for getRankingScanned
-     * @return The position of the player in the global leaderboards for number of QRCodes scanned
+     * Getter for numberCodesScanned
+     * @return The number of codes the player has scanned
      */
     public int getNumberCodesScanned() {
         return numberCodesScanned;
     }
 
-    /**
-     * Setter for rankingScanned
-     * @param numberCodesScanned The new rank in the leadboard
-     */
-    public void setNumberCodesScanned(int numberCodesScanned) {
-        this.numberCodesScanned = numberCodesScanned;
-    }
 
     /**
-     * Getter for rankingPoints
-     * @return The profile's rankingPoints
+     * Getter for pointsOfScannedCodes
+     * @return The profile's sum of points
      */
     public int getPointsOfScannedCodes() {
         return pointsOfScannedCodes;
     }
 
-    /**
-     * Setter for rankingPoints
-     * @param pointsOfScannedCodes The profile's new rank
-     */
-    public void setPointsOfScannedCodes(int pointsOfScannedCodes) {
-        this.pointsOfScannedCodes = pointsOfScannedCodes;
-    }
 
     /**
-     * Getter for ranking in largest scoring QRCode scanned
-     * @return Player's rank
+     * Getter for pointsOfLargestCodes
+     * @return Point value of player's largest QRCode
      */
     public int getPointsOfLargestCodes() {
         return pointsOfLargestCodes;
     }
 
     /**
-     * Setter for ranking in largest scoring QRCode scanned
-     * @param pointsOfLargestCodes Player's new rank
+     * Call the ProfileController to update the player's statistics.
      */
-    public void setPointsOfLargestCodes(int pointsOfLargestCodes) {
-        this.pointsOfLargestCodes = pointsOfLargestCodes;
-    }
-
-    /**
-     * Constructor from a Parcel. Typically used when passing between activities
-     * @param in A parcel containing a profile
-     */
-    protected Profile(Parcel in) {
-        uname = in.readString();
-        email = in.readString();
-        phone = in.readString();
-        numberCodesScanned = in.readInt();
-        pointsOfScannedCodes = in.readInt();
-        pointsOfLargestCodes = in.readInt();
-        scanned = in.createStringArrayList();
+    public void updateStats() {
+        this.numberCodesScanned = ProfileController.calculateTotalScanned(this);
+        this.pointsOfScannedCodes = ProfileController.calculateTotalPoints(this);
+        this.pointsOfLargestCodes = ProfileController.calculateGreatestScore(this);
     }
 }
