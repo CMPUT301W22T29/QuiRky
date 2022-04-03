@@ -17,6 +17,7 @@
 package com.example.quirky;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,11 +27,17 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Random;
 
 /**
  * A controller class that computes data needed by the <code>QRCode</code> model.
@@ -86,7 +93,7 @@ public class QRCodeController {
 
     /**
      * Calculate the score of a hash.
-     * Algorithm works as follows: The ASCII value of each character in the string is summed together, and returned.
+     * Algorithm works as follows: The ASCII value of each character in the string is summed together, and then modulo 100.
      * @param hash
      *      - The string to be scored
      * @return
@@ -98,5 +105,59 @@ public class QRCodeController {
             sum += hash.charAt(i);
         }
         return sum;
+    }
+
+    public static String getRandomString(int length){
+        /**
+         * Generate the a Random QR code ImageView
+         *
+         * @param length
+         *      - Generate
+         * @param codes
+         *      - generated qr code
+         */
+        StringBuilder val = new StringBuilder();
+        Random random = new Random();
+        String finalString;
+        for (int i = 0; i<length;i++){
+            int chatTypa = random.nextInt(3);
+            switch (chatTypa){
+                case 0:
+                    val.append(random.nextInt(10));
+                    break;
+                case 1:
+                    val.append((char) (random.nextInt(26)+97));
+                    break;
+                //capital
+                case 2:
+                    val.append((char)(random.nextInt(26)+65));
+            }
+        }
+        finalString = val.toString();
+        return  finalString;
+    }
+
+    public static Bitmap generateQR(String text){
+        /**
+         * Generate the a Random QR code ImageView
+         *
+         * @param text
+         *      - The generated qr code based on this string
+         * @param codes
+         *      - generated qr code
+         */
+
+        Bitmap generatedQRCode = null;
+        MultiFormatWriter writer = new MultiFormatWriter();
+        try {
+            BitMatrix matrix = writer.encode(text, BarcodeFormat.QR_CODE, 400, 400);
+            BarcodeEncoder encoder = new BarcodeEncoder();
+            Bitmap bitmap = encoder.createBitmap(matrix);
+            generatedQRCode = bitmap;
+        }catch (WriterException e)
+        {
+            e.printStackTrace();
+        }
+        return generatedQRCode;
     }
 }
