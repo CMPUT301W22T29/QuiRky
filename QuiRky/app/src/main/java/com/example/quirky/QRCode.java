@@ -15,10 +15,6 @@
 
 package com.example.quirky;
 
-import org.osmdroid.util.GeoPoint;
-
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.os.Parcel;
 import android.os.Parcelable;
 

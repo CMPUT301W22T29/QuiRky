@@ -51,11 +51,14 @@
     <string name="cancel">cancel</string>
     <string name="editablename">editableName</string>
     <string name="generate_qr_codes">Generate QR Codes</string>
+    <string name="backtopre">back</string>
     <string name="generate_by_text">generate by text</string>
     <string name="generate_by_integer">generate by integer</string>
     <string name="generate_by_url_link">generate by URL Link</string>
     <string name="generate">Generate</string>
     <string name="button">Button</string>
+    <string name="bbaack"><![CDATA[<]]></string>
+    <string name="generate_random_code">Generate Random Code</string>
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_manage_codes">ManageCodesActivity</string>
     <!-- Strings used for fragments for navigation -->
