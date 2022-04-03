@@ -9,6 +9,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -55,24 +56,28 @@ public class MapActivity extends AppCompatActivity {
         Location location;
         nearbymap = (MapView) findViewById(R.id.map1);
         iMapController = nearbymap.getController();
-        ArrayList<Location> locations = new ArrayList<>();
-        ArrayList<Location> locations1 = new ArrayList<>();
         mapController = new MapController(this);
         nearbymap.setTileSource(TileSourceFactory.MAPNIK);
         nearbymap.setBuiltInZoomControls(true);
         nearbymap.setMultiTouchControls(true);
         iMapController.setZoom((double) 15);
         locationManager = mapController.getLocationManager();
+        //Set a oncode listener, it's a call back when something is added to the branch
+        CodeList<Location> locations = new CodeList<>();
+        locations.setOnCodeAddedListener(new OnCodeAddedListener<Location>() {
+            @Override
+            public void onCodeAdded(CodeList<Location> codeList) {
+                Log.d("map", "onCodeAdded");
+                Location location = codeList.get(0);
+                qrMarkerOnMap(location);
+            }
+        });
         //Move this part to MapController
         if (Integer.valueOf(android.os.Build.VERSION.SDK) > 30) {
-            locations1 = mapController.requestLocationModern(locations,this);
-            location = locations1.get(0);
-            qrMarkerOnMap(location);
+            mapController.requestLocationModern( locations,this);
         }
         else{
-            locations1 = mapController.requestLocation(locations,this);
-            location = locations1.get(0);
-            qrMarkerOnMap(location);
+            mapController.requestLocation(locations,this);
         }
     }
     public void qrMarkerOnMap(Location location){
