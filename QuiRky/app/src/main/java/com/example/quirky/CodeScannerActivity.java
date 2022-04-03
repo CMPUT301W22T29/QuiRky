@@ -151,20 +151,18 @@ public class CodeScannerActivity extends AppCompatActivity {
     }
 
     public void save(QRCode qr, GeoPoint gp, Bitmap image) {
-        dc.writeQRCode(qr);
         Profile p = mc.read();
 
         if(! p.addScanned(qr.getId()) ) {
-            // FIXME: currently a bug in scanning QRCodes, it will always tell you that you already own the code, but the code is still added to your account.
-            // FIXME: If you actually do already have the QRCode, it will not add it to the account a second time.
-            // FIXME: I have no idea where the bug source is.
             Toast.makeText(this, "You already have that QRCode!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Update the local memory and database, because the player's statistics have changed.
-        mc.write(p);
-        dc.writeProfile(p);
+        //mc.write(p);
+        //dc.writeProfile(p);
+        // FIXME: writeQRCode already updates the player's profile in local and remote memory. Maybe too much responsibility on it, must lower this method's cohesion?
+        dc.writeQRCode(qr);
 
         if(gp != null) {
             // dc.saveLocation(qrcode, location);
@@ -172,9 +170,7 @@ public class CodeScannerActivity extends AppCompatActivity {
         if(image != null) {
             // dc.saveImage(qrcode, image);
         }
-
         Toast.makeText(this, "QRCode saved!", Toast.LENGTH_LONG).show();
-
     }
 
     /**
