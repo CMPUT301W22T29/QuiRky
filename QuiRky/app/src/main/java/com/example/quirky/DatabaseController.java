@@ -106,13 +106,8 @@ public class DatabaseController {
      * Write a QRCode to the database. Will also add the QRCode to the account of the app-holder
      * @param qr The QRCode to be written
      */
-    public void writeQRCode(QRCode qr) {
+    public void writeQRCode(QRCode qr, String user) {
         assert(qr != null) : "You can't write a null object to the database!";
-
-        // Get the user from memory
-        MemoryController mc = new MemoryController(this.ct);
-        Profile p = mc.read();
-        String user = mc.readUser();
 
         // A batch write: a group of write operations to be done at once.
         // Batches are not written immediately. Can add many operations to a batch, then commit all writes at once.
@@ -135,15 +130,16 @@ public class DatabaseController {
             batch.set(collection.document(c.getId()), c);
         }
 
-        // Update the player's profile to include this QRCode as one they have scanned.
-        p.addScanned(qr.getId());
-        ArrayList<String> scanned = p.getScanned();
-        mc.write(p);
-
-        collection = db.collection("users");
+        // Create an entry for the user in the QRCode's userdata folder.
+        // Values are set to null, a separate method will set the location and photo to actual values.
+        collection = doc.collection("userdata");
         doc = collection.document(user);
-        batch.update(doc, "scanned", scanned);
 
+        data.clear();
+        data.put("location", null);
+        data.put("photo", null);
+
+        batch.set(doc, data);
 
         // Issue the batch write
         batch.commit().addOnCompleteListener(writeListener);
@@ -229,6 +225,19 @@ public class DatabaseController {
     }
 
     /**
+     * Determine if the user passed to readProfile() is an owner user.
+     * @param task The task returned by readProfile(). Calling with any other task will result in errors.
+     * @return If the read user is an owner or not.
+     */
+    public boolean isOwner(Task<DocumentSnapshot> task) {
+        DocumentSnapshot doc = task.getResult();
+        if(doc.contains("owner"))
+            return doc.getBoolean("owner");
+        else
+            return false;
+    }
+
+    /**
      * Begin querying the database for profiles with a similar username to the given string.
      * This is an Asynchronous operation, and such this method not return the result. The result can be obtained from getProfile()
      * @param search The string to search for similar usernames with
@@ -283,7 +292,7 @@ public class DatabaseController {
     /**
      * Get the results of the readQRCode(); This method should only be called once the Task returned from it has completed.
      * @param task The task returned from readQRCode(). Calling with any other task will result in errors.
-     * @return The QRCode with the ID that was passed to readQRCode(). Returns null if such a QRCode does not exist in the database, or if the score of the QRCode breaks the integer limit.
+     * @return The QRCode with the ID that was passed to readQRCode(). Returns null if such a QRCode does not exist in the database, or if the score of the QRCode breaks the integer limit.jfdkla;
      */
     // Conversion from Long -> int taken from
     // https://stackoverflow.com/a/32869210

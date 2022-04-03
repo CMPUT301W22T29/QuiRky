@@ -159,10 +159,9 @@ public class CodeScannerActivity extends AppCompatActivity {
         }
 
         // Update the local memory and database, because the player's statistics have changed.
-        //mc.write(p);
-        //dc.writeProfile(p);
-        // FIXME: writeQRCode already updates the player's profile in local and remote memory. Maybe too much responsibility on it, must lower this method's cohesion?
-        dc.writeQRCode(qr);
+        dc.writeQRCode(qr, p.getUname());
+        mc.write(p);
+        dc.writeProfile(p);
 
         if(gp != null) {
             // dc.saveLocation(qrcode, location);
