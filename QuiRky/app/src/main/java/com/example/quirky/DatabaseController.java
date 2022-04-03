@@ -133,13 +133,12 @@ public class DatabaseController {
         // Create an entry for the user in the QRCode's userdata folder.
         // Values are set to null, a separate method will set the location and photo to actual values.
         collection = doc.collection("userdata");
-        doc = collection.document(user);
 
         data.clear();
         data.put("location", null);
         data.put("photo", null);
 
-        batch.set(doc, data);
+        batch.set(collection.document(user), data);
 
         // Issue the batch write
         batch.commit().addOnCompleteListener(writeListener);
