@@ -25,6 +25,7 @@ public class MyStatsActivity extends AppCompatActivity {
         i = getIntent();
         p = (Profile) i.getSerializableExtra("profile");
         lbc = new LeaderBoardController(this);
+        lbc.readAllPlayers().addOnCompleteListener(task -> setTextRanking());
 
         totScore = findViewById(R.id.totScore2);
         scoreRanking = findViewById(R.id.scoreRanking2);
@@ -33,8 +34,6 @@ public class MyStatsActivity extends AppCompatActivity {
 
         totScore.setText(String.valueOf(p.getPointsOfScannedCodes()));
         totScanned.setText(String.valueOf(p.getNumberCodesScanned()));
-        scoreRanking.setText(String.valueOf(lbc.getRankingPoints()));
-        scannedRanking.setText(String.valueOf(lbc.getRankingNumScanned()));
 
         backBt = (Button)findViewById(R.id.mystatsBack);
         backBt.setOnClickListener(new View.OnClickListener() {
@@ -44,6 +43,11 @@ public class MyStatsActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void setTextRanking(){
+        scoreRanking.setText(String.valueOf(lbc.getRankingPoints()));
+        scannedRanking.setText(String.valueOf(lbc.getRankingNumScanned()));
     }
     public void returnToPrev(){
         Intent intent1 = new Intent(this, MainActivity.class);

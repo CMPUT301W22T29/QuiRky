@@ -80,7 +80,12 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
 
         mid.setText("My Stats");
         mid.setOnClickListener(view -> {
+
+            MemoryController mc = new MemoryController(this);
+            Profile p = mc.read();
+
             Intent i = new Intent(this, MyStatsActivity.class);
+            i.putExtra("profile", p);
             startActivity(i);
         });
 
