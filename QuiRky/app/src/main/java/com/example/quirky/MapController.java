@@ -107,6 +107,7 @@ public class MapController{
     }
 
     public LocationManager getLocationManager() {
+
         return locationManager;
     }
 }
