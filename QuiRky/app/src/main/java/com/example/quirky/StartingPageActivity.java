@@ -17,6 +17,7 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
     private Button QRButton, ProfileButton, CommunityButton;
     private Button top, mid, bottom;
     private CameraActivitiesController cameraActivitiesController;
+    MemoryController mc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +51,9 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
     private void setQRlayout() {
         top.setText("Manage Codes");
         top.setOnClickListener(view -> {
+            mc = new MemoryController(this);
             Intent i = new Intent(this, ManageCodesActivity.class);
+            i.putExtra("profile", mc.read());
             startActivity(i);
         });
 
@@ -70,7 +73,7 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
         top.setText("My Profile");
         top.setOnClickListener(view -> {
 
-            MemoryController mc = new MemoryController(this);
+            mc = new MemoryController(this);
             Profile p = mc.read();
 
             Intent i = new Intent(this, ProfileViewerActivity.class);

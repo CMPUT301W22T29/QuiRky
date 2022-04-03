@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 
 import java.util.ArrayList;
@@ -46,9 +47,18 @@ public class LeaderBoardActivity extends AppCompatActivity {
         myRank = findViewById(R.id.my_ranking_button);
         topRanks = findViewById(R.id.top_rankings_button);
 
-        sortPoints.setOnClickListener(view -> sortByPoints());
-        sortScanned.setOnClickListener(view -> sortByScanned());
-        sortGreatest.setOnClickListener(view -> sortByGreatestScanned());
+        sortPoints.setOnClickListener(view -> {
+            sortByPoints();
+            updateDisplay();
+        });
+        sortScanned.setOnClickListener(view -> {
+            sortByScanned();
+            updateDisplay();
+        });
+        sortGreatest.setOnClickListener(view -> {
+            sortByGreatestScanned();
+            updateDisplay();
+        });
 
         myRank.setOnClickListener(view -> showTopPlayers = false);
         topRanks.setOnClickListener(view -> showTopPlayers = true);
@@ -80,31 +90,36 @@ public class LeaderBoardActivity extends AppCompatActivity {
     private void updateDisplay() {
         data.clear();
 
+//        // If there is fewer than 15 players, just display all of them.
+//        if(players.size() <= 15) {
+//            for(Profile p : players) {
+//                if(p == null) continue;
+//                data.add(p.getUname());
+//            }
+//            adapter.notifyDataSetChanged();
+//            return;
+//        }
 
-        if(players.size() <= 10) {
-            for(Profile p : players) {
-                if(p == null) continue;
-                data.add(p.getUname());
-            }
+        // There are more than 15 players
+        // User can choose to show the top 10, or their own position within the rankings
+        if(showTopPlayers) {
+            for (int i = 0; i < 10; i++)
+                data.add(players.get(i).getUname());
             adapter.notifyDataSetChanged();
             return;
         }
 
-        if(showTopPlayers) {
-            // Show the Top 10 players on the leaderboard
-            for(int i = 0; i < 10; i++) {
-                data.add( players.get(i).getUname() );
-            }
+        // Show the 10 surrounding players around the app-holders position
+        int position = lbc.findPlayer(user);
+        if(position == -1) {
+            data.add("You are not yet ranked on the leaderboard!");
         } else {
-            // Show the 10 surrounding players around the app-holders position
-            int position = lbc.findPlayer(user);
 
-            if(position == -1) {
-                data.add("You are not yet ranked on the leaderboard!");
-            } else {
-                for (int i = position - 5; i < position + 5; i++) {
+            // Show the 5 lower and 5 higher players on the leaderboard.
+            for (int i = position - 5; i < position + 5; i++) {
+                // Nested if statement prevents IndexOutOfBoundsException
+                if( -1 < i && i < players.size() )
                     data.add(players.get(i).getUname());
-                }
             }
         }
 

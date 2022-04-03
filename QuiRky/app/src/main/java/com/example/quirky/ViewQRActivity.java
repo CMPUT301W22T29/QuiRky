@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,6 +31,8 @@ import java.util.ArrayList;
  * */
 public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentListener {
 
+    private final String TAG = "ViewQRActivity says";
+
     ImageView image;
     TextView scoreText;
     Fragment buttonsFrag, playersFrag;
@@ -51,10 +54,16 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
 
         i = getIntent();
         qrid = i.getStringExtra("code");
+        Log.d(TAG, "Got |{" + qrid + "}|");
 
-        dc.readQRCode(qrid).addOnCompleteListener(task -> qr = dc.getQRCode(task));
+        dc.readQRCode(qrid).addOnCompleteListener(task -> {
+            qr = dc.getQRCode(task);
+            doneReading();
+        });
         dc.readQRCodeUserData(qrid).addOnCompleteListener(task -> players = dc.getQRCodeScanners(task));
+    }
 
+    private void doneReading() {
         image = findViewById(R.id.imageView2);
         scoreText = findViewById(R.id.text_showScore);
 
@@ -83,6 +92,8 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
 
     @Override
     public ArrayList<String> getPlayers() {
+        if(players == null)
+            return new ArrayList<String>();
         return players;
     }
 

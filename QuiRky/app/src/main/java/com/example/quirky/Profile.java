@@ -177,7 +177,7 @@ public class Profile implements Serializable {
     /**
      * Call the ProfileController to update the player's statistics.
      */
-    public void updateStats() {
+    private void updateStats() {
         this.numberCodesScanned = ProfileController.calculateTotalScanned(this);
         this.pointsOfScannedCodes = ProfileController.calculateTotalPoints(this);
         this.pointsOfLargestCodes = ProfileController.calculateGreatestScore(this);

@@ -8,33 +8,61 @@
 
     <ImageView
         android:id="@+id/qrfield"
-        android:layout_width="280dp"
-        android:layout_height="339dp"
-        android:layout_marginTop="72dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
         android:contentDescription="qr code"
+        android:minWidth="200dp"
+        android:minHeight="200dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.396"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="?attr/actionModeSelectAllDrawable" />
 
     <Button
-        android:id="@+id/generateButton1"
-        android:layout_width="155dp"
-        android:layout_height="95dp"
-        android:layout_marginTop="68dp"
-        android:layout_marginEnd="140dp"
-        android:text="@string/generate_random_code"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/generateLoginCodeButton"
+        android:layout_width="140dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="64dp"
+        android:text="Generate Login Code"
+        app:layout_constraintEnd_toStartOf="@+id/GenerateViewProfileCodeButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/qrfield" />
 
     <Button
-        android:id="@+id/randomGenerBack"
-        android:layout_width="99dp"
-        android:layout_height="58dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Back"
+        android:id="@+id/GenerateViewProfileCodeButton"
+        android:layout_width="140dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="64dp"
+        android:text="QRCode To View Profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/generateLoginCodeButton"
+        app:layout_constraintTop_toBottomOf="@+id/qrfield" />
+
+    <EditText
+        android:id="@+id/genertateByTextField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:hint="Type something!"
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/generateLoginCodeButton" />
+
+    <Button
+        android:id="@+id/generateByTextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Generate QR Code off text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/genertateByTextField" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
