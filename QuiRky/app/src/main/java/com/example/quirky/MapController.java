@@ -168,6 +168,7 @@ public class MapController{
                     //FIXME: OVERRIDE onStatusChanged(String, int, Bundle) FOR API LEVEL < 29
                     //FIXME: Figure out why onLocationChanged doesn't get called in some cases, or if it gets called in any cases
                     //TODO: Use getCurrentLocation() instead for API level > 29
+                    //TODO: if can't make it work, go back to using requestLocationUpdates() and call removeUpdates() instead.
                 }, null);
 
             }
