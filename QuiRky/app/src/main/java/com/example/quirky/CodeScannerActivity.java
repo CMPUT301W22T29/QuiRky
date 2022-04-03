@@ -151,7 +151,6 @@ public class CodeScannerActivity extends AppCompatActivity {
     }
 
     public void save(QRCode qr, GeoPoint gp, Bitmap image) {
-        //dc.writeQRCode(qr);
         Profile p = mc.read();
 
         if(! p.addScanned(qr.getId()) ) {
@@ -162,6 +161,7 @@ public class CodeScannerActivity extends AppCompatActivity {
         // Update the local memory and database, because the player's statistics have changed.
         //mc.write(p);
         //dc.writeProfile(p);
+        // FIXME: writeQRCode already updates the player's profile in local and remote memory. Maybe too much responsibility on it, must lower this method's cohesion?
         dc.writeQRCode(qr);
 
         if(gp != null) {
@@ -170,9 +170,7 @@ public class CodeScannerActivity extends AppCompatActivity {
         if(image != null) {
             // dc.saveImage(qrcode, image);
         }
-
         Toast.makeText(this, "QRCode saved!", Toast.LENGTH_LONG).show();
-
     }
 
     /**

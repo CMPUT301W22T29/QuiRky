@@ -24,7 +24,6 @@ public class ProfileController {
      */
     public static int calculateTotalScanned(Profile p) {
         ArrayList<String> codes = p.getScanned();
-        Log.d(TAG, "Profile " + p.getUname() + " has " + codes.size() + " QRCodes");
         return codes.size();
     }
 
@@ -37,10 +36,8 @@ public class ProfileController {
         ArrayList<String> codes = p.getScanned();
         int sum = 0;
 
-        Log.d(TAG, "Calculating profile " + p.getUname() + "'s sum of points\n\t");
         for(String id : codes) {
             sum += QRCodeController.score(id);
-            Log.d(TAG, "Sum is now " + sum + "\n\t");
         }
         return sum;
     }
@@ -54,11 +51,9 @@ public class ProfileController {
         ArrayList<String> codes = p.getScanned();
         int largest = 0;
 
-        Log.d(TAG, "Calculating profile " + p.getUname() + "'s Largest Code\n\t");
         for(String id : codes) {
             if(QRCodeController.score(id) > largest) {
                 largest = QRCodeController.score(id);
-                Log.d(TAG, p.getUname() + "'s largest is now " + largest + "\n\t");
             }
         }
         return largest;

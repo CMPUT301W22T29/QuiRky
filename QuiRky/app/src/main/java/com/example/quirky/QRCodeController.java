@@ -17,6 +17,7 @@
 package com.example.quirky;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,11 +27,17 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Random;
 
 /**
  * A controller class that computes data needed by the <code>QRCode</code> model.
@@ -47,36 +54,6 @@ import java.util.List;
  * @see QRCode
  */
 public class QRCodeController {
-    private static final BarcodeScanner codeScanner = BarcodeScanning.getClient(
-            new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build());
-
-    /**
-     * Analyzes an image for qr codes, and constructs <code>QRCode</code>s from their data.
-     *
-     * @param inputImage
-     *      - The image to analyze.
-     * @param codes
-     *      - The list in which the <code>QRCode</code>s will be stored once they are constructed.
-     * @param context
-     *      - The activity that the user is interacting with to capture QR code images.
-     * @see CameraController
-     */
-    public static void scanQRCodes(InputImage inputImage, CodeList<QRCode> codes, Context context) {
-        // TODO: edit javadoc
-        Task<List<Barcode>> result = codeScanner.process(inputImage)
-                .addOnSuccessListener(barcodes -> {
-                    // Construct a QRCode with the scanned raw data
-                    for (Barcode barcode: barcodes) {
-                        codes.add(new QRCode(barcode.getRawValue()));
-                    }
-                    if (codes.size() == 0) {
-                        String text
-                                = "Could not find any QR codes. Move closer or further and try scanning again.";
-                        Toast.makeText(context, text, Toast.LENGTH_LONG).show();
-                    }
-                });
-    }
-    
     /**
      * Returns the SHA-256 Hash of a string as a string
      * @param content
@@ -93,21 +70,21 @@ public class QRCodeController {
         // April 3, 2011
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] temp = md.digest(content.getBytes(StandardCharsets.UTF_8));
+            byte[] hash = md.digest(content.getBytes(StandardCharsets.UTF_8));
 
             // The byte[] is converted into a String using the UTF-8 character set.
             // In Firestore, it is illegal for Documents and Collections to have '/' or '.' in their ID
             // So the byte[] is parsed for these characters before it is turned to a string.
             // This reduces the number of unique ID's, but only by a small amount.
-            for(int i = 0; i < temp.length; i++) {
-                if(temp[i] == 0x2f)   // 0x2f -> '/'
-                    temp[i] = 0x30;
-                if(temp[i] == 0x2e)   // 0x2e -> '.'
-                    temp[i] = 0x30;
+            for(int i = 0; i < hash.length; i++) {
+                if(hash[i] == 0x2f)   // 0x2f -> '/'
+                    hash[i] = 0x30;
+                if(hash[i] == 0x2e)   // 0x2e -> '.'
+                    hash[i] = 0x30;
             }
 
             // byte[] -> String using UTF_8 because that's the character set FireStore document names can use
-            return new String(temp, StandardCharsets.UTF_8);
+            return new String(hash, StandardCharsets.UTF_8);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage(), e.getCause());
@@ -116,7 +93,7 @@ public class QRCodeController {
 
     /**
      * Calculate the score of a hash.
-     * Algorithm works as follows: The ASCII value of each character in the string is summed together, and returned.
+     * Algorithm works as follows: The ASCII value of each character in the string is summed together, and then modulo 100.
      * @param hash
      *      - The string to be scored
      * @return
@@ -128,5 +105,59 @@ public class QRCodeController {
             sum += hash.charAt(i);
         }
         return sum;
+    }
+
+    public static String getRandomString(int length){
+        /**
+         * Generate the a Random QR code ImageView
+         *
+         * @param length
+         *      - Generate
+         * @param codes
+         *      - generated qr code
+         */
+        StringBuilder val = new StringBuilder();
+        Random random = new Random();
+        String finalString;
+        for (int i = 0; i<length;i++){
+            int chatTypa = random.nextInt(3);
+            switch (chatTypa){
+                case 0:
+                    val.append(random.nextInt(10));
+                    break;
+                case 1:
+                    val.append((char) (random.nextInt(26)+97));
+                    break;
+                //capital
+                case 2:
+                    val.append((char)(random.nextInt(26)+65));
+            }
+        }
+        finalString = val.toString();
+        return  finalString;
+    }
+
+    public static Bitmap generateQR(String text){
+        /**
+         * Generate the a Random QR code ImageView
+         *
+         * @param text
+         *      - The generated qr code based on this string
+         * @param codes
+         *      - generated qr code
+         */
+
+        Bitmap generatedQRCode = null;
+        MultiFormatWriter writer = new MultiFormatWriter();
+        try {
+            BitMatrix matrix = writer.encode(text, BarcodeFormat.QR_CODE, 400, 400);
+            BarcodeEncoder encoder = new BarcodeEncoder();
+            Bitmap bitmap = encoder.createBitmap(matrix);
+            generatedQRCode = bitmap;
+        }catch (WriterException e)
+        {
+            e.printStackTrace();
+        }
+        return generatedQRCode;
     }
 }
