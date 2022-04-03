@@ -6,13 +6,35 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class MyStatsActivity extends AppCompatActivity {
     private Button backBt;
+    private Intent i;
+    private Profile p;
+    private MemoryController mc;
+    private LeaderBoardController lbc;
+
+    private TextView totScore, scoreRanking, totScanned, scannedRanking;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_stats);
+
+        // Do I need to get the profile?
+        i = getIntent();
+        p = (Profile) i.getSerializableExtra("profile");
+        lbc = new LeaderBoardController(this);
+
+        totScore = findViewById(R.id.totScore2);
+        scoreRanking = findViewById(R.id.scoreRanking2);
+        totScanned = findViewById(R.id.totScanned2);
+        scannedRanking = findViewById(R.id.scannedRanking2);
+
+        totScore.setText(String.valueOf(p.getPointsOfScannedCodes()));
+        totScanned.setText(String.valueOf(p.getNumberCodesScanned()));
+        scoreRanking.setText(String.valueOf(lbc.getRankingPoints()));
+        scannedRanking.setText(String.valueOf(lbc.getRankingNumScanned()));
 
         backBt = (Button)findViewById(R.id.mystatsBack);
         backBt.setOnClickListener(new View.OnClickListener() {

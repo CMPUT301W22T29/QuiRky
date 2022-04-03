@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Raymart/Documents/GitHub/QuiRky/QuiRky/app/src/main/res/layout/activity_my_qrcode.xml" value="0.10740740740740741" />
+        <entry key="..\:/Users/Raymart/Documents/GitHub/QuiRky/QuiRky/app/src/main/res/layout/activity_my_stats.xml" value="0.22" />
+        <entry key="..\:/Users/Raymart/Documents/GitHub/QuiRky/QuiRky/app/src/main/res/layout/activity_view_profile.xml" value="0.25" />
+        <entry key="..\:/Users/Raymart/Documents/GitHub/QuiRky/QuiRky/app/src/main/res/layout/qr_recycler_items.xml" value="0.1" />
+        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/activity_generate.xml" value="0.24728260869565216" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="11" project-jdk-type="JavaSDK" />
   <component name="ProjectType">
     <option name="id" value="Android" />
   </component>

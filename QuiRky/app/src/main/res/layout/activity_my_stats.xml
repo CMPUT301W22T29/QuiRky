@@ -7,7 +7,7 @@
     tools:context=".MyStatsActivity">
 
     <TextView
-        android:id="@+id/textView9"
+        android:id="@+id/totScanned"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
@@ -15,10 +15,10 @@
         android:text="@string/total_scanned"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/statsTextView" />
 
     <TextView
-        android:id="@+id/textView10"
+        android:id="@+id/scannedRanking"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
@@ -26,10 +26,10 @@
         android:text="@string/ranking"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        app:layout_constraintTop_toBottomOf="@+id/totScore" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/scoreRanking"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
@@ -37,10 +37,10 @@
         android:text="@string/ranking"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        app:layout_constraintTop_toBottomOf="@+id/totScore" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/statsTextView"
         android:layout_width="196dp"
         android:layout_height="75dp"
         android:layout_marginTop="64dp"
@@ -53,7 +53,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/totScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
@@ -61,7 +61,7 @@
         android:text="@string/total_score"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/statsTextView" />
 
     <Button
         android:id="@+id/mystatsBack"
@@ -72,5 +72,47 @@
         android:text="@string/back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/totScore2"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_width="wrap_content"
+        android:hint="No Score"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/totScore"
+        app:layout_constraintTop_toTopOf="@+id/totScore"
+       />
+
+    <TextView
+        android:id="@+id/scoreRanking2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:hint="No Ranking"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/scoreRanking"
+        app:layout_constraintTop_toTopOf="@+id/scoreRanking" />
+
+    <TextView
+        android:id="@+id/totScanned2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:hint="None"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/scannedRanking"
+        app:layout_constraintTop_toTopOf="@+id/scannedRanking" />
+
+    <TextView
+        android:id="@+id/scannedRanking2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:hint="No Ranking"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/totScanned"
+        app:layout_constraintTop_toTopOf="@+id/totScanned" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
