@@ -1,13 +1,9 @@
 package com.example.quirky;
 
 import org.junit.*;
-import org.osmdroid.util.GeoPoint;
 
 import static org.junit.Assert.*;
 
-
-import java.lang.reflect.Array;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 

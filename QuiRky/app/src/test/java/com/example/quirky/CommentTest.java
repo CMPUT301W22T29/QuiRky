@@ -12,7 +12,6 @@ import static org.junit.Assert.*;
 
 import java.util.Date;
 
-// TODO: implement me.
 public class CommentTest {
 
     // Test the constructor initialises values correctly
