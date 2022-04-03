@@ -6,58 +6,25 @@ import android.content.Context;
 import android.Manifest;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.Marker;
 
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
-import android.os.Build.VERSION_CODES;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;//Tile source factory used for manipulating the map
-import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import static android.content.ContentValues.TAG;
 import static android.content.Context.LOCATION_SERVICE;
 
-import android.annotation.SuppressLint;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Build.VERSION_CODES;
-
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.widget.Toast;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
-import org.osmdroid.api.IMapController;
-import org.osmdroid.config.Configuration;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;//Tile source factory used for manipulating the map
-import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
-
+import java.util.ArrayList;
+import java.util.function.Consumer;
 
 
 /*
@@ -101,12 +68,42 @@ public class MapController{
         if(locationManager == null){
             locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
         }
+        //if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+        //    if (hasLocationPermissions(context)){
+        //        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0, (LocationListener) context);
+        //    }
+        //}
+        return locationManager;
+    }
+    @SuppressLint("MissingPermission")
+    public ArrayList<Location> requestLocation(ArrayList<Location> locations, Context context){
         if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
             if (hasLocationPermissions(context)){
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0, (LocationListener) context);
+                locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new LocationListener() {
+                    @Override
+                    public void onLocationChanged(@NonNull Location location) {
+                        locations.add(location);
+                    }
+                },null);//RequestLocationUpdate once
+                //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0, (LocationListener) context);
             }
         }
-        return locationManager;
+        return locations;
+    }
+
+    @SuppressLint("MissingPermission")
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    public ArrayList<Location> requestLocationModern(ArrayList<Location> locations, Context context){
+        if (hasLocationPermissions(context)){
+            locationManager.getCurrentLocation(LocationManager.GPS_PROVIDER, null, ContextCompat.getMainExecutor(context), new Consumer<Location>() {
+                @SuppressLint("MissingPermission")
+                @Override
+                public void accept(Location location) {
+                    locations.add(location);
+                }
+            });
+        }
+        return locations;
     }
 
     public LocationManager getLocationManager() {
