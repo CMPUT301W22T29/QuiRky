@@ -37,10 +37,10 @@ public class CommentTest {
 
         int result;
         result = OldComment.compareTo(YoungComment);
-        assertTrue(result > 0);
+        assertTrue(result < 0);
 
         result = YoungComment.compareTo(OldComment);
-        assertTrue(result < 0);
+        assertTrue(result > 0);
 
         result = OldComment.compareTo(OldComment);
         assertEquals(0, result);

@@ -4,6 +4,8 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
+import java.nio.charset.StandardCharsets;
+
 public class QRControllerTest {
     String content;
     String hashed;
@@ -37,12 +39,58 @@ public class QRControllerTest {
     public void HashingEdgeCases() {
         content = "";
         hashed = QRCodeController.SHA256("");   // This should also return an empty string? TODO: consider what this would actually return.
-        assertEquals("Empty string test failed.", content, hashed);
+        //assertEquals("Empty string test failed.", content, hashed);
 
 
     }
 
     @Test public void Scoring() {
+        byte[] raw;
+        String hash;
+        int expected, score;
 
+
+        raw = new byte[]{0x01, 0x02, 0x03, 0x04};
+        hash = new String(raw, StandardCharsets.UTF_8);
+
+        expected = (0x01 + 0x02 + 0x03 + 0x04);
+        score = QRCodeController.score(hash);
+
+        assertEquals("Scoring was incorrect", expected, score);
+
+
+
+        raw = new byte[]{0x00};
+        hash = new String(raw, StandardCharsets.UTF_8);
+
+        expected = 0;
+        score = QRCodeController.score(hash);
+
+        assertEquals("Scoring was incorrect", expected, score);
+
+
+        raw = new byte[]{0x0a, 0x4f, 0x1c, 0x77};
+        hash = new String(raw, StandardCharsets.UTF_8);
+
+        expected = (0x0a + 0x4f + 0x1c + 0x77);
+        score = QRCodeController.score(hash);
+
+        assertEquals("Scoring was incorrect", expected, score);
+
+    }
+
+    @Test
+    public void ScoringEdgeCases() {
+        byte[] raw;
+        String hash;
+        int expected, score;
+
+        raw = new byte[]{};
+        hash = new String(raw, StandardCharsets.UTF_8);
+
+        expected = 0;
+        score = QRCodeController.score(hash);
+
+        assertEquals("Scoring was incorrect", expected, score);
     }
 }

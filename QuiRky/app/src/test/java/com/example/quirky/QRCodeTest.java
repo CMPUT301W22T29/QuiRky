@@ -48,10 +48,12 @@ public class QRCodeTest {
                 qr.getComments());
     }
 
+    // Test the QRCode constructor with edge case values
     @Test
     public void constructorEdgeCases() {
-        qr = new QRCode("");
-        assertEquals("Empty content failed", "", qr.getId());
+        // The below test is already covered in QRControllerTest
+        // qr = new QRCode("");
+        // assertEquals("Empty content failed", "", qr.getId());
 
         qr = new QRCode("x", null);
         assertNull("Null arraylist failed!", qr.getComments());

@@ -24,8 +24,8 @@ public class CodeList<E> extends ArrayList<E> {
     }
 
     @Override
-    public boolean add(Object o) {
-        if (super.add((E) o)) {
+    public boolean add(E o) {
+        if (super.add(o)) {
             listener.onCodeAdded(this);
             return true;
         }
@@ -33,8 +33,8 @@ public class CodeList<E> extends ArrayList<E> {
     }
 
     @Override
-    public void add(int index, Object element) {
-        super.add(index, (E) element);
+    public void add(int index, E element) {
+        super.add(index, element);
         listener.onCodeAdded(this);
     }
 

@@ -21,9 +21,9 @@ public class LeaderboardControllerTest {
     static Profile mostPoints;
     static Profile HighRoller;
     static Profile bottom;
+    static ArrayList<Profile> players;
 
     // Unfortunately there is no setter for the 3 Statistics in a Profile, so they must be carefully set by adding Strings to their list of scanned codes.
-    // TODO: Double check how scoring algorithm works and double check your string combinations will work. This test is very likely to produce bugs, and we likely just need a method to directly set the stat values of a Profile.
     /* Attempted to recreate the following ordering:
         most points acquired:
             mostPoints
@@ -54,41 +54,40 @@ public class LeaderboardControllerTest {
         String scanned5 = "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZY";
         String scanned6 = "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"; // This should be the highest scoring string
 
-        ArrayList<String> x = new ArrayList<>();
+        ArrayList<String> scanned = new ArrayList<>();
 
-        bottom = new Profile("", "", "", x);
+        bottom = new Profile("", "", "", scanned);
 
-        x.add(scanned1);
-        x.add(scanned2);
-        x.add(scanned3);
-        mostScanned = new Profile("", "", "", x);
+        scanned.add(scanned1);
+        scanned.add(scanned2);
+        scanned.add(scanned3);
+        mostScanned = new Profile("", "", "", scanned);
 
-        x.clear();
-        x.add(scanned4);
-        x.add(scanned5);
-        mostPoints = new Profile("", "", "", x);
+        scanned.clear();
+        scanned.add(scanned4);
+        scanned.add(scanned5);
+        mostPoints = new Profile("", "", "", scanned);
 
-        x.clear();
-        x.add(scanned6);
-        HighRoller = new Profile("", "", "", x);
+        scanned.clear();
+        scanned.add(scanned6);
+        HighRoller = new Profile("", "", "", scanned);
 
 
         // The profiles have been initialised with closely controlled statistics.
-        // Time to initialise a LeaderBoardController with these profiles as a data set.
+        // Add them to the population of players
 
-        ArrayList<Profile> players = new ArrayList<>();
+        players = new ArrayList<>();
         players.add(bottom);
         players.add(mostPoints);
         players.add(mostScanned);
         players.add(HighRoller);
-
-        lc = new LeaderBoardController(players);
     }
 
 
-    // Now that the effort of initialising a controller with a population of players has been done, we can now test the controller's sorting
+    // The population has been correctly initialised, test if the leaderboard correctly sorts by the points the profile's have acquired
     @Test
-    public void TestSorting() { // TODO: Look up ArrayList<> documentation to double check how to manually sort one
+    public void TestSortA() {
+        lc = new LeaderBoardController(players);
         ArrayList<Profile> result = new ArrayList<>();
         ArrayList<Profile> expected = new ArrayList<>();
 
@@ -111,7 +110,7 @@ public class LeaderboardControllerTest {
         expected.add(2, HighRoller);
         expected.add(3, bottom);
         result = lc.getRankingNumScanned();
-        assertEquals("Sort by number scnned failed", expected, result);
+        assertEquals("Sort by number scanned failed", expected, result);
 
 
         expected.clear();
@@ -125,9 +124,48 @@ public class LeaderboardControllerTest {
         assertEquals("Sort by largest single qrcode scanned failed", expected, result);
     }
 
+
+    // Test if the controller correctly sorts the population by number of qr codes scanned
+    @Test
+    public void TestSortB() {
+        lc = new LeaderBoardController(players);
+        ArrayList<Profile> result = new ArrayList<>();
+        ArrayList<Profile> expected = new ArrayList<>();
+        result.ensureCapacity(4);
+        expected.ensureCapacity(4);
+
+        expected.add(0, mostScanned);
+        expected.add(1, mostPoints);
+        expected.add(2, HighRoller);
+        expected.add(3, bottom);
+        result = lc.getRankingNumScanned();
+        assertEquals("Sort by number scanned failed", expected, result);
+    }
+
+    // Test if the controller correctly sorts the population by largest code scanned
+    @Test
+    public void TestSortC() {
+        lc = new LeaderBoardController(players);
+        ArrayList<Profile> result = new ArrayList<>();
+        ArrayList<Profile> expected = new ArrayList<>();
+
+        result.ensureCapacity(4);
+        expected.ensureCapacity(4);
+
+        expected.add(0, HighRoller);
+        expected.add(1, mostPoints);
+        expected.add(2, mostScanned);
+        expected.add(3, bottom);
+        result = lc.getRankingLargestScanned();
+        assertEquals("Sort by largest single qrcode scanned failed", expected, result);
+    }
+
+
+
     // Test that looking up a player in the leaderboards returns the correct position
     @Test
     public void TestLookup() {
+        lc = new LeaderBoardController(players);
         ArrayList<Profile> result = lc.getRankingNumScanned();
 
         int position;
@@ -136,7 +174,7 @@ public class LeaderboardControllerTest {
         assertEquals(0, position);
 
         position = lc.findPlayer(bottom);
-        assertEquals(4, position);
+        assertEquals(3, position);
 
         position = lc.findPlayer(new Profile(""));
         assertEquals(-1, position);
