@@ -8,9 +8,11 @@ import android.location.LocationManager;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -29,7 +31,7 @@ Publish Date:2019-09-27
 /*source:https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime*/
 
 
-public class MapActivity extends AppCompatActivity implements LocationListener {
+public class MapActivity extends AppCompatActivity implements /*LocationListener,*/ ActivityCompat.OnRequestPermissionsResultCallback {
     private MapView nearbymap;
     private MapController mapController;
     private LocationManager locationManager;
@@ -52,23 +54,52 @@ public class MapActivity extends AppCompatActivity implements LocationListener {
         nearbymap.setMultiTouchControls(true);
         iMapController.setZoom((double)15);
         locationManager = mapController.getLocationManager();
+
+        CodeList<Location> locations = new CodeList<>();
+        Log.d("map", "mapOnCreate");
+        locations.setOnCodeAddedListener(new OnCodeAddedListener<Location>() {
+
+            @Override
+            public void onCodeAdded(CodeList<Location> codeList) {
+                Log.d("map", "onCodeAdded");
+                Location location = codeList.get(0);
+                Marker qrMarker = new Marker(nearbymap);
+                GeoPoint startPoint = new GeoPoint(
+                                (double) location.getLatitude(), (double) location.getLongitude());
+                iMapController.setCenter(startPoint);
+                qrMarker.setPosition(startPoint);
+                qrMarker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_BOTTOM);
+                nearbymap.getOverlays().add(qrMarker);
+                qrMarker.setTitle("Current location");
+            }
+
+        });
+        Log.d("map", "map getLocation");
+        mapController.getLocation(locations);
     }
 
-
-    @SuppressLint("MissingPermission")
+    @SuppressLint("MissingSuperCall")
     @Override
-    public void onLocationChanged(@NonNull Location location) {
-        Marker qrmarker = null;
-        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        Toast.makeText(this,"Current Location:"+String.valueOf(location.getLatitude())+","+String.valueOf(location.getLongitude()),Toast.LENGTH_LONG).show();
-        GeoPoint startPoint = new GeoPoint((double)location.getLatitude(),(double)location.getLongitude());
-        iMapController.setCenter(startPoint);
-        qrmarker = new Marker(nearbymap);
-        qrmarker.setPosition(startPoint);
-        qrmarker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_BOTTOM);
-        nearbymap.getOverlays().add(qrmarker);
-        qrmarker.setTitle("Current location");
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                                                      @NonNull int[] grantResults) {
+        mapController.onLocationPermissionRequestResult(requestCode, grantResults);
     }
+
+
+    //@SuppressLint("MissingPermission")
+    //@Override
+    //public void onLocationChanged(@NonNull Location location) {
+    //    Marker qrmarker = null;
+    //    location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+    //    Toast.makeText(this,"Current Location:"+String.valueOf(location.getLatitude())+","+String.valueOf(location.getLongitude()),Toast.LENGTH_LONG).show();
+    //    GeoPoint startPoint = new GeoPoint((double)location.getLatitude(),(double)location.getLongitude());
+    //    iMapController.setCenter(startPoint);
+    //    //qrmarker = new Marker(nearbymap);
+    //    //qrmarker.setPosition(startPoint);
+    //    //qrmarker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_BOTTOM);
+    //    //nearbymap.getOverlays().add(qrmarker);
+    //    //qrmarker.setTitle("Current location");
+    //}
 
 
 
