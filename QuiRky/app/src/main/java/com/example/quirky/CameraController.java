@@ -204,7 +204,7 @@ public class CameraController {
      *      - The activity that the user is interacting with to capture QR code images.
      * @see CameraController
      */
-    public static void scanQRCodes(InputImage inputImage, CodeList<QRCode> codes, Context context) {
+    public static void scanQRCodes(InputImage inputImage, ListeningList<QRCode> codes, Context context) {
         // TODO: edit javadoc
         Task<List<Barcode>> result = codeScanner.process(inputImage)
                 .addOnSuccessListener(barcodes -> {
