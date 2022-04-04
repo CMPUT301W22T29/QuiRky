@@ -6,10 +6,15 @@
 
 package com.example.quirky;
 
+import android.util.Log;
+
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 
 public class LeaderBoardController {
+    private final String TAG = "LeaderboardController says";
     private final ArrayList<Profile> HighestPoints;
     private final ArrayList<Profile> MostScanned;
     private final ArrayList<Profile> LargestCode;
@@ -73,16 +78,15 @@ public class LeaderBoardController {
 
     public int findRankPoints(Profile p) {
         for (int i = 0; i < HighestPoints.size(); i++) {
-            if( p.getUname() == HighestPoints.get(i).getUname())
+            if (p.getUname().equals(HighestPoints.get(i).getUname()))
                 return i;
         }
-
         return -1;
     }
 
     public int findRankScanned(Profile p) {
         for (int i = 0; i < MostScanned.size(); i++) {
-            if( p.getUname() == MostScanned.get(i).getUname())
+            if(p.getUname().equals(MostScanned.get(i).getUname()))
                 return i;
         }
 
@@ -91,7 +95,7 @@ public class LeaderBoardController {
 
     public int findRankLargest(Profile p) {
         for (int i = 0; i < LargestCode.size(); i++) {
-            if( p.getUname() == LargestCode.get(i).getUname())
+            if(p.getUname().equals(LargestCode.get(i).getUname()))
                 return i;
         }
 

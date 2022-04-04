@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class MyStatsActivity extends AppCompatActivity {
-    private final String TAG = "MyStatsActivity says:";
+    private final String TAG = "\tMyStatsActivity says:";
     private Profile p;
     private LeaderBoardController lbc;
 
@@ -39,25 +39,26 @@ public class MyStatsActivity extends AppCompatActivity {
     }
 
     private void doneReading(ArrayList<Profile> players) {
-        Log.d(TAG, "The dc gave us: \n" + players + "\n");
+        Log.d(TAG, "Reading from the database gave us these players:\n");
+        for(Profile profile : players)
+            Log.d(TAG, profile.getUname() + "\n");
+        Log.d("", "The appholder is: " + p.getUname() + "\n");
+
         lbc = new LeaderBoardController(players);
         int position;
 
         ArrayList<Profile> temp = lbc.getRankingPoints();
-        Log.d(TAG, "Sorted by points, it is now:\n" + temp + "\n");
         position = lbc.findRankPoints(p);
 
         totalScore.setText( String.valueOf( p.getPointsOfScannedCodes() ) );
         scoreRanking.setText( String.valueOf(position) );
 
         temp = lbc.getRankingNumScanned();
-        Log.d(TAG, "Sorted by scanned, it is now:\n" + temp + "\n");
         position = lbc.findRankScanned(p);
         totalScanned.setText(String.valueOf(p.getNumberCodesScanned()));
         scannedRanking.setText(String.valueOf(position) );
 
         temp = lbc.getRankingLargestScanned();
-        Log.d(TAG, "Sorted by largest, it is now:\n" + temp + "\n");
         position = lbc.findRankLargest(p);
         largestScanned.setText(String.valueOf(p.getPointsOfLargestCodes()));
         lrgRanking.setText(String.valueOf(position));

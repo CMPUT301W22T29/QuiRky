@@ -56,8 +56,6 @@ public class LeaderBoardActivity extends AppCompatActivity {
             ArrayList<Profile> result = dc.getAllProfiles(task);
             doneReading(result);
         });
-
-        // TODO: list.scrollToPosition(int x);
     }
 
     // Continue setup of activity once done reading.
@@ -87,7 +85,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
         });
 
         myRank.setOnClickListener(view -> list.scrollToPosition(position));
-        topRanks.setOnClickListener(view -> list.scrollToPosition(position));
+        topRanks.setOnClickListener(view -> list.scrollToPosition(0));
     }
 
     private void sortByPoints() {
@@ -96,7 +94,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
         for(Profile p: players)
             data.add(p.getUname());
 
-        position = players.indexOf(user);
+        position = lbc.findRankPoints(user);
         if(position == -1) {
             Toast.makeText(this, "You are not in the Leaderboard!", Toast.LENGTH_SHORT).show();
             position = 0;
@@ -109,7 +107,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
         for(Profile p: players)
             data.add(p.getUname());
 
-        position = players.indexOf(user);
+        position = lbc.findRankScanned(user);
         if(position == -1) {
             Toast.makeText(this, "You are not in the Leaderboard!", Toast.LENGTH_SHORT).show();
             position = 0;
@@ -122,7 +120,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
         for(Profile p: players)
             data.add(p.getUname());
 
-        position = players.indexOf(user);
+        position = lbc.findRankLargest(user);
         if(position == -1) {
             Toast.makeText(this, "You are not in the Leaderboard!", Toast.LENGTH_SHORT).show();
             position = 0;
