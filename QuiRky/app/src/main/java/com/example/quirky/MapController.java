@@ -32,6 +32,7 @@ author: osmdroid team : https://github.com/osmdroid/osmdroid
 Publish Date:2019-09-27
  */
 /*source:https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime*/
+//TODO: Javadoc
 public class MapController {
     public static final int LOCATION_REQUEST_CODE = 99;
     private final LocationManager locationManager;
@@ -40,7 +41,8 @@ public class MapController {
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
     private final Context context;
-    private static final String PROVIDER = LocationManager.GPS_PROVIDER;
+    private static final String PROVIDER = (Build.VERSION.SDK_INT > 30) ? LocationManager.FUSED_PROVIDER
+                                                                        : LocationManager.GPS_PROVIDER;
     private final ArrayDeque<Runnable> runnables;
 
     public MapController(Context context) {
@@ -70,24 +72,12 @@ public class MapController {
                                    (Activity) context, LOCATION_PERMISSIONS, LOCATION_REQUEST_CODE);
     }
 
-    //@SuppressLint("MissingPermission")
-    //public LocationManager setLocationManager(Context context){
-    //    if(locationManager == null){
-    //        locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
-    //    }
-    //    if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-    //        if (hasLocationPermissions(context)){
-    //            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,50, (LocationListener) context);
-    //        }
-    //    }
-    //    return locationManager;
-    //}
-
     public void permissionsThenRun(Runnable runnable) {
         Log.d("map", "permissionsThenRun");
         if (hasLocationPermissions(context)) {
             if (!locationManager.isProviderEnabled(PROVIDER)) {
-                Toast.makeText(context, "This might not do anything since your GPS is off!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "This might not do anything since your GPS is off!",
+                                                                            Toast.LENGTH_LONG).show();
             }
             runnable.run();
         } else {
@@ -121,27 +111,24 @@ public class MapController {
                     locationManager.requestSingleUpdate(PROVIDER, new LocationListenerCompat() {
                         @Override
                         public void onLocationChanged(@NonNull Location location) {
-                            //TODO: Remove debugging code
-                            Log.d("map", "onLocationChanged");
-                            Toast.makeText(context, "Current Location:"
-                                    + String.valueOf(location.getLatitude())
-                                    + ","
-                                    + String.valueOf(location.getLongitude()), Toast.LENGTH_LONG).show();
-                            //End of debugging code.
-
                             locations.add(location);
                         }
-                        //FIXME: OVERRIDE onStatusChanged(String, int, Bundle) FOR API LEVEL < 29
-                        //FIXME: Figure out why onLocationChanged doesn't get called in some cases, or if it gets called in any cases
-                        //TODO: Use getCurrentLocation() instead for API level > 29
-                        //TODO: if can't make it work, go back to using requestLocationUpdates() and call removeUpdates() instead.
                     }, null);
+
                 } else {    // API level >= 30
-                    locationManager.getCurrentLocation(PROVIDER, null, ContextCompat.getMainExecutor(context), new Consumer<Location>() {
+                    locationManager.getCurrentLocation(PROVIDER,
+                                             null,
+                                  ContextCompat.getMainExecutor(context), new Consumer<Location>() {
                         @SuppressLint("MissingPermission")
                         @Override
                         public void accept(Location location) {
-                            locations.add(location);
+                            if (location != null) {
+                                locations.add(location);
+                            } else {
+                                Toast.makeText(context,
+                                        "Oops! Couldn't find you... Teehee.",
+                                                                          Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
                 }
@@ -157,26 +144,6 @@ public class MapController {
         nearbyMap.getOverlays().add(qrMarker);
         qrMarker.setTitle(title);
     }
-
-    //@SuppressLint("MissingPermission")
-    //@RequiresApi(api = Build.VERSION_CODES.R)
-    //public void requestLocationModern(CodeList<Location> locations, Context context){
-    //    Log.d("map", "getLocation");
-    //    permissionsThenRun(new Runnable() {
-    //        @Override
-    //        public void run() {
-    //            if (hasLocationPermissions(context)) {
-    //                locationManager.getCurrentLocation(PROVIDER, null, ContextCompat.getMainExecutor(context), new Consumer<Location>() {
-    //                    @SuppressLint("MissingPermission")
-    //                    @Override
-    //                    public void accept(Location location) {
-    //                        locations.add(location);
-    //                    }
-    //                });
-    //            }
-    //        }
-    //    });
-    //}
 
     public LocationManager getLocationManager() {
         return locationManager;

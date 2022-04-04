@@ -27,13 +27,10 @@ author: osmdroid team : https://github.com/osmdroid/osmdroid
 Publish Date:2019-09-27
  */
 /*source:https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime*/
-
-
 public class MapActivity extends AppCompatActivity implements /*LocationListener,*/ ActivityCompat.OnRequestPermissionsResultCallback {
     private MapView nearbyMap;
     private MapController mapController;
     private IMapController iMapController;
-
 
     @SuppressLint("MissingPermission")
     @Override
@@ -70,18 +67,8 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
         });
         Log.d("map", "map getLocation");
 
-        //TODO
         mapController.getLocation(locations);
-        ////Move this part to MapController
-        //if (Integer.valueOf(android.os.Build.VERSION.SDK) > 30) {
-        //    mapController.requestLocationModern( locations,this);
-        //}
-        //else{
-        //    mapController.requestLocation(locations,this);
-        //}
     }
-
-
 
     @SuppressLint("MissingSuperCall")
     @Override
@@ -90,32 +77,14 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
         mapController.onLocationPermissionRequestResult(requestCode, grantResults);
     }
 
-
-    //@SuppressLint("MissingPermission")
-    //@Override
-    //public void onLocationChanged(@NonNull Location location) {
-    //    Marker qrmarker = null;
-    //    location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-    //    Toast.makeText(this,"Current Location:"+String.valueOf(location.getLatitude())+","+String.valueOf(location.getLongitude()),Toast.LENGTH_LONG).show();
-    //    GeoPoint startPoint = new GeoPoint((double)location.getLatitude(),(double)location.getLongitude());
-    //    iMapController.setCenter(startPoint);
-    //    //qrmarker = new Marker(nearbymap);
-    //    //qrmarker.setPosition(startPoint);
-    //    //qrmarker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_BOTTOM);
-    //    //nearbymap.getOverlays().add(qrmarker);
-    //    //qrmarker.setTitle("Current location");
-    //}
-
-
-
-        public void onResume () {
-            super.onResume();
-            nearbyMap.onResume();
-        }
-        public void onPause () {
-            super.onPause();
-            nearbyMap.onPause();  //Compass
-        }
+    public void onResume () {
+        super.onResume();
+        nearbyMap.onResume();
+    }
+    public void onPause () {
+        super.onPause();
+        nearbyMap.onPause();  //Compass
+    }
 }
 
 
