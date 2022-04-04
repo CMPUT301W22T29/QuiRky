@@ -91,10 +91,6 @@
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />
         <activity
-            android:name=".MyQRCode"
-            android:exported="false"
-            android:parentActivityName=".StartingPageActivity" />
-        <activity
             android:name=".MyStatsActivity"
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />

@@ -7,7 +7,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -32,11 +34,11 @@ import java.util.ArrayList;
 public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentListener {
 
     private final String TAG = "ViewQRActivity says";
-
     ImageView image;
     TextView scoreText;
     Fragment buttonsFrag, playersFrag;
     Bitmap photo;
+    ProgressBar loading;
 
     DatabaseController dc;
     ArrayList<String> players;
@@ -50,20 +52,20 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_qr);
 
+        loading = findViewById(R.id.view_qr_progress_bar);
         dc = new DatabaseController(this);
 
         i = getIntent();
         qrid = i.getStringExtra("code");
-        Log.d(TAG, "Got |{" + qrid + "}|");
 
         dc.readQRCode(qrid).addOnCompleteListener(task -> {
             qr = dc.getQRCode(task);
-            doneReading();
+            doneReadingQRCode();
         });
-        dc.readQRCodeUserData(qrid).addOnCompleteListener(task -> players = dc.getQRCodeScanners(task));
+
     }
 
-    private void doneReading() {
+    private void doneReadingQRCode() {
         image = findViewById(R.id.imageView2);
         scoreText = findViewById(R.id.text_showScore);
 
@@ -75,7 +77,11 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         photo = BitmapFactory.decodeResource(getResources(), R.drawable.temp);
         image.setImageBitmap(photo);
 
-        changeFragment(buttonsFrag);
+        dc.readQRCodeUserData(qrid).addOnCompleteListener(task -> {
+            players = dc.getQRCodeScanners(task);
+            changeFragment(buttonsFrag);
+            loading.setVisibility(View.INVISIBLE);
+        });
     }
 
     /**
@@ -92,8 +98,7 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
 
     @Override
     public ArrayList<String> getPlayers() {
-        if(players == null)
-            return new ArrayList<String>();
+        Log.d(TAG, "players is:\n" + players);
         return players;
     }
 
@@ -103,10 +108,7 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
     @Override
     public void commentsButton() {
         Intent intent = new Intent(this, ViewCommentsActivity.class);
-
-        String message = "Sample QR Code ID"; // This needs to be a specific QR code Id.
-        intent.putExtra("comment", message);
-
+        intent.putExtra("qrId", qrid);
         startActivity(intent);
     }
 

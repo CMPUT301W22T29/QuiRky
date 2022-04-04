@@ -13,6 +13,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
@@ -20,6 +21,7 @@ import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -125,6 +127,7 @@ public class DatabaseController {
 
         // Add the comments to the batch. Skip any null comments.
         collection = doc.collection("comments");
+        batch.set(collection.document("sample"), data);
         for(Comment c : qr.getComments()) {
             if(c==null) continue;
             batch.set(collection.document(c.getId()), c);
@@ -374,7 +377,6 @@ public class DatabaseController {
         for(DocumentSnapshot doc : query.getDocuments()) {
             if(doc == null) continue;
             photos.add((Drawable) doc.get("photo"));        // FIXME: this will 1000% crash, need to think about how store Drawables to FireStore
-
         }
         return photos;
     }
@@ -385,13 +387,15 @@ public class DatabaseController {
      * @return A list of strings, the usernames of players who scanned the code.
      */
     public ArrayList<String> getQRCodeScanners(Task<QuerySnapshot> task) {
+
         QuerySnapshot query = task.getResult();
-        ArrayList<String> scanners = new ArrayList<>();
-        for(DocumentSnapshot doc : query.getDocuments()) {
-            if(doc == null) continue;
-            scanners.add(doc.getId());
-        }
-        return scanners;
+        ArrayList<Profile> scanners = (ArrayList<Profile>) query.toObjects(Profile.class);
+        Log.d(TAG, "getQRCodeScanners read " + query.size() + " players");
+
+        ArrayList<String> usernames = new ArrayList<>();
+        for(Profile p : scanners)
+            usernames.add(p.getUname());
+        return usernames;
     }
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
@@ -459,5 +463,15 @@ public class DatabaseController {
      */
     public boolean checkProfileExists(Task<DocumentSnapshot> task) {
         return task.getResult().getData() == null;
+    }
+
+    public Task<QuerySnapshot> readComments(String qrId) {
+        collection = db.collection("QRcodes").document(qrId).collection("comments");
+        return collection.get();
+    }
+
+    public ArrayList<Comment> getComments(Task<QuerySnapshot> task) {
+        QuerySnapshot q = task.getResult();
+        return (ArrayList<Comment>) q.toObjects(Comment.class);
     }
 }
