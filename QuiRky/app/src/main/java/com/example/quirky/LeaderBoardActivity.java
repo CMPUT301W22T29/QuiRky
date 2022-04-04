@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -23,11 +24,10 @@ public class LeaderBoardActivity extends AppCompatActivity {
     private QRAdapter adapter;
 
     private Profile user;
+    private ArrayList<String> data; // For use with the adapter
     private ArrayList<Profile> players;
-    private ArrayList<String> data = new ArrayList<>(); // For use with the adapter
     private LeaderBoardController lbc;
-
-    private Boolean showTopPlayers;
+    private int position;
 
 
     @Override
@@ -35,94 +35,97 @@ public class LeaderBoardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leader_board);
 
+        // Read the user from memory
         MemoryController mc = new MemoryController(this);
         user = mc.read();
 
-        list = findViewById(R.id.leaderboard_list);
+        data = new ArrayList<>();
 
+        // Initialise views
+        list = findViewById(R.id.leaderboard_list);
+        // Buttons
         sortPoints = findViewById(R.id.sort_points_button);
         sortScanned = findViewById(R.id.sort_scanned_button);
         sortGreatest = findViewById(R.id.sort_largest_button);
-
         myRank = findViewById(R.id.my_ranking_button);
         topRanks = findViewById(R.id.top_rankings_button);
 
-        sortPoints.setOnClickListener(view -> {
-            sortByPoints();
-            updateDisplay();
-        });
-        sortScanned.setOnClickListener(view -> {
-            sortByScanned();
-            updateDisplay();
-        });
-        sortGreatest.setOnClickListener(view -> {
-            sortByGreatestScanned();
-            updateDisplay();
+        // Read the player population
+        DatabaseController dc = new DatabaseController(this);
+        dc.readAllProfiles().addOnCompleteListener(task -> {
+            ArrayList<Profile> result = dc.getAllProfiles(task);
+            doneReading(result);
         });
 
-        myRank.setOnClickListener(view -> showTopPlayers = false);
-        topRanks.setOnClickListener(view -> showTopPlayers = true);
+        // TODO: list.scrollToPosition(int x);
+    }
+
+    // Continue setup of activity once done reading.
+    private void doneReading(ArrayList<Profile> players) {
+
+        lbc = new LeaderBoardController(players);
+        sortByPoints();
 
         adapter = new QRAdapter(data, new ArrayList<>(), this);
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        showTopPlayers = true;
-        lbc = new LeaderBoardController(this);
-        lbc.readAllPlayers().addOnCompleteListener(task -> sortByPoints());
+
+        sortPoints.setOnClickListener(view -> {
+            sortByPoints();
+            adapter.notifyDataSetChanged();
+        });
+
+        sortScanned.setOnClickListener(view -> {
+            sortByScanned();
+            adapter.notifyDataSetChanged();
+        });
+
+        sortGreatest.setOnClickListener(view -> {
+            sortByGreatestScanned();
+            adapter.notifyDataSetChanged();
+        });
+
+        myRank.setOnClickListener(view -> list.scrollToPosition(position));
+        topRanks.setOnClickListener(view -> list.scrollToPosition(position));
     }
 
     private void sortByPoints() {
         players = lbc.getRankingPoints();
-        updateDisplay();
+        data.clear();
+        for(Profile p: players)
+            data.add(p.getUname());
+
+        position = players.indexOf(user);
+        if(position == -1) {
+            Toast.makeText(this, "You are not in the Leaderboard!", Toast.LENGTH_SHORT).show();
+            position = 0;
+        }
     }
 
     private void sortByScanned() {
         players = lbc.getRankingNumScanned();
-        updateDisplay();
+        data.clear();
+        for(Profile p: players)
+            data.add(p.getUname());
+
+        position = players.indexOf(user);
+        if(position == -1) {
+            Toast.makeText(this, "You are not in the Leaderboard!", Toast.LENGTH_SHORT).show();
+            position = 0;
+        }
     }
 
     private void sortByGreatestScanned() {
         players = lbc.getRankingLargestScanned();
-        updateDisplay();
-    }
-
-    private void updateDisplay() {
         data.clear();
+        for(Profile p: players)
+            data.add(p.getUname());
 
-//        // If there is fewer than 15 players, just display all of them.
-//        if(players.size() <= 15) {
-//            for(Profile p : players) {
-//                if(p == null) continue;
-//                data.add(p.getUname());
-//            }
-//            adapter.notifyDataSetChanged();
-//            return;
-//        }
-
-        // There are more than 15 players
-        // User can choose to show the top 10, or their own position within the rankings
-        if(showTopPlayers) {
-            for (int i = 0; i < 10; i++)
-                data.add(players.get(i).getUname());
-            adapter.notifyDataSetChanged();
-            return;
-        }
-
-        // Show the 10 surrounding players around the app-holders position
-        int position = lbc.findPlayer(user);
+        position = players.indexOf(user);
         if(position == -1) {
-            data.add("You are not yet ranked on the leaderboard!");
-        } else {
-
-            // Show the 5 lower and 5 higher players on the leaderboard.
-            for (int i = position - 5; i < position + 5; i++) {
-                // Nested if statement prevents IndexOutOfBoundsException
-                if( -1 < i && i < players.size() )
-                    data.add(players.get(i).getUname());
-            }
+            Toast.makeText(this, "You are not in the Leaderboard!", Toast.LENGTH_SHORT).show();
+            position = 0;
         }
-
-        adapter.notifyDataSetChanged();
     }
 }

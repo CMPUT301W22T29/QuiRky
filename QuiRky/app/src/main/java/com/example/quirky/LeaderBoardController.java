@@ -6,92 +6,95 @@
 
 package com.example.quirky;
 
-import android.content.Context;
-
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 
 public class LeaderBoardController {
-    private DatabaseController dc;
-    private ArrayList<Profile> players;
-    private final String ErrorTag = "You must call readAllPlayers() before you can sort the players!";
+    private final ArrayList<Profile> HighestPoints;
+    private final ArrayList<Profile> MostScanned;
+    private final ArrayList<Profile> LargestCode;
 
-    public LeaderBoardController(Context ct) {
-        this.dc = new DatabaseController(ct);
-    }
-
-    // Constructor with Dependency Injection for testing purposes.
     public LeaderBoardController(ArrayList<Profile> players) {
-        this.players = players;
+        this.HighestPoints = sortPlayersByPoints(players);
+        this.MostScanned = sortPlayersByNumScanned(players);
+        this.LargestCode = sortPlayersByLargestScanned(players);
     }
 
-    public Task<QuerySnapshot> readAllPlayers() {
-        Task<QuerySnapshot> read = dc.readAllProfiles();
-        read.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                players = dc.getAllProfiles(task);
-            }
-        });
-        return read;
-    }
-
-    private void sortPlayersByPoints() {
-        players.sort(new Comparator<Profile>() {
+    private ArrayList<Profile> sortPlayersByPoints(ArrayList<Profile> players) {
+        Comparator<Profile> sorter = new Comparator<Profile>() {
             @Override
             public int compare(Profile profile, Profile t1) {
                 return t1.getPointsOfScannedCodes()
                         - profile.getPointsOfScannedCodes();
             }
-        });
+        };
+
+        players.sort(sorter);
+        return players;
     }
 
-    private void sortPlayersByNumScanned() {
-        players.sort(new Comparator<Profile>() {
+    private ArrayList<Profile> sortPlayersByNumScanned(ArrayList<Profile> players) {
+        Comparator<Profile> sorter = new Comparator<Profile>() {
             @Override
             public int compare(Profile profile, Profile t1) {
                 return t1.getNumberCodesScanned()
                         - profile.getNumberCodesScanned();
             }
-        });
+        };
+
+        players.sort(sorter);
+        return players;
     }
 
-    private void sortPlayersByLargestScanned() {
-        players.sort(new Comparator<Profile>() {
+    private ArrayList<Profile> sortPlayersByLargestScanned(ArrayList<Profile> players) {
+        Comparator<Profile> sorter = new Comparator<Profile>() {
             @Override
             public int compare(Profile profile, Profile t1) {
                 return t1.getPointsOfLargestCodes()
                         - profile.getPointsOfLargestCodes();
             }
-        });
+        };
+
+        players.sort(sorter);
+        return players;
     }
 
     public ArrayList<Profile> getRankingPoints() {
-        assert players != null : "Somehow the players have not yet been initialized!";
-        sortPlayersByPoints();
-        return players;
+        return HighestPoints;
     }
 
     public ArrayList<Profile> getRankingNumScanned() {
-        assert players != null : "Somehow the players have not yet been initialized!";
-        sortPlayersByNumScanned();
-        return players;
+        return MostScanned;
     }
 
     public ArrayList<Profile> getRankingLargestScanned() {
-        assert players != null : "Somehow the players have not yet been initialized!";
-        sortPlayersByLargestScanned();
-        return players;
+        return LargestCode;
     }
 
-    public int findPlayer(Profile p) {
-        return players.indexOf(p);
+    public int findRankPoints(Profile p) {
+        for (int i = 0; i < HighestPoints.size(); i++) {
+            if( p.getUname() == HighestPoints.get(i).getUname())
+                return i;
+        }
+
+        return -1;
+    }
+
+    public int findRankScanned(Profile p) {
+        for (int i = 0; i < MostScanned.size(); i++) {
+            if( p.getUname() == MostScanned.get(i).getUname())
+                return i;
+        }
+
+        return -1;
+    }
+
+    public int findRankLargest(Profile p) {
+        for (int i = 0; i < LargestCode.size(); i++) {
+            if( p.getUname() == LargestCode.get(i).getUname())
+                return i;
+        }
+
+        return -1;
     }
 }
