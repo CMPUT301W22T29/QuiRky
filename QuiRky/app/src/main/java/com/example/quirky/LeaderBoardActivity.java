@@ -10,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -22,6 +22,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
     private Button sortPoints, sortScanned, sortGreatest, myRank, topRanks;
     private RecyclerView list;
     private QRAdapter adapter;
+    private RecyclerClickerListener listener;
 
     private Profile user;
     private ArrayList<String> data; // For use with the adapter
@@ -64,7 +65,15 @@ public class LeaderBoardActivity extends AppCompatActivity {
         lbc = new LeaderBoardController(players);
         sortByPoints();
 
-        adapter = new QRAdapter(data, new ArrayList<>(), this);
+        listener = new RecyclerClickerListener() {
+            @Override
+            public void OnClickListItem(int position) {
+                Profile p = players.get(position);
+                startViewProfile(p);
+            }
+        };
+
+        adapter = new QRAdapter(data, new ArrayList<>(), this, listener);
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
@@ -73,12 +82,10 @@ public class LeaderBoardActivity extends AppCompatActivity {
             sortByPoints();
             adapter.notifyDataSetChanged();
         });
-
         sortScanned.setOnClickListener(view -> {
             sortByScanned();
             adapter.notifyDataSetChanged();
         });
-
         sortGreatest.setOnClickListener(view -> {
             sortByGreatestScanned();
             adapter.notifyDataSetChanged();
@@ -88,37 +95,33 @@ public class LeaderBoardActivity extends AppCompatActivity {
         topRanks.setOnClickListener(view -> list.scrollToPosition(0));
     }
 
+    private void startViewProfile(Profile p) {
+        Intent i = new Intent(this, ProfileViewerActivity.class);
+        i.putExtra("profile", p);
+        startActivity(i);
+    }
+
     private void sortByPoints() {
         players = lbc.getRankingPoints();
-        data.clear();
-        for(Profile p: players)
-            data.add(p.getUname());
-
-        position = lbc.findRankPoints(user);
-        if(position == -1) {
-            Toast.makeText(this, "You are not in the Leaderboard!", Toast.LENGTH_SHORT).show();
-            position = 0;
-        }
+        updateDisplay();
     }
 
     private void sortByScanned() {
         players = lbc.getRankingNumScanned();
-        data.clear();
-        for(Profile p: players)
-            data.add(p.getUname());
-
-        position = lbc.findRankScanned(user);
-        if(position == -1) {
-            Toast.makeText(this, "You are not in the Leaderboard!", Toast.LENGTH_SHORT).show();
-            position = 0;
-        }
+        updateDisplay();
     }
 
     private void sortByGreatestScanned() {
         players = lbc.getRankingLargestScanned();
+        updateDisplay();
+    }
+
+    private void updateDisplay() {
         data.clear();
-        for(Profile p: players)
-            data.add(p.getUname());
+        for(int i = 0; i < players.size(); i++) {
+            String x = i + " | " + players.get(i).getUname();
+            data.add(x);
+        }
 
         position = lbc.findRankLargest(user);
         if(position == -1) {
