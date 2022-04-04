@@ -14,14 +14,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.widget.CompoundButton;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Comparator;
+
 /**
- * An activity class that will display the list of QR codes you have scanned from highest to lowest or the other way around.
+ * Activity to view a list of QRCodes a Profile has scanned
  */
 public class ManageCodesActivity extends AppCompatActivity {
     private final String TAG = "ManageCodesActivity says";
@@ -40,6 +45,13 @@ public class ManageCodesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_manage_codes);
 
         Profile p = (Profile) getIntent().getSerializableExtra("profile");
+        if(p == null)
+            ExitWithError();
+
+        TextView title = findViewById(R.id.manage_codes_title);
+        String text = p.getUname() + "'s Codes";
+        title.setText(text);
+
         codes = p.getScanned();
         points = new ArrayList<>();
         for(String id : codes) {
@@ -66,9 +78,10 @@ public class ManageCodesActivity extends AppCompatActivity {
             }
         });
     }
+
     /**
-     * A method to reorder the list of QRCodes to highest to lowest or the other way
-     * @param isChecked to see if its checked or not
+     * Sets the order to display the QRCodes
+     * @param isChecked The state of the ordering switch
      */
     private void setOrder(boolean isChecked) {
         Comparator<String> c = new Comparator<String>() {
@@ -92,13 +105,23 @@ public class ManageCodesActivity extends AppCompatActivity {
             QRCodeAdapter.notifyDataSetChanged();
         }
     }
+
     /**
-     * This is the method when the user click on an item in the list, it will redirect to another activity which shows its details.
-     * @param position An Integer position of the item in the list
+     * Start the activity to view a QRCode. Determines which QRCode to view with the given item the user clicked on
+     * @param position The position in the recycler that the user clicked on
      */
     private void startViewQRActivity(int position) {
         Intent i = new Intent(this, ViewQRActivity.class);
         i.putExtra("code", codes.get(position));
         startActivity(i);
+    }
+
+    /**
+     * Method called when data is passed to this activity incorrectly, or when there is an issue reading the data from FireStore.
+     * Makes a toast and then finishes the activity.
+     */
+    private void ExitWithError() {
+        Toast.makeText(this, "User was not found!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 }

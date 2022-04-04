@@ -9,6 +9,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+/**
+ * Activity to generate QRCodes
+ */
 public class GenerateActivity extends AppCompatActivity {
 
     Button generateLogin, generateViewProfile, generateText;

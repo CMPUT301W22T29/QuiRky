@@ -1,5 +1,7 @@
 package com.example.quirky;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -138,12 +140,15 @@ public class Profile implements Serializable {
      * Also updates the profile's stats to reflect the added code.
      * @param qrId
      *      - The ID of the QRCode the player wants to delete
+     * @return If the Profile had the QRCode to begin with.
      */
-    public void removeScanned(String qrId) {
+    public boolean removeScanned(String qrId) {
         if(scanned.contains(qrId)) {
             scanned.remove(qrId);
             updateStats();
+            return true;
         }
+        return false;
     }
 
     /**
@@ -179,5 +184,27 @@ public class Profile implements Serializable {
         this.numberCodesScanned = ProfileController.calculateTotalScanned(this);
         this.pointsOfScannedCodes = ProfileController.calculateTotalPoints(this);
         this.pointsOfLargestCodes = ProfileController.calculateGreatestScore(this);
+    }
+
+    /**
+     * Method to directly set the stats of a profile. Not to be used by any class besides Unit Tests
+     * @param points The points to set the class to
+     * @param scanned The number of codes to set the class to
+     * @param largest The largest qrcode the profile has scanned
+     */
+    public void updateStats(int points, int scanned, int largest) {
+        this.numberCodesScanned = scanned;
+        this.pointsOfScannedCodes = points;
+        this.pointsOfLargestCodes = largest;
+    }
+
+    /**
+     * Turn the profile into a string via it's username. Useful for log statements.
+     * @return The username of the profile
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return uname;
     }
 }

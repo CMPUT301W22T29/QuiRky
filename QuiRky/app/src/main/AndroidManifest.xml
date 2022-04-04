@@ -67,15 +67,12 @@
         <activity
             android:name=".MapActivity"
             android:exported="false"
-            android:label="@string/title_activity_map" />
+            android:label="@string/title_activity_map"
+            />
         <activity
             android:name=".CodeScannerActivity"
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />
-        <activity
-            android:name=".SettingsActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".StartingPageActivity"
             android:exported="false" />

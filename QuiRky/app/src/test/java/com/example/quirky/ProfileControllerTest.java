@@ -33,4 +33,41 @@ public class ProfileControllerTest {
         assertEquals(sum, ProfileController.calculateTotalPoints(p));
         assertEquals(score2, ProfileController.calculateGreatestScore(p));
     }
+
+    // This test checks that the ValidUsername method works properly.
+    @Test
+    public void TestValidUsername() {
+        String username;
+        boolean valid;
+
+        username = "abc123";
+        valid = ProfileController.validUsername(username);
+        assertTrue("Failed abc123", valid);
+
+        // Test boundaries
+        username = "az09AZ";
+        valid = ProfileController.validUsername(username);
+        assertTrue("Failed az09AZ", valid);
+
+        // Test failing cases
+        username = "a`z";
+        valid = ProfileController.validUsername(username);
+        assertFalse("Failed a`z", valid);
+
+        username = "Z[a";
+        valid = ProfileController.validUsername(username);
+        assertFalse("Failed Z[a", valid);
+
+        username = "{abc13";
+        valid = ProfileController.validUsername(username);
+        assertFalse("Failed {abc13", valid);
+
+        username = "yes+";
+        valid = ProfileController.validUsername(username);
+        assertFalse("Failed yes+", valid);
+
+        username = "Spaces Test";
+        valid = ProfileController.validUsername(username);
+        assertFalse("Failed spaces test", valid);
+    }
 }
