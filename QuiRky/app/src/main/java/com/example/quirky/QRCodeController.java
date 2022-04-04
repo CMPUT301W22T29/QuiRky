@@ -145,8 +145,9 @@ public class QRCodeController {
          *
          * @param length
          *      - Generate
-         * @param codes
-         *      - generated qr code
+         *
+         * @return
+         *      - generated random string
          */
         StringBuilder val = new StringBuilder();
         Random random = new Random();

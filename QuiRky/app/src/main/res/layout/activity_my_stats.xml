@@ -73,4 +73,51 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/totalscorefield"
+        android:layout_width="107dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="104dp"
+        android:hint="@string/calculated_score_here"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/textView6"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/totalScoreRanking"
+        android:layout_width="113dp"
+        android:layout_height="29dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="52dp"
+        android:hint="@string/score_ranking"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/textView8"
+        app:layout_constraintTop_toBottomOf="@+id/totalscorefield" />
+
+    <TextView
+        android:id="@+id/TotalScanned"
+        android:layout_width="123dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="100dp"
+        android:hint="@string/total_code_scanned"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/textView9"
+        app:layout_constraintTop_toBottomOf="@+id/totalScoreRanking" />
+
+    <TextView
+        android:id="@+id/totalScannedRanking"
+        android:layout_width="128dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="52dp"
+        android:hint="@string/total_scanned_ranking"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.335"
+        app:layout_constraintStart_toEndOf="@+id/textView10"
+        app:layout_constraintTop_toBottomOf="@+id/TotalScanned" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

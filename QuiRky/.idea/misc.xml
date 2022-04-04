@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/donny/Desktop/QuiRky/QuiRky/QuiRky/app/src/main/res/layout/activity_change_profile.xml" value="0.5244791666666667" />
+        <entry key="..\:/Users/donny/Desktop/QuiRky/QuiRky/QuiRky/app/src/main/res/layout/activity_code_scanner.xml" value="0.5244791666666667" />
+        <entry key="..\:/Users/donny/Desktop/QuiRky/QuiRky/QuiRky/app/src/main/res/layout/activity_generate.xml" value="0.5244791666666667" />
+        <entry key="..\:/Users/donny/Desktop/QuiRky/QuiRky/QuiRky/app/src/main/res/layout/activity_main.xml" value="0.3458333333333333" />
+        <entry key="..\:/Users/donny/Desktop/QuiRky/QuiRky/QuiRky/app/src/main/res/layout/activity_manage_codes.xml" value="0.3458333333333333" />
+        <entry key="..\:/Users/donny/Desktop/QuiRky/QuiRky/QuiRky/app/src/main/res/layout/activity_my_qrcode.xml" value="0.3458333333333333" />
+        <entry key="..\:/Users/donny/Desktop/QuiRky/QuiRky/QuiRky/app/src/main/res/layout/activity_my_stats.xml" value="0.46770833333333334" />
+        <entry key="..\:/Users/donny/Desktop/QuiRky/QuiRky/QuiRky/app/src/main/res/layout/activity_qrcode_controller.xml" value="0.5244791666666667" />
+        <entry key="..\:/Users/donny/Desktop/QuiRky/QuiRky/QuiRky/app/src/main/res/layout/activity_setting.xml" value="0.5244791666666667" />
+        <entry key="..\:/Users/donny/Desktop/QuiRky/QuiRky/QuiRky/app/src/main/res/layout/activity_starting_page.xml" value="0.46770833333333334" />
+        <entry key="..\:/Users/donny/Desktop/QuiRky/QuiRky/QuiRky/app/src/main/res/layout/activity_view_comment.xml" value="0.46770833333333334" />
+        <entry key="..\:/Users/donny/Desktop/QuiRky/QuiRky/QuiRky/app/src/main/res/layout/activity_view_profile.xml" value="0.3458333333333333" />
+        <entry key="..\:/Users/donny/Desktop/QuiRky/QuiRky/QuiRky/app/src/main/res/layout/activity_view_qr.xml" value="0.3458333333333333" />
+        <entry key="..\:/Users/donny/Desktop/QuiRky/QuiRky/QuiRky/app/src/main/res/layout/comment_list.xml" value="0.5244791666666667" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="11" project-jdk-type="JavaSDK" />
   <component name="ProjectType">
     <option name="id" value="Android" />
   </component>
