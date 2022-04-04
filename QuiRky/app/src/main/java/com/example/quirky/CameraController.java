@@ -66,6 +66,8 @@ import java.util.concurrent.ExecutionException;
 public class CameraController {
     private static final String[] CAMERA_PERMISSION = new String[]{Manifest.permission.CAMERA};
     private static final int CAMERA_REQUEST_CODE = 10;
+    private static final BarcodeScanner codeScanner = BarcodeScanning.getClient(
+            new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build());
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
     private Preview preview;
     private ImageCapture imageCapture;
@@ -189,9 +191,6 @@ public class CameraController {
                     }
                 });
     }
-
-    private static final BarcodeScanner codeScanner = BarcodeScanning.getClient(
-            new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build());
 
     /**
      * Analyzes an image for qr codes, and constructs <code>QRCode</code>s from their data.
