@@ -18,6 +18,7 @@ package com.example.quirky;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +29,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.view.PreviewView;
 
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
 
 /**
  * Previews camera feed and allows scanning QR codes.
@@ -48,6 +50,7 @@ public class CodeScannerActivity extends AppCompatActivity {
     private PreviewView previewView;
     private Button scan_button, cancel_button, save_button;
     private Switch location_switch, photo_switch;
+
 
     private CameraController cameraController;
     private DatabaseController dc;
@@ -105,28 +108,44 @@ public class CodeScannerActivity extends AppCompatActivity {
         cameraController.captureQRCodes(this, codes);
     }
 
-    private void showSavingInterface(CodeList<QRCode> codeList) {
+    private void showSavingInterface(CodeList<QRCode> qrCodeList) {
         setVisibility(false);
 
         save_button.setOnClickListener(view -> {
-            GeoPoint gp;
-            Bitmap photo;
+            GeoPoint gp = null;
+            Bitmap photo = null;
+            MapView nearbymap = (MapView) findViewById(R.id.map1);
+            CodeList<Location> locations = new CodeList<>();
+            locations.setOnCodeAddedListener(new OnCodeAddedListener<Location>() {
+                @Override
+                public void onCodeAdded(CodeList<Location> codeList) {
+                    Bitmap photo = null;
+                   Location location = codeList.get(0);
+                   GeoPoint gp = new GeoPoint((double) location.getLatitude(),(double)location.getLongitude());
+                   dc.writeQRCodeLocation(qrCodeList.get(0).getId(),mc.readUser(),gp);
+                   save(qrCodeList.get(0), gp, photo);
+                }
+            });
             if (location_switch.isChecked()) {
-                gp = null;
-                // GeoPoint gp = MapController.getLocation(); TODO: Make a controller class that gets location.
+                MapController mapController = new MapController(this);
+                mapController.requestLocation(locations,this);
+                //mapController.qrMarkerOnMap(gp,nearbymap,"A QR code located");
+
+                //TODO: Make a controller class that gets location.
             } else {
+                save(qrCodeList.get(0), gp, photo);
                 gp = null;
             }
 
             if (photo_switch.isChecked()) {
                 photo = null;
-                // photo = results.get(0).getLocation(); // TODO: Figure out how to get the photo of the code
+                // TODO: Figure out how to get the photo of the code
                 //FIXME: Need to direct to a new photo capture activity, rather than saving the image of the QRCode
             } else {
                 photo = null;
             }
 
-            save(codeList.get(0), gp, photo);
+            save(qrCodeList.get(0), gp, photo);
             setVisibility(true);
         });
 

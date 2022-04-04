@@ -28,8 +28,12 @@ import androidx.core.location.LocationListenerCompat;
 import static android.content.ContentValues.TAG;
 import static android.content.Context.LOCATION_SERVICE;
 
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.function.Consumer;
 
 
@@ -117,43 +121,47 @@ public class MapController{
     public void requestLocation(CodeList<Location> locations, Context context){
         Log.d("map", "getLocation");
         permissionsThenRun(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.R)
             @Override
             public void run() {
                 Log.d("map", "runGetLocation");
                 if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                     if (hasLocationPermissions(context)){
+                        if (Integer.valueOf(android.os.Build.VERSION.SDK) < 30){
                         locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new LocationListenerCompat() {
                             @Override
                             public void onLocationChanged(@NonNull Location location) {
                                 locations.add(location);
                             }
-                        },null);//RequestLocationUpdate once
+                        },null);
+                        }//RequestLocationUpdate once
                         //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0, (LocationListener) context);
+                    else {
+                            locationManager.getCurrentLocation(LocationManager.GPS_PROVIDER, null, ContextCompat.getMainExecutor(context), new Consumer<Location>() {
+                                @SuppressLint("MissingPermission")
+                                @Override
+                                public void accept(Location location) {
+                                    locations.add(location);
+                                }
+                            });
+                        }
                     }
                 }
             }
         });
     }
-
-    @SuppressLint("MissingPermission")
-    @RequiresApi(api = Build.VERSION_CODES.R)
-    public void requestLocationModern(CodeList<Location> locations, Context context){
-        Log.d("map", "getLocation");
-        permissionsThenRun(new Runnable() {
-            @Override
-            public void run() {
-                if (hasLocationPermissions(context)){
-                    locationManager.getCurrentLocation(LocationManager.GPS_PROVIDER, null, ContextCompat.getMainExecutor(context), new Consumer<Location>() {
-                        @SuppressLint("MissingPermission")
-                        @Override
-                        public void accept(Location location) {
-                            locations.add(location);
-                        }
-                    });
-                }
-            }
-        });
+    public void writeQrCodesToMap(DatabaseController dc,MapView nearbymap, String title){
+        ArrayList<GeoPoint> locations = dc.fakeGetLocations();
+        for (int i =0; i< locations.size();i++){
+            GeoPoint location = locations.get(i);
+            Marker qrmarker = new Marker(nearbymap);
+            qrmarker.setPosition(location);
+            qrmarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            nearbymap.getOverlays().add(qrmarker);
+            qrmarker.setTitle(title);
+        }
     }
+
     public void qrMarkerOnMap(GeoPoint startPoint, MapView nearbymap, String title){
         Marker qrmarker = new Marker(nearbymap);
         qrmarker.setPosition(startPoint);

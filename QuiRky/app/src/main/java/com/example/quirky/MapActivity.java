@@ -41,6 +41,7 @@ public class MapActivity extends AppCompatActivity {
     private MapController mapController;
     private LocationManager locationManager;
     private IMapController iMapController;
+    private DatabaseController dc;
 
 
     @SuppressLint("MissingPermission")
@@ -54,6 +55,7 @@ public class MapActivity extends AppCompatActivity {
         //Create a map
         setContentView(R.layout.activity_map_layout);
         Location location;
+        dc = new DatabaseController(this);
         nearbymap = (MapView) findViewById(R.id.map1);
         iMapController = nearbymap.getController();
         mapController = new MapController(this);
@@ -72,15 +74,10 @@ public class MapActivity extends AppCompatActivity {
                 GeoPoint startPoint = new GeoPoint((double) location.getLatitude(), (double) location.getLongitude());
                 iMapController.setCenter(startPoint);
                 mapController.qrMarkerOnMap(startPoint,nearbymap,"Current location");
+                mapController.writeQrCodesToMap(dc,nearbymap,"Nearby QR code located");
             }
         });
-
-        if (Integer.valueOf(android.os.Build.VERSION.SDK) > 30) {
-            mapController.requestLocationModern( locations,this);
-        }
-        else{
-            mapController.requestLocation(locations,this);
-        }
+        mapController.requestLocation(locations,this);
     }
 
 

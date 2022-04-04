@@ -435,4 +435,15 @@ public class DatabaseController {
     public boolean checkProfileExists(Task<DocumentSnapshot> task) {
         return task.getResult().getData() == null;
     }
+    public ArrayList<GeoPoint> fakeGetLocations(){
+        ArrayList<GeoPoint> geoPoints = new ArrayList<>();
+        GeoPoint geoPoint = new GeoPoint(34.25,46.23);
+        geoPoints.add(geoPoint);
+        GeoPoint geoPoint2 = new GeoPoint(35.25,47.23);
+        geoPoints.add(geoPoint2);
+        GeoPoint geoPoint3 = new GeoPoint(36.22,46.58);
+        geoPoints.add(geoPoint3);
+        return geoPoints;
+
+    }
 }
