@@ -65,10 +65,7 @@ public class ViewCommentsActivity extends AppCompatActivity {
         ct = getApplicationContext();
         DM = new DatabaseController(ct);
 
-        // Has to be getting it from Fragment
-      
         String qrCodeId = intent.getStringExtra("qrCodeId"); // Needs to be changed
-        System.out.println(qrCodeId);
 
         commentDataList = new ArrayList<>();
 
