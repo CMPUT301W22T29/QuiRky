@@ -6,62 +6,41 @@ import android.content.Context;
 import android.Manifest;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.Marker;
 
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
-import android.os.Build.VERSION_CODES;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;//Tile source factory used for manipulating the map
-import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import static android.content.ContentValues.TAG;
 import static android.content.Context.LOCATION_SERVICE;
 
-import android.annotation.SuppressLint;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build.VERSION_CODES;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.widget.Toast;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.tasks.Task;
 
-import org.osmdroid.api.IMapController;
-import org.osmdroid.config.Configuration;
-import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;//Tile source factory used for manipulating the map
-import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 
 /*
@@ -70,7 +49,7 @@ author: osmdroid team : https://github.com/osmdroid/osmdroid
 Publish Date:2019-09-27
  */
 /*source:https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime*/
-public class MapController{
+public class MapController {
     public static final int LOCATION_REQUEST_CODE = 99;
     private LocationManager locationManager;
     private static final String[] LOCATION_PERMISSIONS = new String[]{
@@ -147,6 +126,7 @@ public class MapController{
         }
     }
 
+
     @SuppressLint("MissingPermission")
     public void getLocation(CodeList<Location> locations) {
         Log.d("map", "getLocation");
@@ -175,7 +155,29 @@ public class MapController{
         });
     }
 
+
+    @SuppressLint("MissingPermission")
+    @RequiresApi(api = Build.VERSION_CODES.R)
+    public void requestLocationModern(CodeList<Location> locations, Context context){
+        Log.d("map", "getLocation");
+        permissionsThenRun(new Runnable() {
+            @Override
+            public void run() {
+                if (hasLocationPermissions(context)){
+                    locationManager.getCurrentLocation(LocationManager.GPS_PROVIDER, null, ContextCompat.getMainExecutor(context), new Consumer<Location>() {
+                        @SuppressLint("MissingPermission")
+                        @Override
+                        public void accept(Location location) {
+                            locations.add(location);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     public LocationManager getLocationManager() {
+
         return locationManager;
     }
 }
