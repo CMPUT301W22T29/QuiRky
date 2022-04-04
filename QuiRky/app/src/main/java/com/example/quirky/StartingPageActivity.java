@@ -87,7 +87,7 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
      * Set the buttons & their listeners to show the Profile layout
      */
     private void setProfileLayout() {
-        top.setText("My Profile");
+        top.setText("My Profile Info");
         top.setOnClickListener(view -> {
 
             mc = new MemoryController(this);

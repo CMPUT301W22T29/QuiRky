@@ -55,4 +55,12 @@ dependencies {
     implementation "androidx.camera:camera-view:1.0.0-alpha14"
     implementation 'com.google.mlkit:barcode-scanning:17.0.2'
     implementation 'com.google.android.gms:play-services-mlkit-barcode-scanning:18.0.0'
+
+    implementation 'com.google.mlkit:barcode-scanning:17.0.2'
+    implementation 'com.google.android.gms:play-services-mlkit-barcode-scanning:18.0.0'
+
+    implementation 'org.osmdroid:osmdroid-android:6.0.2'
+    implementation 'org.osmdroid:osmdroid-third-party:5.6.3'
+    androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.3.1'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
 }
