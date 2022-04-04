@@ -18,7 +18,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class IntentTests {
+public class IntentStartingPageTest {
 
     private Solo solo;
 
@@ -47,6 +47,7 @@ public class IntentTests {
         solo.clickOnButton("Login");
         solo.assertCurrentActivity("Wrong Activity", StartingPageActivity.class);
     }
+
     @Test
     public void checkSettings(){
         solo.assertCurrentActivity("Wrong Activity",MainActivity.class);

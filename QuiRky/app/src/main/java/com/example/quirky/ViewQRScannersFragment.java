@@ -62,7 +62,6 @@ public class ViewQRScannersFragment extends Fragment {
         back = view.findViewById(R.id.fragment_back_button);
         list = view.findViewById(R.id.other_players_who_have_scanned_this_particular_qr_code_list);
 
-        // Temporary filling of ArrayList
         players = fragmentListener.getPlayers();
 
         recyclerListener = position -> startViewPlayerActivity(players.get(position));

@@ -3,8 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+<<<<<<< HEAD
         <entry key="..\:/Users/kyrie/Desktop/CMPUT301/QuiRky/QuiRky/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/kyrie/Desktop/CMPUT301/QuiRky/QuiRky/app/src/main/res/layout/activity_starting_page.xml" value="0.33" />
+=======
+        <entry key="..\:/Users/jonad/Documents/Classes/301/QuiRky/QuiRky/app/src/main/res/layout/activity_main.xml" value="0.20416666666666666" />
+>>>>>>> JJ
       </map>
     </option>
   </component>

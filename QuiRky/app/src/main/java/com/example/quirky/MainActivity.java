@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -43,17 +44,28 @@ public class MainActivity extends AppCompatActivity implements
         Button settings = findViewById(R.id.setting);
         Button quit = findViewById(R.id.quit);
 
-        getStarted.setOnClickListener(view -> login());
+        final boolean returningUser = mc.exists();
+        if(returningUser) {
+            String user = mc.readUser();
+
+            dm.readProfile(user).addOnCompleteListener(task -> {
+                if(dm.isOwner(task))
+                    displayOwnerButton();
+            });
+        }
+
+        getStarted.setOnClickListener(view -> login(returningUser));
         settings.setOnClickListener(view -> startSettingsActivity());
         quit.setOnClickListener(view -> finishAffinity());
     }
 
-    private void login() {
-        // mc.exists() checks if the user has logged in with the app before
-        if(!mc.exists()) {
+
+    private void login(boolean returningUser) {
+        if(!returningUser) {
+            // Display a fragment to get a username from the user.
+            // Once the fragment closes, the method OnClickConfirm() is called.
             InputUnameLoginFragment frag = new InputUnameLoginFragment();
             frag.show(getSupportFragmentManager(), "GET_UNAME");
-            // Once the fragment is closed, the method OnClickConfirm() is called.
         } else {
             startHubActivity();
         }
@@ -80,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements
             } else {
                 Toast.makeText(this, "This username already exists!", Toast.LENGTH_LONG).show();
                 // Restart the process by calling login()
-                login();
+                login(false);
             }
         });
     }
@@ -95,6 +107,16 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void LoginByQR() {
         cameraActivitiesController.startCodeScannerActivity();
+    }
+
+    private void displayOwnerButton() {
+        Button ownerButton = findViewById(R.id.owner_button);
+        ownerButton.setVisibility(View.VISIBLE);
+
+        ownerButton.setOnClickListener(view -> {
+            Intent i = new Intent(this, OwnerMenu.class);
+            startActivity(i);
+        });
     }
 
     private void startSettingsActivity() {

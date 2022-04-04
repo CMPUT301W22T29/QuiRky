@@ -98,7 +98,6 @@ public class ManageCodesActivity extends AppCompatActivity {
      */
     private void startViewQRActivity(int position) {
         Intent i = new Intent(this, ViewQRActivity.class);
-        Log.d(TAG, "passed |{" + codes.get(position) + "}| to the activity");
         i.putExtra("code", codes.get(position));
         startActivity(i);
     }
