@@ -3,11 +3,14 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.Manifest;
+import org.osmdroid.api.IMapController;
+import org.osmdroid.config.Configuration;
 
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -44,6 +47,7 @@ public class MapController {
     private static final String PROVIDER = (Build.VERSION.SDK_INT > 30) ? LocationManager.FUSED_PROVIDER
                                                                         : LocationManager.GPS_PROVIDER;
     private final ArrayDeque<Runnable> runnables;
+
 
     public MapController(Context context) {
         this.context = context;
