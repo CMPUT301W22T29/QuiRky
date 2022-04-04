@@ -26,7 +26,6 @@ public class CommentList extends RecyclerView.Adapter<CommentList.CommentViewHol
     private Context context;
 
     public CommentList(Context context, ArrayList<Comment> comments) {
-        Collections.sort(comments);
         this.comments = comments;
         this.context = context;
     }
