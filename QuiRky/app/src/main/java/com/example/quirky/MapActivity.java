@@ -3,19 +3,14 @@ package com.example.quirky;
 
 import android.annotation.SuppressLint;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
+
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -23,9 +18,6 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;//Tile source factory used for manipulating the map
 import org.osmdroid.views.overlay.Marker;
-
-import java.util.ArrayList;
-import java.util.function.Consumer;
 
 
 
@@ -38,14 +30,12 @@ Publish Date:2019-09-27
 
 
 public class MapActivity extends AppCompatActivity implements /*LocationListener,*/ ActivityCompat.OnRequestPermissionsResultCallback {
-    private MapView nearbymap;
+    private MapView nearbyMap;
     private MapController mapController;
-    private LocationManager locationManager;
     private IMapController iMapController;
 
 
     @SuppressLint("MissingPermission")
-    @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,25 +45,26 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
         //Create a map
         setContentView(R.layout.activity_map_layout);
         Location location;
-        nearbymap = (MapView) findViewById(R.id.map1);
-        iMapController = nearbymap.getController();
+        nearbyMap = (MapView) findViewById(R.id.map1);
+        iMapController = nearbyMap.getController();
         mapController = new MapController(this);
-        nearbymap.setTileSource(TileSourceFactory.MAPNIK);
-        nearbymap.setBuiltInZoomControls(true);
-        nearbymap.setMultiTouchControls(true);
+        nearbyMap.setTileSource(TileSourceFactory.MAPNIK);
+        nearbyMap.setBuiltInZoomControls(true);
+        nearbyMap.setMultiTouchControls(true);
         iMapController.setZoom((double) 15);
-        locationManager = mapController.getLocationManager();
         
         //Set a oncode listener, it's a call back when something is added to the list
-        CodeList<Location> locations = new CodeList<>();
+        ListeningList<Location> locations = new ListeningList<>();
         Log.d("map", "mapOnCreate");
-        locations.setOnCodeAddedListener(new OnCodeAddedListener<Location>() {
+        locations.setOnAddListener(new OnAddListener<Location>() {
 
             @Override
-            public void onCodeAdded(CodeList<Location> codeList) {
+            public void onAdd(ListeningList<Location> listeningList) {
                 Log.d("map", "onCodeAdded");
-                Location location = codeList.get(0);
-                qrMarkerOnMap(location);
+                Location location = listeningList.get(0);
+                GeoPoint startPoint = new GeoPoint((double) location.getLatitude(), (double) location.getLongitude());
+                iMapController.setCenter(startPoint);
+                MapController.qrMarkerOnMap(startPoint, nearbyMap, "Current location");
             }
 
         });
@@ -81,24 +72,16 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
 
         //TODO
         mapController.getLocation(locations);
-        //Move this part to MapController
-        if (Integer.valueOf(android.os.Build.VERSION.SDK) > 30) {
-            mapController.requestLocationModern( locations,this);
-        }
-        else{
-            mapController.requestLocation(locations,this);
-        }
+        ////Move this part to MapController
+        //if (Integer.valueOf(android.os.Build.VERSION.SDK) > 30) {
+        //    mapController.requestLocationModern( locations,this);
+        //}
+        //else{
+        //    mapController.requestLocation(locations,this);
+        //}
     }
 
-    public void qrMarkerOnMap(Location location){
-        Marker qrmarker = new Marker(nearbymap);
-        GeoPoint startPoint = new GeoPoint((double) location.getLatitude(), (double) location.getLongitude());
-        qrmarker.setPosition(startPoint);
-        iMapController.setCenter(startPoint);
-        qrmarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        nearbymap.getOverlays().add(qrmarker);
-        qrmarker.setTitle("Current location");
-    }
+
 
     @SuppressLint("MissingSuperCall")
     @Override
@@ -127,11 +110,11 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
 
         public void onResume () {
             super.onResume();
-            nearbymap.onResume();
+            nearbyMap.onResume();
         }
         public void onPause () {
             super.onPause();
-            nearbymap.onPause();  //Compass
+            nearbyMap.onPause();  //Compass
         }
 }
 

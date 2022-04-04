@@ -1,45 +1,28 @@
 package com.example.quirky;
-import static androidx.core.content.ContextCompat.getSystemService;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.Manifest;
-import org.osmdroid.api.IMapController;
-import org.osmdroid.config.Configuration;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.overlay.Marker;
 
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.location.LocationListenerCompat;
 
-import static android.content.ContentValues.TAG;
 import static android.content.Context.LOCATION_SERVICE;
 
-import android.os.Build.VERSION_CODES;
-
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.gms.tasks.Task;
-
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;//Tile source factory used for manipulating the map
-import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
-import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+import org.osmdroid.views.overlay.Marker;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.function.Consumer;
 
 
@@ -51,14 +34,14 @@ Publish Date:2019-09-27
 /*source:https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime*/
 public class MapController {
     public static final int LOCATION_REQUEST_CODE = 99;
-    private LocationManager locationManager;
-    private static final String[] LOCATION_PERMISSIONS = new String[]{
+    private final LocationManager locationManager;
+    private static final String[] LOCATION_PERMISSIONS = new String[] {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
-    private Context context;
-    private static final String provider = LocationManager.GPS_PROVIDER;
-    private ArrayDeque<Runnable> runnables;
+    private final Context context;
+    private static final String PROVIDER = LocationManager.GPS_PROVIDER;
+    private final ArrayDeque<Runnable> runnables;
 
     public MapController(Context context) {
         this.context = context;
@@ -67,7 +50,7 @@ public class MapController {
         runnables = new ArrayDeque<>();
     }
 
-    public static boolean requestingLocationPermissions(int request_code){
+    public static boolean requestingLocationPermissions(int request_code) {
         return (request_code == LOCATION_REQUEST_CODE);
 
     }
@@ -103,7 +86,7 @@ public class MapController {
     public void permissionsThenRun(Runnable runnable) {
         Log.d("map", "permissionsThenRun");
         if (hasLocationPermissions(context)) {
-            if (!locationManager.isProviderEnabled(provider)) {
+            if (!locationManager.isProviderEnabled(PROVIDER)) {
                 Toast.makeText(context, "This might not do anything since your GPS is off!", Toast.LENGTH_LONG).show();
             }
             runnable.run();
@@ -126,45 +109,35 @@ public class MapController {
         }
     }
 
-
     @SuppressLint("MissingPermission")
-    public void getLocation(CodeList<Location> locations) {
+    public void getLocation(ListeningList<Location> locations) {
         Log.d("map", "getLocation");
         permissionsThenRun(new Runnable() {
             @Override
             public void run() {
                 Log.d("map", "runGetLocation");
 
-                locationManager.requestSingleUpdate(provider, new LocationListener() {
-                    @Override
-                    public void onLocationChanged(@NonNull Location location) {
-                        Log.d("map", "onLocationChanged");
-                        Toast.makeText(context,"Current Location:"
-                                + String.valueOf(location.getLatitude())
-                                + ","
-                                + String.valueOf(location.getLongitude()), Toast.LENGTH_LONG).show();
-                        locations.add(location);
-                    }
-                    //FIXME: OVERRIDE onStatusChanged(String, int, Bundle) FOR API LEVEL < 29
-                    //FIXME: Figure out why onLocationChanged doesn't get called in some cases, or if it gets called in any cases
-                    //TODO: Use getCurrentLocation() instead for API level > 29
-                    //TODO: if can't make it work, go back to using requestLocationUpdates() and call removeUpdates() instead.
-                }, null);
+                if (Build.VERSION.SDK_INT < 30) {
+                    locationManager.requestSingleUpdate(PROVIDER, new LocationListenerCompat() {
+                        @Override
+                        public void onLocationChanged(@NonNull Location location) {
+                            //TODO: Remove debugging code
+                            Log.d("map", "onLocationChanged");
+                            Toast.makeText(context, "Current Location:"
+                                    + String.valueOf(location.getLatitude())
+                                    + ","
+                                    + String.valueOf(location.getLongitude()), Toast.LENGTH_LONG).show();
+                            //End of debugging code.
 
-            }
-        });
-    }
-
-
-    @SuppressLint("MissingPermission")
-    @RequiresApi(api = Build.VERSION_CODES.R)
-    public void requestLocationModern(CodeList<Location> locations, Context context){
-        Log.d("map", "getLocation");
-        permissionsThenRun(new Runnable() {
-            @Override
-            public void run() {
-                if (hasLocationPermissions(context)){
-                    locationManager.getCurrentLocation(LocationManager.GPS_PROVIDER, null, ContextCompat.getMainExecutor(context), new Consumer<Location>() {
+                            locations.add(location);
+                        }
+                        //FIXME: OVERRIDE onStatusChanged(String, int, Bundle) FOR API LEVEL < 29
+                        //FIXME: Figure out why onLocationChanged doesn't get called in some cases, or if it gets called in any cases
+                        //TODO: Use getCurrentLocation() instead for API level > 29
+                        //TODO: if can't make it work, go back to using requestLocationUpdates() and call removeUpdates() instead.
+                    }, null);
+                } else {    // API level >= 30
+                    locationManager.getCurrentLocation(PROVIDER, null, ContextCompat.getMainExecutor(context), new Consumer<Location>() {
                         @SuppressLint("MissingPermission")
                         @Override
                         public void accept(Location location) {
@@ -172,12 +145,40 @@ public class MapController {
                         }
                     });
                 }
+
             }
         });
     }
 
-    public LocationManager getLocationManager() {
+    public static void qrMarkerOnMap(@NonNull GeoPoint geoPoint, @NonNull MapView nearbyMap, String title) {
+        Marker qrMarker = new Marker(nearbyMap);
+        qrMarker.setPosition(geoPoint);
+        qrMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        nearbyMap.getOverlays().add(qrMarker);
+        qrMarker.setTitle(title);
+    }
 
+    //@SuppressLint("MissingPermission")
+    //@RequiresApi(api = Build.VERSION_CODES.R)
+    //public void requestLocationModern(CodeList<Location> locations, Context context){
+    //    Log.d("map", "getLocation");
+    //    permissionsThenRun(new Runnable() {
+    //        @Override
+    //        public void run() {
+    //            if (hasLocationPermissions(context)) {
+    //                locationManager.getCurrentLocation(PROVIDER, null, ContextCompat.getMainExecutor(context), new Consumer<Location>() {
+    //                    @SuppressLint("MissingPermission")
+    //                    @Override
+    //                    public void accept(Location location) {
+    //                        locations.add(location);
+    //                    }
+    //                });
+    //            }
+    //        }
+    //    });
+    //}
+
+    public LocationManager getLocationManager() {
         return locationManager;
     }
 }

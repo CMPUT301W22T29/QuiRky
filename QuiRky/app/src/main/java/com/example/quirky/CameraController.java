@@ -38,7 +38,6 @@ import androidx.lifecycle.LifecycleOwner;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.common.InputImage;
 
-import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -166,7 +165,7 @@ public class CameraController {
      * @see QRCodeController
      */
     @androidx.camera.core.ExperimentalGetImage
-    public void captureQRCodes(Context context, CodeList<QRCode> codes) {
+    public void captureQRCodes(Context context, ListeningList<QRCode> codes) {
         // TODO: edit javadoc
         imageCapture.takePicture(ContextCompat.getMainExecutor(context),
                 new ImageCapture.OnImageCapturedCallback() {
