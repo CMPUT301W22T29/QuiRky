@@ -44,7 +44,7 @@ public class StartingPageTest {
         solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
         solo.clickOnButton("Manage Codes");
         solo.assertCurrentActivity("Wrong Activity", ManageCodesActivity.class);
-        assertTrue(solo.searchText("1115083"));
+        assertTrue(solo.searchText("1115083"));//QRCode that you scanned
     }
     @Test
     public void checkGenerateCodes(){
@@ -93,7 +93,7 @@ public class StartingPageTest {
         solo.clickOnButton("Search Other Users");
         solo.assertCurrentActivity("Wrong Activity",PlayerSearchActivity.class);
     }
-    //It will not work for LeaderBoards if you dont scan any QRCodes before checking leaderBoards
+    //Before testing on Buttons FIND MY POSITION, you need to create an account
     @Test
     public void checkTheLeaderBoards(){
         solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
@@ -101,7 +101,12 @@ public class StartingPageTest {
         solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
         solo.clickOnText("The Leaderboards");
         solo.assertCurrentActivity("Wrong Activity",LeaderBoardActivity.class);
+        solo.clickOnButton("Find My Position");
+        assertTrue(solo.searchText("jiawei3"));//username of your account
+        solo.clickOnButton("Top Players");
+        assertTrue(solo.searchText("JJ"));//The top player in the game when you run the test
     }
+
     @Test
     public void checkNearbyQRCodes(){
         solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
