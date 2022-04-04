@@ -170,13 +170,13 @@ public class LeaderboardControllerTest {
 
         int position;
 
-        position = lc.findPlayer(mostScanned);
+        position = lc.findRankScanned(mostScanned);
         assertEquals(0, position);
 
-        position = lc.findPlayer(bottom);
+        position = lc.findRankScanned(bottom);
         assertEquals(3, position);
 
-        position = lc.findPlayer(new Profile(""));
+        position = lc.findRankScanned(new Profile(""));
         assertEquals(-1, position);
     }
 }

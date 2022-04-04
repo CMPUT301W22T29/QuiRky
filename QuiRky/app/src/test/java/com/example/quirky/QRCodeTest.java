@@ -5,7 +5,6 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class QRCodeTest {
 
@@ -73,7 +72,7 @@ public class QRCodeTest {
 
 
         // Test removing comments that aren't actually in the QRCode
-        qr.removeComment(new Comment("I'm not actually in the QRCode's comments", "user");
+        qr.removeComment(new Comment("I'm not actually in the QRCode's comments", "user"));
         assertEquals("Removing a comment the QRCode didn't have somehow changed the ArrayList<>",
                 comments,
                 qr.getComments());
