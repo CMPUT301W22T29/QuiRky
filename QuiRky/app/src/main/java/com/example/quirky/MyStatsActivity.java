@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -33,6 +34,8 @@ public class MyStatsActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         p = (Profile) i.getSerializableExtra("profile");
+        if(p == null)
+            ExitWithError();
 
         DatabaseController dc = new DatabaseController(this);
         dc.readAllProfiles().addOnCompleteListener(task -> {
@@ -67,5 +70,14 @@ public class MyStatsActivity extends AppCompatActivity {
         position = lbc.findRankLargest(p);
         largestScanned.setText(String.valueOf(p.getPointsOfLargestCodes()));
         lrgRanking.setText(String.valueOf(position));
+    }
+
+    /**
+     * Method called when data is passed to this activity incorrectly, or when there is an issue reading the data from FireStore.
+     * Makes a toast and then finishes the activity.
+     */
+    private void ExitWithError() {
+        Toast.makeText(this, "User was passed incorrectly!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 }

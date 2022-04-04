@@ -14,9 +14,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.widget.CompoundButton;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -41,6 +45,13 @@ public class ManageCodesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_manage_codes);
 
         Profile p = (Profile) getIntent().getSerializableExtra("profile");
+        if(p == null)
+            ExitWithError();
+
+        TextView title = findViewById(R.id.manage_codes_title);
+        String text = p.getUname() + "'s Codes";
+        title.setText(text);
+
         codes = p.getScanned();
         points = new ArrayList<>();
         for(String id : codes) {
@@ -103,5 +114,14 @@ public class ManageCodesActivity extends AppCompatActivity {
         Intent i = new Intent(this, ViewQRActivity.class);
         i.putExtra("code", codes.get(position));
         startActivity(i);
+    }
+
+    /**
+     * Method called when data is passed to this activity incorrectly, or when there is an issue reading the data from FireStore.
+     * Makes a toast and then finishes the activity.
+     */
+    private void ExitWithError() {
+        Toast.makeText(this, "User was not found!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 }

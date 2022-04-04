@@ -49,10 +49,15 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
 
         i = getIntent();
         qrid = i.getStringExtra("code");
+        if(qrid == null || qrid.equals(""))
+            ExitWithError();
 
         dc.readQRCode(qrid).addOnCompleteListener(task -> {
             qr = dc.getQRCode(task);
-            doneReadingQRCode();
+            if(qr == null)
+                ExitWithError();
+            else
+                doneReadingQRCode();
         });
 
     }
@@ -119,13 +124,25 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         MemoryController mc = new MemoryController(this);
         Profile p = mc.read();
 
-        p.removeScanned(qrid);
-        mc.write(p);
-        dc.writeProfile(p);
+        if(p.removeScanned(qrid)) {
+            mc.write(p);
+            dc.writeProfile(p);
 
-        Toast.makeText(this, "Removed from your scanned codes!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Removed from your scanned codes!", Toast.LENGTH_SHORT).show();
 
-        Intent i = new Intent(this, StartingPageActivity.class);
-        startActivity(i);
+            Intent i = new Intent(this, StartingPageActivity.class);
+            startActivity(i);
+        } else {
+            Toast.makeText(this, "You did not have that code anyways!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Method called when data is passed to this activity incorrectly, or when there is an issue reading the data from FireStore.
+     * Makes a toast and then finishes the activity.
+     */
+    private void ExitWithError() {
+        Toast.makeText(this, "QRCode was passed incorrectly, or not found in FireStore!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 }

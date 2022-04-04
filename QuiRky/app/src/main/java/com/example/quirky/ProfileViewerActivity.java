@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Activity to view a profile
@@ -17,7 +18,7 @@ public class ProfileViewerActivity extends AppCompatActivity {
     private Profile p;
     private MemoryController mc;
 
-    private Button changeProfile;
+    private Button changeProfile, seeCodes;
     private TextView title, email, phone, rank1, rank2, rank3;
 
     boolean view_self; // Is the player viewing themself?
@@ -28,6 +29,8 @@ public class ProfileViewerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_profile);
         i = getIntent();
         p = (Profile) i.getSerializableExtra("profile");
+        if(p == null)
+            ExitWithError();
 
         title = findViewById(R.id.profile_name);
         email = findViewById(R.id.email2);
@@ -36,6 +39,8 @@ public class ProfileViewerActivity extends AppCompatActivity {
         rank2 = findViewById(R.id.rank_scanned_field);
         rank3 = findViewById(R.id.rank_largest_field);
         changeProfile = findViewById(R.id.change_profile_button);
+        seeCodes = findViewById(R.id.see_scanned_codes_button);
+
 
         rank1.setText(String.valueOf(p.getPointsOfScannedCodes()));
         rank2.setText(String.valueOf(p.getNumberCodesScanned()));
@@ -51,7 +56,15 @@ public class ProfileViewerActivity extends AppCompatActivity {
             changeProfile.setOnClickListener(view -> changeProfile());
         } else {
             changeProfile.setVisibility(View.INVISIBLE);
+            seeCodes.setVisibility(View.VISIBLE);
+            seeCodes.setOnClickListener(view -> viewQRCodes());
         }
+    }
+
+    private void viewQRCodes() {
+        Intent i = new Intent(this, ManageCodesActivity.class);
+        i.putExtra("profile", p);
+        startActivity(i);
     }
 
     // Displayed information must be updated onResume in the event that the user is returning from EditProfileActivity
@@ -74,5 +87,14 @@ public class ProfileViewerActivity extends AppCompatActivity {
         Intent intent = new Intent(this, EditProfileActivity.class);
         intent.putExtra("profile", p);
         startActivity(intent);
+    }
+
+    /**
+     * Method called when data is passed to this activity incorrectly, or when there is an issue reading the data from FireStore.
+     * Makes a toast and then finishes the activity.
+     */
+    private void ExitWithError() {
+        Toast.makeText(this, "User was passed incorrectly!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 }

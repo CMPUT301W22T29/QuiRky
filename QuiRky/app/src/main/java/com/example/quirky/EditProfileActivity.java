@@ -27,6 +27,8 @@ public class EditProfileActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         p = (Profile) i.getSerializableExtra("profile");
+        if(p == null)
+            ExitWithError();
 
         originalUsername = p.getUname();
 
@@ -45,6 +47,15 @@ public class EditProfileActivity extends AppCompatActivity {
 
         save.setOnClickListener(view -> updateProfile());
         cancel.setOnClickListener(view -> exit());
+    }
+
+    /**
+     * Method called when data is passed to this activity incorrectly, or when there is an issue reading the data from FireStore.
+     * Makes a toast and then finishes the activity.
+     */
+    private void ExitWithError() {
+        Toast.makeText(this, "User was passed incorrectly!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     /**

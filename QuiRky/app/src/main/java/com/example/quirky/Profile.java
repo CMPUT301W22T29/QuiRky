@@ -140,12 +140,15 @@ public class Profile implements Serializable {
      * Also updates the profile's stats to reflect the added code.
      * @param qrId
      *      - The ID of the QRCode the player wants to delete
+     * @return If the Profile had the QRCode to begin with.
      */
-    public void removeScanned(String qrId) {
+    public boolean removeScanned(String qrId) {
         if(scanned.contains(qrId)) {
             scanned.remove(qrId);
             updateStats();
+            return true;
         }
+        return false;
     }
 
     /**
