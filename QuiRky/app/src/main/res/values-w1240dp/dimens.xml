@@ -1,0 +1,9 @@
+<!--
+  ~ Copyright (c) 2022. CMPUT301W22T29
+  ~ Subject to MIT License
+  ~ See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
+  -->
+
+<resources>
+    <dimen name="fab_margin">200dp</dimen>
+</resources>

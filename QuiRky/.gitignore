@@ -15,3 +15,5 @@
 .cxx
 local.properties
 /.idea/misc.xml
+.vscode
+/.idea/deploymentTargetDropDown.xml

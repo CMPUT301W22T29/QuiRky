@@ -1,55 +1,66 @@
 package com.example.quirky;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements InputUnameLoginFragment.LoginFragListener {
+/**
+ * The activity that starts when the app is opened.
+ * Provides an interface for the user to log into the app with.
+ */
+public class MainActivity extends AppCompatActivity implements
+                                                 InputUnameLoginFragment.LoginFragListener,
+                                                 ActivityCompat.OnRequestPermissionsResultCallback {
 
     DatabaseController dm;
-    MemoryManager mm;
+    MemoryController mc;
+    private CameraActivitiesController cameraActivitiesController;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        cameraActivitiesController = new CameraActivitiesController(this, true);
+
+        dm = new DatabaseController();
+        mc = new MemoryController(this);
+
         Button getStarted = findViewById(R.id.getStarted);
-        Button settings = findViewById(R.id.setting);
         Button quit = findViewById(R.id.quit);
 
-        getStarted.setOnClickListener(view -> login());
-        settings.setOnClickListener(view -> startSettingsActivity());
+        final boolean returningUser = mc.exists();
+        if(returningUser) {
+            String user = mc.readUser();
+
+            dm.readProfile(user).addOnCompleteListener(task -> {
+                if(dm.isOwner(task))
+                    displayOwnerButton();
+            });
+        }
+
+        getStarted.setOnClickListener(view -> login(returningUser));
         quit.setOnClickListener(view -> finishAffinity());
     }
 
-    @Override
-    public void confirm(String uname) {
-        // TODO: Database read to check this username does not already exist
-        Profile p = new Profile(uname);
-        writeUser(p);
-        startHubActivity();
-    }
 
-    private void login() {
-        /*
-        Code for getting unique device ID taken from:
-        https://stackoverflow.com/a/2785493
-        Written by user:
-        https://stackoverflow.com/users/166712/anthony-forloney
-        Published May 7 2010
-        */
-        // FIXME: this may need to go in a controller? But cannot use 'this.getContentResolver' outside an activity
-        String id = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        mm = new MemoryManager(this, id);
-
-        // mm.exist() checks if the user has logged in on this device before
-        if(!mm.exist()) {
-            // If the user has not logged in yet, show the fragment that asks for a username
-            // This fragment's listener will call the write user method
+    /**
+     * Called when the user clicks the login button.
+     * Will either enter the app or launch a fragment to prompt the user for login details
+     * @param returningUser If the user has logged in with the app before.
+     */
+    private void login(boolean returningUser) {
+        if(!returningUser) {
+            // Display a fragment to get a username from the user.
+            // Once the fragment closes, the method OnClickConfirm() is called.
             InputUnameLoginFragment frag = new InputUnameLoginFragment();
             frag.show(getSupportFragmentManager(), "GET_UNAME");
         } else {
@@ -57,20 +68,75 @@ public class MainActivity extends AppCompatActivity implements InputUnameLoginFr
         }
     }
 
-    private void startSettingsActivity() {
-        Intent i = new Intent(this, SettingsActivity.class);
-        startActivity(i);
+    /**
+     * Called by the listener in the login dialogue fragment, when the user clicks confirm.
+     * Checks if the entered username is taken in the database already, and calls controllers to write the new profile to local memory and the database
+     * @param uname
+     * User name which it stores
+     */
+    @Override
+    public void OnClickConfirm(String uname) {
+
+        // Check if the inputted username is valid
+        if(!ProfileController.validUsername(uname)) {
+            Toast.makeText(this, "This username is not valid!", Toast.LENGTH_SHORT).show();
+            login(false);
+            return;
+        }
+
+        // Read from the database to check if this username is already taken.
+        dm.startCheckProfileExists(uname).addOnCompleteListener(task -> {
+            if(dm.checkProfileExists(task)) {
+                Profile p = new Profile(uname);
+
+                mc.write(p);
+                mc.writeUser(uname);
+                dm.writeProfile(p);
+
+                startHubActivity();
+
+            } else {
+                Toast.makeText(this, "This username already exists!", Toast.LENGTH_LONG).show();
+                // Restart the process by calling login()
+                login(false);
+            }
+        });
     }
 
-    private void writeUser(Profile user) {
-        mm.make();
-        mm.write("name", user.getUname());
-        mm.write("email", "");
-        mm.write("phone", "");
-
-        // dm.writeUser(user); Commented out so it is at least runnable.
+    /**
+     * Uses CameraActivitiesController to do permissions things to launch the CodeScannerActivity
+     */
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                                                      @NonNull int[] grantResults) {
+        cameraActivitiesController.getCameraPermissionRequestResult(requestCode, grantResults);
     }
 
+    /**
+     * Uses CameraActivityController to launch the CodeScannerActivity, if the user chooses to log in by QRCode scan.
+     */
+    @Override
+    public void LoginByQR() {
+        cameraActivitiesController.startCodeScannerActivity();
+    }
+
+    /**
+     * Makes the Owner Settings available. onCreate
+     */
+    private void displayOwnerButton() {
+        Button ownerButton = findViewById(R.id.owner_button);
+        ownerButton.setVisibility(View.VISIBLE);
+
+        ownerButton.setOnClickListener(view -> {
+            Intent i = new Intent(this, OwnerMenu.class);
+            startActivity(i);
+        });
+    }
+
+    /**
+     * Launches StartingPageActivity
+     */
     private void startHubActivity() {
         Intent i = new Intent(this, StartingPageActivity.class);
         startActivity(i);

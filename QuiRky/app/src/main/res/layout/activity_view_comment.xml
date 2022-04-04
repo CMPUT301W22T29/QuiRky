@@ -9,34 +9,28 @@
         android:id="@+id/text_qrCodeSelected1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:text="@string/qr_code_selected"
-        android:textSize="50dp"
+        android:layout_marginTop="8dp"
+        android:text="Comments"
+        android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ListView
-        android:id="@+id/listView_user_comment"
-        android:layout_width="300dp"
-        android:layout_height="76dp"
-        android:layout_marginBottom="50dp"
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycleListView_user_comment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:outlineSpotShadowColor="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/textView_write_comment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/textView_comment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/text_comment"
-        android:textSize="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/listView_user_comment"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/QRCodeImmage_Comment" />
 
     <TextView
         android:id="@+id/textView_write_comment"
@@ -45,7 +39,7 @@
         android:layout_marginStart="60dp"
         android:layout_marginBottom="8dp"
         android:text="@string/text_write_comment"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/editText_comment"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -54,8 +48,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
-        android:layout_marginBottom="32dp"
-        android:text="@string/button_cancel"
+        android:layout_marginBottom="16dp"
+        android:text="@string/back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -64,7 +58,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="64dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/button_save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -73,11 +67,23 @@
         android:id="@+id/editText_comment"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="52dp"
+        android:layout_marginBottom="16dp"
         android:ems="18"
+        android:hint="@string/string_comment"
         android:inputType="textLongMessage"
-        android:text="@string/string_comment"
+        android:minHeight="48dp"
         app:layout_constraintBottom_toTopOf="@+id/button_cancel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/QRCodeImmage_Comment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_qrCodeSelected1"
+        app:srcCompat="@mipmap/ic_launcher" />
 </androidx.constraintlayout.widget.ConstraintLayout>

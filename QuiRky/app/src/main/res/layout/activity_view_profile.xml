@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ProfileViewerActivity">
+
+    <TextView
+        android:id="@+id/profile_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:layout_marginTop="48dp"
+        android:hint="To be replaced"
+        android:textSize="40sp"
+        android:gravity="center_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/email1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_name"
+        android:text="Email: "
+        android:textSize="30sp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        />
+    <TextView
+        android:id="@+id/email2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:hint="No email."
+        android:textSize="30sp"
+        app:layout_constraintStart_toEndOf="@+id/email1"
+        app:layout_constraintTop_toBottomOf="@+id/profile_name" />
+
+    <TextView
+        android:id="@+id/phone1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/email1"
+        android:text="Cell Number: "
+        android:textSize="30sp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        />
+    <TextView
+        android:id="@+id/phone2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:hint="No email."
+        android:textSize="30sp"
+        app:layout_constraintStart_toEndOf="@+id/phone1"
+        app:layout_constraintTop_toBottomOf="@+id/email1" />
+
+    <TextView
+        android:id="@+id/rank_points_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="Points Acquired"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/phone1" />
+    <TextView
+        android:id="@+id/rank_points_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:hint="Replace me in .java file"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/rank_points_text"
+        app:layout_constraintTop_toBottomOf="@+id/phone1" />
+
+    <TextView
+        android:id="@+id/rank_scanned_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="Codes Scanned"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rank_points_text" />
+    <TextView
+        android:id="@+id/rank_scanned_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:hint="Replace me in .java file"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/rank_scanned_text"
+        app:layout_constraintTop_toBottomOf="@+id/rank_points_text" />
+
+    <TextView
+        android:id="@+id/rank_largest_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="Largest Code Scanned"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rank_scanned_text" />
+
+    <TextView
+        android:id="@+id/rank_largest_field"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:hint="Replace me in .java file"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/rank_largest_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/rank_largest_text"
+        app:layout_constraintTop_toBottomOf="@+id/rank_scanned_text" />
+
+    <Button
+        android:id="@+id/change_profile_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Change Profile"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="24dp"
+        />
+
+    <Button
+        android:id="@+id/see_scanned_codes_button"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="See Scanned Codes"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/change_profile_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

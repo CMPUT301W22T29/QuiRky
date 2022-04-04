@@ -1,75 +1,103 @@
+
 package com.example.quirky;
 
-import android.content.Context;
-import org.osmdroid.api.IMapController;
-import org.osmdroid.config.Configuration;
+import android.annotation.SuppressLint;
+import android.location.Location;
+
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.appcompat.app.AppCompatActivity;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import org.osmdroid.api.IMapController;
+import org.osmdroid.config.Configuration;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;//Tile source factory used for manipulating the map
-import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.Overlay;
-import org.osmdroid.views.overlay.OverlayItem;
+
+
 
 /*
 source: https://osmdroid.github.io/osmdroid/How-to-use-the-osmdroid-library.html
 author: osmdroid team : https://github.com/osmdroid/osmdroid
 Publish Date:2019-09-27
  */
-public class MapActivity extends AppCompatActivity {
-    MapView nearbymap = null;
+/*source:https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime*/
+
+/**
+ * @Author HengYuan
+ * @Author Sean
+ * Activity to display a map of the surrounding region. Will also mark nearby QRCodes.
+ * @See MapController
+ */
+public class MapActivity extends AppCompatActivity implements /*LocationListener,*/ ActivityCompat.OnRequestPermissionsResultCallback {
+    private MapView nearbyMap;
+    private MapController mapController;
+    private IMapController iMapController;
+
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //Initialize the osmdroid configuration which can be done through
-        Context cxt = getApplicationContext();
-        Configuration.getInstance().load(cxt, PreferenceManager.getDefaultSharedPreferences(cxt));
+        //Activity for the following two lines
+        Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
 
         //Create a map
         setContentView(R.layout.activity_map_layout);
-        nearbymap = (MapView) findViewById(R.id.map);
-        nearbymap.setTileSource(TileSourceFactory.MAPNIK);
-        //Make the map can zoom in or out
-        nearbymap.setBuiltInZoomControls(true);
-        nearbymap.setMultiTouchControls(true);
-        IMapController mapController = nearbymap.getController();
-        mapController.setZoom(15);
-        //zoom into university of Alberta
-        GeoPoint startPoint = new GeoPoint(53.52682, -113.52449);
-        mapController.setCenter(startPoint);
-        //set a marker on our current location
-        Marker qrmarker = new Marker(nearbymap);
-        qrmarker.setPosition(startPoint);
-        qrmarker.setAnchor(Marker.ANCHOR_CENTER,Marker.ANCHOR_BOTTOM);
-        nearbymap.getOverlays().add(qrmarker);
-        qrmarker.setTitle("Current location");
-        // use this to assign QR codes images to our marker
-        // qrmarker.setImage();
-        /*qrmarker.setOnMarkerClickListener(final Marker.OnMarkerClickListener listener){
+
+        Location location;
+        nearbyMap = (MapView) findViewById(R.id.map1);
+        iMapController = nearbyMap.getController();
+        mapController = new MapController(this);
+        nearbyMap.setTileSource(TileSourceFactory.MAPNIK);
+        nearbyMap.setBuiltInZoomControls(true);
+        nearbyMap.setMultiTouchControls(true);
+        iMapController.setZoom((double) 15);
+
+        Log.d("map", "mapOnCreate");
+
+        //Set a oncode listener, it's a call back when something is added to the list
+        ListeningList<Location> locations = new ListeningList<>();
+        locations.setOnAddListener(new OnAddListener<Location>() {
+
             @Override
-            public boolean onMarkerClick(Marker marker){
-                if(marker.equals(qrmarker)){
-                    qrmarker.setTitle("Current location");
-                    return true;
-                }
-                return false;
+            public void onAdd(ListeningList<Location> listeningList) {
+                Log.d("map", "onCodeAdded");
+                Location location = listeningList.get(0);
+                GeoPoint startPoint = new GeoPoint((double) location.getLatitude(), (double) location.getLongitude());
+                iMapController.setCenter(startPoint);
+                MapController.qrMarkerOnMap(startPoint, nearbyMap, "Current location");
             }
-        }*/
 
+        });
 
+        Log.d("map", "map getLocation");
+        mapController.getLocation(locations);
     }
-    public void onResume(){
+
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                                                      @NonNull int[] grantResults) {
+        mapController.onLocationPermissionRequestResult(requestCode, grantResults);
+    }
+
+    public void onResume () {
         super.onResume();
-        nearbymap.onResume();
-
+        nearbyMap.onResume();
     }
-    public void onPause(){
+    public void onPause () {
         super.onPause();
-        nearbymap.onPause();  //Compass
+        nearbyMap.onPause();  //Compass
     }
-
 }
+
+
+
+

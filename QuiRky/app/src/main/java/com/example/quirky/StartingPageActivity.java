@@ -1,19 +1,32 @@
 package com.example.quirky;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.Toast;
 
-public class StartingPageActivity extends AppCompatActivity {
+/**
+ * Hub-Style Activity that directs to all the other activites
+ */
+public class StartingPageActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+
     private Button QRButton, ProfileButton, CommunityButton;
     private Button top, mid, bottom;
+    private CameraActivitiesController cameraActivitiesController;
+    MemoryController mc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_starting_page);
+
+        cameraActivitiesController = new CameraActivitiesController(this, false);
 
         QRButton = findViewById(R.id.hub_qr_codes);
         ProfileButton = findViewById(R.id.hub_profile_button);
@@ -30,74 +43,105 @@ public class StartingPageActivity extends AppCompatActivity {
         setQRlayout();
     }
 
-    private void startCodeScannerActivity() {
-        assert CameraController.hasCameraPermission(this);
-        Intent intent = new Intent(this, CodeScannerActivity.class);
-        startActivity(intent);
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                                                      @NonNull int[] grantResults) {
+        cameraActivitiesController.getCameraPermissionRequestResult(requestCode, grantResults);
+        if (MapController.requestingLocationPermissions(requestCode)) {
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(this, "Permission Granted!", Toast.LENGTH_SHORT).show();
+                Intent in = new Intent(this, MapActivity.class);
+                startActivity(in);
+            } else{
+                Toast.makeText(this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
+    /**
+     * Set the buttons & their listeners to show the QRCode layout
+     */
     private void setQRlayout() {
         top.setText("Manage Codes");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement activity that views player's qr codes
+            mc = new MemoryController(this);
+            Intent i = new Intent(this, ManageCodesActivity.class);
+            i.putExtra("profile", mc.read());
             startActivity(i);
         });
 
         mid.setText("Scan Codes");
         mid.setOnClickListener(view -> {
-            if (CameraController.hasCameraPermission(this)) {
-                startCodeScannerActivity();
-            } else if (CameraController.requestCameraPermission(this)) {
-                startCodeScannerActivity();
-            }
-            //Intent i = new Intent(this, CodeScannerActivity.class);
-            //startActivity(i);
+            cameraActivitiesController.startCodeScannerActivity();
         });
 
         bottom.setText("Generate Codes");
         bottom.setOnClickListener(view -> {
-            Intent i = new Intent(this, GenerateActivity.class);    // TODO: implement generate qrcodes activity
+            Intent i = new Intent(this, GenerateActivity.class);
             startActivity(i);
         });
     }
 
+    /**
+     * Set the buttons & their listeners to show the Profile layout
+     */
     private void setProfileLayout() {
-        top.setText("My Profile");
+        top.setText("My Profile Info");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, ProfileViewerActivity.class);    // TODO: implement the activity this should direct to
+
+            mc = new MemoryController(this);
+            Profile p = mc.read();
+
+            Intent i = new Intent(this, ProfileViewerActivity.class);
+            i.putExtra("profile", p);
             startActivity(i);
         });
 
         mid.setText("My Stats");
         mid.setOnClickListener(view -> {
-            Intent i = new Intent(this, MyStatsActivity.class);    // TODO: implement the activity this should direct to
+
+            MemoryController mc = new MemoryController(this);
+            Profile p = mc.read();
+
+            Intent i = new Intent(this, MyStatsActivity.class);
+            i.putExtra("profile", p);
             startActivity(i);
         });
 
         bottom.setText("My QR Codes");
         bottom.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            mc = new MemoryController(this);
+            Intent i = new Intent(this, ManageCodesActivity.class);
+            i.putExtra("profile", mc.read());
             startActivity(i);
         });
     }
 
+    /**
+     * Set the buttons & their listeners to show the Community layout
+     */
     private void setCommunityLayout() {
         top.setText("Search Other Users");
         top.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, PlayerSearchActivity.class);
             startActivity(i);
         });
 
         mid.setText("The Leaderboards");
         mid.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            Intent i = new Intent(this, LeaderBoardActivity.class);
             startActivity(i);
         });
 
         bottom.setText("Nearby QR Codes");
         bottom.setOnClickListener(view -> {
-            Intent i = new Intent(this, MapActivity.class);
-            startActivity(i);
+            if (MapController.hasLocationPermissions(this)) {
+                Intent intent = new Intent(this, MapActivity.class);
+                startActivity(intent);
+            } else {
+                MapController.requestLocationPermission(this);
+            }
         });
     }
 }
