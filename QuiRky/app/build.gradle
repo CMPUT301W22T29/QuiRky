@@ -59,4 +59,6 @@ dependencies {
 
     implementation 'org.osmdroid:osmdroid-android:6.0.2'
     implementation 'org.osmdroid:osmdroid-third-party:5.6.3'
+    androidTestImplementation 'com.jayway.android.robotium:robotium-solo:5.3.1'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
 }

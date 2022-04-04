@@ -17,7 +17,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
-
+/**
+ * This class is one of the functionalities of the Owner. And it shows the QRCodes and deletes them.
+ */
 public class delete_QRCodes extends AppCompatActivity{
     private RecyclerView set_QRCODE_list;
     private QRAdapter set_QRCodeAdapter;

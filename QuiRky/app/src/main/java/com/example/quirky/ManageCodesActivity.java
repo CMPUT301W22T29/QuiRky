@@ -20,7 +20,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-
+/**
+ * An activity class that will display the list of QR codes you have scanned from highest to lowest or the other way around.
+ */
 public class ManageCodesActivity extends AppCompatActivity {
     private final String TAG = "ManageCodesActivity says";
 
@@ -64,7 +66,10 @@ public class ManageCodesActivity extends AppCompatActivity {
             }
         });
     }
-
+    /**
+     * A method to reorder the list of QRCodes to highest to lowest or the other way
+     * @param isChecked to see if its checked or not
+     */
     private void setOrder(boolean isChecked) {
         Comparator<String> c = new Comparator<String>() {
             @Override
@@ -87,7 +92,10 @@ public class ManageCodesActivity extends AppCompatActivity {
             QRCodeAdapter.notifyDataSetChanged();
         }
     }
-
+    /**
+     * This is the method when the user click on an item in the list, it will redirect to another activity which shows its details.
+     * @param position An Integer position of the item in the list
+     */
     private void startViewQRActivity(int position) {
         Intent i = new Intent(this, ViewQRActivity.class);
         Log.d(TAG, "passed |{" + codes.get(position) + "}| to the activity");

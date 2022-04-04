@@ -3,10 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/activity_generate.xml" value="0.24728260869565216" />
+        <entry key="..\:/Users/kyrie/Desktop/CMPUT301/QuiRky/QuiRky/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/kyrie/Desktop/CMPUT301/QuiRky/QuiRky/app/src/main/res/layout/activity_starting_page.xml" value="0.33" />
       </map>
     </option>
   </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
   <component name="ProjectType">
     <option name="id" value="Android" />
   </component>

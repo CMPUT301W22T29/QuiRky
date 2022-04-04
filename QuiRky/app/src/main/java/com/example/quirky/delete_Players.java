@@ -18,7 +18,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
-
+/**
+ * This class deletes player and it is one of the functionalities of the Owner
+ */
 public class delete_Players extends AppCompatActivity {
     private RecyclerView set_Player_list;
     private QRAdapter set_PlayerAdapter;
