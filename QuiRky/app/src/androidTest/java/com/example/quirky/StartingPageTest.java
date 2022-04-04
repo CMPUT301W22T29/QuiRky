@@ -38,7 +38,7 @@ public class StartingPageTest {
     public void start() throws Exception{
         Activity activity = rule.getActivity();
     }
-
+//Need to Scan Some Codes If this is a new account
     @Test
     public void checkManageCodes(){
         solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
@@ -54,6 +54,7 @@ public class StartingPageTest {
         solo.enterText((EditText) solo.getView(R.id.genertateByTextField), "testTest");
         //it generated a QR Code for you to see
     }
+    //In order to test this, we need to create a user name jiawei3
     @Test
     public void checkMyProfileInfo(){
         solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
@@ -61,7 +62,7 @@ public class StartingPageTest {
         solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
         solo.clickOnButton("My Profile Info");
         solo.assertCurrentActivity("Wrong Activity",ProfileViewerActivity.class);
-        assertTrue(solo.searchText("jiawei3"));
+        assertTrue(solo.searchText("jiawei3"));//user name
         solo.clickOnButton("Change Profile");
         solo.assertCurrentActivity("Wrong Activity",EditProfileActivity.class);
         solo.clearEditText((EditText) solo.getView(R.id.EditProfileInput1));
@@ -92,6 +93,7 @@ public class StartingPageTest {
         solo.clickOnButton("Search Other Users");
         solo.assertCurrentActivity("Wrong Activity",PlayerSearchActivity.class);
     }
+    //It will not work for LeaderBoards if you dont scan any QRCodes before checking leaderBoards
     @Test
     public void checkTheLeaderBoards(){
         solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);

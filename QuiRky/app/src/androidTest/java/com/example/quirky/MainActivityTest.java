@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.widget.EditText;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
@@ -36,11 +37,20 @@ public class MainActivityTest {
     public void start() throws Exception{
         Activity activity = rule.getActivity();
     }
-
+    //Two situations, One is you never login in before, So it prompts you a username to input
+    @Test
+    public void checkFirstTimeLogin(){
+        solo.assertCurrentActivity("Wrong Activity",MainActivity.class);
+        solo.clickOnButton("Login");
+        solo.assertCurrentActivity("Wrong Activity", StartingPageActivity.class);
+    }
+    //The other situation, you have an account in the history of your phone before, so you dont need to create an account anymore
     @Test
     public void checkLogin(){
         solo.assertCurrentActivity("Wrong Activity",MainActivity.class);
         solo.clickOnButton("Login");
+        solo.enterText((EditText) solo.getView(R.id.login_frag_input_field), "jiawei3");
+        solo.clickOnButton("Confirm");
         solo.assertCurrentActivity("Wrong Activity", StartingPageActivity.class);
     }
     @Test
