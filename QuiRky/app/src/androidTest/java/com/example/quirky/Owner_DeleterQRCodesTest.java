@@ -17,6 +17,7 @@ import androidx.test.rule.ActivityTestRule;
 
 import com.robotium.solo.Solo;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -45,6 +46,14 @@ public class Owner_DeleterQRCodesTest {
         solo.clickOnText("724167");
         solo.clickOnButton("Yes");
         assertFalse(solo.searchText("724167"));
+    }
+    /**
+     * Close activity after each test
+     * @throws Exception
+     */
+    @After
+    public void tearDown() throws Exception{
+        solo.finishOpenedActivities();
     }
 
 }

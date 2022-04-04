@@ -70,7 +70,7 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
     }
 
     private void setProfileLayout() {
-        top.setText("My Profile");
+        top.setText("My Profile Info");
         top.setOnClickListener(view -> {
 
             mc = new MemoryController(this);

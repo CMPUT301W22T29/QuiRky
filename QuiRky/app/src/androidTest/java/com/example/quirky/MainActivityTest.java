@@ -15,6 +15,7 @@ import androidx.test.rule.ActivityTestRule;
 
 import com.robotium.solo.Solo;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -47,6 +48,14 @@ public class MainActivityTest {
         solo.assertCurrentActivity("Wrong Activity",MainActivity.class);
         solo.clickOnButton("Settings");
         solo.assertCurrentActivity("Wrong Activity", SettingsActivity.class);
+    }
+    /**
+     * Close activity after each test
+     * @throws Exception
+     */
+    @After
+    public void tearDown() throws Exception{
+        solo.finishOpenedActivities();
     }
 
 }
