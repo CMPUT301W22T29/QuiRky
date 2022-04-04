@@ -39,6 +39,7 @@ public class Owner_DeletePlayerTest {
         Activity activity = rule.getActivity();
     }
     //this will delete jiawei from player list
+    //Before test it out, need to add an account using jiawei as username first
     @Test
     public void checkDeletePlayer(){
         solo.assertCurrentActivity("Wrong Activity",delete_Players.class);

@@ -42,7 +42,7 @@ public class Owner_DeleterQRCodesTest {
     @Test
     public void checkDeleteQRCodes(){
         solo.assertCurrentActivity("Wrong Activity",delete_QRCodes.class);
-        assertTrue(solo.searchText("724167"));
+        assertTrue(solo.searchText("724167"));//Need to know an existing QRCode from the database and use that to input
         solo.clickOnText("724167");
         solo.clickOnButton("Yes");
         assertFalse(solo.searchText("724167"));
