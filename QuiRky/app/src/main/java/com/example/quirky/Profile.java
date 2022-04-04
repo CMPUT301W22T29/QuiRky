@@ -1,5 +1,7 @@
 package com.example.quirky;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -179,5 +181,17 @@ public class Profile implements Serializable {
         this.numberCodesScanned = ProfileController.calculateTotalScanned(this);
         this.pointsOfScannedCodes = ProfileController.calculateTotalPoints(this);
         this.pointsOfLargestCodes = ProfileController.calculateGreatestScore(this);
+    }
+
+    public void updateStats(int points, int scanned, int largest) {
+        this.numberCodesScanned = scanned;
+        this.pointsOfScannedCodes = points;
+        this.pointsOfLargestCodes = largest;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return uname;
     }
 }

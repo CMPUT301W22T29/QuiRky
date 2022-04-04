@@ -6,11 +6,7 @@
 
 package com.example.quirky;
 
-import android.util.Log;
-
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 
 public class LeaderBoardController {

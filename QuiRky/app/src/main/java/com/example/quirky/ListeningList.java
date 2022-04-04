@@ -24,8 +24,8 @@ public class ListeningList<E> extends ArrayList<E> {
     }
 
     @Override
-    public boolean add(Object o) {
-        if (super.add((E) o)) {
+    public boolean add(E o) {
+        if (super.add(o)) {
             listener.onAdd(this);
             return true;
         }
@@ -33,22 +33,13 @@ public class ListeningList<E> extends ArrayList<E> {
     }
 
     @Override
-    public void add(int index, Object element) {
-        super.add(index, (E) element);
+    public void add(int index, E element) {
+        super.add(index, element);
         listener.onAdd(this);
     }
 
     @Override
-    public boolean addAll(@NonNull Collection c) {
-        if (super.addAll(c)) {
-            listener.onAdd(this);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean addAll(int index, @NonNull Collection c) {
+    public boolean addAll(int index, @NonNull Collection<? extends E> c) {
         if (super.addAll(index, c)) {
             listener.onAdd(this);
             return true;
