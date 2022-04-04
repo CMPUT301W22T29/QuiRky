@@ -51,14 +51,12 @@ public class MapController {
 
     public MapController(Context context) {
         this.context = context;
-        //this.locationManager = setLocationManager(context);
         locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
         runnables = new ArrayDeque<>();
     }
 
     public static boolean requestingLocationPermissions(int request_code) {
         return (request_code == LOCATION_REQUEST_CODE);
-
     }
 
     protected static boolean hasLocationPermissions(Context context) {

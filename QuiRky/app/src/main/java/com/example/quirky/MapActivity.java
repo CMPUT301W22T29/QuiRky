@@ -36,11 +36,14 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //Initialize the osmdroid configuration which can be done through
         //Activity for the following two lines
         Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
+
         //Create a map
         setContentView(R.layout.activity_map_layout);
+
         Location location;
         nearbyMap = (MapView) findViewById(R.id.map1);
         iMapController = nearbyMap.getController();
@@ -49,10 +52,11 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
         nearbyMap.setBuiltInZoomControls(true);
         nearbyMap.setMultiTouchControls(true);
         iMapController.setZoom((double) 15);
-        
+
+        Log.d("map", "mapOnCreate");
+
         //Set a oncode listener, it's a call back when something is added to the list
         ListeningList<Location> locations = new ListeningList<>();
-        Log.d("map", "mapOnCreate");
         locations.setOnAddListener(new OnAddListener<Location>() {
 
             @Override
@@ -65,8 +69,8 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
             }
 
         });
-        Log.d("map", "map getLocation");
 
+        Log.d("map", "map getLocation");
         mapController.getLocation(locations);
     }
 
