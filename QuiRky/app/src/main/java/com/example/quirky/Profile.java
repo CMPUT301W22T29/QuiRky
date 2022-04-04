@@ -183,12 +183,22 @@ public class Profile implements Serializable {
         this.pointsOfLargestCodes = ProfileController.calculateGreatestScore(this);
     }
 
+    /**
+     * Method to directly set the stats of a profile. Not to be used by any class besides Unit Tests
+     * @param points The points to set the class to
+     * @param scanned The number of codes to set the class to
+     * @param largest The largest qrcode the profile has scanned
+     */
     public void updateStats(int points, int scanned, int largest) {
         this.numberCodesScanned = scanned;
         this.pointsOfScannedCodes = points;
         this.pointsOfLargestCodes = largest;
     }
 
+    /**
+     * Turn the profile into a string via it's username. Useful for log statements.
+     * @return The username of the profile
+     */
     @NonNull
     @Override
     public String toString() {

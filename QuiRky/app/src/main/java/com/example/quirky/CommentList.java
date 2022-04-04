@@ -15,7 +15,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * This class is used to make a scrollable list, and used in the Recycler Adapter.
+ * Adapter class to map a Comment to a Recycler View.
+ * Will display a comment's content and user to the recycler
  *
  * @author Raymart Bless C. Datuin
  *

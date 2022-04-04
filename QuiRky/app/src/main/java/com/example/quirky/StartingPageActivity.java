@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 /**
- * This is the activity that has different areas user may want to go to, after the user logins
+ * Hub-Style Activity that directs to all the other activites
  */
 public class StartingPageActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -59,6 +59,9 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
         }
     }
 
+    /**
+     * Set the buttons & their listeners to show the QRCode layout
+     */
     private void setQRlayout() {
         top.setText("Manage Codes");
         top.setOnClickListener(view -> {
@@ -80,6 +83,9 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
         });
     }
 
+    /**
+     * Set the buttons & their listeners to show the Profile layout
+     */
     private void setProfileLayout() {
         top.setText("My Profile");
         top.setOnClickListener(view -> {
@@ -110,6 +116,9 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
         });
     }
 
+    /**
+     * Set the buttons & their listeners to show the Community layout
+     */
     private void setCommunityLayout() {
         top.setText("Search Other Users");
         top.setOnClickListener(view -> {

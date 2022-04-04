@@ -8,6 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+/**
+ * Activity to view a profile
+ */
 public class ProfileViewerActivity extends AppCompatActivity {
 
     private Intent i;
@@ -64,6 +67,9 @@ public class ProfileViewerActivity extends AppCompatActivity {
         phone.setText(p.getPhone());
     }
 
+    /**
+     * Start up an activity to let the user edit their profile
+     */
     public void changeProfile() {
         Intent intent = new Intent(this, EditProfileActivity.class);
         intent.putExtra("profile", p);

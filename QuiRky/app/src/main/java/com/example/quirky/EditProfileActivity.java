@@ -8,6 +8,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+/**
+ * Activity to change a profile's information. Can change the username, email, and phone number.
+ * Changes are saved to local memory and FireStore
+ */
 public class EditProfileActivity extends AppCompatActivity {
     EditText name, email, phone;
     Button cancel, save;
@@ -43,6 +47,12 @@ public class EditProfileActivity extends AppCompatActivity {
         cancel.setOnClickListener(view -> exit());
     }
 
+    /**
+     * Called once the user clicks the save button.
+     * Gets the new values from the input fields and determines if a new username was inputted.
+     * If so, checks FireStore if the username was taken
+     * Calls write() to do the saving
+     */
     private void updateProfile() {
             String new_name = name.getText().toString();
             String new_mail = email.getText().toString();
@@ -71,6 +81,10 @@ public class EditProfileActivity extends AppCompatActivity {
             write(false);
     }
 
+    /**
+     * Writes the new information to local memory and FireStore. If a new username was selected, creates a new profile in FireStore with the username, and deletes the old profile.
+     * @param newUsername If a new username was selected
+     */
     private void write(Boolean newUsername) {
         mc.write(p);
         mc.writeUser(p.getUname());
@@ -84,6 +98,9 @@ public class EditProfileActivity extends AppCompatActivity {
         exit();
     }
 
+    /**
+     * Finishes the activity
+     */
     private void exit() {
         finish();
     }

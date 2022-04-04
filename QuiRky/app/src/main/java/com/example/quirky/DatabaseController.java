@@ -471,11 +471,22 @@ public class DatabaseController {
         return task.getResult().getData() == null;
     }
 
+    /**
+     * Begin reading the comments of a QRCode.
+     * Because this is an asynchronous operation, the results are not returned here.
+     * @param qrId The ID of the QRCode to read from
+     * @return A task representing the read operation. Pass this to getComments() to complete the read
+     */
     public Task<QuerySnapshot> readComments(String qrId) {
         collection = db.collection("QRcodes").document(qrId).collection("comments");
         return collection.get();
     }
 
+    /**
+     * Finish reading the comments of a QRCode.
+     * @param task The task returned by readComments(). Calling with any other task will result in errors
+     * @return The comments on the QRCode, in an ArrayList
+     */
     public ArrayList<Comment> getComments(Task<QuerySnapshot> task) {
         QuerySnapshot q = task.getResult();
         return (ArrayList<Comment>) q.toObjects(Comment.class);

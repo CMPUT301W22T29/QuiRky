@@ -17,9 +17,10 @@ import java.util.ArrayList;
 
 /**
  * Comment Activity page which allows users to scroll through comments of a
- * Specific QR code and also add commments.
+ * Specific QR code and also add comments.
  *
  * @author Raymart Bless C. Datuin
+ * @author Jonathen Adsit
  * */
 public class ViewCommentsActivity extends AppCompatActivity {
     private Button Save;
@@ -50,6 +51,9 @@ public class ViewCommentsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Called when done reading the QRCode's comments from the database. Finishes setting up the list of comments
+     */
     private void readDone() {
         commentAdapter = new CommentList(this, commentDataList);
         commentList =  findViewById(R.id.recycleListView_user_comment);
@@ -75,8 +79,7 @@ public class ViewCommentsActivity extends AppCompatActivity {
     }
 
     /**
-     * When clicked the comment, uname and time will be saved to the database
-     * under a document field of a specific QR Code
+     * Save a written comment to the QRCode
      */
     public void save() {
         MemoryController mc = new MemoryController(this);

@@ -27,6 +27,13 @@ author: osmdroid team : https://github.com/osmdroid/osmdroid
 Publish Date:2019-09-27
  */
 /*source:https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime*/
+
+/**
+ * @Author HengYuan
+ * @Author Sean
+ * Activity to display a map of the surrounding region. Will also mark nearby QRCodes.
+ * @See MapController
+ */
 public class MapActivity extends AppCompatActivity implements /*LocationListener,*/ ActivityCompat.OnRequestPermissionsResultCallback {
     private MapView nearbyMap;
     private MapController mapController;

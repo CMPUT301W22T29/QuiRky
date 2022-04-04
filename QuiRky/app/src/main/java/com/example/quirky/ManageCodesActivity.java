@@ -21,6 +21,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+/**
+ * Activity to view a list of QRCodes a Profile has scanned
+ */
 public class ManageCodesActivity extends AppCompatActivity {
     private final String TAG = "ManageCodesActivity says";
 
@@ -65,6 +68,10 @@ public class ManageCodesActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Sets the order to display the QRCodes
+     * @param isChecked The state of the ordering switch
+     */
     private void setOrder(boolean isChecked) {
         Comparator<String> c = new Comparator<String>() {
             @Override
@@ -88,6 +95,10 @@ public class ManageCodesActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Start the activity to view a QRCode. Determines which QRCode to view with the given item the user clicked on
+     * @param position The position in the recycler that the user clicked on
+     */
     private void startViewQRActivity(int position) {
         Intent i = new Intent(this, ViewQRActivity.class);
         i.putExtra("code", codes.get(position));

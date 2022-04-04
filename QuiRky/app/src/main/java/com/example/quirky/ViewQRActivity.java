@@ -20,8 +20,8 @@ import androidx.fragment.app.FragmentTransaction;
 import java.util.ArrayList;
 
 /**
- * This class is of the Activity for when you're clicking on one of the listed items in "Your QR Codes" or
- * "nearby QR code" in "MAP" Activity, as seen on the Project Part 2 Miro.
+ * Activity to view a QRCode. Holds two fragments: one fragment to see the QRCode location, & start up the comments activity
+ * Another fragment to see all other players who have scanned the QRCode
  * */
 public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentListener {
 
@@ -57,6 +57,9 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
 
     }
 
+    /**
+     * Called when done reading the QRCode from the database. Finishes setting up the fields.
+     */
     private void doneReadingQRCode() {
         image = findViewById(R.id.imageView2);
         scoreText = findViewById(R.id.text_showScore);
@@ -88,6 +91,10 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         ft.commit();
     }
 
+    /**
+     * Returns the list of players to the calling fragment
+     * @return All other players who have scanned the same QRCode
+     */
     @Override
     public ArrayList<String> getPlayers() {
         Log.d(TAG, "players is:\t" + players);
@@ -104,6 +111,9 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         startActivity(intent);
     }
 
+    /**
+     * Deletes the QRCode from the list of codes the user has scanned. Exits the activity.
+     */
     @Override
     public void deleteButton() {
         MemoryController mc = new MemoryController(this);

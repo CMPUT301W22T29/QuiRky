@@ -9,6 +9,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+/**
+ * Activity to view the user's rankings in a text format, rather than in a list
+ */
 public class MyStatsActivity extends AppCompatActivity {
     private final String TAG = "\tMyStatsActivity says:";
     private Profile p;
@@ -38,6 +41,11 @@ public class MyStatsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Called once DatabaseController is done reading the population of players from the database
+     * Finishes setting up the text-boxes to display accurate information
+     * @param players The population of players
+     */
     private void doneReading(ArrayList<Profile> players) {
         Log.d(TAG, "Reading from the database gave us these players:\n");
         for(Profile profile : players)
@@ -47,18 +55,15 @@ public class MyStatsActivity extends AppCompatActivity {
         lbc = new LeaderBoardController(players);
         int position;
 
-        ArrayList<Profile> temp = lbc.getRankingPoints();
         position = lbc.findRankPoints(p);
 
         totalScore.setText( String.valueOf( p.getPointsOfScannedCodes() ) );
         scoreRanking.setText( String.valueOf(position) );
 
-        temp = lbc.getRankingNumScanned();
         position = lbc.findRankScanned(p);
         totalScanned.setText(String.valueOf(p.getNumberCodesScanned()));
         scannedRanking.setText(String.valueOf(position) );
 
-        temp = lbc.getRankingLargestScanned();
         position = lbc.findRankLargest(p);
         largestScanned.setText(String.valueOf(p.getPointsOfLargestCodes()));
         lrgRanking.setText(String.valueOf(position));

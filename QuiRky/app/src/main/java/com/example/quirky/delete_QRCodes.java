@@ -17,6 +17,9 @@ import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
+/**
+ * Activity to delete QRCodes from the Database
+ */
 public class delete_QRCodes extends AppCompatActivity {
 
     private RecyclerView qrList;
@@ -61,6 +64,9 @@ public class delete_QRCodes extends AppCompatActivity {
         });
     }
 
+    /**
+     * Called once DatabaseController is done reading all the users from Firestore. Finishes setting up the Recycler.
+     */
     private void doneReading() {
         for(int i = 0; i < codes.size(); i ++){
             scores.add(String.valueOf(codes.get(i).getScore()));

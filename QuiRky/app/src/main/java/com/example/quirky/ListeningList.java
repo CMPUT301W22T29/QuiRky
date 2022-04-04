@@ -11,18 +11,34 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Collection;
 
-//TODO: javadocs
+/**
+ * @author Sean
+ * Wrapper Class for an ArrayList<> that contains a listener for adding objects into the list
+ * @param <E> The data type to hold
+ */
 public class ListeningList<E> extends ArrayList<E> {
     private OnAddListener<E> listener;
 
+    /**
+     * Constructor to initialise an empty list
+     */
     public ListeningList() {
         super();
     }
 
+    /**
+     * Add a listener to call when an object is added to the list
+     * @param listener The listener to be called
+     */
     public void setOnAddListener(OnAddListener<E> listener) {
         this.listener = listener;
     }
 
+    /**
+     * Add an object to the list
+     * @param o The object to be added
+     * @return If the object was successfully added
+     */
     @Override
     public boolean add(E o) {
         if (super.add(o)) {
@@ -32,12 +48,23 @@ public class ListeningList<E> extends ArrayList<E> {
         return false;
     }
 
+    /**
+     * Add an object to a specific index.
+     * @param index The index to insert the object
+     * @param element The object to be added
+     */
     @Override
     public void add(int index, E element) {
         super.add(index, element);
         listener.onAdd(this);
     }
 
+    /**
+     * Add a collection of items to the list at once. This method is a mandatory override, but not used by QuiRky anywhere.
+     * @param index The index to insert the items
+     * @param c The collection of items to add
+     * @return If the items were successfully added
+     */
     @Override
     public boolean addAll(int index, @NonNull Collection<? extends E> c) {
         if (super.addAll(index, c)) {

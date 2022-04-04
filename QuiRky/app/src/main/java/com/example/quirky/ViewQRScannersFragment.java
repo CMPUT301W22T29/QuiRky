@@ -29,6 +29,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
+/**
+ * Fragment to view all the other users who have scanned the same QRCode
+ */
 public class ViewQRScannersFragment extends Fragment {
 
     private ViewQRFragmentListener fragmentListener;
@@ -73,6 +76,10 @@ public class ViewQRScannersFragment extends Fragment {
         back.setOnClickListener(view1 -> fragmentListener.changeFragment(new ViewQRButtonsFragment()));
     }
 
+    /**
+     * Start viewing another player's profile
+     * @param username The username of the player to view
+     */
     private void startViewPlayerActivity(String username) {
         Log.d("ViewQRCodes Fragment Says", "You clicked on this username: " + username);
         DatabaseController dc = new DatabaseController(getActivity());

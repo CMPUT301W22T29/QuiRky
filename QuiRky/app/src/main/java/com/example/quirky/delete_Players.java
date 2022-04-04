@@ -17,6 +17,9 @@ import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
+/**
+ * Activity to delete players from the database
+ */
 public class delete_Players extends AppCompatActivity {
 
     private RecyclerView playersList;
@@ -65,6 +68,10 @@ public class delete_Players extends AppCompatActivity {
         });
     }
 
+    /**
+     * Called once DatabaseController is done reading all the users from Firestore. Finishes setting up the Recycler.
+     * @param profiles The player population
+     */
     private void doneReading(ArrayList<Profile> profiles) {
         for(int i = 0; i < profiles.size(); i ++){
             Usernames.add(profiles.get(i).getUname());
