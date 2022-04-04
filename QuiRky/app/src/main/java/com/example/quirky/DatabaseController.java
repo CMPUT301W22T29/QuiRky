@@ -410,6 +410,7 @@ public class DatabaseController {
 
     /**
      * Get the account with the hash passed to by readLoginHash().
+     * This will also delete the data field that holds the login password from the database. This makes login QRCodes one use only.
      * @param task The task returned by readLoginHash(). Calling with any other task will result in errors.
      * @return The account with the hash password passed to readLoginHash(). If no account has such password, return null.
      */
@@ -425,7 +426,12 @@ public class DatabaseController {
             return null;
         }
 
-        return results.toObjects(Profile.class).get(0);
+        Profile p = results.toObjects(Profile.class).get(0);
+
+        collection = db.collection("users");
+        collection.document(p.getUname()).update("loginhash", 0).addOnCompleteListener(deleteListener);
+
+        return p;
     }
 
     /**
