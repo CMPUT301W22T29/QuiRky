@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import static java.lang.Math.toIntExact;
+
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -281,12 +283,21 @@ public class DatabaseController {
     /**
      * Get the results of the readQRCode(); This method should only be called once the Task returned from it has completed.
      * @param task The task returned from readQRCode(). Calling with any other task will result in errors.
-     * @return The QRCode with the ID that was passed to readQRCode(). Returns null if such a QRCode does not exist in the database
+     * @return The QRCode with the ID that was passed to readQRCode(). Returns null if such a QRCode does not exist in the database, or if the score of the QRCode breaks the integer limit.
      */
+    // Conversion from Long -> int taken from
+    // https://stackoverflow.com/a/32869210
+    // Posted by:
+    // https://stackoverflow.com/users/1162647/pierre-antoine
+    // Sept. 30, 2015
     public QRCode getQRCode(Task<DocumentSnapshot> task) {
         DocumentSnapshot doc = task.getResult();
         try {
-            return new QRCode(doc.getId(), (int) doc.get("score"));
+            long score = doc.getLong("score");
+            return new QRCode(doc.getId(), toIntExact(score));
+        } catch (ArithmeticException e) {
+            Log.d(TAG, "Somehow a QRCode score broke the integer limit LMAOOOOO");
+            return null;
         } catch (NullPointerException e) {
             Log.d(TAG, "getQRCode returned a Null object");
             return null;
@@ -399,6 +410,7 @@ public class DatabaseController {
 
     /**
      * Get the account with the hash passed to by readLoginHash().
+     * This will also delete the data field that holds the login password from the database. This makes login QRCodes one use only.
      * @param task The task returned by readLoginHash(). Calling with any other task will result in errors.
      * @return The account with the hash password passed to readLoginHash(). If no account has such password, return null.
      */
@@ -414,7 +426,12 @@ public class DatabaseController {
             return null;
         }
 
-        return results.toObjects(Profile.class).get(0);
+        Profile p = results.toObjects(Profile.class).get(0);
+
+        collection = db.collection("users");
+        collection.document(p.getUname()).update("loginhash", 0).addOnCompleteListener(deleteListener);
+
+        return p;
     }
 
     /**

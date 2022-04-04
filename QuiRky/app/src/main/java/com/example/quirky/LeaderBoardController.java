@@ -47,8 +47,8 @@ public class LeaderBoardController {
         players.sort(new Comparator<Profile>() {
             @Override
             public int compare(Profile profile, Profile t1) {
-                return ProfileController.calculateTotalPoints(profile)
-                        - ProfileController.calculateTotalPoints(t1);
+                return t1.getPointsOfScannedCodes()
+                        - profile.getPointsOfScannedCodes();
             }
         });
     }
@@ -57,8 +57,8 @@ public class LeaderBoardController {
         players.sort(new Comparator<Profile>() {
             @Override
             public int compare(Profile profile, Profile t1) {
-                return ProfileController.calculateTotalScanned(profile)
-                        - ProfileController.calculateTotalScanned(t1);
+                return t1.getNumberCodesScanned()
+                        - profile.getNumberCodesScanned();
             }
         });
     }
@@ -67,8 +67,8 @@ public class LeaderBoardController {
         players.sort(new Comparator<Profile>() {
             @Override
             public int compare(Profile profile, Profile t1) {
-                return ProfileController.calculateGreatestScore(profile)
-                        - ProfileController.calculateGreatestScore(t1);
+                return t1.getPointsOfLargestCodes()
+                        - profile.getPointsOfLargestCodes();
             }
         });
     }
