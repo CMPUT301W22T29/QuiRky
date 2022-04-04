@@ -88,16 +88,16 @@ public class CodeScannerActivity extends AppCompatActivity {
     //TODO: javadocs
     @androidx.camera.core.ExperimentalGetImage
     public void scan() {
-        CodeList<QRCode> codes = new CodeList<>();
-        codes.setOnCodeAddedListener(new OnCodeAddedListener<QRCode>() {
+        ListeningList<QRCode> codes = new ListeningList<>();
+        codes.setOnAddListener(new OnAddListener<QRCode>() {
 
             @Override
-            public void onCodeAdded(CodeList<QRCode> codeList) {
+            public void onAdd(ListeningList<QRCode> listeningList) {
                 if (login) {
-                    String password = codeList.get(0).getId();
+                    String password = listeningList.get(0).getId();
                     dc.readLoginHash(password).addOnCompleteListener(task -> login( dc.getProfileWithHash(task)) );
                 } else {
-                    showSavingInterface(codeList);
+                    showSavingInterface(listeningList);
                 }
             }
 
@@ -105,7 +105,7 @@ public class CodeScannerActivity extends AppCompatActivity {
         cameraController.captureQRCodes(this, codes);
     }
 
-    private void showSavingInterface(CodeList<QRCode> codeList) {
+    private void showSavingInterface(ListeningList<QRCode> listeningList) {
         setVisibility(false);
 
         save_button.setOnClickListener(view -> {
@@ -126,7 +126,7 @@ public class CodeScannerActivity extends AppCompatActivity {
                 photo = null;
             }
 
-            save(codeList.get(0), gp, photo);
+            save(listeningList.get(0), gp, photo);
             setVisibility(true);
         });
 
@@ -153,7 +153,7 @@ public class CodeScannerActivity extends AppCompatActivity {
     public void save(QRCode qr, GeoPoint gp, Bitmap image) {
         Profile p = mc.read();
 
-        if(! p.addScanned(qr.getId()) ) {
+        if(! p.addScanned(qr.getId())) {
             Toast.makeText(this, "You already have that QRCode!", Toast.LENGTH_SHORT).show();
             return;
         }

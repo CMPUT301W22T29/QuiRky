@@ -173,7 +173,7 @@ public class CameraController {
      * @see QRCodeController
      */
     @androidx.camera.core.ExperimentalGetImage
-    public void captureQRCodes(Context context, CodeList<QRCode> codes) {
+    public void captureQRCodes(Context context, ListeningList<QRCode> codes) {
         // TODO: edit javadoc
         imageCapture.takePicture(ContextCompat.getMainExecutor(context),
                 new ImageCapture.OnImageCapturedCallback() {
@@ -204,7 +204,7 @@ public class CameraController {
      *      - The activity that the user is interacting with to capture QR code images.
      * @see CameraController
      */
-    public static void scanQRCodes(InputImage inputImage, CodeList<QRCode> codes, Context context) {
+    public static void scanQRCodes(InputImage inputImage, ListeningList<QRCode> codes, Context context) {
         // TODO: edit javadoc
         Task<List<Barcode>> result = codeScanner.process(inputImage)
                 .addOnSuccessListener(barcodes -> {
