@@ -33,7 +33,7 @@ public class GenerateActivity extends AppCompatActivity {
         inputField = findViewById(R.id.genertateByTextField);
         qrImage = findViewById(R.id.qrfield);
 
-        dc = new DatabaseController(this);
+        dc = new DatabaseController();
         user = new MemoryController(this).readUser();
 
         generateLogin.setOnClickListener(v -> {

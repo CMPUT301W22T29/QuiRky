@@ -44,7 +44,7 @@ public class ViewCommentsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         qrCodeId = intent.getStringExtra("qrId");
 
-        DM = new DatabaseController(this);
+        DM = new DatabaseController();
 
         DM.readComments(qrCodeId).addOnCompleteListener(task -> {
             commentDataList = DM.getComments(task);

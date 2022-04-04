@@ -57,7 +57,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
         topRanks = findViewById(R.id.top_rankings_button);
 
         // Read the player population
-        DatabaseController dc = new DatabaseController(this);
+        DatabaseController dc = new DatabaseController();
         dc.readAllProfiles().addOnCompleteListener(task -> {
             ArrayList<Profile> result = dc.getAllProfiles(task);
             doneReading(result);

@@ -38,7 +38,7 @@ public class delete_Players extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delete_players);
 
-        dc = new DatabaseController(this);
+        dc = new DatabaseController();
         Usernames = new ArrayList<>();
 
         playersList = findViewById(R.id.players);

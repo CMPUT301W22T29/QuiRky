@@ -33,7 +33,7 @@ public class EditProfileActivity extends AppCompatActivity {
         originalUsername = p.getUname();
 
         mc = new MemoryController(this);
-        dc = new DatabaseController(this);
+        dc = new DatabaseController();
 
         name = findViewById(R.id.EditProfileInput1);
         email = findViewById(R.id.EditProfileInput3);
