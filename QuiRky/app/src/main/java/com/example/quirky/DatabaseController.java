@@ -5,7 +5,11 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -13,10 +17,19 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.osmdroid.util.GeoPoint;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -434,5 +447,38 @@ public class DatabaseController {
      */
     public boolean checkProfileExists(Task<DocumentSnapshot> task) {
         return task.getResult().getData() == null;
+    }
+
+    /**
+     * Adds a provided image to the Firebase Storage location with all required information
+     * @param qrid String with the qr code ID
+     * @param storage reference to the Firebase Storage location
+     * @param objectImagePath Path to location of image file on device
+     * @return String address of the images location in Firebase Storage
+     * @throws FileNotFoundException
+     */
+    public String addImageFirebase(String qrid, FirebaseStorage storage, String objectImagePath) throws FileNotFoundException {
+        StorageReference storageRef = storage.getReference();
+        SimpleDateFormat s = new SimpleDateFormat("ddMMyyyyhhmmss");
+
+        String format = s.format(new Date());
+        String photoBaseLoc = "images/" + qrid + "/" + format + ".jpg";
+        StorageReference photoID = storageRef.child(photoBaseLoc);
+        Log.i(TAG, "PhotoRef location: " + photoBaseLoc);
+
+        InputStream stream = new FileInputStream(new File(objectImagePath));
+        UploadTask uploadTask = photoID.putStream(stream);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.i(TAG, "upload failed - error code: " + e);
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.i(TAG, "Upload successfully");
+            }
+        });
+        return photoBaseLoc;
     }
 }
