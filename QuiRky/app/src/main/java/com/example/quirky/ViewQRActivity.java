@@ -45,7 +45,7 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         setContentView(R.layout.activity_view_qr);
 
         loading = findViewById(R.id.view_qr_progress_bar);
-        dc = new DatabaseController(this);
+        dc = new DatabaseController();
 
         i = getIntent();
         qrid = i.getStringExtra("code");

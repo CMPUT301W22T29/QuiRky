@@ -77,7 +77,7 @@ public class CodeScannerActivity extends AppCompatActivity {
         cameraController = new CameraController(this);
         cameraController.startCamera(previewView.createSurfaceProvider(), this);
 
-        dc = new DatabaseController(this);
+        dc = new DatabaseController();
         mc = new MemoryController(this);
 
         scan_button.setOnClickListener(view -> scan());

@@ -111,7 +111,9 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
 
         bottom.setText("My QR Codes");
         bottom.setOnClickListener(view -> {
-            Intent i = new Intent(this, MainActivity.class);    // TODO: implement the activity this should direct to
+            mc = new MemoryController(this);
+            Intent i = new Intent(this, ManageCodesActivity.class);
+            i.putExtra("profile", mc.read());
             startActivity(i);
         });
     }

@@ -57,7 +57,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
         topRanks = findViewById(R.id.top_rankings_button);
 
         // Read the player population
-        DatabaseController dc = new DatabaseController(this);
+        DatabaseController dc = new DatabaseController();
         dc.readAllProfiles().addOnCompleteListener(task -> {
             ArrayList<Profile> result = dc.getAllProfiles(task);
             doneReading(result);
@@ -77,12 +77,11 @@ public class LeaderBoardActivity extends AppCompatActivity {
         listener = new RecyclerClickerListener() {
             @Override
             public void OnClickListItem(int position) {
-                Profile p = players.get(position);
-                startViewProfile(p);
+                startViewProfile(position);
             }
         };
 
-        adapter = new QRAdapter(data, new ArrayList<>(), this, listener);
+        adapter = new QRAdapter(data, new ArrayList<>(), this);
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
@@ -106,9 +105,10 @@ public class LeaderBoardActivity extends AppCompatActivity {
 
     /**
      * Start viewing a profile clicked on in the rankings list
-     * @param p The profile to begin viewing
+     * @param index The position of the item the player clicked on. Variable name position was already taken.
      */
-    private void startViewProfile(Profile p) {
+    private void startViewProfile(int index) {
+        Profile p = players.get(index);
         Intent i = new Intent(this, ProfileViewerActivity.class);
         i.putExtra("profile", p);
         startActivity(i);
@@ -144,7 +144,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
     private void updateDisplay() {
         data.clear();
         for(int i = 0; i < players.size(); i++) {
-            String x = i + " | " + players.get(i).getUname();
+            String x = i+1 + " | " + players.get(i).getUname();
             data.add(x);
         }
 

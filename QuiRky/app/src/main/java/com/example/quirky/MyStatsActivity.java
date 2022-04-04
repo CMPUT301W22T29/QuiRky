@@ -37,7 +37,7 @@ public class MyStatsActivity extends AppCompatActivity {
         if(p == null)
             ExitWithError();
 
-        DatabaseController dc = new DatabaseController(this);
+        DatabaseController dc = new DatabaseController();
         dc.readAllProfiles().addOnCompleteListener(task -> {
             ArrayList<Profile> results = dc.getAllProfiles(task);
             doneReading(results);

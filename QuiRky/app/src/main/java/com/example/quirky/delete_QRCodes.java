@@ -39,7 +39,7 @@ public class delete_QRCodes extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delete_qrcodes);
 
-        dc = new DatabaseController(this);
+        dc = new DatabaseController();
         scores = new ArrayList<>();
 
         qrList = findViewById(R.id.qrCodes);
