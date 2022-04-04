@@ -53,11 +53,12 @@ public class MainActivityTest {
         solo.clickOnButton("Confirm");
         solo.assertCurrentActivity("Wrong Activity", StartingPageActivity.class);
     }
+    //Needs to be an owner in order to see Owner Setting Button
     @Test
     public void checkSettings(){
         solo.assertCurrentActivity("Wrong Activity",MainActivity.class);
         solo.clickOnButton("Settings");
-        solo.assertCurrentActivity("Wrong Activity", SettingsActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", OwnerMenu.class);
     }
     /**
      * Close activity after each test
