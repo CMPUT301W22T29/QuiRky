@@ -106,6 +106,16 @@ public class MapActivity extends AppCompatActivity {
         }
     }
 
+    //MapActivity test.
+    /*Case1:I open the MapActivity and allow the device to read my location, It directs me to my current location and
+    and I see a marker on the map that shows my current location and nearby qr codes stored in the firebase store.
+    I can zoom in and out with my finger and move around the map with my finger and the map will update my location as long
+    as I move.
+
+    Case2: I open the app and goes to MapActivity, I deny it's request to ask for accessing location permission I'm
+    not able to enter MapActivity and the app will prompt a Toast to encourage me to allow it's request.
+     */
+
 
 
 
