@@ -13,10 +13,12 @@
         android:minHeight="60dp"
         android:text="Scan!"
         android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@id/container"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/container"
+        app:layout_constraintVertical_bias="0.516" />
 
     <TextView
         android:id="@+id/code_scanner_header"
@@ -63,11 +65,11 @@
 
     <Button
         android:id="@+id/save_scan_button"
-        android:visibility="invisible"
-        android:text="Save!"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:text="Save!"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/cancel_scan_button"
         app:layout_constraintTop_toBottomOf="@id/container" />
@@ -101,4 +103,16 @@
         app:layout_constraintStart_toEndOf="@id/keep_location_switch"
         app:layout_constraintTop_toBottomOf="@+id/save_scan_button"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <Button
+        android:id="@+id/record_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="16dp"
+        android:text="Loc Record"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/scan_button"
+        app:layout_constraintTop_toBottomOf="@+id/container" />
 </androidx.constraintlayout.widget.ConstraintLayout>

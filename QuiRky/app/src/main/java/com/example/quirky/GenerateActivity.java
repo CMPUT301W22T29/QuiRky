@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -72,4 +73,5 @@ public class GenerateActivity extends AppCompatActivity {
             qrImage.setImageBitmap(generated);
         });
     }
+
 }

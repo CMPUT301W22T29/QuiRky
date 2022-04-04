@@ -22,9 +22,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuiRky">
         <activity
+            android:name=".takePicture"
+            android:exported="false" />
+        <activity
             android:name=".LeaderBoardActivity"
             android:exported="false" />
-	<activity
+        <activity
             android:name=".delete_Players"
             android:exported="false" />
         <activity
@@ -112,4 +115,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

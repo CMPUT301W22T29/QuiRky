@@ -46,7 +46,7 @@ import org.osmdroid.util.GeoPoint;
 public class CodeScannerActivity extends AppCompatActivity {
 
     private PreviewView previewView;
-    private Button scan_button, cancel_button, save_button;
+    private Button scan_button, cancel_button, save_button, record_button;
     private Switch location_switch, photo_switch;
 
     private CameraController cameraController;
@@ -75,7 +75,7 @@ public class CodeScannerActivity extends AppCompatActivity {
         save_button = findViewById(R.id.save_scan_button);
         location_switch = findViewById(R.id.keep_location_switch);
         photo_switch = findViewById(R.id.keep_photo_switch);
-
+        record_button = findViewById(R.id.record_button);
         cameraController = new CameraController(this);
         cameraController.startCamera(previewView.createSurfaceProvider(), this);
 
@@ -83,8 +83,19 @@ public class CodeScannerActivity extends AppCompatActivity {
         mc = new MemoryController(this);
 
         scan_button.setOnClickListener(view -> scan());
+        record_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recordLocation();
+            }
+        });
     }
 
+    public void recordLocation(){
+        Intent intent1 = new Intent(this, takePicture.class);
+        startActivity(intent1);
+
+    }
     //TODO: javadocs
     @androidx.camera.core.ExperimentalGetImage
     public void scan() {
@@ -195,4 +206,5 @@ public class CodeScannerActivity extends AppCompatActivity {
             photo_switch.setVisibility(View.VISIBLE);
         }
     }
+
 }
