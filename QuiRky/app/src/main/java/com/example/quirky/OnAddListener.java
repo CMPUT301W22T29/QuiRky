@@ -7,7 +7,7 @@
 package com.example.quirky;
 
 //TODO: javadocs
-public abstract class OnCodeAddedListener<E> {
+public abstract class OnAddListener<E> {
 
-    public abstract void onCodeAdded(CodeList<E> codeList);
+    public abstract void onAdd(ListeningList<E> listeningList);
 }

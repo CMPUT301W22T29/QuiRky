@@ -12,36 +12,36 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 //TODO: javadocs
-public class CodeList<E> extends ArrayList<E> {
-    private OnCodeAddedListener<E> listener;
+public class ListeningList<E> extends ArrayList<E> {
+    private OnAddListener<E> listener;
 
-    public CodeList() {
+    public ListeningList() {
         super();
     }
 
-    public void setOnCodeAddedListener(OnCodeAddedListener<E> listener) {
+    public void setOnAddListener(OnAddListener<E> listener) {
         this.listener = listener;
     }
 
     @Override
-    public boolean add(E o) {
-        if (super.add(o)) {
-            listener.onCodeAdded(this);
+    public boolean add(Object o) {
+        if (super.add((E) o)) {
+            listener.onAdd(this);
             return true;
         }
         return false;
     }
 
     @Override
-    public void add(int index, E element) {
-        super.add(index, element);
-        listener.onCodeAdded(this);
+    public void add(int index, Object element) {
+        super.add(index, (E) element);
+        listener.onAdd(this);
     }
 
     @Override
     public boolean addAll(@NonNull Collection c) {
         if (super.addAll(c)) {
-            listener.onCodeAdded(this);
+            listener.onAdd(this);
             return true;
         }
         return false;
@@ -50,7 +50,7 @@ public class CodeList<E> extends ArrayList<E> {
     @Override
     public boolean addAll(int index, @NonNull Collection c) {
         if (super.addAll(index, c)) {
-            listener.onCodeAdded(this);
+            listener.onAdd(this);
             return true;
         }
         return false;
