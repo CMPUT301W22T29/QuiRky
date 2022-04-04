@@ -5,7 +5,6 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class QRCodeTest {
 
@@ -18,8 +17,8 @@ public class QRCodeTest {
         String id = QRCodeController.SHA256(content);
 
         ArrayList<Comment> comments = new ArrayList<>();
-        comments.add( new Comment("content1", "user1", new Date() ) );
-        comments.add( new Comment("content2", "user2", new Date() ) );
+        comments.add( new Comment("content1", "user1" ) );
+        comments.add( new Comment("content2", "user2" ) );
 
         int score = QRCodeController.score(id);
 
@@ -63,17 +62,17 @@ public class QRCodeTest {
     @Test
     public void Comments() {
 
-        Comment c = new Comment("I'm a new comment", "user1", new Date());
+        Comment c = new Comment("I'm a new comment", "user1");
 
         ArrayList<Comment> comments = new ArrayList<>();
 
-        comments.add(new Comment("content", "user", new Date()));
+        comments.add(new Comment("content", "user"));
 
         qr = new QRCode("x", comments);
 
 
         // Test removing comments that aren't actually in the QRCode
-        qr.removeComment(new Comment("I'm not actually in the QRCode's comments", "user", new Date()));
+        qr.removeComment(new Comment("I'm not actually in the QRCode's comments", "user"));
         assertEquals("Removing a comment the QRCode didn't have somehow changed the ArrayList<>",
                 comments,
                 qr.getComments());
@@ -91,8 +90,8 @@ public class QRCodeTest {
 
 
         comments.clear();
-        comments.add( new Comment("abc123", "user5", new Date()) );
-        comments.add( new Comment("abc124", "user6", new Date()) );
+        comments.add( new Comment("abc123", "user5") );
+        comments.add( new Comment("abc124", "user6") );
 
         // Test setting the comments to something completely different.
         qr.setComments(comments);

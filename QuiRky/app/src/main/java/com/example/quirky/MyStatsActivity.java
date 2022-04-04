@@ -4,55 +4,80 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
+/**
+ * Activity to view the user's rankings in a text format, rather than in a list
+ */
 public class MyStatsActivity extends AppCompatActivity {
-    private Button backBt;
-    private Intent i;
+    private final String TAG = "\tMyStatsActivity says:";
     private Profile p;
-    private MemoryController mc;
     private LeaderBoardController lbc;
 
-    private TextView totScore, scoreRanking, totScanned, scannedRanking, largestScanned, lrgRanking;
+    private TextView totalScore, scoreRanking, totalScanned, scannedRanking, largestScanned, lrgRanking;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_stats);
 
-        i = getIntent();
-        p = (Profile) i.getSerializableExtra("profile");
-        lbc = new LeaderBoardController(this);
-
-        totScore = findViewById(R.id.totScore2);
+        totalScore = findViewById(R.id.totScore2);
         scoreRanking = findViewById(R.id.scoreRanking2);
-        totScanned = findViewById(R.id.totScanned2);
+        totalScanned = findViewById(R.id.totScanned2);
         scannedRanking = findViewById(R.id.scannedRanking2);
         largestScanned = findViewById(R.id.largestScanned2);
         lrgRanking = findViewById(R.id.largestScannedRanking2);
 
-        replaceValues();
+        Intent i = getIntent();
+        p = (Profile) i.getSerializableExtra("profile");
+        if(p == null)
+            ExitWithError();
+
+        DatabaseController dc = new DatabaseController(this);
+        dc.readAllProfiles().addOnCompleteListener(task -> {
+            ArrayList<Profile> results = dc.getAllProfiles(task);
+            doneReading(results);
+        });
     }
 
-    private void replaceValues() {
-        totScore.setText(String.valueOf(p.getPointsOfScannedCodes()));
-        totScanned.setText(String.valueOf(p.getNumberCodesScanned()));
+    /**
+     * Called once DatabaseController is done reading the population of players from the database
+     * Finishes setting up the text-boxes to display accurate information
+     * @param players The population of players
+     */
+    private void doneReading(ArrayList<Profile> players) {
+        Log.d(TAG, "Reading from the database gave us these players:\n");
+        for(Profile profile : players)
+            Log.d(TAG, profile.getUname() + "\n");
+        Log.d("", "The appholder is: " + p.getUname() + "\n");
+
+        lbc = new LeaderBoardController(players);
+        int position;
+
+        position = lbc.findRankPoints(p);
+
+        totalScore.setText( String.valueOf( p.getPointsOfScannedCodes() ) );
+        scoreRanking.setText( String.valueOf(position) );
+
+        position = lbc.findRankScanned(p);
+        totalScanned.setText(String.valueOf(p.getNumberCodesScanned()));
+        scannedRanking.setText(String.valueOf(position) );
+
+        position = lbc.findRankLargest(p);
         largestScanned.setText(String.valueOf(p.getPointsOfLargestCodes()));
-        lbc.readAllPlayers().addOnCompleteListener(task -> setTextRanking());
+        lrgRanking.setText(String.valueOf(position));
     }
 
-    private void setTextRanking(){
-        ArrayList<Profile> leaderboard = lbc.getRankingPoints();
-        scoreRanking.setText(String.valueOf(leaderboard.indexOf(p)));
-
-        leaderboard = lbc.getRankingNumScanned();
-        scannedRanking.setText(String.valueOf(leaderboard.indexOf(p)));
-
-        leaderboard = lbc.getRankingLargestScanned();
-        lrgRanking.setText(String.valueOf(leaderboard.indexOf(p)));
+    /**
+     * Method called when data is passed to this activity incorrectly, or when there is an issue reading the data from FireStore.
+     * Makes a toast and then finishes the activity.
+     */
+    private void ExitWithError() {
+        Toast.makeText(this, "User was passed incorrectly!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 }

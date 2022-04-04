@@ -6,7 +6,12 @@
 
 package com.example.quirky;
 
-//TODO: javadocs
+/**
+ * @Author Sean
+ * Listener to be used with ListeningList
+ * @param <E> The datatype the associated ListeningList holds
+ * @see ListeningList
+ */
 public abstract class OnAddListener<E> {
 
     public abstract void onAdd(ListeningList<E> listeningList);

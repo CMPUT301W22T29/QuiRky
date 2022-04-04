@@ -35,7 +35,13 @@ author: osmdroid team : https://github.com/osmdroid/osmdroid
 Publish Date:2019-09-27
  */
 /*source:https://stackoverflow.com/questions/40142331/how-to-request-location-permission-at-runtime*/
-//TODO: Javadoc
+
+/**
+ * @author Sean
+ * @author HengYuan
+ * Controller class to manage computations that MapActivity needs.
+ * @see MapActivity
+ */
 public class MapController {
     public static final int LOCATION_REQUEST_CODE = 99;
     private final LocationManager locationManager;
@@ -49,6 +55,9 @@ public class MapController {
     private final ArrayDeque<Runnable> runnables;
 
 
+    /**
+     * Constructor initialised with context
+     */
     public MapController(Context context) {
         this.context = context;
         locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
@@ -59,6 +68,11 @@ public class MapController {
         return (request_code == LOCATION_REQUEST_CODE);
     }
 
+    /**
+     * Checks if the user has granted location permissions
+     * @param context Context
+     * @return If the user has granted location permissions
+     */
     protected static boolean hasLocationPermissions(Context context) {
         boolean fineGranted
                 = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -69,6 +83,10 @@ public class MapController {
         return fineGranted && coarseGranted;
     }
 
+    /**
+     * Request location permissions from the user
+     * @param context context
+     */
     protected static void requestLocationPermission(Context context) {
         ActivityCompat.requestPermissions(
                                    (Activity) context, LOCATION_PERMISSIONS, LOCATION_REQUEST_CODE);
@@ -101,6 +119,11 @@ public class MapController {
         }
     }
 
+    // TODO: someone who knows how this works, javadoc it
+    /**
+     * Get the current location of the user
+     * @param locations A listening list to add the location to
+     */
     @SuppressLint("MissingPermission")
     public void getLocation(ListeningList<Location> locations) {
         Log.d("map", "getLocation");
@@ -139,6 +162,12 @@ public class MapController {
         });
     }
 
+    /**
+     * Place a marker on the map
+     * @param geoPoint The location of the marker
+     * @param nearbyMap The map to place the marker on
+     * @param title The text to be displayed on the marker
+     */
     public static void qrMarkerOnMap(@NonNull GeoPoint geoPoint, @NonNull MapView nearbyMap, String title) {
         Marker qrMarker = new Marker(nearbyMap);
         qrMarker.setPosition(geoPoint);

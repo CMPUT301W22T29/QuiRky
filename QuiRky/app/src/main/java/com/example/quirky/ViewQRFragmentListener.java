@@ -10,10 +10,12 @@ import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 
+/**
+ * Interface to allow ViewQRActivity and it's fragments to communicate
+ */
 public interface ViewQRFragmentListener {
     void changeFragment(Fragment frag);
     void commentsButton();
-    void privateButton();
     void deleteButton();
     ArrayList<String> getPlayers();
 }

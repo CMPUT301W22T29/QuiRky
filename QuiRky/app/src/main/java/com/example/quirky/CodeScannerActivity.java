@@ -31,12 +31,9 @@ import org.osmdroid.util.GeoPoint;
 
 /**
  * Previews camera feed and allows scanning QR codes.
- * <p>
- * Known Issues:
- *      Captures QR codes and opens a save dialogue, but does not save to the database yet. (v0.3.0)
- *      login method doesn't do anything yet.   (v0.3.0)
  *
  * @author Sean Meyers
+ * @author Jonathen Adsit
  * @version 0.3.0
  * @see androidx.camera.core
  * @see CameraController
@@ -56,6 +53,7 @@ public class CodeScannerActivity extends AppCompatActivity {
     private Boolean login;
 
     private final String TAG = "CodeScannerActivity says";
+
 
     @Override
     @androidx.camera.core.ExperimentalGetImage
@@ -85,7 +83,10 @@ public class CodeScannerActivity extends AppCompatActivity {
         scan_button.setOnClickListener(view -> scan());
     }
 
-    //TODO: javadocs
+    /**
+     * Create a ListeningList to listen for a QRCode to be added to it. Calls CameraController to scan for a QRCode to add to ListeningList.
+     * This method will be followed by either showSavingInterface() or login(), depending on whether the user was using this activity to login or not.
+     */
     @androidx.camera.core.ExperimentalGetImage
     public void scan() {
         ListeningList<QRCode> codes = new ListeningList<>();
@@ -105,6 +106,10 @@ public class CodeScannerActivity extends AppCompatActivity {
         cameraController.captureQRCodes(this, codes);
     }
 
+    /**
+     * Displays the save buttons and hide the Scan button. Set on click listeners to save the QRCode if the user chooses
+     * @param listeningList The listening list that holds the QRCode scanned by CameraController
+     */
     private void showSavingInterface(ListeningList<QRCode> listeningList) {
         setVisibility(false);
 
@@ -136,6 +141,10 @@ public class CodeScannerActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Attempt to login to a profile. Writes the profile to local memory and starts up a new activity
+     * @param p
+     */
     private void login(Profile p) {
         if (p == null) {
             Toast.makeText(this, "That QRCode did not match any users!", Toast.LENGTH_LONG).show();
@@ -150,6 +159,12 @@ public class CodeScannerActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    /**
+     * Save a QRCode to the Database. Update the player's profile to include the newly scanned code.
+     * @param qr The QRCode to be saved
+     * @param gp The location of the user, if they want their location to be saved
+     * @param image The photo of the QRCode, if the user wants the photo saved.
+     */
     public void save(QRCode qr, GeoPoint gp, Bitmap image) {
         Profile p = mc.read();
 
@@ -159,10 +174,9 @@ public class CodeScannerActivity extends AppCompatActivity {
         }
 
         // Update the local memory and database, because the player's statistics have changed.
-        //mc.write(p);
-        //dc.writeProfile(p);
-        // FIXME: writeQRCode already updates the player's profile in local and remote memory. Maybe too much responsibility on it, must lower this method's cohesion?
-        dc.writeQRCode(qr);
+        dc.writeQRCode(qr, p.getUname());
+        mc.write(p);
+        dc.writeProfile(p);
 
         if(gp != null) {
             // dc.saveLocation(qrcode, location);

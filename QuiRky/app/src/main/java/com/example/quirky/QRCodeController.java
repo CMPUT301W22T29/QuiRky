@@ -16,17 +16,7 @@
 
 package com.example.quirky;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.Task;
-import com.google.mlkit.vision.barcode.BarcodeScanner;
-import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
-import com.google.mlkit.vision.barcode.BarcodeScanning;
-import com.google.mlkit.vision.barcode.common.Barcode;
-import com.google.mlkit.vision.common.InputImage;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -36,21 +26,16 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.Random;
 
 /**
  * A controller class that computes data needed by the <code>QRCode</code> model.
  * <p>
- * Constructs <code>QRCode</code>s from <code>InputImage</code>s, computes a SHA256 hash of a string, and scores a string.
+ * Constructs images of QRCodes, hashes Strings, and scores Strings
  *
  * @author Sean Meyers
  * @author Jonathen Adsit
  * @version 0.2.1
- * @see androidx.camera.core
- * @see CameraController
- * @see CodeScannerActivity
- * @see com.google.mlkit.vision
  * @see QRCode
  */
 public class QRCodeController {
@@ -107,15 +92,15 @@ public class QRCodeController {
         return sum;
     }
 
+
+    /**
+     * Create a random string of specified length
+     * @param length
+     *      - The length of the string to generate
+     * @return A random string
+     */
     public static String getRandomString(int length){
-        /**
-         * Generate the a Random QR code ImageView
-         *
-         * @param length
-         *      - Generate
-         * @param codes
-         *      - generated qr code
-         */
+
         StringBuilder val = new StringBuilder();
         Random random = new Random();
         String finalString;
@@ -137,15 +122,13 @@ public class QRCodeController {
         return  finalString;
     }
 
+    /**
+     * Generate a Bitmap of a QRCode based off a string
+     * @param text
+     *      - The generated qr code based on this string
+     */
     public static Bitmap generateQR(String text){
-        /**
-         * Generate the a Random QR code ImageView
-         *
-         * @param text
-         *      - The generated qr code based on this string
-         * @param codes
-         *      - generated qr code
-         */
+
 
         Bitmap generatedQRCode = null;
         MultiFormatWriter writer = new MultiFormatWriter();
