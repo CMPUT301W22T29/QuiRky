@@ -29,6 +29,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
@@ -44,6 +45,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -72,6 +74,7 @@ public class CameraController {
     private Preview preview;
     private ImageCapture imageCapture;
     private CameraSelector cameraSelector;
+    private MemoryController memoryController;
 
     /**
      * Check if the app has permission to use the camera.
@@ -129,6 +132,7 @@ public class CameraController {
         imageCapture = new ImageCapture.Builder().build();
         cameraSelector = new CameraSelector.Builder()
                 .requireLensFacing(CameraSelector.LENS_FACING_BACK).build();
+        memoryController = new MemoryController(context);
     }
 
     /**
@@ -190,6 +194,21 @@ public class CameraController {
                         image.close();
                     }
                 });
+    }
+
+    public void capturePhoto(Context context) {
+        ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(memoryController.newPhotoFile()).build();
+        imageCapture.takePicture(outputFileOptions, ContextCompat.getMainExecutor(context), new ImageCapture.OnImageSavedCallback() {
+            @Override
+            public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+
+            }
+
+            @Override
+            public void onError(@NonNull ImageCaptureException exception) {
+
+            }
+        });
     }
 
     /**

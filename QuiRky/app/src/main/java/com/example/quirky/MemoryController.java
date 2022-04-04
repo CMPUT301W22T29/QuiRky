@@ -78,6 +78,10 @@ public class MemoryController {
         }
     }
 
+    public File newPhotoFile() {
+        return new File(dir, "Photos/" + dir.list().length);
+    }
+
     /**
      * Write a username to memory. Will overwrite any data already stored in the 'name' file.
      * @param user The new username to write
