@@ -69,10 +69,12 @@ public class MapActivity extends AppCompatActivity {
             public void onCodeAdded(CodeList<Location> codeList) {
                 Log.d("map", "onCodeAdded");
                 Location location = codeList.get(0);
-                qrMarkerOnMap(location);
+                GeoPoint startPoint = new GeoPoint((double) location.getLatitude(), (double) location.getLongitude());
+                iMapController.setCenter(startPoint);
+                mapController.qrMarkerOnMap(startPoint,nearbymap,"Current location");
             }
         });
-        //Move this part to MapController
+
         if (Integer.valueOf(android.os.Build.VERSION.SDK) > 30) {
             mapController.requestLocationModern( locations,this);
         }
@@ -80,15 +82,7 @@ public class MapActivity extends AppCompatActivity {
             mapController.requestLocation(locations,this);
         }
     }
-    public void qrMarkerOnMap(Location location){
-        Marker qrmarker = new Marker(nearbymap);
-        GeoPoint startPoint = new GeoPoint((double) location.getLatitude(), (double) location.getLongitude());
-        qrmarker.setPosition(startPoint);
-        iMapController.setCenter(startPoint);
-        qrmarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        nearbymap.getOverlays().add(qrmarker);
-        qrmarker.setTitle("Current location");
-    }
+
 
 
     /*@SuppressLint("MissingPermission")

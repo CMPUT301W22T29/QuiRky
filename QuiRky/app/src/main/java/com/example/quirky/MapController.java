@@ -7,6 +7,7 @@ import android.Manifest;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
 import android.content.pm.PackageManager;
@@ -14,6 +15,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.location.LocationListenerCompat;
 
 import static android.content.ContentValues.TAG;
 import static android.content.Context.LOCATION_SERVICE;
@@ -43,6 +46,7 @@ public class MapController{
     private static final String[] LOCATION_PERMISSION_COARSE = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION};
     private Context context;
     private ArrayDeque<Runnable> runnables;
+
 
     public MapController(Context context) {
         this.context = context;
@@ -118,7 +122,7 @@ public class MapController{
                 Log.d("map", "runGetLocation");
                 if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                     if (hasLocationPermissions(context)){
-                        locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new LocationListener() {
+                        locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new LocationListenerCompat() {
                             @Override
                             public void onLocationChanged(@NonNull Location location) {
                                 locations.add(location);
@@ -150,11 +154,20 @@ public class MapController{
             }
         });
     }
+    public void qrMarkerOnMap(GeoPoint startPoint, MapView nearbymap, String title){
+        Marker qrmarker = new Marker(nearbymap);
+        qrmarker.setPosition(startPoint);
+        qrmarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        nearbymap.getOverlays().add(qrmarker);
+        qrmarker.setTitle(title);
+    }
 
     public LocationManager getLocationManager() {
 
         return locationManager;
     }
+
+
 }
 
 
