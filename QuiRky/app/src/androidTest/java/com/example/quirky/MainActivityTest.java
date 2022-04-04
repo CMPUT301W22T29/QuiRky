@@ -5,6 +5,7 @@
  */
 
 package com.example.quirky;
+import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
 import android.app.Instrumentation;
@@ -18,7 +19,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class IntentStartingPageTest {
+public class MainActivityTest {
 
     private Solo solo;
 
@@ -35,19 +36,12 @@ public class IntentStartingPageTest {
         Activity activity = rule.getActivity();
     }
 
-
     @Test
     public void checkLogin(){
         solo.assertCurrentActivity("Wrong Activity",MainActivity.class);
         solo.clickOnButton("Login");
-    }
-    @Test
-    public void checkButtons(){
-        solo.assertCurrentActivity("Wrong Activity",MainActivity.class);
-        solo.clickOnButton("Login");
         solo.assertCurrentActivity("Wrong Activity", StartingPageActivity.class);
     }
-
     @Test
     public void checkSettings(){
         solo.assertCurrentActivity("Wrong Activity",MainActivity.class);
@@ -56,3 +50,4 @@ public class IntentStartingPageTest {
     }
 
 }
+

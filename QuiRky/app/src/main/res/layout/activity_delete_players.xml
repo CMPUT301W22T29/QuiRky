@@ -21,7 +21,7 @@
         android:layout_marginTop="20dp"
 
         android:textSize="40sp"
-        android:text="Delete QR Codes"
+        android:text="Delete Players"
         android:textAlignment="center"/>
 
     <androidx.recyclerview.widget.RecyclerView
