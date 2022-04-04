@@ -9,21 +9,13 @@
         <entry key="..\:/Users/kyrie/Desktop/CMPUT301/QuiRky/QuiRky/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/kyrie/Desktop/CMPUT301/QuiRky/QuiRky/app/src/main/res/layout/activity_my_stats.xml" value="0.75" />
         <entry key="..\:/Users/kyrie/Desktop/CMPUT301/QuiRky/QuiRky/app/src/main/res/layout/activity_starting_page.xml" value="0.33" />
+        <entry key="..\:/Users/kyrie/Desktop/CMPUT301/QuiRky/QuiRky/app/src/main/res/layout/activity_view_comment.xml" value="0.33" />
+        <entry key="..\:/Users/kyrie/Desktop/CMPUT301/QuiRky/QuiRky/app/src/main/res/layout/activity_view_qr.xml" value="0.33" />
         <entry key="..\:/Users/kyrie/Desktop/CMPUT301/QuiRky/QuiRky/app/src/main/res/layout/input_uname_login_fragment.xml" value="0.5" />
       </map>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
-        <entry key="..\:/Users/jonad/Documents/Classes/301/QuiRky/QuiRky/app/src/main/res/layout/activity_main.xml" value="0.20416666666666666" />
-        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/activity_main.xml" value="0.3482789855072464" />
-        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/activity_manage_codes.xml" value="0.2318840579710145" />
-        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/activity_setting.xml" value="0.3482789855072464" />
-        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/activity_view_profile.xml" value="0.3482789855072464" />
-        <entry key="..\:/Users/jonad/OneDrive/Documents/GitHub/301-Project/QuiRky/app/src/main/res/layout/comment_list.xml" value="0.3482789855072464" />
-      </map>
-    </option>
-  </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="11" project-jdk-type="JavaSDK" />
   <component name="ProjectType">
     <option name="id" value="Android" />
   </component>
