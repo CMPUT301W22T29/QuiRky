@@ -70,4 +70,7 @@
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="deny_camera_permissions_toast">Please allow camera permissions to scan QR codes.</string>
+    <string name="largest_scanned">Largest Scanned:</string>
+    <string name="none">None</string>
+    <string name="no_ranking">No Ranking</string>
 </resources>

@@ -11,29 +11,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="264dp"
+        android:layout_marginTop="50dp"
         android:text="@string/total_scanned"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/statsTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/scoreRanking" />
 
     <TextView
         android:id="@+id/scannedRanking"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="264dp"
+        android:layout_marginTop="24dp"
         android:text="@string/ranking"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/totScore" />
+        app:layout_constraintTop_toBottomOf="@+id/totScanned" />
 
     <TextView
         android:id="@+id/scoreRanking"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="24dp"
         android:text="@string/ranking"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -63,22 +63,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/statsTextView" />
 
-    <Button
-        android:id="@+id/mystatsBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/totScore2"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_width="wrap_content"
-        android:hint="No Score"
+        android:hint="@string/none"
         android:textSize="24sp"
         app:layout_constraintStart_toEndOf="@+id/totScore"
         app:layout_constraintTop_toTopOf="@+id/totScore"
@@ -89,7 +79,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:hint="No Ranking"
+        android:hint="@string/no_ranking"
         android:textSize="24sp"
         app:layout_constraintStart_toEndOf="@+id/scoreRanking"
         app:layout_constraintTop_toTopOf="@+id/scoreRanking" />
@@ -99,7 +89,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:hint="None"
+        android:hint="@string/no_ranking"
         android:textSize="24sp"
         app:layout_constraintStart_toEndOf="@+id/scannedRanking"
         app:layout_constraintTop_toTopOf="@+id/scannedRanking" />
@@ -109,10 +99,51 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:hint="No Ranking"
+        android:hint="@string/none"
         android:textSize="24sp"
         app:layout_constraintStart_toEndOf="@+id/totScanned"
         app:layout_constraintTop_toTopOf="@+id/totScanned" />
 
+    <TextView
+        android:id="@+id/largestScanned"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="50dp"
+        android:text="@string/largest_scanned"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scannedRanking" />
+
+    <TextView
+        android:id="@+id/largestScannedRanking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/ranking"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/largestScanned" />
+
+    <TextView
+        android:id="@+id/largestScanned2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:hint="@string/none"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/largestScanned"
+        app:layout_constraintTop_toTopOf="@+id/largestScanned" />
+
+    <TextView
+        android:id="@+id/largestScannedRanking2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:hint="@string/no_ranking"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/largestScannedRanking"
+        app:layout_constraintTop_toTopOf="@+id/largestScannedRanking" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
