@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -93,5 +94,6 @@ public class ViewCommentsActivity extends AppCompatActivity {
 
         commentDataList.add(comment);
         commentAdapter.notifyDataSetChanged();
+        Toast.makeText(this, "Comment Saved", Toast.LENGTH_SHORT).show();
     }
 }
