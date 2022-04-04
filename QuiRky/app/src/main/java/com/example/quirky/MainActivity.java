@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements
         if(!ProfileController.validUsername(uname)) {
             Toast.makeText(this, "This username is not valid!", Toast.LENGTH_SHORT).show();
             login(false);
+            return;
         }
 
         // Read from the database to check if this username is already taken.
