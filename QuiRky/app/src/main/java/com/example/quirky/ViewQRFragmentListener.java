@@ -13,7 +13,6 @@ import java.util.ArrayList;
 public interface ViewQRFragmentListener {
     void changeFragment(Fragment frag);
     void commentsButton();
-    void privateButton();
     void deleteButton();
     ArrayList<String> getPlayers();
 }

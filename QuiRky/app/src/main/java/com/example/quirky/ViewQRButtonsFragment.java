@@ -25,7 +25,7 @@ import androidx.fragment.app.Fragment;
 // Published January 3 2021
 public class ViewQRButtonsFragment extends Fragment {
 
-    Button comments, players, setprivate, delete;
+    Button comments, players, delete;
     TextView location;
 
     private ViewQRFragmentListener listener;
@@ -51,7 +51,6 @@ public class ViewQRButtonsFragment extends Fragment {
 
         comments = v.findViewById(R.id.view_comments_button);
         players = v.findViewById(R.id.other_scanners_button);
-        setprivate = v.findViewById(R.id.private_qr_button);
         delete = v.findViewById(R.id.delete_qr_button);
         location = v.findViewById(R.id.qr_location_textbox);
 
@@ -59,7 +58,6 @@ public class ViewQRButtonsFragment extends Fragment {
 
         comments.setOnClickListener(view -> listener.commentsButton());
         players.setOnClickListener(view -> listener.changeFragment(new ViewQRScannersFragment()));
-        setprivate.setOnClickListener(view -> listener.privateButton());
         delete.setOnClickListener(view -> listener.deleteButton());
     }
 

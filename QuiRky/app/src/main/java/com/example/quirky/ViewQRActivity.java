@@ -3,27 +3,19 @@ package com.example.quirky;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -98,7 +90,7 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
 
     @Override
     public ArrayList<String> getPlayers() {
-        Log.d(TAG, "players is:\n" + players);
+        Log.d(TAG, "players is:\t" + players);
         return players;
     }
 
@@ -113,15 +105,17 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
     }
 
     @Override
-    public void privateButton() {
-        // Reconsider the Set Private button in this UI. Why does it exists? What does it do?
-        // Perhaps it removes the GeoLocation and Image associated with the displayed QRCode?
-    }
-
-    @Override
     public void deleteButton() {
-        // Delete button will remove the QRCode from the list of QRCodes the player has scanned.
-        // It will also remove the GeoLocation and Image from the database
-        // This button should also probably start up another activity, like StartingPageActivity
+        MemoryController mc = new MemoryController(this);
+        Profile p = mc.read();
+
+        p.removeScanned(qrid);
+        mc.write(p);
+        dc.writeProfile(p);
+
+        Toast.makeText(this, "Removed from your scanned codes!", Toast.LENGTH_SHORT).show();
+
+        Intent i = new Intent(this, StartingPageActivity.class);
+        startActivity(i);
     }
 }
