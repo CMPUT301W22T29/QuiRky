@@ -78,6 +78,13 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public void OnClickConfirm(String uname) {
+
+        // Check if the inputted username is valid
+        if(!ProfileController.validUsername(uname)) {
+            Toast.makeText(this, "This username is not valid!", Toast.LENGTH_SHORT).show();
+            login(false);
+        }
+
         // Read from the database to check if this username is already taken.
         dm.startCheckProfileExists(uname).addOnCompleteListener(task -> {
             if(dm.checkProfileExists(task)) {
