@@ -89,7 +89,7 @@ public class QRCodeController {
         for (int i = 0; i < hash.length(); i++) {
             sum += hash.charAt(i);
         }
-        return sum;
+        return sum%10000;
     }
 
 
