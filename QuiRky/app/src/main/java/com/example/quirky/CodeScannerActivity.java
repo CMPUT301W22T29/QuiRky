@@ -33,12 +33,9 @@ import org.osmdroid.views.MapView;
 
 /**
  * Previews camera feed and allows scanning QR codes.
- * <p>
- * Known Issues:
- *      Captures QR codes and opens a save dialogue, but does not save to the database yet. (v0.3.0)
- *      login method doesn't do anything yet.   (v0.3.0)
  *
  * @author Sean Meyers
+ * @author Jonathen Adsit
  * @version 0.3.0
  * @see androidx.camera.core
  * @see CameraController
@@ -59,6 +56,7 @@ public class CodeScannerActivity extends AppCompatActivity {
     private Boolean login;
 
     private final String TAG = "CodeScannerActivity says";
+
 
     @Override
     @androidx.camera.core.ExperimentalGetImage
@@ -88,19 +86,22 @@ public class CodeScannerActivity extends AppCompatActivity {
         scan_button.setOnClickListener(view -> scan());
     }
 
-    //TODO: javadocs
+    /**
+     * Create a ListeningList to listen for a QRCode to be added to it. Calls CameraController to scan for a QRCode to add to ListeningList.
+     * This method will be followed by either showSavingInterface() or login(), depending on whether the user was using this activity to login or not.
+     */
     @androidx.camera.core.ExperimentalGetImage
     public void scan() {
-        CodeList<QRCode> codes = new CodeList<>();
-        codes.setOnCodeAddedListener(new OnCodeAddedListener<QRCode>() {
+        ListeningList<QRCode> codes = new ListeningList<>();
+        codes.setOnAddListener(new OnAddListener<QRCode>() {
 
             @Override
-            public void onCodeAdded(CodeList<QRCode> codeList) {
+            public void onAdd(ListeningList<QRCode> listeningList) {
                 if (login) {
-                    String password = codeList.get(0).getId();
+                    String password = listeningList.get(0).getId();
                     dc.readLoginHash(password).addOnCompleteListener(task -> login( dc.getProfileWithHash(task)) );
                 } else {
-                    showSavingInterface(codeList);
+                    showSavingInterface(listeningList);
                 }
             }
 
@@ -108,32 +109,35 @@ public class CodeScannerActivity extends AppCompatActivity {
         cameraController.captureQRCodes(this, codes);
     }
 
-    private void showSavingInterface(CodeList<QRCode> qrCodeList) {
+    /**
+     * Displays the save buttons and hide the Scan button. Set on click listeners to save the QRCode if the user chooses
+     * @param listeningList The listening list that holds the QRCode scanned by CameraController
+     */
+    private void showSavingInterface(ListeningList<QRCode> listeningList) {
         setVisibility(false);
 
         save_button.setOnClickListener(view -> {
             GeoPoint gp = null;
             Bitmap photo = null;
             MapView nearbymap = (MapView) findViewById(R.id.map1);
-            CodeList<Location> locations = new CodeList<>();
-            locations.setOnCodeAddedListener(new OnCodeAddedListener<Location>() {
-                @Override
-                public void onCodeAdded(CodeList<Location> codeList) {
+            ListeningList<Location> locations = new ListeningList<>();
+            locations.setOnAddListener(new OnAddListener<Location>() {
+                public void onAdd(ListeningList<Location> listeningList1) {
                     Bitmap photo = null;
-                   Location location = codeList.get(0);
+                   Location location = listeningList1.get(0);
                    GeoPoint gp = new GeoPoint((double) location.getLatitude(),(double)location.getLongitude());
-                   dc.writeQRCodeLocation(qrCodeList.get(0).getId(),mc.readUser(),gp);
-                   save(qrCodeList.get(0), gp, photo);
+                   dc.writeQRCodeLocation(listeningList.get(0).getId(),mc.readUser(),gp);
+                   save(listeningList.get(0), gp, photo);
                 }
             });
             if (location_switch.isChecked()) {
                 MapController mapController = new MapController(this);
-                mapController.requestLocation(locations,this);
+                mapController.getLocation(locations);
                 //mapController.qrMarkerOnMap(gp,nearbymap,"A QR code located");
 
                 //TODO: Make a controller class that gets location.
             } else {
-                save(qrCodeList.get(0), gp, photo);
+                save(listeningList.get(0), gp, photo);
                 gp = null;
             }
 
@@ -145,7 +149,7 @@ public class CodeScannerActivity extends AppCompatActivity {
                 photo = null;
             }
 
-            save(qrCodeList.get(0), gp, photo);
+            save(listeningList.get(0), gp, photo);
             setVisibility(true);
         });
 
@@ -155,6 +159,10 @@ public class CodeScannerActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Attempt to login to a profile. Writes the profile to local memory and starts up a new activity
+     * @param p
+     */
     private void login(Profile p) {
         if (p == null) {
             Toast.makeText(this, "That QRCode did not match any users!", Toast.LENGTH_LONG).show();
@@ -169,16 +177,22 @@ public class CodeScannerActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    /**
+     * Save a QRCode to the Database. Update the player's profile to include the newly scanned code.
+     * @param qr The QRCode to be saved
+     * @param gp The location of the user, if they want their location to be saved
+     * @param image The photo of the QRCode, if the user wants the photo saved.
+     */
     public void save(QRCode qr, GeoPoint gp, Bitmap image) {
-        dc.writeQRCode(qr);
         Profile p = mc.read();
 
-        if(! p.addScanned(qr.getId()) ) {
+        if(! p.addScanned(qr.getId())) {
             Toast.makeText(this, "You already have that QRCode!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Update the local memory and database, because the player's statistics have changed.
+        dc.writeQRCode(qr, p.getUname());
         mc.write(p);
         dc.writeProfile(p);
 
@@ -188,9 +202,7 @@ public class CodeScannerActivity extends AppCompatActivity {
         if(image != null) {
             // dc.saveImage(qrcode, image);
         }
-
         Toast.makeText(this, "QRCode saved!", Toast.LENGTH_LONG).show();
-
     }
 
     /**

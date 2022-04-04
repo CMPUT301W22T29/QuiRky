@@ -12,13 +12,14 @@ import android.widget.Button;
 import android.widget.Toast;
 
 /**
- * This is the activity that has different areas user may want to go to, after the user logins
+ * Hub-Style Activity that directs to all the other activites
  */
 public class StartingPageActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private Button QRButton, ProfileButton, CommunityButton;
     private Button top, mid, bottom;
     private CameraActivitiesController cameraActivitiesController;
+    MemoryController mc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +59,15 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
         }
     }
 
+    /**
+     * Set the buttons & their listeners to show the QRCode layout
+     */
     private void setQRlayout() {
         top.setText("Manage Codes");
         top.setOnClickListener(view -> {
+            mc = new MemoryController(this);
             Intent i = new Intent(this, ManageCodesActivity.class);
+            i.putExtra("profile", mc.read());
             startActivity(i);
         });
 
@@ -77,11 +83,14 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
         });
     }
 
+    /**
+     * Set the buttons & their listeners to show the Profile layout
+     */
     private void setProfileLayout() {
-        top.setText("My Profile");
+        top.setText("My Profile Info");
         top.setOnClickListener(view -> {
 
-            MemoryController mc = new MemoryController(this);
+            mc = new MemoryController(this);
             Profile p = mc.read();
 
             Intent i = new Intent(this, ProfileViewerActivity.class);
@@ -91,7 +100,12 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
 
         mid.setText("My Stats");
         mid.setOnClickListener(view -> {
+
+            MemoryController mc = new MemoryController(this);
+            Profile p = mc.read();
+
             Intent i = new Intent(this, MyStatsActivity.class);
+            i.putExtra("profile", p);
             startActivity(i);
         });
 
@@ -102,6 +116,9 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
         });
     }
 
+    /**
+     * Set the buttons & their listeners to show the Community layout
+     */
     private void setCommunityLayout() {
         top.setText("Search Other Users");
         top.setOnClickListener(view -> {

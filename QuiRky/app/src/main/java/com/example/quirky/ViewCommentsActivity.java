@@ -1,46 +1,26 @@
 
-
 package com.example.quirky;
 
-
-import android.content.Context;
 import android.content.Intent;
 
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.security.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Comment Activity page which allows users to scroll through comments of a
- * Specific QR code and also add commments.
+ * Specific QR code and also add comments.
  *
  * @author Raymart Bless C. Datuin
+ * @author Jonathen Adsit
  * */
 public class ViewCommentsActivity extends AppCompatActivity {
     private Button Save;
@@ -50,107 +30,68 @@ public class ViewCommentsActivity extends AppCompatActivity {
     ArrayList<Comment> commentDataList;
     CommentList commentAdapter;
     DatabaseController DM;
-    Context ct;
+    String qrCodeId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_comment);
-        ImageView QRCodeImage;
-        QRCodeImage = findViewById(R.id.QRCodeImmage_Comment);
-//      QRCodeImage.setImageResource(0); // This is going to have to be something in order to view Image.
+
+        ImageView QRCodeImage = findViewById(R.id.QRCodeImmage_Comment);
+        QRCodeImage.setImageResource(R.drawable.temp); // This is going to have to be something in order to view Image.
 
         Intent intent = getIntent();
+        qrCodeId = intent.getStringExtra("qrId");
 
-        ct = getApplicationContext();
-        DM = new DatabaseController(ct);
+        DM = new DatabaseController(this);
 
-        // Has to be getting it from Fragment
-      
-        String qrCodeId = intent.getStringExtra("qrCodeId"); // Needs to be changed
-        System.out.println(qrCodeId);
+        DM.readComments(qrCodeId).addOnCompleteListener(task -> {
+            commentDataList = DM.getComments(task);
+            readDone();
+        });
+    }
 
-        commentDataList = new ArrayList<>();
-
-
-        // Reading Comments from the data doesn't really work well rn.
-        // But the intention is that it will return an array of comments.
-        String message = "";
-        commentDataList = readComments(message);
-
+    /**
+     * Called when done reading the QRCode's comments from the database. Finishes setting up the list of comments
+     */
+    private void readDone() {
         commentAdapter = new CommentList(this, commentDataList);
-        commentList = (RecyclerView) findViewById(R.id.recycleListView_user_comment);
+        commentList =  findViewById(R.id.recycleListView_user_comment);
         commentList.setAdapter(commentAdapter);
         commentList.setLayoutManager(new LinearLayoutManager(this));
 
-        Save = (Button) findViewById(R.id.button_save);
-        Cancel = (Button) findViewById(R.id.button_cancel);
+        Save = findViewById(R.id.button_save);
+        Cancel = findViewById(R.id.button_cancel);
 
         Save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                save(message);
+                save();
             }
         });
 
         Cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cancel();
+                finish();
             }
         });
     }
 
-    // Mock readcomments List until Jonathen has finished the readComments implementation
-    // on the DatabaseManager
-    public ArrayList<Comment> readComments(String mockID) {
-        String[] sampleComments = {"cool", "nice", "rad"};
-        String[] sampleNames = {"Akhmetov", "GoldenBear", "Panda"};
-
-        for (int i = 0; i < sampleComments.length; i++) {
-
-            Comment sampleComment1 = new Comment(sampleComments[i], sampleNames[i], new Date());
-            commentDataList.add(sampleComment1);
-        }
-        return commentDataList;
-    }
-
     /**
-     * When clicked the comment, uname and time will be saved to the database
-     * under a document field of a specific QR Code
-     * @param qrCodeID - The specific QRCode Id so the comment can be stored
-     *                 in the specific document for the QRCode in the database
+     * Save a written comment to the QRCode
      */
-    public void save(String qrCodeID) {
-        String uName; // Should be retrieved from profile. How would I retrieve the User Name?
-        // MemoryManager will return the userName but not rn. It will get fixed in the future.
-        uName = "John Doe"; // Default Variable for now
+    public void save() {
+        MemoryController mc = new MemoryController(this);
+        String uName = mc.readUser();
 
         EditText editTextComment = (EditText) findViewById(R.id.editText_comment);
         String content = editTextComment.getText().toString();
-        Comment comment = new Comment(content, uName, new Date());
-        DM.addComment(comment, qrCodeID);
+
+        Comment comment = new Comment(content, uName);
+        DM.addComment(comment, qrCodeId);
+
+        commentDataList.add(comment);
         commentAdapter.notifyDataSetChanged();
-        finish(); // Prolly don't have to finish right away
-    }
-
-
-    /**
-     * This would return the String version of the passed time.
-     * @param time - given time
-     * @return String version of the date in the format "dd-MM-yyyy"
-     */
-    private String timestampToString(long time) {
-        Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
-        calendar.setTimeInMillis(time);
-        String date = DateFormat.format("dd-MM-yyyy", calendar).toString();
-        return date;
-    }
-
-    /**
-     * Goes back to previous Activity
-     */
-    public void cancel() {
-        finish();
     }
 }

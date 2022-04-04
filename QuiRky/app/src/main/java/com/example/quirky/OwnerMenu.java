@@ -12,6 +12,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
+/**
+ * Menu Activity that allows owners to navigate to the two other owner activities
+ */
 public class OwnerMenu extends AppCompatActivity {
     private Button ownerDeleteQR;
     private Button ownerDeletePL;

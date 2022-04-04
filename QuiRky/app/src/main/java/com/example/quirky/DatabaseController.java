@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import static java.lang.Math.toIntExact;
+
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -11,6 +13,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
@@ -18,6 +21,7 @@ import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -104,13 +108,8 @@ public class DatabaseController {
      * Write a QRCode to the database. Will also add the QRCode to the account of the app-holder
      * @param qr The QRCode to be written
      */
-    public void writeQRCode(QRCode qr) {
+    public void writeQRCode(QRCode qr, String user) {
         assert(qr != null) : "You can't write a null object to the database!";
-
-        // Get the user from memory
-        MemoryController mc = new MemoryController(this.ct);
-        Profile p = mc.read();
-        String user = mc.readUser();
 
         // A batch write: a group of write operations to be done at once.
         // Batches are not written immediately. Can add many operations to a batch, then commit all writes at once.
@@ -128,20 +127,21 @@ public class DatabaseController {
 
         // Add the comments to the batch. Skip any null comments.
         collection = doc.collection("comments");
+        batch.set(collection.document("sample"), data);
         for(Comment c : qr.getComments()) {
             if(c==null) continue;
             batch.set(collection.document(c.getId()), c);
         }
 
-        // Update the player's profile to include this QRCode as one they have scanned.
-        p.addScanned(qr.getId());
-        ArrayList<String> scanned = p.getScanned();
-        mc.write(p);
+        // Create an entry for the user in the QRCode's userdata folder.
+        // Values are set to null, a separate method will set the location and photo to actual values.
+        collection = doc.collection("userdata");
 
-        collection = db.collection("users");
-        doc = collection.document(user);
-        batch.update(doc, "scanned", scanned);
+        data.clear();
+        data.put("location", null);
+        data.put("photo", null);
 
+        batch.set(collection.document(user), data);
 
         // Issue the batch write
         batch.commit().addOnCompleteListener(writeListener);
@@ -178,9 +178,9 @@ public class DatabaseController {
      * TODO: Implement a method to remove a QRCode from a players profile
      * @param qr The QRCode to delete
      */
-    public void deleteQRCode(QRCode qr) {
-        collection = db.collection("QRCodes");
-        collection.document(qr.getId()).delete().addOnCompleteListener(deleteListener);
+    public void deleteQRCode(String qr) {
+        collection = db.collection("QRcodes");
+        collection.document(qr).delete().addOnCompleteListener(deleteListener);
     }
 
     /**
@@ -224,6 +224,19 @@ public class DatabaseController {
             return null;
         }
         return doc.toObject(Profile.class);
+    }
+
+    /**
+     * Determine if the user passed to readProfile() is an owner user.
+     * @param task The task returned by readProfile(). Calling with any other task will result in errors.
+     * @return If the read user is an owner or not.
+     */
+    public boolean isOwner(Task<DocumentSnapshot> task) {
+        DocumentSnapshot doc = task.getResult();
+        if(doc.contains("owner"))
+            return doc.getBoolean("owner");
+        else
+            return false;
     }
 
     /**
@@ -281,12 +294,21 @@ public class DatabaseController {
     /**
      * Get the results of the readQRCode(); This method should only be called once the Task returned from it has completed.
      * @param task The task returned from readQRCode(). Calling with any other task will result in errors.
-     * @return The QRCode with the ID that was passed to readQRCode(). Returns null if such a QRCode does not exist in the database
+     * @return The QRCode with the ID that was passed to readQRCode(). Returns null if such a QRCode does not exist in the database, or if the score of the QRCode breaks the integer limit.jfdkla;
      */
+    // Conversion from Long -> int taken from
+    // https://stackoverflow.com/a/32869210
+    // Posted by:
+    // https://stackoverflow.com/users/1162647/pierre-antoine
+    // Sept. 30, 2015
     public QRCode getQRCode(Task<DocumentSnapshot> task) {
         DocumentSnapshot doc = task.getResult();
         try {
-            return new QRCode(doc.getId(), (int) doc.get("score"));
+            long score = doc.getLong("score");
+            return new QRCode(doc.getId(), toIntExact(score));
+        } catch (ArithmeticException e) {
+            Log.d(TAG, "Somehow a QRCode score broke the integer limit LMAOOOOO");
+            return null;
         } catch (NullPointerException e) {
             Log.d(TAG, "getQRCode returned a Null object");
             return null;
@@ -309,8 +331,14 @@ public class DatabaseController {
      */
     public ArrayList<QRCode> getAllQRCodes(Task<QuerySnapshot> task) {
         QuerySnapshot result = task.getResult();
-        return (ArrayList<QRCode>) result.toObjects(QRCode.class);
+        ArrayList<QRCode> codes = new ArrayList<>();
+        for(DocumentSnapshot doc : result.getDocuments()) {
+            String id = doc.getId();
+            int score = toIntExact(doc.getLong("score"));
+            codes.add(new QRCode(id, score));
+        }
 
+        return codes;
     }
 
     /* - - The Methods in this block are related to each other - - */
@@ -355,7 +383,6 @@ public class DatabaseController {
         for(DocumentSnapshot doc : query.getDocuments()) {
             if(doc == null) continue;
             photos.add((Drawable) doc.get("photo"));        // FIXME: this will 1000% crash, need to think about how store Drawables to FireStore
-
         }
         return photos;
     }
@@ -366,13 +393,15 @@ public class DatabaseController {
      * @return A list of strings, the usernames of players who scanned the code.
      */
     public ArrayList<String> getQRCodeScanners(Task<QuerySnapshot> task) {
+
         QuerySnapshot query = task.getResult();
-        ArrayList<String> scanners = new ArrayList<>();
-        for(DocumentSnapshot doc : query.getDocuments()) {
-            if(doc == null) continue;
-            scanners.add(doc.getId());
-        }
-        return scanners;
+        ArrayList<Profile> scanners = (ArrayList<Profile>) query.toObjects(Profile.class);
+        Log.d(TAG, "getQRCodeScanners read " + query.size() + " players");
+
+        ArrayList<String> usernames = new ArrayList<>();
+        for(Profile p : scanners)
+            usernames.add(p.getUname());
+        return usernames;
     }
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
@@ -399,6 +428,7 @@ public class DatabaseController {
 
     /**
      * Get the account with the hash passed to by readLoginHash().
+     * This will also delete the data field that holds the login password from the database. This makes login QRCodes one use only.
      * @param task The task returned by readLoginHash(). Calling with any other task will result in errors.
      * @return The account with the hash password passed to readLoginHash(). If no account has such password, return null.
      */
@@ -414,7 +444,12 @@ public class DatabaseController {
             return null;
         }
 
-        return results.toObjects(Profile.class).get(0);
+        Profile p = results.toObjects(Profile.class).get(0);
+
+        collection = db.collection("users");
+        collection.document(p.getUname()).update("loginhash", 0).addOnCompleteListener(deleteListener);
+
+        return p;
     }
 
     /**
@@ -435,17 +470,39 @@ public class DatabaseController {
     public boolean checkProfileExists(Task<DocumentSnapshot> task) {
         return task.getResult().getData() == null;
     }
-    public ArrayList<GeoPoint> fakeGetLocations(){
+    public ArrayList<GeoPoint> fakeGetLocations() {
         //Task<QuerySnapshot> task = readQRCodeUserData(QRCode.);
         //ArrayList<GeoPoint> geoPoints = getQRCodeLocations();
         ArrayList<GeoPoint> geoPoints = new ArrayList<>();
-        GeoPoint geoPoint = new GeoPoint(34.25,46.23);
+        GeoPoint geoPoint = new GeoPoint(34.25, 46.23);
         geoPoints.add(geoPoint);
-        GeoPoint geoPoint2 = new GeoPoint(35.25,47.23);
+        GeoPoint geoPoint2 = new GeoPoint(35.25, 47.23);
         geoPoints.add(geoPoint2);
-        GeoPoint geoPoint3 = new GeoPoint(36.22,46.58);
+        GeoPoint geoPoint3 = new GeoPoint(36.22, 46.58);
         geoPoints.add(geoPoint3);
         return geoPoints;
+    }
 
+
+
+    /**
+     * Begin reading the comments of a QRCode.
+     * Because this is an asynchronous operation, the results are not returned here.
+     * @param qrId The ID of the QRCode to read from
+     * @return A task representing the read operation. Pass this to getComments() to complete the read
+     */
+    public Task<QuerySnapshot> readComments(String qrId) {
+        collection = db.collection("QRcodes").document(qrId).collection("comments");
+        return collection.get();
+    }
+
+    /**
+     * Finish reading the comments of a QRCode.
+     * @param task The task returned by readComments(). Calling with any other task will result in errors
+     * @return The comments on the QRCode, in an ArrayList
+     */
+    public ArrayList<Comment> getComments(Task<QuerySnapshot> task) {
+        QuerySnapshot q = task.getResult();
+        return (ArrayList<Comment>) q.toObjects(Comment.class);
     }
 }

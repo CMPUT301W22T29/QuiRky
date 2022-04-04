@@ -74,10 +74,6 @@
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />
         <activity
-            android:name=".SettingsActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity" />
-        <activity
             android:name=".StartingPageActivity"
             android:exported="false" />
         <activity
@@ -89,10 +85,6 @@
             android:parentActivityName=".StartingPageActivity" />
         <activity
             android:name=".EditProfileActivity"
-            android:exported="false"
-            android:parentActivityName=".StartingPageActivity" />
-        <activity
-            android:name=".MyQRCode"
             android:exported="false"
             android:parentActivityName=".StartingPageActivity" />
         <activity

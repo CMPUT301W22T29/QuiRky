@@ -25,7 +25,7 @@ public class MemoryTest {
     // This test checks that MC.readUser() and MC.writeUser() function properly.
     // This is a Happy Path test.
     @Test
-    public void nameReadWrite() {
+    public void UsernameReadWriteTest() {
         // Test capital and non-capital letters
         String username = "PlaYer";
         String result;
@@ -53,7 +53,7 @@ public class MemoryTest {
     // Continue to test readUser() and writeUser() methods
     // This test is for edge cases, not the Happy path
     @Test
-    public void nameReadWriteContinued() {
+    public void NameReadWriteEdgeCases() {
         // Case: empty string
         String username = "";
         mc.writeUser(username);

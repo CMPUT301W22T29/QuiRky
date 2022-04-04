@@ -15,10 +15,6 @@
 
 package com.example.quirky;
 
-import org.osmdroid.util.GeoPoint;
-
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -28,10 +24,6 @@ import java.util.ArrayList;
  * @author Jonathen Adsit
  * This model class represents a QR Code. It holds the <code>QRCode</code>'s content, hash, score, location, and comments
  *
- * Known Issues:
- *      - QR Codes contain the content of the code as a raw unencrypted string, which is probably
- *        bad for security and privacy, and contradicts US 08.0X.01. (v0.1.1)
- *      - Each new <code>QRCode</code> instance instantiates a <code>QRCodeController</code> instance. bad. (v0.2.0)
  */
 public class QRCode implements Parcelable {
     private String id; // id is hash of content.
@@ -66,7 +58,7 @@ public class QRCode implements Parcelable {
     }
 
     /**
-     * Initialize a QRCode with an assigned ID. To be used when reading from Firestore? A
+     * Initialize a QRCode with an assigned ID. To be used when reading from Firestore
      * @param id The ID of the QRCode
      */
     public QRCode(String id, int score) {
@@ -75,6 +67,12 @@ public class QRCode implements Parcelable {
         this.comments = new ArrayList<>();
     }
 
+    /**
+     * Initialize a QRCode with an assigned ID and comments section. To be used when reading from firestore
+     * @param id The id of the QRCode
+     * @param score The score of the QRCode
+     * @param comments The comments of the QRCode
+     */
     public QRCode(String id, int score, ArrayList<Comment> comments) {
         this.id = id;
         this.score = score;
