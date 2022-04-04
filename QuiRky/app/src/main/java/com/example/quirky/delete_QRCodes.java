@@ -28,7 +28,8 @@ public class delete_QRCodes extends AppCompatActivity {
     private Button no;
     private DatabaseController dc;
 
-    private ArrayList<String> QRIDs;
+    private ArrayList<String> scores;
+    private ArrayList<QRCode> codes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class delete_QRCodes extends AppCompatActivity {
         setContentView(R.layout.activity_delete_qrcodes);
 
         dc = new DatabaseController(this);
-        QRIDs = new ArrayList<>();
+        scores = new ArrayList<>();
 
         qrList = findViewById(R.id.qrCodes);
         confirmBox = findViewById(R.id.linearLayout);
@@ -48,34 +49,35 @@ public class delete_QRCodes extends AppCompatActivity {
             public void OnClickListItem(int position) {
                 confirmBox.setVisibility(View.VISIBLE);
 
-                yes.setOnClickListener(view -> {
-                    dc.deleteQRCode(QRIDs.get(position));
-                    QRIDs.remove(position);
-                    confirmBox.setVisibility(View.INVISIBLE);
-                    adapter.notifyDataSetChanged();
-                });
+                yes.setOnClickListener(view -> delete(position) );
 
                 no.setOnClickListener(view -> confirmBox.setVisibility(View.INVISIBLE));
             }
         };
 
         dc.readAllQRCodes().addOnCompleteListener(task -> {
-            ArrayList<QRCode> qrCodes = dc.getAllQRCodes(task);
-            doneReading(qrCodes);
+            codes = dc.getAllQRCodes(task);
+            doneReading();
         });
-
-
     }
 
-    private void doneReading(ArrayList<QRCode> qrCodes) {
-        for(int i = 0; i < qrCodes.size(); i ++){
-            QRIDs.add(String.valueOf(qrCodes.get(i).getScore()));
+    private void doneReading() {
+        for(int i = 0; i < codes.size(); i ++){
+            scores.add(String.valueOf(codes.get(i).getScore()));
         }
-        adapter = new QRAdapter(QRIDs, new ArrayList<>(), this, listener);
+        adapter = new QRAdapter(scores, new ArrayList<>(), this, listener);
 
         qrList.setAdapter(adapter);
 
         qrList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+    }
+
+    private void delete(int position) {
+        String id = codes.get(position).getId();
+        dc.deleteQRCode(id);
+        scores.remove(position);
+        confirmBox.setVisibility(View.INVISIBLE);
+        adapter.notifyDataSetChanged();
     }
 }
 

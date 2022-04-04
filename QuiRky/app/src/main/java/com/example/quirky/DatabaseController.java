@@ -179,7 +179,7 @@ public class DatabaseController {
      * @param qr The QRCode to delete
      */
     public void deleteQRCode(String qr) {
-        collection = db.collection("QRCodes");
+        collection = db.collection("QRcodes");
         collection.document(qr).delete().addOnCompleteListener(deleteListener);
     }
 
@@ -331,8 +331,14 @@ public class DatabaseController {
      */
     public ArrayList<QRCode> getAllQRCodes(Task<QuerySnapshot> task) {
         QuerySnapshot result = task.getResult();
-        return (ArrayList<QRCode>) result.toObjects(QRCode.class);
+        ArrayList<QRCode> codes = new ArrayList<>();
+        for(DocumentSnapshot doc : result.getDocuments()) {
+            String id = doc.getId();
+            int score = toIntExact(doc.getLong("score"));
+            codes.add(new QRCode(id, score));
+        }
 
+        return codes;
     }
 
     /* - - The Methods in this block are related to each other - - */
