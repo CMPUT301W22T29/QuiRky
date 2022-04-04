@@ -24,6 +24,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.Image;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.camera.core.CameraSelector;
@@ -35,10 +36,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.google.android.gms.tasks.Task;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
+import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -166,7 +173,7 @@ public class CameraController {
      * @see QRCodeController
      */
     @androidx.camera.core.ExperimentalGetImage
-    public void captureQRCodes(Context context, CodeList<QRCode> codes) {
+    public void captureQRCodes(Context context, ListeningList<QRCode> codes) {
         // TODO: edit javadoc
         imageCapture.takePicture(ContextCompat.getMainExecutor(context),
                 new ImageCapture.OnImageCapturedCallback() {
@@ -176,9 +183,39 @@ public class CameraController {
                         if (mediaImage != null) {
                             InputImage inputImage = InputImage.fromMediaImage(
                                              mediaImage, image.getImageInfo().getRotationDegrees());
-                            QRCodeController.scanQRCodes(inputImage, codes, context);
+                            CameraController.scanQRCodes(inputImage, codes, context);
                         }
                         image.close();
+                    }
+                });
+    }
+
+    private static final BarcodeScanner codeScanner = BarcodeScanning.getClient(
+            new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build());
+
+    /**
+     * Analyzes an image for qr codes, and constructs <code>QRCode</code>s from their data.
+     *
+     * @param inputImage
+     *      - The image to analyze.
+     * @param codes
+     *      - The list in which the <code>QRCode</code>s will be stored once they are constructed.
+     * @param context
+     *      - The activity that the user is interacting with to capture QR code images.
+     * @see CameraController
+     */
+    public static void scanQRCodes(InputImage inputImage, ListeningList<QRCode> codes, Context context) {
+        // TODO: edit javadoc
+        Task<List<Barcode>> result = codeScanner.process(inputImage)
+                .addOnSuccessListener(barcodes -> {
+                    // Construct a QRCode with the scanned raw data
+                    for (Barcode barcode: barcodes) {
+                        codes.add(new QRCode(barcode.getRawValue()));
+                    }
+                    if (codes.size() == 0) {
+                        String text
+                                = "Could not find any QR codes. Move closer or further and try scanning again.";
+                        Toast.makeText(context, text, Toast.LENGTH_LONG).show();
                     }
                 });
     }

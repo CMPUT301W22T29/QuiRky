@@ -1,57 +1,60 @@
 package com.example.quirky;
 
-import java.util.Date;
-
 /**
  * This is the comment that will be stored to a Database. The Comment will have
- * the content of the comment, the user name, and the time it was made.
+ * the content of the comment, and the user who wrote it
  *
  * @author Raymart Bless C. Datuin
  *
  */
-public class Comment implements Comparable<Comment>{
+public class Comment {
 
     private String content, uname, id;
-    private Date timestamp;
 
     /**
      * Empty constructor because Firestore tutorial told me to...
      */
     public Comment() {}
 
-    public Comment(String content, String uname, Date timestamp) {
+    /**
+     * Constructor to initialise content and author
+     * @param content The contents of the comment
+     * @param uname The user who wrote it
+     */
+    public Comment(String content, String uname) {
         this.content = content;
         this.uname = uname;
-        this.timestamp = timestamp;
-        this.id = QRCodeController.SHA256(content); // FIXME: Comment should definitely not make a method call to QRCodeController... Make a comment controller i guess..
+        this.id = QRCodeController.SHA256(content);
     }
 
     /**
-     * This is used for sorting the Comments by time. So that in an Array
-     * They will be sorted by time basis, so Oldest first then youngest.
-     * @param compareComment
-     * @return 0 if same date. >0 if after the date. <0 if before the date.
+     * Getter for content
+     * @return The content of the QRCode
      */
-    public int compareTo(Comment compareComment) {
-        return this.timestamp.compareTo(compareComment.getTimestamp());
-    }
-
     public String getContent() {
         return content;
     }
 
+    /**
+     * Getter for author
+     * @return The username of the player who wrote it
+     */
     public String getUname() {
         return uname;
     }
 
+    /**
+     * Setter for content
+     * @param content The new content
+     */
     public void setContent(String content) {
         this.content = content;
     }
 
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
+    /**
+     * Getter for ID
+     * @return The SHA256 hash of the content, for Firebase storage purposes.
+     */
     public String getId() {
         return this.id;
     }

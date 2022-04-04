@@ -8,6 +8,7 @@ package com.example.quirky;
 
 import android.util.Log;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 /**
@@ -24,7 +25,6 @@ public class ProfileController {
      */
     public static int calculateTotalScanned(Profile p) {
         ArrayList<String> codes = p.getScanned();
-        Log.d(TAG, "Profile " + p.getUname() + " has " + codes.size() + " QRCodes");
         return codes.size();
     }
 
@@ -37,10 +37,8 @@ public class ProfileController {
         ArrayList<String> codes = p.getScanned();
         int sum = 0;
 
-        Log.d(TAG, "Calculating profile " + p.getUname() + "'s sum of points\n\t");
         for(String id : codes) {
             sum += QRCodeController.score(id);
-            Log.d(TAG, "Sum is now " + sum + "\n\t");
         }
         return sum;
     }
@@ -54,13 +52,34 @@ public class ProfileController {
         ArrayList<String> codes = p.getScanned();
         int largest = 0;
 
-        Log.d(TAG, "Calculating profile " + p.getUname() + "'s Largest Code\n\t");
         for(String id : codes) {
             if(QRCodeController.score(id) > largest) {
                 largest = QRCodeController.score(id);
-                Log.d(TAG, p.getUname() + "'s largest is now " + largest + "\n\t");
             }
         }
         return largest;
+    }
+
+    /**
+     * Checks that the given username is alpha-numeric
+     * @param username The username to check
+     * @return If the username is valid
+     */
+    public static boolean validUsername(String username) {
+        byte[] bytes = username.getBytes(StandardCharsets.UTF_8);
+
+        // See UTF-8 Character chart
+        for(byte b : bytes) {
+            if(b < 0x30)    // Bytes < 30 are not alphanumeric. Bytes >= 30 are the digits
+                return false;
+            if(b > 0x39 && b < 0x41)    // Bytes between 0x39 and 0x41 are not alphanumeric
+                return false;           // Bytes starting at 0x41 are upper case letters
+            if(b > 0x5a && b < 0x61)    // Bytes between 0x5a and 0x61 are not alphanumeric
+                return false;           // Bytes starting at 0x61 are lower case letters
+            if(b > 0x7a)                // Everything after 0x7a is also not alphanumeric
+                return false;
+        }
+
+        return true;
     }
 }

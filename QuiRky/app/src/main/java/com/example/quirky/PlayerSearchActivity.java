@@ -24,6 +24,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
+/**
+ * Activity to let the user search for other players by username
+ */
 public class PlayerSearchActivity extends AppCompatActivity {
 
     private final String TAG = "PlayerSearchActivity says";
@@ -78,6 +81,10 @@ public class PlayerSearchActivity extends AppCompatActivity {
         button.setOnClickListener(view -> { QueryDatabase(); });
     }
 
+    /**
+     * Called when the user clicks the search icon
+     * Begin searching the database for usernames similar to the inputted username.
+     */
     public void QueryDatabase() {
         circle.setVisibility(View.VISIBLE);
         usernames.clear();
@@ -106,6 +113,10 @@ public class PlayerSearchActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Starts up the ProfileViewerActivity with a given profile
+     * @param p The profile to be viewed
+     */
     private void startViewProfileActivity(Profile p) {
         Intent i = new Intent(this, ProfileViewerActivity.class);
         i.putExtra("profile", p);

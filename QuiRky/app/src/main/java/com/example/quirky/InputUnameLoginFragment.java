@@ -13,15 +13,29 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+/**
+ * @author Jonathen Adsit
+ * Fragment that is attached to MainActivity, which is the Login Activity.
+ * Prompts the user for a username, and provides an option to login through QRCode scanning instead.
+ * Does no work on it's own, instead communicates it's input to the calling activity
+ * @see CodeScannerActivity
+ */
 public class InputUnameLoginFragment extends DialogFragment {
     private EditText input;
     private LoginFragListener listener;
 
+    /**
+     * The interface used to communicate with the calling activity
+     */
     public interface LoginFragListener {
         void OnClickConfirm(String uname);
         void LoginByQR();
     }
 
+    /**
+     * Checks that the calling activity implements the listener correctly
+     * @param ct The calling activity typecast to Context
+     */
     @Override
     public void onAttach(Context ct) {
         super.onAttach(ct);

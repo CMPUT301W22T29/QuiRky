@@ -10,23 +10,30 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
+/**
+ * Activity to show the global leaderboards. Players can see the population ranked by three statistics
+ * Total Points the players have acquired, Most QRCodes Scanned, and Largest Single QRCode Scanned
+ * @See LeaderBoardController
+ */
 public class LeaderBoardActivity extends AppCompatActivity {
 
     private Button sortPoints, sortScanned, sortGreatest, myRank, topRanks;
     private RecyclerView list;
     private QRAdapter adapter;
+    private RecyclerClickerListener listener;
 
     private Profile user;
+    private ArrayList<String> data; // For use with the adapter
     private ArrayList<Profile> players;
-    private ArrayList<String> data = new ArrayList<>(); // For use with the adapter
     private LeaderBoardController lbc;
-
-    private Boolean showTopPlayers;
+    private int position;
 
 
     @Override
@@ -34,80 +41,117 @@ public class LeaderBoardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leader_board);
 
+        // Read the user from memory
         MemoryController mc = new MemoryController(this);
         user = mc.read();
 
-        list = findViewById(R.id.leaderboard_list);
+        data = new ArrayList<>();
 
+        // Initialise views
+        list = findViewById(R.id.leaderboard_list);
+        // Buttons
         sortPoints = findViewById(R.id.sort_points_button);
         sortScanned = findViewById(R.id.sort_scanned_button);
         sortGreatest = findViewById(R.id.sort_largest_button);
-
         myRank = findViewById(R.id.my_ranking_button);
         topRanks = findViewById(R.id.top_rankings_button);
 
-        sortPoints.setOnClickListener(view -> sortByPoints());
-        sortScanned.setOnClickListener(view -> sortByScanned());
-        sortGreatest.setOnClickListener(view -> sortByGreatestScanned());
+        // Read the player population
+        DatabaseController dc = new DatabaseController(this);
+        dc.readAllProfiles().addOnCompleteListener(task -> {
+            ArrayList<Profile> result = dc.getAllProfiles(task);
+            doneReading(result);
+        });
+    }
 
-        myRank.setOnClickListener(view -> showTopPlayers = false);
-        topRanks.setOnClickListener(view -> showTopPlayers = true);
+    /**
+     * Called once the DatabaseController is finished reading all the users from FireStore.
+     * Finishes setting up the Recycler & Adapter, and sets on click listeners for the buttons
+     * @param players The population of players in the database
+     */
+    private void doneReading(ArrayList<Profile> players) {
 
-        adapter = new QRAdapter(data, new ArrayList<>(), this);
+        lbc = new LeaderBoardController(players);
+        sortByPoints();
+
+        listener = new RecyclerClickerListener() {
+            @Override
+            public void OnClickListItem(int position) {
+                Profile p = players.get(position);
+                startViewProfile(p);
+            }
+        };
+
+        adapter = new QRAdapter(data, new ArrayList<>(), this, listener);
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
-        showTopPlayers = true;
-        lbc = new LeaderBoardController(this);
-        lbc.readAllPlayers().addOnCompleteListener(task -> sortByPoints());
+
+        sortPoints.setOnClickListener(view -> {
+            sortByPoints();
+            adapter.notifyDataSetChanged();
+        });
+        sortScanned.setOnClickListener(view -> {
+            sortByScanned();
+            adapter.notifyDataSetChanged();
+        });
+        sortGreatest.setOnClickListener(view -> {
+            sortByGreatestScanned();
+            adapter.notifyDataSetChanged();
+        });
+
+        myRank.setOnClickListener(view -> list.scrollToPosition(position));
+        topRanks.setOnClickListener(view -> list.scrollToPosition(0));
     }
 
+    /**
+     * Start viewing a profile clicked on in the rankings list
+     * @param p The profile to begin viewing
+     */
+    private void startViewProfile(Profile p) {
+        Intent i = new Intent(this, ProfileViewerActivity.class);
+        i.putExtra("profile", p);
+        startActivity(i);
+    }
+
+    /**
+     * Sort the leaderboard by total points acquired
+     */
     private void sortByPoints() {
         players = lbc.getRankingPoints();
         updateDisplay();
     }
 
+    /**
+     * Sort the leaderboard by total qrcodes scanned
+     */
     private void sortByScanned() {
         players = lbc.getRankingNumScanned();
         updateDisplay();
     }
 
+    /**
+     * Sort the leaderboard by greatest single QRCode scanned
+     */
     private void sortByGreatestScanned() {
         players = lbc.getRankingLargestScanned();
         updateDisplay();
     }
 
+    /**
+     * Tell the adapter to update the display, and find the user's new position in the rankings
+     */
     private void updateDisplay() {
         data.clear();
-
-
-        if(players.size() <= 10) {
-            for(Profile p : players) {
-                if(p == null) continue;
-                data.add(p.getUname());
-            }
-            adapter.notifyDataSetChanged();
-            return;
+        for(int i = 0; i < players.size(); i++) {
+            String x = i + " | " + players.get(i).getUname();
+            data.add(x);
         }
 
-        if(showTopPlayers) {
-            // Show the Top 10 players on the leaderboard
-            for(int i = 0; i < 10; i++) {
-                data.add( players.get(i).getUname() );
-            }
-        } else {
-            // Show the 10 surrounding players around the app-holders position
-            int position = lbc.findPlayer(user);
-
-            if(position == -1) {
-                data.add("You are not yet ranked on the leaderboard!");
-            } else {
-                for (int i = position - 5; i < position + 5; i++) {
-                    data.add(players.get(i).getUname());
-                }
-            }
+        position = lbc.findRankLargest(user);
+        if(position == -1) {
+            Toast.makeText(this, "You are not in the Leaderboard!", Toast.LENGTH_SHORT).show();
+            position = 0;
         }
-
-        adapter.notifyDataSetChanged();
     }
 }

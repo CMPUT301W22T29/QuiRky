@@ -13,14 +13,14 @@
     tools:context=".ManageCodesActivity"
     android:orientation="vertical">
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/manage_codes_title"
         android:layout_width="match_parent"
         android:layout_marginTop="20dp"
         android:layout_height="100dp"
         android:textSize="50dp"
         android:text="Your QR Codes"
         android:textAlignment="center"
-        app:layout_anchor="@+id/textView2"
+        app:layout_anchor="@+id/manage_codes_title"
         app:layout_anchorGravity="bottom|center" />
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,13 +34,14 @@
         android:text="sort by score: "
         android:textSize="20dp"/>
 
-    <ToggleButton
-        android:id="@+id/toggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginLeft="20dp"
-        android:textOff="high to low"
-        android:textOn="low to high"/>
+        <ToggleButton
+            android:id="@+id/toggleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:textOff="high to low"
+            android:textOn="low to high"
+            tools:ignore="TouchTargetSizeCheck" />
 
     </LinearLayout>
 

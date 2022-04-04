@@ -12,6 +12,10 @@ package com.example.quirky;
 // https://www.tutorialspoint.com/get-clicked-item-and-its-position-in-recyclerview
 // Made by:
 // https://www.tutorialspoint.com/answers/Nitya-Raut
+
+/**
+ * Interface to allow communication between a recycler and the activity it is in
+ */
 public interface RecyclerClickerListener {
     void OnClickListItem(int position);
 }

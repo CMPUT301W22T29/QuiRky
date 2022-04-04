@@ -3,37 +3,34 @@ package com.example.quirky;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 
 /**
- * This class is of the Activity for when you're clicking on one of the listed items in "Your QR Codes" or
- * "nearby QR code" in "MAP" Activity, as seen on the Project Part 2 Miro.
+ * Activity to view a QRCode. Holds two fragments: one fragment to see the QRCode location, & start up the comments activity
+ * Another fragment to see all other players who have scanned the QRCode
  * */
 public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentListener {
 
+    private final String TAG = "ViewQRActivity says";
     ImageView image;
     TextView scoreText;
     Fragment buttonsFrag, playersFrag;
     Bitmap photo;
+    ProgressBar loading;
 
     DatabaseController dc;
     ArrayList<String> players;
@@ -47,14 +44,28 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_qr);
 
+        loading = findViewById(R.id.view_qr_progress_bar);
         dc = new DatabaseController(this);
 
         i = getIntent();
         qrid = i.getStringExtra("code");
+        if(qrid == null || qrid.equals(""))
+            ExitWithError();
 
-        dc.readQRCode(qrid).addOnCompleteListener(task -> qr = dc.getQRCode(task));
-        dc.readQRCodeUserData(qrid).addOnCompleteListener(task -> players = dc.getQRCodeScanners(task));
+        dc.readQRCode(qrid).addOnCompleteListener(task -> {
+            qr = dc.getQRCode(task);
+            if(qr == null)
+                ExitWithError();
+            else
+                doneReadingQRCode();
+        });
 
+    }
+
+    /**
+     * Called when done reading the QRCode from the database. Finishes setting up the fields.
+     */
+    private void doneReadingQRCode() {
         image = findViewById(R.id.imageView2);
         scoreText = findViewById(R.id.text_showScore);
 
@@ -66,7 +77,11 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         photo = BitmapFactory.decodeResource(getResources(), R.drawable.temp);
         image.setImageBitmap(photo);
 
-        changeFragment(buttonsFrag);
+        dc.readQRCodeUserData(qrid).addOnCompleteListener(task -> {
+            players = dc.getQRCodeScanners(task);
+            changeFragment(buttonsFrag);
+            loading.setVisibility(View.INVISIBLE);
+        });
     }
 
     /**
@@ -81,8 +96,13 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         ft.commit();
     }
 
+    /**
+     * Returns the list of players to the calling fragment
+     * @return All other players who have scanned the same QRCode
+     */
     @Override
     public ArrayList<String> getPlayers() {
+        Log.d(TAG, "players is:\t" + players);
         return players;
     }
 
@@ -92,23 +112,37 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
     @Override
     public void commentsButton() {
         Intent intent = new Intent(this, ViewCommentsActivity.class);
-
-        String message = "Sample QR Code ID"; // This needs to be a specific QR code Id.
-        intent.putExtra("comment", message);
-
+        intent.putExtra("qrId", qrid);
         startActivity(intent);
     }
 
-    @Override
-    public void privateButton() {
-        // Reconsider the Set Private button in this UI. Why does it exists? What does it do?
-        // Perhaps it removes the GeoLocation and Image associated with the displayed QRCode?
-    }
-
+    /**
+     * Deletes the QRCode from the list of codes the user has scanned. Exits the activity.
+     */
     @Override
     public void deleteButton() {
-        // Delete button will remove the QRCode from the list of QRCodes the player has scanned.
-        // It will also remove the GeoLocation and Image from the database
-        // This button should also probably start up another activity, like StartingPageActivity
+        MemoryController mc = new MemoryController(this);
+        Profile p = mc.read();
+
+        if(p.removeScanned(qrid)) {
+            mc.write(p);
+            dc.writeProfile(p);
+
+            Toast.makeText(this, "Removed from your scanned codes!", Toast.LENGTH_SHORT).show();
+
+            Intent i = new Intent(this, StartingPageActivity.class);
+            startActivity(i);
+        } else {
+            Toast.makeText(this, "You did not have that code anyways!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Method called when data is passed to this activity incorrectly, or when there is an issue reading the data from FireStore.
+     * Makes a toast and then finishes the activity.
+     */
+    private void ExitWithError() {
+        Toast.makeText(this, "QRCode was passed incorrectly, or not found in FireStore!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 }

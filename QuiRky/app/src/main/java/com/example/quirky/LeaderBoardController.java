@@ -6,92 +6,134 @@
 
 package com.example.quirky;
 
-import android.content.Context;
-
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 
+/**
+ * @Author Jonathen Adsit
+ * Controller class to sort the player population by the three statistics,
+ * which are Most Total Points, Most Codes Scanned, and Largest Single QRCode Found
+ */
 public class LeaderBoardController {
-    private DatabaseController dc;
-    private ArrayList<Profile> players;
-    private final String ErrorTag = "You must call readAllPlayers() before you can sort the players!";
+    private final String TAG = "LeaderboardController says";
+    private final ArrayList<Profile> players;
 
-    public LeaderBoardController(Context ct) {
-        this.dc = new DatabaseController(ct);
-    }
-
-    // Constructor with Dependency Injection for testing purposes.
+    /**
+     * Constructor to initialise the rankings with the player population
+     * @param players The population of players to sort
+     */
     public LeaderBoardController(ArrayList<Profile> players) {
         this.players = players;
+        sortPlayersByPoints();
     }
 
-    public Task<QuerySnapshot> readAllPlayers() {
-        Task<QuerySnapshot> read = dc.readAllProfiles();
-        read.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                players = dc.getAllProfiles(task);
-            }
-        });
-        return read;
-    }
-
+    /**
+     * Sort the population of players by total points
+     */
     private void sortPlayersByPoints() {
         players.sort(new Comparator<Profile>() {
             @Override
             public int compare(Profile profile, Profile t1) {
-                return ProfileController.calculateTotalPoints(profile)
-                        - ProfileController.calculateTotalPoints(t1);
+                return t1.getPointsOfScannedCodes()
+                        - profile.getPointsOfScannedCodes();
             }
         });
     }
 
+    /**
+     * Sort the population of players by most codes scanned
+     */
     private void sortPlayersByNumScanned() {
         players.sort(new Comparator<Profile>() {
             @Override
             public int compare(Profile profile, Profile t1) {
-                return ProfileController.calculateTotalScanned(profile)
-                        - ProfileController.calculateTotalScanned(t1);
+                return t1.getNumberCodesScanned()
+                        - profile.getNumberCodesScanned();
             }
         });
     }
 
+    /**
+     * Sort the population of players by largest code found
+     */
     private void sortPlayersByLargestScanned() {
         players.sort(new Comparator<Profile>() {
             @Override
             public int compare(Profile profile, Profile t1) {
-                return ProfileController.calculateGreatestScore(profile)
-                        - ProfileController.calculateGreatestScore(t1);
+                return t1.getPointsOfLargestCodes()
+                        - profile.getPointsOfLargestCodes();
             }
         });
     }
 
+    /**
+     * Getter for the population ranked by total points
+     * @return The sorted population
+     */
     public ArrayList<Profile> getRankingPoints() {
-        assert players != null : "Somehow the players have not yet been initialized!";
         sortPlayersByPoints();
         return players;
     }
 
+    /**
+     * Getter for the population ranked by total codes scanned
+     * @return The sorted population
+     */
     public ArrayList<Profile> getRankingNumScanned() {
-        assert players != null : "Somehow the players have not yet been initialized!";
         sortPlayersByNumScanned();
         return players;
     }
 
+    /**
+     * Getter for the population ranked by greatest code scanned
+     * @return The sorted population
+     */
     public ArrayList<Profile> getRankingLargestScanned() {
-        assert players != null : "Somehow the players have not yet been initialized!";
         sortPlayersByLargestScanned();
         return players;
     }
 
-    public int findPlayer(Profile p) {
-        return players.indexOf(p);
+    /**
+     * Find a player's ranking within the Total Points category
+     * @param p The profile to find
+     * @return The player's ranking, or -1, if the player does not exist
+     */
+    public int findRankPoints(Profile p) {
+        sortPlayersByPoints();
+        for (int i = 0; i < players.size(); i++) {
+            if (p.getUname().equals(players.get(i).getUname()))
+                return i;
+        }
+        return -1;
+    }
+
+    /**
+     * Find a player's ranking within the Most Scanned category
+     * @param p The profile to find
+     * @return The player's ranking, or -1, if the player does not exist
+     */
+    public int findRankScanned(Profile p) {
+        sortPlayersByNumScanned();
+        for (int i = 0; i < players.size(); i++) {
+            if(p.getUname().equals(players.get(i).getUname()))
+                return i;
+        }
+
+        return -1;
+    }
+
+    /**
+     * Find a player's ranking within the largest code category
+     * @param p The profile to find
+     * @return The player's ranking, or -1, if the player does not exist
+     */
+    public int findRankLargest(Profile p) {
+        sortPlayersByLargestScanned();
+        for (int i = 0; i < players.size(); i++) {
+            if(p.getUname().equals(players.get(i).getUname()))
+                return i;
+        }
+
+        return -1;
     }
 }
