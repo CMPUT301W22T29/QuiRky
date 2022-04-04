@@ -436,8 +436,8 @@ public class DatabaseController {
         return task.getResult().getData() == null;
     }
     public ArrayList<GeoPoint> fakeGetLocations(){
-        //Task<QuerySnapshot> task = readQRCodeUserData(QRCode.);
-        //ArrayList<GeoPoint> geoPoints = getQRCodeLocations();
+        Task<QuerySnapshot> task = readAllQRCodes();
+        ArrayList<QRCode> qrCodes = getAllQRCodes(task);
         ArrayList<GeoPoint> geoPoints = new ArrayList<>();
         GeoPoint geoPoint = new GeoPoint(34.25,46.23);
         geoPoints.add(geoPoint);
