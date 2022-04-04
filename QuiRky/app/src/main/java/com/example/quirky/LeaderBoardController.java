@@ -16,72 +16,54 @@ import java.util.Comparator;
  */
 public class LeaderBoardController {
     private final String TAG = "LeaderboardController says";
-    private final ArrayList<Profile> HighestPoints;
-    private final ArrayList<Profile> MostScanned;
-    private final ArrayList<Profile> LargestCode;
+    private final ArrayList<Profile> players;
 
     /**
      * Constructor to initialise the rankings with the player population
      * @param players The population of players to sort
      */
     public LeaderBoardController(ArrayList<Profile> players) {
-        this.HighestPoints = sortPlayersByPoints(players);
-        this.MostScanned = sortPlayersByNumScanned(players);
-        this.LargestCode = sortPlayersByLargestScanned(players);
+        this.players = players;
+        sortPlayersByPoints();
     }
 
     /**
      * Sort the population of players by total points
-     * @param players The population of players
-     * @return The sorted population
      */
-    private ArrayList<Profile> sortPlayersByPoints(ArrayList<Profile> players) {
-        Comparator<Profile> sorter = new Comparator<Profile>() {
+    private void sortPlayersByPoints() {
+        players.sort(new Comparator<Profile>() {
             @Override
             public int compare(Profile profile, Profile t1) {
                 return t1.getPointsOfScannedCodes()
                         - profile.getPointsOfScannedCodes();
             }
-        };
-
-        players.sort(sorter);
-        return players;
+        });
     }
 
     /**
      * Sort the population of players by most codes scanned
-     * @param players The population of players
-     * @return The sorted population
      */
-    private ArrayList<Profile> sortPlayersByNumScanned(ArrayList<Profile> players) {
-        Comparator<Profile> sorter = new Comparator<Profile>() {
+    private void sortPlayersByNumScanned() {
+        players.sort(new Comparator<Profile>() {
             @Override
             public int compare(Profile profile, Profile t1) {
                 return t1.getNumberCodesScanned()
                         - profile.getNumberCodesScanned();
             }
-        };
-
-        players.sort(sorter);
-        return players;
+        });
     }
 
     /**
      * Sort the population of players by largest code found
-     * @param players The population of players
-     * @return The sorted population
      */
-    private ArrayList<Profile> sortPlayersByLargestScanned(ArrayList<Profile> players) {
-        Comparator<Profile> sorter = new Comparator<Profile>() {
+    private void sortPlayersByLargestScanned() {
+        players.sort(new Comparator<Profile>() {
             @Override
             public int compare(Profile profile, Profile t1) {
                 return t1.getPointsOfLargestCodes()
                         - profile.getPointsOfLargestCodes();
             }
-        };
-
-        players.sort(sorter);
-        return players;
+        });
     }
 
     /**
@@ -89,7 +71,8 @@ public class LeaderBoardController {
      * @return The sorted population
      */
     public ArrayList<Profile> getRankingPoints() {
-        return HighestPoints;
+        sortPlayersByPoints();
+        return players;
     }
 
     /**
@@ -97,7 +80,8 @@ public class LeaderBoardController {
      * @return The sorted population
      */
     public ArrayList<Profile> getRankingNumScanned() {
-        return MostScanned;
+        sortPlayersByNumScanned();
+        return players;
     }
 
     /**
@@ -105,7 +89,8 @@ public class LeaderBoardController {
      * @return The sorted population
      */
     public ArrayList<Profile> getRankingLargestScanned() {
-        return LargestCode;
+        sortPlayersByLargestScanned();
+        return players;
     }
 
     /**
@@ -114,8 +99,9 @@ public class LeaderBoardController {
      * @return The player's ranking, or -1, if the player does not exist
      */
     public int findRankPoints(Profile p) {
-        for (int i = 0; i < HighestPoints.size(); i++) {
-            if (p.getUname().equals(HighestPoints.get(i).getUname()))
+        sortPlayersByPoints();
+        for (int i = 0; i < players.size(); i++) {
+            if (p.getUname().equals(players.get(i).getUname()))
                 return i;
         }
         return -1;
@@ -127,8 +113,9 @@ public class LeaderBoardController {
      * @return The player's ranking, or -1, if the player does not exist
      */
     public int findRankScanned(Profile p) {
-        for (int i = 0; i < MostScanned.size(); i++) {
-            if(p.getUname().equals(MostScanned.get(i).getUname()))
+        sortPlayersByNumScanned();
+        for (int i = 0; i < players.size(); i++) {
+            if(p.getUname().equals(players.get(i).getUname()))
                 return i;
         }
 
@@ -141,8 +128,9 @@ public class LeaderBoardController {
      * @return The player's ranking, or -1, if the player does not exist
      */
     public int findRankLargest(Profile p) {
-        for (int i = 0; i < LargestCode.size(); i++) {
-            if(p.getUname().equals(LargestCode.get(i).getUname()))
+        sortPlayersByLargestScanned();
+        for (int i = 0; i < players.size(); i++) {
+            if(p.getUname().equals(players.get(i).getUname()))
                 return i;
         }
 
