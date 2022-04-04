@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements
         mc = new MemoryController(this);
 
         Button getStarted = findViewById(R.id.getStarted);
-        Button settings = findViewById(R.id.setting);
         Button quit = findViewById(R.id.quit);
 
         final boolean returningUser = mc.exists();
@@ -49,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         getStarted.setOnClickListener(view -> login(returningUser));
-        settings.setOnClickListener(view -> startSettingsActivity());
         quit.setOnClickListener(view -> finishAffinity());
     }
 
@@ -134,14 +132,6 @@ public class MainActivity extends AppCompatActivity implements
             Intent i = new Intent(this, OwnerMenu.class);
             startActivity(i);
         });
-    }
-
-    /**
-     * Starts the settings activity
-     */
-    private void startSettingsActivity() {
-        Intent i = new Intent(this, SettingsActivity.class);
-        startActivity(i);
     }
 
     /**
