@@ -474,11 +474,11 @@ public class DatabaseController {
         //Task<QuerySnapshot> task = readQRCodeUserData(QRCode.);
         //ArrayList<GeoPoint> geoPoints = getQRCodeLocations();
         ArrayList<GeoPoint> geoPoints = new ArrayList<>();
-        GeoPoint geoPoint = new GeoPoint(34.25, 46.23);
+        GeoPoint geoPoint = new GeoPoint((double)53.5232, (double)-113.5263);
         geoPoints.add(geoPoint);
-        GeoPoint geoPoint2 = new GeoPoint(35.25, 47.23);
+        GeoPoint geoPoint2 = new GeoPoint((double)53.5232, (double)-113.5261);
         geoPoints.add(geoPoint2);
-        GeoPoint geoPoint3 = new GeoPoint(36.22, 46.58);
+        GeoPoint geoPoint3 = new GeoPoint((double)53.5234, (double)-113.5262);
         geoPoints.add(geoPoint3);
         return geoPoints;
     }

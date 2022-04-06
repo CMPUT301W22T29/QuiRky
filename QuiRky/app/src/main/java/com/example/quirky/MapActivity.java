@@ -73,7 +73,7 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
                 GeoPoint startPoint = new GeoPoint((double) location.getLatitude(), (double) location.getLongitude());
                 iMapController.setCenter(startPoint);
                 mapController.qrMarkerOnMap(startPoint,nearbyMap,"Current location");
-                mapController.writeQrCodesToMap(dc,nearbyMap,"Nearby QR code located");
+                mapController.writeQrCodesToMap(dc,nearbyMap,"A wild QR code appears");
             }
 
         });
