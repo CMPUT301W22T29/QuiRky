@@ -53,7 +53,7 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
         setContentView(R.layout.activity_map_layout);
 
         Location location;
-        dc = new DatabaseController(this);
+        dc = new DatabaseController();
         nearbyMap = (MapView) findViewById(R.id.map1);
         iMapController = nearbyMap.getController();
         mapController = new MapController(this);
