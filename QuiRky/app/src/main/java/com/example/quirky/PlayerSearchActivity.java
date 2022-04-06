@@ -49,7 +49,7 @@ public class PlayerSearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_search);
 
-        dc = new DatabaseController(this);
+        dc = new DatabaseController();
 
         usernames = new ArrayList<>();
         photos = new ArrayList<>();

@@ -55,15 +55,13 @@ public class DatabaseController {
 
 
     private final FirebaseFirestore db;
-    private final Context ct;
 
     private CollectionReference collection;
     private final OnCompleteListener writeListener;
     private final OnCompleteListener deleteListener;
 
-    public DatabaseController(Context ct) {
+    public DatabaseController() {
         this.db = FirebaseFirestore.getInstance();
-        this.ct = ct;
 
         this.writeListener = task -> {
             if(task.isSuccessful())

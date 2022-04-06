@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements
 
         cameraActivitiesController = new CameraActivitiesController(this, true);
 
-        dm = new DatabaseController(this);
+        dm = new DatabaseController();
         mc = new MemoryController(this);
 
         Button getStarted = findViewById(R.id.getStarted);
