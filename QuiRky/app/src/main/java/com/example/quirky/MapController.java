@@ -22,6 +22,7 @@ import androidx.core.location.LocationListenerCompat;
 
 import static android.content.Context.LOCATION_SERVICE;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -171,6 +172,7 @@ public class MapController {
             Marker qrmarker = new Marker(nearbymap);
             qrmarker.setPosition(location);
             qrmarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            qrmarker.setAlpha((float) 0.6);
             nearbymap.getOverlays().add(qrmarker);
             qrmarker.setTitle(title);
         }
@@ -180,6 +182,7 @@ public class MapController {
         Marker qrmarker = new Marker(nearbymap);
         qrmarker.setPosition(startPoint);
         qrmarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        qrmarker.setAlpha((float)1);
         nearbymap.getOverlays().add(qrmarker);
         qrmarker.setTitle(title);
     }
