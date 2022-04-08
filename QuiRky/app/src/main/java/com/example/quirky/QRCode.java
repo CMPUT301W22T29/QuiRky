@@ -116,4 +116,37 @@ public class QRCode implements Parcelable {
     public void setComments(ArrayList<Comment> comments) {
         this.comments = comments;
     }
+
+
+    protected QRCode(Parcel in) {
+        id = in.readString();
+        score = in.readInt();
+        locations = in.createTypedArrayList(GeoPoint.CREATOR);
+        scanners = in.createStringArrayList();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeInt(score);
+        dest.writeTypedList(locations);
+        dest.writeStringList(scanners);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<QRCode> CREATOR = new Creator<QRCode>() {
+        @Override
+        public QRCode createFromParcel(Parcel in) {
+            return new QRCode(in);
+        }
+
+        @Override
+        public QRCode[] newArray(int size) {
+            return new QRCode[size];
+        }
+    };
 }
