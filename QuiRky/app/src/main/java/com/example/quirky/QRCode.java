@@ -18,8 +18,16 @@ package com.example.quirky;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.osmdroid.util.GeoPoint;
+
 import java.util.ArrayList;
 
+
+
+// Praise this absolute mad lad who literally answered all of my questions at once.
+// I didn't even take any code from him but he's getting a cite anyways.
+// https://stackoverflow.com/a/54194734
+//
 /**
  * @author Jonathen Adsit
  * This model class represents a QR Code. It holds the <code>QRCode</code>'s content, hash, score, location, and comments
@@ -29,24 +37,11 @@ public class QRCode implements Parcelable {
     private String id; // id is hash of content.
     private int score;
     private ArrayList<Comment> comments;
+    private ArrayList<GeoPoint> locations;
+    private ArrayList<String> scanners;
 
     /**
-     * The constructor to be used when the QRCode has comments on it. This constructor likely be called when the QRCode already exists in the Database.
-     * If the user does not want to save their geolocation or photo, constructor can be called with these values null.
-     * If the user does not want to save the content of the code, the constructor can be called with Boolean saveContent == False.
-     * @param content
-     *      - The content of the QRCode. This is mandatory, as it is used to find the QRCode's hash and score
-     * @param comments
-     *      - The comments that have been posted on the QRCode, in an ArrayList<>
-     */
-    public QRCode(String content, ArrayList<Comment> comments) {
-        this.id = QRCodeController.SHA256(content);
-        this.score = QRCodeController.score(id);
-        this.comments = comments;
-    }
-
-    /**
-     * Initialize this <code>QRCode</code> with only the content.
+     * Initialize this <code>QRCode</code> with only the content. To be used when creating a new QRCode.
      * @param content
      *          - The content of the <code>QRCode</code> retrieved from the barcode in the
      *            <code>QRCodeController.scanQRCodes()</code> method.
@@ -57,26 +52,12 @@ public class QRCode implements Parcelable {
         this.comments = new ArrayList<>();
     }
 
-    /**
-     * Initialize a QRCode with an assigned ID. To be used when reading from Firestore
-     * @param id The ID of the QRCode
-     */
-    public QRCode(String id, int score) {
-        this.id = id;
-        this.score = score;
-        this.comments = new ArrayList<>();
-    }
-
-    /**
-     * Initialize a QRCode with an assigned ID and comments section. To be used when reading from firestore
-     * @param id The id of the QRCode
-     * @param score The score of the QRCode
-     * @param comments The comments of the QRCode
-     */
-    public QRCode(String id, int score, ArrayList<Comment> comments) {
+    public QRCode(String id, int score, ArrayList<Comment> comments, ArrayList<GeoPoint> locations, ArrayList<String> scanners) {
         this.id = id;
         this.score = score;
         this.comments = comments;
+        this.locations = locations;
+        this.scanners = scanners;
     }
 
     /**
@@ -135,33 +116,4 @@ public class QRCode implements Parcelable {
     public void setComments(ArrayList<Comment> comments) {
         this.comments = comments;
     }
-
-    protected QRCode(Parcel in) {
-        id = in.readString();
-        score = in.readInt();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeInt(score);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<QRCode> CREATOR = new Creator<QRCode>() {
-        @Override
-        public QRCode createFromParcel(Parcel in) {
-            return new QRCode(in);
-        }
-
-        @Override
-        public QRCode[] newArray(int size) {
-            return new QRCode[size];
-        }
-    };
-
 }

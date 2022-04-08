@@ -28,20 +28,8 @@ public class QRCodeTest {
         assertEquals("ID was not properly assigned", id, qr.getId());
         assertEquals("Score was not properly assigned", score, qr.getScore());
 
-        // Test constructor with content & comments
-        qr = new QRCode(content, comments);
-        assertEquals("Comments was not properly assigned", comments, qr.getComments());
-
-
-        // Test constructor that takes ID & Score
-        qr = new QRCode("id", 5);
-        assertEquals("ID was not properly assigned in the second constructor!",
-                "id", qr.getId());
-        assertEquals("Score was not properly assigned in the second constructor!",
-                5, qr.getScore());
-
         // Test constructor with ID, Score, & comments
-        qr = new QRCode("id", 5, comments);
+        qr = new QRCode("id", 5, comments, null, null);
         assertEquals("Comments was not properly assigned in the second constructor!",
                 comments,
                 qr.getComments());
@@ -54,7 +42,7 @@ public class QRCodeTest {
         // qr = new QRCode("");
         // assertEquals("Empty content failed", "", qr.getId());
 
-        qr = new QRCode("x", null);
+        qr = new QRCode("x", 5, null, null, null);
         assertNull("Null arraylist failed!", qr.getComments());
     }
 
@@ -68,8 +56,7 @@ public class QRCodeTest {
 
         comments.add(new Comment("content", "user"));
 
-        qr = new QRCode("x", comments);
-
+        qr = new QRCode("x", 5, comments, null, null);
 
         // Test removing comments that aren't actually in the QRCode
         qr.removeComment(new Comment("I'm not actually in the QRCode's comments", "user"));

@@ -1,15 +1,15 @@
 package com.example.quirky;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 /**
  * The activity that starts when the app is opened.
@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements
     DatabaseController dm;
     MemoryController mc;
     private CameraActivitiesController cameraActivitiesController;
+    private boolean returningUser;
 
 
     @Override
@@ -37,15 +38,7 @@ public class MainActivity extends AppCompatActivity implements
         Button getStarted = findViewById(R.id.getStarted);
         Button quit = findViewById(R.id.quit);
 
-        final boolean returningUser = mc.exists();
-        if(returningUser) {
-            String user = mc.readUser();
-
-            dm.readProfile(user).addOnCompleteListener(task -> {
-                if(dm.isOwner(task))
-                    displayOwnerButton();
-            });
-        }
+        checkOwner();
 
         getStarted.setOnClickListener(view -> login(returningUser));
         quit.setOnClickListener(view -> finishAffinity());
@@ -85,20 +78,24 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         // Read from the database to check if this username is already taken.
-        dm.startCheckProfileExists(uname).addOnCompleteListener(task -> {
-            if(dm.checkProfileExists(task)) {
-                Profile p = new Profile(uname);
+        ListeningList<Profile> result = dm.readProfile(uname);
+        result.setOnAddListener(new OnAddListener<Profile>() {
+            @Override
+            public void onAdd(ListeningList<Profile> listeningList) {
+                if(listeningList.get(0) == null) {
+                    Profile p = new Profile(uname);
 
-                mc.write(p);
-                mc.writeUser(uname);
-                dm.writeProfile(p);
+                    mc.write(p);
+                    mc.writeUser(uname);
+                    dm.writeProfile(p);
 
-                startHubActivity();
+                    startHubActivity();
 
-            } else {
-                Toast.makeText(this, "This username already exists!", Toast.LENGTH_LONG).show();
-                // Restart the process by calling login()
-                login(false);
+                } else {
+                    Toast.makeText(getApplicationContext(), "This username already exists!", Toast.LENGTH_LONG).show();
+                    // Restart the process by calling login()
+                    login(false);
+                }
             }
         });
     }
@@ -122,23 +119,36 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     * Makes the Owner Settings available. onCreate
-     */
-    private void displayOwnerButton() {
-        Button ownerButton = findViewById(R.id.owner_button);
-        ownerButton.setVisibility(View.VISIBLE);
-
-        ownerButton.setOnClickListener(view -> {
-            Intent i = new Intent(this, OwnerMenu.class);
-            startActivity(i);
-        });
-    }
-
-    /**
      * Launches StartingPageActivity
      */
     private void startHubActivity() {
         Intent i = new Intent(this, StartingPageActivity.class);
         startActivity(i);
+    }
+
+    // Checks if the app holder is an owner
+    private void checkOwner() {
+        returningUser = mc.exists();
+        if(returningUser) {
+            String user = mc.readUser();
+
+            ListeningList<Boolean> isOwner = dm.isOwner(user);
+            isOwner.setOnAddListener(new OnAddListener<Boolean>() {
+                @Override
+                public void onAdd(ListeningList<Boolean> listeningList) {
+                    if( listeningList.get(0) )
+                        displayOwnerButtons();
+                }
+            });
+        }
+    }
+
+    private void displayOwnerButtons() {
+        Button ownerButton = findViewById(R.id.owner_button);
+        ownerButton.setVisibility(View.VISIBLE);
+        ownerButton.setOnClickListener(view -> {
+            Intent i = new Intent(this, OwnerMenu.class);
+            startActivity(i);
+        });
     }
 }
