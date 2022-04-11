@@ -30,13 +30,11 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
     TextView scoreText;
     Fragment buttonsFrag, playersFrag;
     Bitmap photo;
-    ProgressBar loading;
 
     DatabaseController dc;
     ArrayList<String> players;
 
     Intent i;
-    String qrid;
     QRCode qr;
 
     @Override
@@ -44,28 +42,13 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_qr);
 
-        loading = findViewById(R.id.view_qr_progress_bar);
         dc = new DatabaseController();
 
         i = getIntent();
-        qrid = i.getStringExtra("code");
-        if(qrid == null || qrid.equals(""))
+        qr = i.getParcelableExtra("code");
+        if(qr == null)
             ExitWithError();
 
-        dc.readQRCode(qrid).addOnCompleteListener(task -> {
-            qr = dc.getQRCode(task);
-            if(qr == null)
-                ExitWithError();
-            else
-                doneReadingQRCode();
-        });
-
-    }
-
-    /**
-     * Called when done reading the QRCode from the database. Finishes setting up the fields.
-     */
-    private void doneReadingQRCode() {
         image = findViewById(R.id.imageView2);
         scoreText = findViewById(R.id.text_showScore);
 
@@ -77,11 +60,8 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         photo = BitmapFactory.decodeResource(getResources(), R.drawable.temp);
         image.setImageBitmap(photo);
 
-        dc.readQRCodeUserData(qrid).addOnCompleteListener(task -> {
-            players = dc.getQRCodeScanners(task);
-            changeFragment(buttonsFrag);
-            loading.setVisibility(View.INVISIBLE);
-        });
+        players = qr.getScanners();
+        changeFragment(buttonsFrag);
     }
 
     /**
@@ -112,7 +92,7 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
     @Override
     public void commentsButton() {
         Intent intent = new Intent(this, ViewCommentsActivity.class);
-        intent.putExtra("qrId", qrid);
+        intent.putExtra("qr", qr);
         startActivity(intent);
     }
 
@@ -124,9 +104,12 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         MemoryController mc = new MemoryController(this);
         Profile p = mc.read();
 
-        if(p.removeScanned(qrid)) {
+        if(p.removeScanned(qr.getId())) {
             mc.write(p);
             dc.writeProfile(p);
+
+            qr.removeScanner(p.getUname());
+            dc.writeQRCode(qr);
 
             Toast.makeText(this, "Removed from your scanned codes!", Toast.LENGTH_SHORT).show();
 

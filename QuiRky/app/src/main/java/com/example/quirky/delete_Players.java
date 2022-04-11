@@ -31,7 +31,8 @@ public class delete_Players extends AppCompatActivity {
     private Button no;
     private DatabaseController dc;
 
-    ArrayList<String> Usernames;
+    private ArrayList<String> Usernames;
+    private ListeningList<Profile> readResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,7 @@ public class delete_Players extends AppCompatActivity {
 
         dc = new DatabaseController();
         Usernames = new ArrayList<>();
+
 
         playersList = findViewById(R.id.players);
         confirmBox = findViewById(R.id.linearLayout1);
@@ -51,35 +53,41 @@ public class delete_Players extends AppCompatActivity {
             public void OnClickListItem(int position) {
                 confirmBox.setVisibility(View.VISIBLE);
 
-                yes.setOnClickListener(view -> {
-                    dc.deleteProfile(Usernames.get(position));
-                    Usernames.remove(position);
-                    confirmBox.setVisibility(View.INVISIBLE);
-                    adapter.notifyDataSetChanged();
-                });
+                yes.setOnClickListener(view -> delete(position));
 
                 no.setOnClickListener(view -> confirmBox.setVisibility(View.INVISIBLE) );
             }
         };
 
-        dc.readAllProfiles().addOnCompleteListener(task -> {
-            ArrayList<Profile> profiles = dc.getAllProfiles(task);
-            doneReading(profiles);
+        readResults = new ListeningList<>();
+        readResults.setOnAddListener(new OnAddListener<Profile>() {
+            @Override
+            public void onAdd(ListeningList<Profile> listeningList) {
+                doneReading();
+            }
         });
+
+        dc.readUsers("", readResults);
     }
 
     /**
      * Called once DatabaseController is done reading all the users from Firestore. Finishes setting up the Recycler.
-     * @param profiles The player population
      */
-    private void doneReading(ArrayList<Profile> profiles) {
-        for(int i = 0; i < profiles.size(); i ++){
-            Usernames.add(profiles.get(i).getUname());
+    private void doneReading() {
+        for(int i = 0; i < readResults.size(); i ++){
+            Usernames.add(readResults.get(i).getUname());
         }
         adapter = new QRAdapter(Usernames, new ArrayList<>(), this, listener);
 
         playersList.setAdapter(adapter);
 
         playersList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+    }
+
+    private void delete(int position) {
+        dc.deleteProfile(Usernames.get(position));
+        Usernames.remove(position);
+        confirmBox.setVisibility(View.INVISIBLE);
+        adapter.notifyDataSetChanged();
     }
 }

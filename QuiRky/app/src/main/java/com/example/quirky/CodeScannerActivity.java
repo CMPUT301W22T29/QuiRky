@@ -91,12 +91,19 @@ public class CodeScannerActivity extends AppCompatActivity {
     public void scan() {
         ListeningList<QRCode> codes = new ListeningList<>();
         codes.setOnAddListener(new OnAddListener<QRCode>() {
-
             @Override
             public void onAdd(ListeningList<QRCode> listeningList) {
                 if (login) {
                     String password = listeningList.get(0).getId();
-                    dc.readLoginHash(password).addOnCompleteListener(task -> login( dc.getProfileWithHash(task)) );
+                    ListeningList<Profile> profile = new ListeningList<>();
+                    profile.setOnAddListener(new OnAddListener<Profile>() {
+                        @Override
+                        public void onAdd(ListeningList<Profile> listeningList) {
+                            Profile p = listeningList.get(0);
+                            login(p);
+                        }
+                    });
+                    dc.readLoginHash(password, profile);
                 } else {
                     showSavingInterface(listeningList);
                 }
@@ -112,26 +119,10 @@ public class CodeScannerActivity extends AppCompatActivity {
      */
     private void showSavingInterface(ListeningList<QRCode> listeningList) {
         setVisibility(false);
+        QRCode qr = listeningList.get(0);
 
         save_button.setOnClickListener(view -> {
-            GeoPoint gp;
-            Bitmap photo;
-            if (location_switch.isChecked()) {
-                gp = null;
-                // GeoPoint gp = MapController.getLocation(); TODO: Make a controller class that gets location.
-            } else {
-                gp = null;
-            }
-
-            if (photo_switch.isChecked()) {
-                photo = null;
-                // photo = results.get(0).getLocation(); // TODO: Figure out how to get the photo of the code
-                //FIXME: Need to direct to a new photo capture activity, rather than saving the image of the QRCode
-            } else {
-                photo = null;
-            }
-
-            save(listeningList.get(0), gp, photo);
+            save(qr);
             setVisibility(true);
         });
 
@@ -142,8 +133,8 @@ public class CodeScannerActivity extends AppCompatActivity {
     }
 
     /**
-     * Attempt to login to a profile. Writes the profile to local memory and starts up a new activity
-     * @param p
+     * Attempt to login to an existing profile. Writes the profile to local memory and starts up a new activity
+     * @param p The profile to log in with. May be null, if the scan matched no user.
      */
     private void login(Profile p) {
         if (p == null) {
@@ -162,10 +153,8 @@ public class CodeScannerActivity extends AppCompatActivity {
     /**
      * Save a QRCode to the Database. Update the player's profile to include the newly scanned code.
      * @param qr The QRCode to be saved
-     * @param gp The location of the user, if they want their location to be saved
-     * @param image The photo of the QRCode, if the user wants the photo saved.
      */
-    public void save(QRCode qr, GeoPoint gp, Bitmap image) {
+    public void save(QRCode qr) {
         Profile p = mc.read();
 
         if(! p.addScanned(qr.getId())) {
@@ -173,17 +162,23 @@ public class CodeScannerActivity extends AppCompatActivity {
             return;
         }
 
-        // Update the local memory and database, because the player's statistics have changed.
-        dc.writeQRCode(qr, p.getUname());
+        if (location_switch.isChecked()) {
+            // TODO: GeoPoint gp = MapController.getLocation();
+            GeoPoint gp = new GeoPoint(10.0, 10.0);
+            qr.addLocation(gp);
+        }
+
+        if (photo_switch.isChecked()) {
+            // TODO: photo = takePhoto();
+            // TODO: dc.writePhoto(codeId, photo);
+        }
+
+
+        qr.addScanner(p.getUname());
+        dc.writeQRCode(qr);
         mc.write(p);
         dc.writeProfile(p);
 
-        if(gp != null) {
-            // dc.saveLocation(qrcode, location);
-        }
-        if(image != null) {
-            // dc.saveImage(qrcode, image);
-        }
         Toast.makeText(this, "QRCode saved!", Toast.LENGTH_LONG).show();
     }
 

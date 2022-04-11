@@ -78,8 +78,8 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         // Read from the database to check if this username is already taken.
-        ListeningList<Profile> result = dm.readProfile(uname);
-        result.setOnAddListener(new OnAddListener<Profile>() {
+        ListeningList<Profile> doesExist = new ListeningList<>();
+        doesExist.setOnAddListener(new OnAddListener<Profile>() {
             @Override
             public void onAdd(ListeningList<Profile> listeningList) {
                 if(listeningList.get(0) == null) {
@@ -98,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         });
+
+        dm.readProfile(uname, doesExist);
     }
 
     /**
@@ -131,8 +133,7 @@ public class MainActivity extends AppCompatActivity implements
         returningUser = mc.exists();
         if(returningUser) {
             String user = mc.readUser();
-
-            ListeningList<Boolean> isOwner = dm.isOwner(user);
+            ListeningList<Boolean> isOwner = new ListeningList<>();
             isOwner.setOnAddListener(new OnAddListener<Boolean>() {
                 @Override
                 public void onAdd(ListeningList<Boolean> listeningList) {
@@ -140,6 +141,9 @@ public class MainActivity extends AppCompatActivity implements
                         displayOwnerButtons();
                 }
             });
+
+            dm.isOwner(user, isOwner);
+
         }
     }
 

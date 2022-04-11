@@ -12,6 +12,7 @@ import com.google.firebase.firestore.WriteBatch;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,67 +57,22 @@ public class DatabaseController {
         };
     }
 
-    public void addComment(Comment c, String id) {
-        collection = db.collection("QRcodes");
+    public void writeQRCode(QRCode qr) {
+        assert qr != null : "You can't write a null object to the database!";
 
-        collection = collection.document(id).collection("comments");
-        collection.document(c.getId()).set(c).addOnCompleteListener(writeListener);
-    }
-
-    public void removeComment(Comment c, String id) {   // TODO: consider making this method take the comment's id, rather than the object itself.
-        collection = db.collection("QRcodes");
-
-        collection = collection.document(id).collection("comments");
-        collection.document(c.getId()).delete().addOnCompleteListener(deleteListener);
-    }
-
-    public void writeQRCode(QRCode qr, String user) {
-        assert(qr != null) : "You can't write a null object to the database!";
-
-        // A batch write: a group of write operations to be done at once.
-        // Batches are not written immediately. Can add many operations to a batch, then commit all writes at once.
-        WriteBatch batch = db.batch();
-        DocumentReference doc;
-
-        // Set the document location
-        collection = db.collection("QRcodes");
-        doc = collection.document(qr.getId());
-
-        // Write the score of the QRCode
-        Map<String, Object> data = new HashMap<>();
-        data.put("score", qr.getScore());
-        batch.set(doc, data);
-
-        // Add the comments to the batch. Skip any null comments.
-        collection = doc.collection("comments");
-        batch.set(collection.document("sample"), data);
-        for(Comment c : qr.getComments()) {
-            if(c==null) continue;
-            batch.set(collection.document(c.getId()), c);
-        }
-
-        // Create an entry for the user in the QRCode's userdata folder.
-        // Values are set to null, a separate method will set the location and photo to actual values.
-        collection = doc.collection("userdata");
-
-        data.clear();
-        data.put("location", null);
-        data.put("photo", null);
-
-        batch.set(collection.document(user), data);
-
-        // Issue the batch write
-        batch.commit().addOnCompleteListener(writeListener);
-    }
-
-    public void deleteQRCode(String qr) {
-        collection = db.collection("QRcodes");
-        collection.document(qr).delete().addOnCompleteListener(deleteListener);
+        collection = db.collection("QRCodes");
+        collection.document(qr.getId()).set(qr).addOnCompleteListener(writeListener);
     }
 
     public void writeProfile(Profile p) {
+        assert p != null : "You can't write a null object to the database!";
         collection = db.collection("users");
         collection.document(p.getUname()).set(p).addOnCompleteListener(writeListener);
+    }
+
+    public void deleteQRCode(String qr) {
+        collection = db.collection("QRCodes");
+        collection.document(qr).delete().addOnCompleteListener(deleteListener);
     }
 
     public void deleteProfile(String username) {
@@ -124,32 +80,26 @@ public class DatabaseController {
         collection.document(username).delete().addOnCompleteListener(deleteListener);
     }
 
-    public ListeningList<Profile> readProfile(String username) {
+    public void readProfile(String username, ListeningList<Profile> data) {
         collection = db.collection("users");
-        ListeningList<Profile> data = new ListeningList<>();
         collection.document(username).get().addOnCompleteListener(task -> {
             data.add( task.getResult().toObject(Profile.class) );
         });
-
-        return data;
     }
 
-    public ListeningList<Boolean> isOwner(String username) {
+    public void isOwner(String username, ListeningList<Boolean> data) {
         collection = db.collection("users");
-        ListeningList<Boolean> data = new ListeningList<>();
         collection.document(username).get().addOnCompleteListener(task -> {
             if(task.getResult().contains("owner"))
                 data.add( task.getResult().getBoolean("owner") );
             else
                 data.add( false );
         });
-
-        return data;
     }
 
-    public ListeningList<Profile> readUsers(String search) {
+    // This method can be used to Query the database for specific users, or read the whole database at once, by passing an empty string.
+    public void readUsers(String search, ListeningList<Profile> data) {
         collection = db.collection("users");
-        ListeningList<Profile> data = new ListeningList<>();
         OnCompleteListener<QuerySnapshot> complete = task -> {
             Collection<Profile> result = task.getResult().toObjects(Profile.class);
             data.addAll(result);
@@ -159,24 +109,22 @@ public class DatabaseController {
             collection.get().addOnCompleteListener(complete);
         else
             collection.whereGreaterThanOrEqualTo("uname", search).get().addOnCompleteListener(complete);
-
-        return data;
     }
 
-    public QRCode readQRCode(String id) {   // TODO: Refactor QRCode class
-        return new QRCode(id, QRCodeController.score(id), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    public void readQRCode(String id, ListeningList<QRCode> data) {
+        collection = db.collection("QRCodes");
+        collection.document(id).get().addOnCompleteListener(task -> {
+            QRCode result = task.getResult().toObject(QRCode.class);
+            data.add(result);
+        });
     }
 
-    public ListeningList<QRCode> readAllQRCodes() {
-        collection = db.collection("QRcodes");
-
-        ListeningList<QRCode> data = new ListeningList<>();
+    public void readAllQRCodes(ListeningList<QRCode> data) {
+        collection = db.collection("QRCodes");
         collection.get().addOnCompleteListener(task -> {
             Collection<QRCode> result = task.getResult().toObjects(QRCode.class);
             data.addAll(result);
         });
-
-        return data;
     }
 
     public void writeLoginHash(String hash, String user) {
@@ -184,19 +132,18 @@ public class DatabaseController {
         collection.document(user).update("loginhash", hash).addOnCompleteListener(writeListener);
     }
 
-    public ListeningList<Profile> readLoginHash(String hash) {
+    public void readLoginHash(String hash, ListeningList<Profile> data) {
         collection = db.collection("users");
-
-        ListeningList<Profile> data = new ListeningList<>();
         collection.whereEqualTo("loginhash", hash).get().addOnCompleteListener(task -> {
             QuerySnapshot q = task.getResult();
             if(q.size() != 1) {
                 Log.d(TAG, "For some reason reading a login hash did not produce exactly 1 profile!");
+                data.add(null);
             } else {
-                data.add ( q.getDocuments().get(0).toObject(Profile.class) );
+                Profile p = q.getDocuments().get(0).toObject(Profile.class);
+                db.collection("users").document(p.getUname()).update("loginhash", "");
+                data.add (p);
             }
         });
-
-        return data;
     }
 }

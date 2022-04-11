@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Activity to show the global leaderboards. Players can see the population ranked by three statistics
@@ -27,7 +28,6 @@ public class LeaderBoardActivity extends AppCompatActivity {
     private Button sortPoints, sortScanned, sortGreatest, myRank, topRanks;
     private RecyclerView list;
     private QRAdapter adapter;
-    private RecyclerClickerListener listener;
 
     private Profile user;
     private ArrayList<String> data; // For use with the adapter
@@ -49,7 +49,6 @@ public class LeaderBoardActivity extends AppCompatActivity {
 
         // Initialise views
         list = findViewById(R.id.leaderboard_list);
-        // Buttons
         sortPoints = findViewById(R.id.sort_points_button);
         sortScanned = findViewById(R.id.sort_scanned_button);
         sortGreatest = findViewById(R.id.sort_largest_button);
@@ -58,28 +57,26 @@ public class LeaderBoardActivity extends AppCompatActivity {
 
         // Read the player population
         DatabaseController dc = new DatabaseController();
-        dc.readAllProfiles().addOnCompleteListener(task -> {
-            ArrayList<Profile> result = dc.getAllProfiles(task);
-            doneReading(result);
+        ListeningList<Profile> readResults = new ListeningList<>();
+        readResults.setOnAddListener(new OnAddListener<Profile>() {
+            @Override
+            public void onAdd(ListeningList<Profile> listeningList) {
+                players = (ArrayList<Profile>) listeningList;
+                doneReading();
+            }
         });
+
+        dc.readProfile("", readResults);
     }
 
     /**
      * Called once the DatabaseController is finished reading all the users from FireStore.
      * Finishes setting up the Recycler & Adapter, and sets on click listeners for the buttons
-     * @param players The population of players in the database
      */
-    private void doneReading(ArrayList<Profile> players) {
+    private void doneReading() {
 
         lbc = new LeaderBoardController(players);
         sortByPoints();
-
-        listener = new RecyclerClickerListener() {
-            @Override
-            public void OnClickListItem(int position) {
-                startViewProfile(position);
-            }
-        };
 
         adapter = new QRAdapter(data, new ArrayList<>(), this);
         list.setAdapter(adapter);

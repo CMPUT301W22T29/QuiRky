@@ -76,20 +76,27 @@ public class EditProfileActivity extends AppCompatActivity {
             // Check if user wants to change their username. Changing username complicates things.
             if(!p.getUname().equals(originalUsername)) {
 
-                // Must check that the new username is not taken
-                dc.startCheckProfileExists(p.getUname()).addOnCompleteListener(task -> {
-                    boolean exists = dc.checkProfileExists(task);
+                // First check that the username is valid
+                if (!ProfileController.validUsername(new_name) ) {
+                    Toast.makeText(this, "That's not a valid username!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                    if(exists) {
-                        Toast.makeText(this, "That username is taken!", Toast.LENGTH_LONG).show();
-                    } else {
-                        write(true);
+                // Then check if the username is taken
+                ListeningList<Profile> result = new ListeningList<>();
+                result.setOnAddListener(new OnAddListener<Profile>() {
+                    @Override
+                    public void onAdd(ListeningList<Profile> listeningList) {
+                        if(listeningList.get(0) != null) {
+                            Toast.makeText(getApplicationContext(), "That username is taken!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            write(true);
+                        }
                     }
-
                 });
+            } else {
+                write(false);
             }
-
-            write(false);
     }
 
     /**

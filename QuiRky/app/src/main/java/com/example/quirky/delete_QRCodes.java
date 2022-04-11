@@ -32,7 +32,7 @@ public class delete_QRCodes extends AppCompatActivity {
     private DatabaseController dc;
 
     private ArrayList<String> scores;
-    private ArrayList<QRCode> codes;
+    private ListeningList<QRCode> readResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,24 +52,29 @@ public class delete_QRCodes extends AppCompatActivity {
             public void OnClickListItem(int position) {
                 confirmBox.setVisibility(View.VISIBLE);
 
-                yes.setOnClickListener(view -> delete(position) );
+                yes.setOnClickListener(view -> delete(position));
 
                 no.setOnClickListener(view -> confirmBox.setVisibility(View.INVISIBLE));
             }
         };
 
-        dc.readAllQRCodes().addOnCompleteListener(task -> {
-            codes = dc.getAllQRCodes(task);
-            doneReading();
+        readResults = new ListeningList<>();
+        readResults.setOnAddListener(new OnAddListener<QRCode>() {
+            @Override
+            public void onAdd(ListeningList<QRCode> listeningList) {
+                doneReading();
+            }
         });
+
+        dc.readAllQRCodes(readResults);
     }
 
     /**
      * Called once DatabaseController is done reading all the users from Firestore. Finishes setting up the Recycler.
      */
     private void doneReading() {
-        for(int i = 0; i < codes.size(); i ++){
-            scores.add(String.valueOf(codes.get(i).getScore()));
+        for(int i = 0; i < readResults.size(); i ++){
+            scores.add(String.valueOf(readResults.get(i).getScore()));
         }
         adapter = new QRAdapter(scores, new ArrayList<>(), this, listener);
 
@@ -79,7 +84,7 @@ public class delete_QRCodes extends AppCompatActivity {
     }
 
     private void delete(int position) {
-        String id = codes.get(position).getId();
+        String id = readResults.get(position).getId();
         dc.deleteQRCode(id);
         scores.remove(position);
         confirmBox.setVisibility(View.INVISIBLE);

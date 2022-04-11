@@ -52,6 +52,14 @@ public class QRCode implements Parcelable {
         this.comments = new ArrayList<>();
     }
 
+    /**
+     * Initialize this QRCode with every field. To be used when reading from FireStore
+     * @param id The id of the QRCode
+     * @param score The score of the QRCode
+     * @param comments The list of comments on the code
+     * @param locations The list of locations the code has been scanned
+     * @param scanners The list of users that has scanned the code
+     */
     public QRCode(String id, int score, ArrayList<Comment> comments, ArrayList<GeoPoint> locations, ArrayList<String> scanners) {
         this.id = id;
         this.score = score;
@@ -89,6 +97,10 @@ public class QRCode implements Parcelable {
         return comments;
     }
 
+    public ArrayList<String> getScanners() { return scanners; }
+
+    public ArrayList<GeoPoint> getLocations() { return locations; }
+
     /**
      * Adds a comment to the array. Throws an assertion error if the parameter is null.
      * @param c
@@ -109,7 +121,19 @@ public class QRCode implements Parcelable {
             comments.remove(c);
     }
 
-    /**
+    public void addLocation(GeoPoint gp) {
+        locations.add(gp);
+    }
+
+    public void removeLocation(GeoPoint gp) {
+        locations.remove(gp);
+    }
+
+    public void setLocations(ArrayList<GeoPoint> locations) {
+        this.locations = locations;
+    }
+
+    /** FIXME: determine if FireStore needs setters for custom object reading. Prefer not to have a direct setter.
      * Set the comments on the QRCode
      * @param comments An arraylist of comments
      */
@@ -117,7 +141,20 @@ public class QRCode implements Parcelable {
         this.comments = comments;
     }
 
+    public void addScanner(String username) {
+        scanners.add(username);
+    }
 
+    public void removeScanner(String username) {
+        scanners.remove(username);
+    }
+
+    public void setScanners(ArrayList<String> scanners) {
+        this.scanners = scanners;
+    }
+
+
+    // Parcelable stuff below
     protected QRCode(Parcel in) {
         id = in.readString();
         score = in.readInt();

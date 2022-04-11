@@ -26,63 +26,44 @@ import java.util.ArrayList;
 public class ViewCommentsActivity extends AppCompatActivity {
     private Button Save;
     private Button Cancel;
+    private ImageView QRCodeImage;
 
     RecyclerView commentList;
     ArrayList<Comment> commentDataList;
     CommentList commentAdapter;
-    DatabaseController DM;
-    String qrCodeId;
+    QRCode qr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_comment);
 
-        ImageView QRCodeImage = findViewById(R.id.QRCodeImmage_Comment);
-        QRCodeImage.setImageResource(R.drawable.temp); // This is going to have to be something in order to view Image.
-
         Intent intent = getIntent();
-        qrCodeId = intent.getStringExtra("qrId");
-
-        DM = new DatabaseController();
-
-        DM.readComments(qrCodeId).addOnCompleteListener(task -> {
-            commentDataList = DM.getComments(task);
-            readDone();
-        });
-    }
-
-    /**
-     * Called when done reading the QRCode's comments from the database. Finishes setting up the list of comments
-     */
-    private void readDone() {
-        commentAdapter = new CommentList(this, commentDataList);
-        commentList =  findViewById(R.id.recycleListView_user_comment);
-        commentList.setAdapter(commentAdapter);
-        commentList.setLayoutManager(new LinearLayoutManager(this));
+        qr = intent.getParcelableExtra("qr");
+        if(qr == null)
+            ExitWithError();
 
         Save = findViewById(R.id.button_save);
         Cancel = findViewById(R.id.button_cancel);
+        QRCodeImage = findViewById(R.id.QRCodeImmage_Comment);
+        commentList =  findViewById(R.id.recycleListView_user_comment);
 
-        Save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                save();
-            }
-        });
+        QRCodeImage.setImageResource(R.drawable.temp); // This is going to have to be something in order to view Image.
 
-        Cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        commentDataList = qr.getComments();
+        commentAdapter = new CommentList(this, commentDataList);
+        commentList.setAdapter(commentAdapter);
+        commentList.setLayoutManager(new LinearLayoutManager(this));
+
+        Save.setOnClickListener(view -> save());
+        Cancel.setOnClickListener(view -> finish());
     }
 
     /**
      * Save a written comment to the QRCode
      */
     public void save() {
+        DatabaseController dc = new DatabaseController();
         MemoryController mc = new MemoryController(this);
         String uName = mc.readUser();
 
@@ -90,10 +71,21 @@ public class ViewCommentsActivity extends AppCompatActivity {
         String content = editTextComment.getText().toString();
 
         Comment comment = new Comment(content, uName);
-        DM.addComment(comment, qrCodeId);
+
+        qr.addComment(comment);
+        dc.writeQRCode(qr);
 
         commentDataList.add(comment);
         commentAdapter.notifyDataSetChanged();
         Toast.makeText(this, "Comment Saved", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Method called when data is passed to this activity incorrectly, or when there is an issue reading the data from FireStore.
+     * Makes a toast and then finishes the activity.
+     */
+    private void ExitWithError() {
+        Toast.makeText(this, "QRCode was passed incorrectly, or not found in FireStore!", Toast.LENGTH_SHORT).show();
+        finish();
     }
 }
