@@ -82,12 +82,6 @@ public class ViewQRScannersFragment extends Fragment {
      */
     private void startViewPlayerActivity(String username) {
         Log.d("ViewQRCodes Fragment Says", "You clicked on this username: " + username);
-        DatabaseController dc = new DatabaseController();
-        dc.readProfile(username).addOnCompleteListener(task -> {
-            Profile p = dc.getProfile(task);
-            Intent i = new Intent(getContext(), ProfileViewerActivity.class);
-            i.putExtra("profile", p);
-            startActivity(i);
-        });
+        fragmentListener.viewProfile(username);
     }
 }

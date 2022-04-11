@@ -1,5 +1,8 @@
 package com.example.quirky;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * This is the comment that will be stored to a Database. The Comment will have
  * the content of the comment, and the user who wrote it
@@ -7,7 +10,7 @@ package com.example.quirky;
  * @author Raymart Bless C. Datuin
  *
  */
-public class Comment {
+public class Comment implements Parcelable {
 
     private String content, uname, id;
 
@@ -58,4 +61,34 @@ public class Comment {
     public String getId() {
         return this.id;
     }
+
+    protected Comment(Parcel in) {
+        content = in.readString();
+        uname = in.readString();
+        id = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(content);
+        dest.writeString(uname);
+        dest.writeString(id);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Comment> CREATOR = new Creator<Comment>() {
+        @Override
+        public Comment createFromParcel(Parcel in) {
+            return new Comment(in);
+        }
+
+        @Override
+        public Comment[] newArray(int size) {
+            return new Comment[size];
+        }
+    };
 }

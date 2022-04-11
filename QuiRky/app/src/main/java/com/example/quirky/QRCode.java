@@ -49,7 +49,10 @@ public class QRCode implements Parcelable {
     public QRCode(String content) {
         this.id = QRCodeController.SHA256(content);
         this.score = QRCodeController.score(id);
+
         this.comments = new ArrayList<>();
+        this.locations = new ArrayList<>();
+        this.scanners = new ArrayList<>();
     }
 
     /**
@@ -158,6 +161,7 @@ public class QRCode implements Parcelable {
     protected QRCode(Parcel in) {
         id = in.readString();
         score = in.readInt();
+        comments = in.createTypedArrayList(Comment.CREATOR);
         locations = in.createTypedArrayList(GeoPoint.CREATOR);
         scanners = in.createStringArrayList();
     }
@@ -166,6 +170,7 @@ public class QRCode implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id);
         dest.writeInt(score);
+        dest.writeTypedList(comments);
         dest.writeTypedList(locations);
         dest.writeStringList(scanners);
     }

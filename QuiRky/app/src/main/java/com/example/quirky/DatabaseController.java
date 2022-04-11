@@ -32,7 +32,6 @@ import java.util.Map;
 public class DatabaseController {
     private final String TAG = "DatabaseController says: ";
 
-
     private final FirebaseFirestore db;
 
     private CollectionReference collection;

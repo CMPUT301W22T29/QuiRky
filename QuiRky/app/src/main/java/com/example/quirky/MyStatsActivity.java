@@ -8,8 +8,6 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-
 /**
  * Activity to view the user's rankings in a text format, rather than in a list
  */
@@ -19,6 +17,7 @@ public class MyStatsActivity extends AppCompatActivity {
     private LeaderBoardController lbc;
 
     private TextView totalScore, scoreRanking, totalScanned, scannedRanking, largestScanned, lrgRanking;
+    private ListeningList<Profile> readResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,24 +37,28 @@ public class MyStatsActivity extends AppCompatActivity {
             ExitWithError();
 
         DatabaseController dc = new DatabaseController();
-        dc.readAllProfiles().addOnCompleteListener(task -> {
-            ArrayList<Profile> results = dc.getAllProfiles(task);
-            doneReading(results);
+        readResults = new ListeningList<>();
+        readResults.setOnAddListener(new OnAddListener<Profile>() {
+            @Override
+            public void onAdd(ListeningList<Profile> listeningList) {
+                doneReading();
+            }
         });
+
+        dc.readUsers("", readResults);
     }
 
     /**
      * Called once DatabaseController is done reading the population of players from the database
      * Finishes setting up the text-boxes to display accurate information
-     * @param players The population of players
      */
-    private void doneReading(ArrayList<Profile> players) {
+    private void doneReading() {
         Log.d(TAG, "Reading from the database gave us these players:\n");
-        for(Profile profile : players)
+        for(Profile profile : readResults)
             Log.d(TAG, profile.getUname() + "\n");
         Log.d("", "The appholder is: " + p.getUname() + "\n");
 
-        lbc = new LeaderBoardController(players);
+        lbc = new LeaderBoardController(readResults);
         int position;
 
         position = lbc.findRankPoints(p);

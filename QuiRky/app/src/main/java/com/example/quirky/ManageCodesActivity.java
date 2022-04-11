@@ -111,9 +111,19 @@ public class ManageCodesActivity extends AppCompatActivity {
      * @param position The position in the recycler that the user clicked on
      */
     private void startViewQRActivity(int position) {
-        Intent i = new Intent(this, ViewQRActivity.class);
-        i.putExtra("code", codes.get(position));
-        startActivity(i);
+        String id = codes.get(position);
+        ListeningList<QRCode> readResult = new ListeningList<>();
+        readResult.setOnAddListener(new OnAddListener<QRCode>() {
+            @Override
+            public void onAdd(ListeningList<QRCode> listeningList) {
+                QRCode qr = listeningList.get(0);
+                Intent i = new Intent(getApplicationContext(), ViewQRActivity.class);
+                i.putExtra("qr", qr);
+                startActivity(i);
+            }
+        });
+        DatabaseController dc = new DatabaseController();
+        dc.readQRCode(id, readResult);
     }
 
     /**

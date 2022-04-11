@@ -19,6 +19,7 @@ package com.example.quirky;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
@@ -119,6 +120,10 @@ public class CodeScannerActivity extends AppCompatActivity {
      */
     private void showSavingInterface(ListeningList<QRCode> listeningList) {
         setVisibility(false);
+        if(listeningList.get(0) == null)
+            Log.d(TAG, "QRCode is null for some goddamn reason");
+        else
+            Log.d(TAG, "QRCode is apparently not null...");
         QRCode qr = listeningList.get(0);
 
         save_button.setOnClickListener(view -> {

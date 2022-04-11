@@ -18,6 +18,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Activity to view a QRCode. Holds two fragments: one fragment to see the QRCode location, & start up the comments activity
@@ -45,7 +46,7 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         dc = new DatabaseController();
 
         i = getIntent();
-        qr = i.getParcelableExtra("code");
+        qr = i.getParcelableExtra("qr");
         if(qr == null)
             ExitWithError();
 
@@ -118,6 +119,22 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         } else {
             Toast.makeText(this, "You did not have that code anyways!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void viewProfile(String username) {
+        ListeningList<Profile> readResult = new ListeningList<>();
+        readResult.setOnAddListener(new OnAddListener<Profile>() {
+            @Override
+            public void onAdd(ListeningList<Profile> listeningList) {
+                Profile p = listeningList.get(0);
+                Intent intent = new Intent(getApplicationContext(), ProfileViewerActivity.class);
+                intent.putExtra("profile", p);
+                startActivity(intent);
+            }
+        });
+
+        dc.readProfile(username, readResult);
     }
 
     /**

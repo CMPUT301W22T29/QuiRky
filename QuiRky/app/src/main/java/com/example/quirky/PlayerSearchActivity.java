@@ -18,9 +18,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.Toast;
-
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
@@ -32,6 +29,7 @@ public class PlayerSearchActivity extends AppCompatActivity {
     private final String TAG = "PlayerSearchActivity says";
 
     private DatabaseController dc;
+    ListeningList<Profile> queryResults;
     private ArrayList<String> usernames;
     private ArrayList<Drawable> photos;
 
@@ -60,17 +58,9 @@ public class PlayerSearchActivity extends AppCompatActivity {
         list = findViewById(R.id.search_user_list);
 
 
-        listener = new RecyclerClickerListener() {
-            @Override
-            public void OnClickListItem(int position) {
-                Log.d(TAG, "Listener received item position" + position);
-                String user = usernames.get(position);
-                dc.readProfile(user).addOnCompleteListener(task -> {
-                    Profile p = dc.getProfile(task);
-                    assert p != null : "Something went wrong in the profile read!";
-                    startViewProfileActivity(p);
-                });
-            }
+        listener = position -> {
+            Log.d(TAG, "Listener received item position" + position);
+            startViewProfileActivity(position);
         };
 
 
@@ -78,7 +68,7 @@ public class PlayerSearchActivity extends AppCompatActivity {
         list.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         list.setAdapter(adapter);
 
-        button.setOnClickListener(view -> { QueryDatabase(); });
+        button.setOnClickListener(view -> QueryDatabase());
     }
 
     /**
@@ -87,37 +77,35 @@ public class PlayerSearchActivity extends AppCompatActivity {
      */
     public void QueryDatabase() {
         circle.setVisibility(View.VISIBLE);
-        usernames.clear();
         String username = input.getText().toString();
 
-        if(username.length() == 0)
-            return;
-
-        // Start the Query and set an on complete listener.
-        dc.startUserSearchQuery(username)
-                .addOnCompleteListener(task -> {
-            ArrayList<Profile> results = dc.getUserSearchQuery(task);
-
-            if(results.size() == 0) {
-                Toast.makeText(PlayerSearchActivity.this, "No results found!", Toast.LENGTH_LONG).show();
-
-            } else {
-                for(Profile p : results) {
-                    if(p == null) continue;
-                    usernames.add(p.getUname());
-                }
-                adapter.notifyDataSetChanged();
+        queryResults = new ListeningList<>();
+        queryResults.setOnAddListener(new OnAddListener<Profile>() {
+            @Override
+            public void onAdd(ListeningList<Profile> listeningList) {
+                updateList();
+                circle.setVisibility(View.INVISIBLE);
             }
-
-            circle.setVisibility(View.INVISIBLE);
         });
+
+        dc.readUsers(username, queryResults);
+    }
+
+    private void updateList() {
+        usernames.clear();
+        for(Profile p : queryResults) {
+            usernames.add( p.getUname() );
+        }
+        adapter.notifyDataSetChanged();
     }
 
     /**
-     * Starts up the ProfileViewerActivity with a given profile
-     * @param p The profile to be viewed
+     * Starts up the ProfileViewerActivity. Called when an item in the RecyclerView is clicked on.
+     * @param position The position of the item the user clicked on.
      */
-    private void startViewProfileActivity(Profile p) {
+    private void startViewProfileActivity(int position) {
+        Profile p = queryResults.get(position);
+
         Intent i = new Intent(this, ProfileViewerActivity.class);
         i.putExtra("profile", p);
         startActivity(i);
