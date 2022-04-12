@@ -1,5 +1,6 @@
 package com.example.quirky;
 
+import android.nfc.Tag;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -80,6 +81,8 @@ public class DatabaseController {
     }
 
     public void readProfile(String username, ListeningList<Profile> data) {
+        assert (!username.equals("") && !username.equals(" ")) : "Tried calling readProfile() with an empty username! Did you mean to use readAllUsers()?";
+
         collection = db.collection("users");
         collection.document(username).get().addOnCompleteListener(task -> {
             data.add( task.getResult().toObject(Profile.class) );
@@ -97,7 +100,7 @@ public class DatabaseController {
     }
 
     // This method can be used to Query the database for specific users, or read the whole database at once, by passing an empty string.
-    public void readUsers(String search, ListeningList<Profile> data) {
+    public void readAllUsers(String search, ListeningList<Profile> data) {
         collection = db.collection("users");
         OnCompleteListener<QuerySnapshot> complete = task -> {
             Collection<Profile> result = task.getResult().toObjects(Profile.class);

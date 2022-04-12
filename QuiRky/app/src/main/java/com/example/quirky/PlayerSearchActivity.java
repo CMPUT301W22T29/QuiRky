@@ -88,7 +88,7 @@ public class PlayerSearchActivity extends AppCompatActivity {
             }
         });
 
-        dc.readUsers(username, queryResults);
+        dc.readAllUsers(username, queryResults);
     }
 
     private void updateList() {

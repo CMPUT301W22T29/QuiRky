@@ -45,7 +45,7 @@ public class MyStatsActivity extends AppCompatActivity {
             }
         });
 
-        dc.readUsers("", readResults);
+        dc.readAllUsers("", readResults);
     }
 
     /**

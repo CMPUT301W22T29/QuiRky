@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Activity to show the global leaderboards. Players can see the population ranked by three statistics
@@ -66,7 +65,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
             }
         });
 
-        dc.readProfile("", readResults);
+        dc.readAllUsers("", readResults);
     }
 
     /**

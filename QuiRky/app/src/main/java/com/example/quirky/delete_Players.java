@@ -67,7 +67,7 @@ public class delete_Players extends AppCompatActivity {
             }
         });
 
-        dc.readUsers("", readResults);
+        dc.readAllUsers("", readResults);
     }
 
     /**
