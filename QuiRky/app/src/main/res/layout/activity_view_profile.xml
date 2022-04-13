@@ -12,144 +12,144 @@
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
         android:layout_marginTop="48dp"
-        android:hint="To be replaced"
-        android:textSize="40sp"
         android:gravity="center_horizontal"
+        android:hint="To be replaced"
+        android:textSize="48sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/email1"
+        android:id="@+id/email_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:hint="User has no email"
+        android:textSize="28sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_name"
-        android:text="Email: "
-        android:textSize="30sp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        />
-    <TextView
-        android:id="@+id/email2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:hint="No email."
-        android:textSize="30sp"
-        app:layout_constraintStart_toEndOf="@+id/email1"
         app:layout_constraintTop_toBottomOf="@+id/profile_name" />
 
     <TextView
-        android:id="@+id/phone1"
-        android:layout_width="wrap_content"
+        android:id="@+id/phone_text"
+        android:layout_width="361dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:hint="User has no phone number"
+        android:textSize="28sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/email1"
-        android:text="Cell Number: "
-        android:textSize="30sp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        />
-    <TextView
-        android:id="@+id/phone2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:hint="No email."
-        android:textSize="30sp"
-        app:layout_constraintStart_toEndOf="@+id/phone1"
-        app:layout_constraintTop_toBottomOf="@+id/email1" />
+        app:layout_constraintTop_toBottomOf="@+id/email_text" />
 
     <TextView
-        android:id="@+id/rank_points_text"
+        android:id="@+id/points_title_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:text="Points Acquired"
-        android:textSize="20sp"
+        android:textSize="32sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/phone1" />
-    <TextView
-        android:id="@+id/rank_points_field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:hint="Replace me in .java file"
-        android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/rank_points_text"
-        app:layout_constraintTop_toBottomOf="@+id/phone1" />
+        app:layout_constraintTop_toBottomOf="@+id/phone_text" />
 
     <TextView
-        android:id="@+id/rank_scanned_text"
+        android:id="@+id/points_stat_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="8dp"
+        android:hint="Replace me! pts"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/points_title_text" />
+
+    <TextView
+        android:id="@+id/points_rank_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="8dp"
+        android:hint="Rank: Replace me!"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/points_stat_text" />
+
+    <TextView
+        android:id="@+id/codes_scanned_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:text="Codes Scanned"
-        android:textSize="20sp"
+        android:textSize="32sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rank_points_text" />
-    <TextView
-        android:id="@+id/rank_scanned_field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:hint="Replace me in .java file"
-        android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@+id/rank_scanned_text"
-        app:layout_constraintTop_toBottomOf="@+id/rank_points_text" />
+        app:layout_constraintTop_toBottomOf="@+id/points_rank_text" />
 
     <TextView
-        android:id="@+id/rank_largest_text"
+        android:id="@+id/scanned_stat_text"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="8dp"
+        android:hint="Replace me! QRCodes scanned"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/codes_scanned_title" />
+
+    <TextView
+        android:id="@+id/scanned_rank_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="8dp"
+        android:hint="Rank: Replace me!"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scanned_stat_text" />
+
+    <TextView
+        android:id="@+id/largest_scanned_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
-        android:text="Largest Code Scanned"
-        android:textSize="20sp"
+        android:layout_marginTop="16dp"
+        android:text="Codes Scanned"
+        android:textSize="32sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rank_scanned_text" />
+        app:layout_constraintTop_toBottomOf="@+id/scanned_rank_text" />
 
     <TextView
-        android:id="@+id/rank_largest_field"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:hint="Replace me in .java file"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/rank_largest_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/rank_largest_text"
-        app:layout_constraintTop_toBottomOf="@+id/rank_scanned_text" />
+        android:id="@+id/largest_stat_text"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="8dp"
+        android:hint="Replace me! QRCodes scanned"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/largest_scanned_title" />
+
+    <TextView
+        android:id="@+id/largest_rank_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="48dp"
+        android:layout_marginTop="8dp"
+        android:hint="Rank: Replace me!"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/largest_stat_text" />
 
     <Button
-        android:id="@+id/change_profile_button"
+        android:id="@+id/profile_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Change Profile"
+        android:minHeight="50dp"
+        android:text="To be replaced"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="24dp"
-        />
-
-    <Button
-        android:id="@+id/see_scanned_codes_button"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:text="See Scanned Codes"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/change_profile_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/largest_rank_text" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

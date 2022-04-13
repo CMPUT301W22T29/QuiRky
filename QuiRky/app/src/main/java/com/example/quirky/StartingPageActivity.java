@@ -98,23 +98,14 @@ public class StartingPageActivity extends AppCompatActivity implements ActivityC
             startActivity(i);
         });
 
-        mid.setText("My Stats");
+        mid.setText("Redundant Button (was MyStats)");
         mid.setOnClickListener(view -> {
-
-            MemoryController mc = new MemoryController(this);
-            Profile p = mc.read();
-
-            Intent i = new Intent(this, MyStatsActivity.class);
-            i.putExtra("profile", p);
-            startActivity(i);
+            Toast.makeText(this, "This activity has been refactored, must update UI to remove button", Toast.LENGTH_SHORT).show();
         });
 
-        bottom.setText("My QR Codes");
+        bottom.setText("Redundant button, does same thing as ManageCodes button");
         bottom.setOnClickListener(view -> {
-            mc = new MemoryController(this);
-            Intent i = new Intent(this, ManageCodesActivity.class);
-            i.putExtra("profile", mc.read());
-            startActivity(i);
+            Toast.makeText(this, "This button is redundant, must update UI to remove button", Toast.LENGTH_SHORT).show();
         });
     }
 

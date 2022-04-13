@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:layout_marginBottom="8dp"
-        android:text="@string/text_write_comment"
+        android:text="Write A Comment"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/editText_comment"
         app:layout_constraintStart_toStartOf="parent" />
@@ -47,21 +47,23 @@
         android:id="@+id/button_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
         android:layout_marginBottom="16dp"
         android:text="@string/back"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button_save"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/button_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="64dp"
         android:layout_marginBottom="16dp"
-        android:text="@string/button_save"
+        android:text="Save!"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/button_cancel" />
 
     <EditText
         android:id="@+id/editText_comment"
@@ -69,7 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:ems="18"
-        android:hint="@string/string_comment"
+        android:hint="Write Something Here!"
         android:inputType="textLongMessage"
         android:minHeight="48dp"
         app:layout_constraintBottom_toTopOf="@+id/button_cancel"

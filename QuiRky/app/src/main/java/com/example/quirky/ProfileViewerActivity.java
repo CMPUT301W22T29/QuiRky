@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,12 +14,16 @@ import android.widget.Toast;
  */
 public class ProfileViewerActivity extends AppCompatActivity {
 
-    private Intent i;
     private Profile p;
     private MemoryController mc;
+    private ListeningList<Profile> readResults;
 
-    private Button changeProfile, seeCodes;
-    private TextView title, email, phone, rank1, rank2, rank3;
+    // This button will either allow the user to change their profile, or direct to the profile's QRCode
+    // Depending on if the user is viewing their own profile or someone else's.
+    private Button button;
+    private TextView UsernameTitleText, EmailText, PhoneText;
+    private TextView PointsText, NumScannedText, LargestScannedText;
+    private TextView PointsRankText, NumScannedRank, LargestScannedRank;
 
     boolean view_self; // Is the player viewing themself?
 
@@ -27,38 +31,68 @@ public class ProfileViewerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_profile);
-        i = getIntent();
+
+        Intent i = getIntent();
         p = (Profile) i.getSerializableExtra("profile");
         if(p == null)
             ExitWithError();
 
-        title = findViewById(R.id.profile_name);
-        email = findViewById(R.id.email2);
-        phone = findViewById(R.id.phone2);
-        rank1 = findViewById(R.id.rank_points_field);
-        rank2 = findViewById(R.id.rank_scanned_field);
-        rank3 = findViewById(R.id.rank_largest_field);
-        changeProfile = findViewById(R.id.change_profile_button);
-        seeCodes = findViewById(R.id.see_scanned_codes_button);
+        UsernameTitleText = findViewById(R.id.profile_name);
+        EmailText = findViewById(R.id.email_text);
+        PhoneText = findViewById(R.id.phone_text);
+
+        PointsText = findViewById(R.id.points_stat_text);
+        PointsRankText = findViewById(R.id.points_rank_text);
+
+        NumScannedText = findViewById(R.id.scanned_stat_text);
+        NumScannedRank = findViewById(R.id.scanned_rank_text);
+
+        LargestScannedText = findViewById(R.id.largest_stat_text);
+        LargestScannedRank = findViewById(R.id.largest_rank_text);
+
+        button = findViewById(R.id.profile_button);
 
 
-        rank1.setText(String.valueOf(p.getPointsOfScannedCodes()));
-        rank2.setText(String.valueOf(p.getNumberCodesScanned()));
-        rank3.setText(String.valueOf(p.getPointsOfLargestCodes()));
+        DatabaseController dc = new DatabaseController();
+        readResults = new ListeningList<>();
+        readResults.setOnAddListener(new OnAddListener<Profile>() {
+            @Override
+            public void onAdd(ListeningList<Profile> listeningList) {
+                doneReading();
+            }
+        });
 
+        dc.readAllUsers("", readResults);
         mc = new MemoryController(this);
 
-        // Check if the username in local memory matches the username passed to this activity
+        // If the username in local memory matches the username passed to this activity,
+        // then the user is viewing themself.
         view_self = ( mc.readUser() ).equals(p.getUname());
-
-        // If the user is viewing their own profile, show the profile button
         if( view_self ) {
-            changeProfile.setOnClickListener(view -> changeProfile());
+            button.setOnClickListener(view -> changeProfile());
+            button.setText("Change Profile");
         } else {
-            changeProfile.setVisibility(View.INVISIBLE);
-            seeCodes.setVisibility(View.VISIBLE);
-            seeCodes.setOnClickListener(view -> viewQRCodes());
+            button.setOnClickListener(view -> viewQRCodes());
+            button.setText("View QRCodes");
         }
+    }
+
+    private void doneReading() {
+        LeaderBoardController lbc = new LeaderBoardController(readResults);
+        int position;
+
+        position = lbc.findRankPoints(p);
+
+        PointsText.setText( String.valueOf( p.getPointsOfScannedCodes() ) );
+        PointsRankText.setText( String.valueOf(position+1) );
+
+        position = lbc.findRankScanned(p);
+        NumScannedText.setText(String.valueOf(p.getNumberCodesScanned() ) );
+        NumScannedRank.setText(String.valueOf(position+1) );
+
+        position = lbc.findRankLargest(p);
+        LargestScannedText.setText(String.valueOf(p.getPointsOfLargestCodes() ) );
+        LargestScannedRank.setText(String.valueOf(position+1) );
     }
 
     private void viewQRCodes() {
@@ -75,9 +109,9 @@ public class ProfileViewerActivity extends AppCompatActivity {
         if(view_self)
             p = mc.read();
 
-        title.setText(p.getUname());
-        email.setText(p.getEmail());
-        phone.setText(p.getPhone());
+        UsernameTitleText.setText(p.getUname());
+        EmailText.setText(p.getEmail());
+        PhoneText.setText(p.getPhone());
     }
 
     /**

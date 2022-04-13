@@ -77,14 +77,7 @@ public class StartingPageTest {
         assertTrue(solo.searchText("QuiRky@ualberta.ca"));
         assertTrue(solo.searchText("1233455678"));
     }
-    @Test
-    public void checkMyStats(){
-        solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
-        solo.clickOnButton("My Profile");
-        solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
-        solo.clickOnButton("My Stats");
-        solo.assertCurrentActivity("Wrong Activity",MyStatsActivity.class);
-    }
+
     @Test
     public void checkSearchOtherUsers(){
         solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);

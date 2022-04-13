@@ -8,6 +8,9 @@ package com.example.quirky;
 
 import org.osmdroid.util.GeoPoint;
 
+/**
+ * Mock class for developing without internet. Obviously can't access the real database with no wifi.
+ */
 public class MockDatabaseController extends DatabaseController {
 
     public void MockReadUser(String username, ListeningList<Profile> list) {
