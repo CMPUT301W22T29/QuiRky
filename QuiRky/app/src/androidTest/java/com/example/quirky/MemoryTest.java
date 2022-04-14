@@ -5,6 +5,9 @@ import android.content.Context;
 import org.junit.*;
 import static org.junit.Assert.*;
 
+import com.example.quirky.controllers.MemoryController;
+import com.example.quirky.models.Profile;
+
 import java.util.ArrayList;
 
 // Code for getting context in a Unit Test taken from:

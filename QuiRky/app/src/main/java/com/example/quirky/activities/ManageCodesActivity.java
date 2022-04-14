@@ -4,15 +4,13 @@
  * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
  */
 
-package com.example.quirky;
+package com.example.quirky.activities;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +18,15 @@ import android.widget.ToggleButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.w3c.dom.Text;
+import com.example.quirky.ListeningList;
+import com.example.quirky.OnAddListener;
+import com.example.quirky.models.Profile;
+import com.example.quirky.QRAdapter;
+import com.example.quirky.models.QRCode;
+import com.example.quirky.controllers.QRCodeController;
+import com.example.quirky.R;
+import com.example.quirky.RecyclerClickerListener;
+import com.example.quirky.controllers.DatabaseController;
 
 import java.util.ArrayList;
 import java.util.Comparator;

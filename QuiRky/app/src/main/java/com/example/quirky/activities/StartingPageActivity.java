@@ -1,8 +1,10 @@
-package com.example.quirky;
+/*
+ * Copyright (c) 2022. CMPUT301W22T29
+ * Subject to MIT License
+ * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
+ */
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
+package com.example.quirky.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -10,6 +12,16 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import com.example.quirky.R;
+import com.example.quirky.controllers.CameraActivitiesController;
+import com.example.quirky.controllers.MapController;
+import com.example.quirky.controllers.MemoryController;
+import com.example.quirky.models.Profile;
 
 /**
  * Hub-Style Activity that directs to all the other activites

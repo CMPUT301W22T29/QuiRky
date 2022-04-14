@@ -8,12 +8,14 @@ package com.example.quirky;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
-import android.app.Instrumentation;
 import android.widget.EditText;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.example.quirky.activities.MainActivity;
+import com.example.quirky.activities.OwnerMenu;
+import com.example.quirky.activities.StartingPageActivity;
 import com.robotium.solo.Solo;
 
 import org.junit.After;

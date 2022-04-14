@@ -4,9 +4,9 @@
  * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
  */
 
-package com.example.quirky;
+package com.example.quirky.controllers;
 
-import android.util.Log;
+import com.example.quirky.models.Profile;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;

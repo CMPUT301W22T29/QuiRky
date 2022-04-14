@@ -4,7 +4,9 @@
  * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
  */
 
-package com.example.quirky;
+package com.example.quirky.controllers;
+
+import com.example.quirky.models.Profile;
 
 import java.util.ArrayList;
 import java.util.Comparator;

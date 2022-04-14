@@ -9,12 +9,19 @@ package com.example.quirky;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
-import android.app.Instrumentation;
 import android.widget.EditText;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.example.quirky.activities.EditProfileActivity;
+import com.example.quirky.activities.GenerateActivity;
+import com.example.quirky.activities.LeaderBoardActivity;
+import com.example.quirky.activities.ManageCodesActivity;
+import com.example.quirky.activities.MapActivity;
+import com.example.quirky.activities.PlayerSearchActivity;
+import com.example.quirky.activities.ProfileViewerActivity;
+import com.example.quirky.activities.StartingPageActivity;
 import com.robotium.solo.Solo;
 
 import org.junit.After;
@@ -61,10 +68,10 @@ public class StartingPageTest {
         solo.clickOnButton("My Profile");
         solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
         solo.clickOnButton("My Profile Info");
-        solo.assertCurrentActivity("Wrong Activity",ProfileViewerActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", ProfileViewerActivity.class);
         assertTrue(solo.searchText("jiawei3"));//user name
         solo.clickOnButton("Change Profile");
-        solo.assertCurrentActivity("Wrong Activity",EditProfileActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", EditProfileActivity.class);
         solo.clearEditText((EditText) solo.getView(R.id.EditProfileInput1));
         solo.clearEditText((EditText) solo.getView(R.id.EditProfileInput2));
         solo.clearEditText((EditText) solo.getView(R.id.EditProfileInput3));
@@ -84,7 +91,7 @@ public class StartingPageTest {
         solo.clickOnButton("Community");
         solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
         solo.clickOnButton("Search Other Users");
-        solo.assertCurrentActivity("Wrong Activity",PlayerSearchActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", PlayerSearchActivity.class);
     }
     //Before testing on Buttons FIND MY POSITION, you need to create an account
     @Test
@@ -93,7 +100,7 @@ public class StartingPageTest {
         solo.clickOnButton("Community");
         solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
         solo.clickOnText("The Leaderboards");
-        solo.assertCurrentActivity("Wrong Activity",LeaderBoardActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", LeaderBoardActivity.class);
         solo.clickOnButton("Find My Position");
         assertTrue(solo.searchText("jiawei3"));//username of your account
         solo.clickOnButton("Top Players");
@@ -106,7 +113,7 @@ public class StartingPageTest {
         solo.clickOnButton("Community");
         solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
         solo.clickOnText("Nearby QR Codes");
-        solo.assertCurrentActivity("Wrong Activity",MapActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MapActivity.class);
     }
     /**
      * Close activity after each test

@@ -1,23 +1,12 @@
 /*
- * CodeScannerActivity.java
- *
- * Version 0.2.0
- * Version History:
- *      Version 0.1.0 -- Camera Previewing Works
- *      Version 0.2.0 -- QR Code Photo Capturing Works
- *      Version 0.3.0 -- There is now a dialogue to save QR codes, this class can now be made to work for the login thing too.
- *
- * Date (v0.3.0): March 30, 2022
- *
  * Copyright (c) 2022. CMPUT301W22T29
  * Subject to MIT License
  * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
  */
 
-package com.example.quirky;
+package com.example.quirky.activities;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +16,16 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.view.PreviewView;
+
+import com.example.quirky.controllers.DatabaseController;
+import com.example.quirky.ListeningList;
+import com.example.quirky.controllers.MemoryController;
+import com.example.quirky.OnAddListener;
+import com.example.quirky.models.Profile;
+import com.example.quirky.models.QRCode;
+import com.example.quirky.controllers.QRCodeController;
+import com.example.quirky.R;
+import com.example.quirky.controllers.CameraController;
 
 import org.osmdroid.util.GeoPoint;
 

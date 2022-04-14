@@ -1,13 +1,17 @@
-package com.example.quirky;
+/*
+ * Copyright (c) 2022. CMPUT301W22T29
+ * Subject to MIT License
+ * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
+ */
+
+package com.example.quirky.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,8 +21,21 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.quirky.ListeningList;
+import com.example.quirky.OnAddListener;
+import com.example.quirky.R;
+import com.example.quirky.ViewQRButtonsFragment;
+import com.example.quirky.ViewQRFragmentListener;
+import com.example.quirky.ViewQRScannersFragment;
+import com.example.quirky.activities.ProfileViewerActivity;
+import com.example.quirky.activities.StartingPageActivity;
+import com.example.quirky.activities.ViewCommentsActivity;
+import com.example.quirky.controllers.DatabaseController;
+import com.example.quirky.controllers.MemoryController;
+import com.example.quirky.models.Profile;
+import com.example.quirky.models.QRCode;
+
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Activity to view a QRCode. Holds two fragments: one fragment to see the QRCode location, & start up the comments activity

@@ -1,4 +1,10 @@
-package com.example.quirky;
+/*
+ * Copyright (c) 2022. CMPUT301W22T29
+ * Subject to MIT License
+ * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
+ */
+
+package com.example.quirky.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,6 +13,14 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.quirky.ListeningList;
+import com.example.quirky.controllers.MemoryController;
+import com.example.quirky.OnAddListener;
+import com.example.quirky.models.Profile;
+import com.example.quirky.controllers.ProfileController;
+import com.example.quirky.R;
+import com.example.quirky.controllers.DatabaseController;
 
 /**
  * Activity to change a profile's information. Can change the username, email, and phone number.

@@ -1,10 +1,15 @@
 
-package com.example.quirky;
+/*
+ * Copyright (c) 2022. CMPUT301W22T29
+ * Subject to MIT License
+ * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
+ */
+
+package com.example.quirky.activities;
 
 import android.content.Intent;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -13,6 +18,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.quirky.CommentList;
+import com.example.quirky.R;
+import com.example.quirky.controllers.DatabaseController;
+import com.example.quirky.controllers.MemoryController;
+import com.example.quirky.models.Comment;
+import com.example.quirky.models.QRCode;
 
 import java.util.ArrayList;
 

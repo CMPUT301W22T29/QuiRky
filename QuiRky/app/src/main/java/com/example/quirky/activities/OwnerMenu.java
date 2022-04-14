@@ -4,13 +4,15 @@
  * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
  */
 
-package com.example.quirky;
+package com.example.quirky.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+
+import com.example.quirky.R;
 
 /**
  * Menu Activity that allows owners to navigate to the two other owner activities
@@ -26,11 +28,11 @@ public class OwnerMenu extends AppCompatActivity {
         ownerDeleteQR = findViewById(R.id.deleteQRCodes);
 
         ownerDeleteQR.setOnClickListener(view -> {
-            Intent i = new Intent(this, delete_QRCodes.class);
+            Intent i = new Intent(this, DeleteCodesActivity.class);
             startActivity(i);
         });
         ownerDeletePL.setOnClickListener(view -> {
-            Intent i = new Intent(this, delete_Players.class);
+            Intent i = new Intent(this, DeletePlayersActivity.class);
             startActivity(i);
         });
     }

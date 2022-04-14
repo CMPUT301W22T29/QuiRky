@@ -1,16 +1,19 @@
-package com.example.quirky;
+/*
+ * Copyright (c) 2022. CMPUT301W22T29
+ * Subject to MIT License
+ * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
+ */
+
+package com.example.quirky.controllers;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.Manifest;
-import org.osmdroid.api.IMapController;
-import org.osmdroid.config.Configuration;
 
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -20,6 +23,9 @@ import androidx.core.content.ContextCompat;
 import androidx.core.location.LocationListenerCompat;
 
 import static android.content.Context.LOCATION_SERVICE;
+
+import com.example.quirky.ListeningList;
+import com.example.quirky.activities.MapActivity;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -73,7 +79,7 @@ public class MapController {
      * @param context Context
      * @return If the user has granted location permissions
      */
-    protected static boolean hasLocationPermissions(Context context) {
+    public static boolean hasLocationPermissions(Context context) {
         boolean fineGranted
                 = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED;
@@ -87,7 +93,7 @@ public class MapController {
      * Request location permissions from the user
      * @param context context
      */
-    protected static void requestLocationPermission(Context context) {
+    public static void requestLocationPermission(Context context) {
         ActivityCompat.requestPermissions(
                                    (Activity) context, LOCATION_PERMISSIONS, LOCATION_REQUEST_CODE);
     }

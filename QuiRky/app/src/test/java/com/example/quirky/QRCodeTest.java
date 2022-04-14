@@ -4,6 +4,10 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
+import com.example.quirky.controllers.QRCodeController;
+import com.example.quirky.models.Comment;
+import com.example.quirky.models.QRCode;
+
 import java.util.ArrayList;
 
 public class QRCodeTest {

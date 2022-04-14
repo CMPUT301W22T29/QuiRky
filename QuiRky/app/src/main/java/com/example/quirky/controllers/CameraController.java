@@ -1,14 +1,4 @@
 /*
- * CameraController.java
- *
- * Version 0.2.0
- * Version History:
- *      Version 0.1.0 -- Camera Previewing Works
- *      Version 0.2.0 -- QR Code Photo Capturing Works
- *      Version 0.2.1 -- Refined Permissions and QR Capturing
- *
- * Date (v0.2.1): March 19, 2022
- *
  * Copyright (c) 2022. CMPUT301W22T29
  * Subject to MIT License
  * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
@@ -17,7 +7,7 @@
 // Much help received from https://medium.com/swlh/introduction-to-androids-camerax-with-java-ca384c522c5
 // TODO: Figure out if needs better citation.
 
-package com.example.quirky;
+package com.example.quirky.controllers;
 
 import android.Manifest;
 import android.app.Activity;
@@ -36,6 +26,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
+import com.example.quirky.activities.CodeScannerActivity;
+import com.example.quirky.ListeningList;
+import com.example.quirky.activities.StartingPageActivity;
+import com.example.quirky.models.QRCode;
 import com.google.android.gms.tasks.Task;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
@@ -44,7 +38,6 @@ import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -104,7 +97,7 @@ public class CameraController {
      *      - The request code of the permission request we are checking.
      * @return
      *      - true if permissions being requested are for the camera, false otherwise.
-     * @see com.example.quirky.StartingPageActivity
+     * @see StartingPageActivity
      * @see ActivityCompat.OnRequestPermissionsResultCallback
      */
     protected static boolean requestingCameraPermissions(int requestCode) {

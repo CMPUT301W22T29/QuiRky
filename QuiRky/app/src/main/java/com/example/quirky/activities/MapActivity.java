@@ -1,5 +1,11 @@
 
-package com.example.quirky;
+/*
+ * Copyright (c) 2022. CMPUT301W22T29
+ * Subject to MIT License
+ * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
+ */
+
+package com.example.quirky.activities;
 
 import android.annotation.SuppressLint;
 import android.location.Location;
@@ -12,12 +18,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.example.quirky.ListeningList;
+import com.example.quirky.controllers.MapController;
+import com.example.quirky.OnAddListener;
+import com.example.quirky.R;
+
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;//Tile source factory used for manipulating the map
-import org.osmdroid.views.overlay.Marker;
+
 
 
 

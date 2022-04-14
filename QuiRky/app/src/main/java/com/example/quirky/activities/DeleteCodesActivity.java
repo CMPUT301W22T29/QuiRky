@@ -4,7 +4,7 @@
  * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
  */
 
-package com.example.quirky;
+package com.example.quirky.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,14 +15,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.example.quirky.ListeningList;
+import com.example.quirky.OnAddListener;
+import com.example.quirky.QRAdapter;
+import com.example.quirky.models.QRCode;
+import com.example.quirky.R;
+import com.example.quirky.RecyclerClickerListener;
+import com.example.quirky.controllers.DatabaseController;
+
 import java.util.ArrayList;
 
 /**
- * Activity to delete players from the database
+ * Activity to delete QRCodes from the Database
  */
-public class delete_Players extends AppCompatActivity {
+public class DeleteCodesActivity extends AppCompatActivity {
 
-    private RecyclerView playersList;
+    private RecyclerView qrList;
     private QRAdapter adapter;
     private RecyclerClickerListener listener;
 
@@ -31,20 +39,19 @@ public class delete_Players extends AppCompatActivity {
     private Button no;
     private DatabaseController dc;
 
-    private ArrayList<String> Usernames;
-    private ListeningList<Profile> readResults;
+    private ArrayList<String> scores;
+    private ListeningList<QRCode> readResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_delete_players);
+        setContentView(R.layout.activity_delete_qrcodes);
 
         dc = new DatabaseController();
-        Usernames = new ArrayList<>();
+        scores = new ArrayList<>();
 
-
-        playersList = findViewById(R.id.players);
-        confirmBox = findViewById(R.id.linearLayout1);
+        qrList = findViewById(R.id.qrCodes);
+        confirmBox = findViewById(R.id.linearLayout);
         yes = findViewById(R.id.confirm);
         no = findViewById(R.id.cancel);
 
@@ -55,19 +62,19 @@ public class delete_Players extends AppCompatActivity {
 
                 yes.setOnClickListener(view -> delete(position));
 
-                no.setOnClickListener(view -> confirmBox.setVisibility(View.INVISIBLE) );
+                no.setOnClickListener(view -> confirmBox.setVisibility(View.INVISIBLE));
             }
         };
 
         readResults = new ListeningList<>();
-        readResults.setOnAddListener(new OnAddListener<Profile>() {
+        readResults.setOnAddListener(new OnAddListener<QRCode>() {
             @Override
-            public void onAdd(ListeningList<Profile> listeningList) {
+            public void onAdd(ListeningList<QRCode> listeningList) {
                 doneReading();
             }
         });
 
-        dc.readAllUsers("", readResults);
+        dc.readAllQRCodes(readResults);
     }
 
     /**
@@ -75,19 +82,22 @@ public class delete_Players extends AppCompatActivity {
      */
     private void doneReading() {
         for(int i = 0; i < readResults.size(); i ++){
-            Usernames.add(readResults.get(i).getUname());
+            scores.add(String.valueOf(readResults.get(i).getScore()));
         }
-        adapter = new QRAdapter(Usernames, new ArrayList<>(), this, listener);
+        adapter = new QRAdapter(scores, new ArrayList<>(), this, listener);
 
-        playersList.setAdapter(adapter);
+        qrList.setAdapter(adapter);
 
-        playersList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        qrList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
     }
 
     private void delete(int position) {
-        dc.deleteProfile(Usernames.get(position));
-        Usernames.remove(position);
+        String id = readResults.get(position).getId();
+        dc.deleteQRCode(id);
+        scores.remove(position);
         confirmBox.setVisibility(View.INVISIBLE);
         adapter.notifyDataSetChanged();
     }
 }
+
+

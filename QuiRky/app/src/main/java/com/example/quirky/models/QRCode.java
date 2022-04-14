@@ -1,22 +1,15 @@
 /*
- * QRCode.java
- *
- * Version 0.2.0
- * Version History:
- *      Version 0.1.0 -- QRCode instances can be constructed
- *      Version 0.2.0 -- Methods that shouldn't go in model classes were moved to QRCodeController.java
- *
- * Date (v0.2.0): March 14, 2022
- *
  * Copyright (c) 2022. CMPUT301W22T29
  * Subject to MIT License
  * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
  */
 
-package com.example.quirky;
+package com.example.quirky.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.example.quirky.controllers.QRCodeController;
 
 import org.osmdroid.util.GeoPoint;
 

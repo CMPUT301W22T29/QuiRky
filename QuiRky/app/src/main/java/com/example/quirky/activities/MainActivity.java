@@ -1,4 +1,10 @@
-package com.example.quirky;
+/*
+ * Copyright (c) 2022. CMPUT301W22T29
+ * Subject to MIT License
+ * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
+ */
+
+package com.example.quirky.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -11,12 +17,22 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.example.quirky.InputUnameLoginFragment;
+import com.example.quirky.ListeningList;
+import com.example.quirky.controllers.MemoryController;
+import com.example.quirky.OnAddListener;
+import com.example.quirky.models.Profile;
+import com.example.quirky.controllers.ProfileController;
+import com.example.quirky.R;
+import com.example.quirky.controllers.CameraActivitiesController;
+import com.example.quirky.controllers.DatabaseController;
+
 /**
  * The activity that starts when the app is opened.
  * Provides an interface for the user to log into the app with.
  */
 public class MainActivity extends AppCompatActivity implements
-                                                 InputUnameLoginFragment.LoginFragListener,
+        InputUnameLoginFragment.LoginFragListener,
                                                  ActivityCompat.OnRequestPermissionsResultCallback {
 
     DatabaseController dm;

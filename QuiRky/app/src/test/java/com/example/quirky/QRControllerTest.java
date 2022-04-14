@@ -4,6 +4,8 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
+import com.example.quirky.controllers.QRCodeController;
+
 import java.nio.charset.StandardCharsets;
 
 public class QRControllerTest {

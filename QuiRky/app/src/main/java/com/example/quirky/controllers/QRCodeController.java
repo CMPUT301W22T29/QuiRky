@@ -1,22 +1,14 @@
 /*
- * QRCodeController.java
- *
- * Version 0.2.0
- * Version History:
- *      Version 0.1.0 -- QRCodes can be constructed from input images
- *      Version 0.2.0 -- Can compute hashes and scores from strings
- *      Version 0.2.1 -- Scanning qr codes now pops toast with info about the scan results.
- *
- * Date (v0.2.1): March 19, 2022
- *
  * Copyright (c) 2022. CMPUT301W22T29
  * Subject to MIT License
  * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
  */
 
-package com.example.quirky;
+package com.example.quirky.controllers;
 
 import android.graphics.Bitmap;
+
+import com.example.quirky.models.QRCode;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;

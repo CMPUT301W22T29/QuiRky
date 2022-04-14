@@ -4,7 +4,7 @@
  * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
  */
 
-package com.example.quirky;
+package com.example.quirky.controllers;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,6 +12,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.quirky.activities.CodeScannerActivity;
+import com.example.quirky.R;
 
 // Provides GUI utilities for Activities that can start other, camera using, Activities.
 

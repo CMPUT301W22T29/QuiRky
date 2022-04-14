@@ -4,7 +4,7 @@
  * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
  */
 
-package com.example.quirky;
+package com.example.quirky.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,6 +14,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.example.quirky.controllers.LeaderBoardController;
+import com.example.quirky.ListeningList;
+import com.example.quirky.controllers.MemoryController;
+import com.example.quirky.OnAddListener;
+import com.example.quirky.models.Profile;
+import com.example.quirky.QRAdapter;
+import com.example.quirky.R;
+import com.example.quirky.controllers.DatabaseController;
 
 import java.util.ArrayList;
 

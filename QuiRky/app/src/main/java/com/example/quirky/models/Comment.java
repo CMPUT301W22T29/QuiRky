@@ -1,7 +1,15 @@
-package com.example.quirky;
+/*
+ * Copyright (c) 2022. CMPUT301W22T29
+ * Subject to MIT License
+ * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
+ */
+
+package com.example.quirky.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.example.quirky.controllers.QRCodeController;
 
 /**
  * This is the comment that will be stored to a Database. The Comment will have
