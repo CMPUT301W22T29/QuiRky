@@ -10,9 +10,14 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.quirky.ListeningList;
+import com.example.quirky.OnAddListener;
 import com.example.quirky.R;
 import com.example.quirky.controllers.CameraActivitiesController;
+import com.example.quirky.controllers.DatabaseController;
+import com.example.quirky.controllers.MemoryController;
 
 /**
  * Hub-Style Activity that directs to all the other activities
@@ -20,6 +25,9 @@ import com.example.quirky.controllers.CameraActivitiesController;
 public class HubActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private CameraActivitiesController cameraActivitiesController;
+    private MemoryController mc;
+    private DatabaseController dc;
+    private boolean owner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,5 +35,19 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         setContentView(R.layout.activity_hub);
 
         cameraActivitiesController = new CameraActivitiesController(this, false);
+        mc = new MemoryController(this);
+        dc = new DatabaseController();
+
+        ListeningList<Boolean> ownerResult = new ListeningList<>();
+        ownerResult.setOnAddListener(new OnAddListener<Boolean>() {
+            @Override
+            public void onAdd(ListeningList<Boolean> listeningList) {
+                owner = listeningList.get(0);
+            }
+        });
+        dc.isOwner( mc.readUser(), ownerResult);
+
+        RecyclerView PhotoList = findViewById(R.id.hub_photo_list);
+
     }
 }

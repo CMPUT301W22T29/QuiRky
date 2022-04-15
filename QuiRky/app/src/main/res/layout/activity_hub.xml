@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText"
     tools:context=".activities.HubActivity"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
@@ -29,9 +30,10 @@
         android:text="Check out the most recent scans!"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/welcome_message" />
+        app:layout_constraintTop_toBottomOf="@id/welcome_message"
+        />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <ScrollView
         android:id="@+id/hub_features_list"
         android:layout_width="match_parent"
         android:layout_height="125dp"
@@ -40,7 +42,83 @@
         android:scrollbarStyle="insideOverlay"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/hub_button1"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:text="Feature1"
+                style="?android:attr/buttonBarButtonStyle" />
+            <Button
+                android:id="@+id/hub_button2"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:text="Feature2"
+                style="?android:attr/buttonBarButtonStyle" />
+
+            <Button
+                android:id="@+id/hub_button3"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:text="Feature3"
+                style="?android:attr/buttonBarButtonStyle" />
+
+            <Button
+                android:id="@+id/hub_button4"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:text="Feature4"
+                style="?android:attr/buttonBarButtonStyle" />
+
+            <Button
+                android:id="@+id/hub_button5"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:text="Feature4"
+                style="?android:attr/buttonBarButtonStyle" />
+
+            <Button
+                android:id="@+id/hub_button6"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:text="Feature4"
+                style="?android:attr/buttonBarButtonStyle" />
+
+            <Button
+                android:id="@+id/hub_button7"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:text="Feature4"
+                style="?android:attr/buttonBarButtonStyle" />
+        </LinearLayout>
+    </ScrollView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/hub_photo_list"
@@ -50,8 +128,9 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/hub_features_list"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.924"
         app:layout_constraintStart_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2"
-        />
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
