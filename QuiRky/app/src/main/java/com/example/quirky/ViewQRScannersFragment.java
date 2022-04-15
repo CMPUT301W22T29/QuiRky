@@ -65,7 +65,7 @@ public class ViewQRScannersFragment extends Fragment {
 
         adapter = new TextPhotoAdapter(players, images, getActivity(), recyclerListener);
         list.setAdapter(adapter);
-        list.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        list.setLayoutManager( adapter.getLayoutManager() );
 
         back.setOnClickListener(view1 -> fragmentListener.changeFragment(new ViewQRButtonsFragment()));
     }

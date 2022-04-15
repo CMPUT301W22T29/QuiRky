@@ -73,7 +73,7 @@ public class PlayerSearchActivity extends AppCompatActivity {
 
 
         adapter = new TextPhotoAdapter(usernames, photos, this, listener);
-        list.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        list.setLayoutManager( adapter.getLayoutManager() );
         list.setAdapter(adapter);
 
         button.setOnClickListener(view -> QueryDatabase());

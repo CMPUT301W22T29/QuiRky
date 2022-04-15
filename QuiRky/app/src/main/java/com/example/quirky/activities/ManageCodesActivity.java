@@ -76,7 +76,7 @@ public class ManageCodesActivity extends AppCompatActivity {
         };
         QRCodeAdapter = new TextPhotoAdapter(points, new ArrayList<>(),this, recyclerListener);
         qr_list.setAdapter(QRCodeAdapter);
-        qr_list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        qr_list.setLayoutManager(QRCodeAdapter.getLayoutManager());
 
         arrangementOrder.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

@@ -89,7 +89,7 @@ public class DeletePlayersActivity extends AppCompatActivity {
 
         playersList.setAdapter(adapter);
 
-        playersList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        playersList.setLayoutManager(adapter.getLayoutManager());
     }
 
     private void delete(int position) {

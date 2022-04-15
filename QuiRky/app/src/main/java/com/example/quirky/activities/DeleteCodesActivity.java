@@ -88,7 +88,7 @@ public class DeleteCodesActivity extends AppCompatActivity {
 
         qrList.setAdapter(adapter);
 
-        qrList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        qrList.setLayoutManager(adapter.getLayoutManager());
     }
 
     private void delete(int position) {

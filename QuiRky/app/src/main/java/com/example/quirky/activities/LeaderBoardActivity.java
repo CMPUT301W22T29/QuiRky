@@ -88,7 +88,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
 
         adapter = new TextPhotoAdapter(data, new ArrayList<>(), this);
         list.setAdapter(adapter);
-        list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        list.setLayoutManager(adapter.getLayoutManager());
 
 
         sortPoints.setOnClickListener(view -> {
