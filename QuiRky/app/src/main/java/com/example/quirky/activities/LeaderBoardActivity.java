@@ -47,7 +47,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_leader_board);
+        setContentView(R.layout.activity_leaderboard);
 
         // Read the user from memory
         MemoryController mc = new MemoryController(this);
@@ -114,7 +114,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
      */
     private void startViewProfile(int index) {
         Profile p = players.get(index);
-        Intent i = new Intent(this, ProfileViewerActivity.class);
+        Intent i = new Intent(this, ProfileActivity.class);
         i.putExtra("profile", p);
         startActivity(i);
     }

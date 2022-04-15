@@ -16,7 +16,7 @@ import com.example.quirky.activities.CodeScannerActivity;
 
 /**
  * @author Jonathen Adsit
- * Fragment that is attached to MainActivity, which is the Login Activity.
+ * Fragment that is attached to LoginActivity, which is the Login Activity.
  * Prompts the user for a username, and provides an option to login through QRCode scanning instead.
  * Does no work on it's own, instead communicates it's input to the calling activity
  * @see CodeScannerActivity

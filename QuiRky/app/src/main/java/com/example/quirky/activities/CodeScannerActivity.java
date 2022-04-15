@@ -150,7 +150,7 @@ public class CodeScannerActivity extends AppCompatActivity {
         mc.write(p);
         mc.writeUser(p.getUname());
 
-        Intent i = new Intent(this, StartingPageActivity.class);
+        Intent i = new Intent(this, HubActivity.class);
         startActivity(i);
     }
 

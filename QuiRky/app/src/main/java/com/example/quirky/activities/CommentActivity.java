@@ -35,7 +35,7 @@ import java.util.ArrayList;
  * @author Raymart Bless C. Datuin
  * @author Jonathen Adsit
  * */
-public class ViewCommentsActivity extends AppCompatActivity {
+public class CommentActivity extends AppCompatActivity {
     private Button Save;
     private Button Cancel;
     private ImageView QRCodeImage;
@@ -48,7 +48,7 @@ public class ViewCommentsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_comment);
+        setContentView(R.layout.activity_comment);
 
         Intent intent = getIntent();
         qr = intent.getParcelableExtra("qr");

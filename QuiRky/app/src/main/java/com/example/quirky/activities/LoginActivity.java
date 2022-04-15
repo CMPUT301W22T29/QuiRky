@@ -31,7 +31,7 @@ import com.example.quirky.controllers.DatabaseController;
  * The activity that starts when the app is opened.
  * Provides an interface for the user to log into the app with.
  */
-public class MainActivity extends AppCompatActivity implements
+public class LoginActivity extends AppCompatActivity implements
         InputUnameLoginFragment.LoginFragListener,
                                                  ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
         cameraActivitiesController = new CameraActivitiesController(this, true);
 
@@ -137,10 +137,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     * Launches StartingPageActivity
+     * Launches HubActivity
      */
     private void startHubActivity() {
-        Intent i = new Intent(this, StartingPageActivity.class);
+        Intent i = new Intent(this, HubActivity.class);
         startActivity(i);
     }
 
@@ -159,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements
             });
 
             dm.isOwner(user, isOwner);
-
         }
     }
 

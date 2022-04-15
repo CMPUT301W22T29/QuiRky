@@ -27,7 +27,7 @@ import com.example.quirky.models.Profile;
 /**
  * Activity to view a profile
  */
-public class ProfileViewerActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity {
 
     private Profile p;
     private MemoryController mc;

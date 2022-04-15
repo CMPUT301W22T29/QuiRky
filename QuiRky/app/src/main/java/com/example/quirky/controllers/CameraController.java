@@ -28,7 +28,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import com.example.quirky.activities.CodeScannerActivity;
 import com.example.quirky.ListeningList;
-import com.example.quirky.activities.StartingPageActivity;
+import com.example.quirky.activities.HubActivity;
 import com.example.quirky.models.QRCode;
 import com.google.android.gms.tasks.Task;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -97,7 +97,7 @@ public class CameraController {
      *      - The request code of the permission request we are checking.
      * @return
      *      - true if permissions being requested are for the camera, false otherwise.
-     * @see StartingPageActivity
+     * @see HubActivity
      * @see ActivityCompat.OnRequestPermissionsResultCallback
      */
     protected static boolean requestingCameraPermissions(int requestCode) {

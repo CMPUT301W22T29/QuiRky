@@ -63,7 +63,7 @@
         <activity
             android:name=".activities.ViewQRActivity"
             android:exported="false"
-            android:parentActivityName=".activities.StartingPageActivity" />
+            android:parentActivityName=".activities.HubActivity" />
         <activity
             android:name=".activities.MapActivity"
             android:exported="false"
@@ -72,27 +72,27 @@
         <activity
             android:name=".activities.CodeScannerActivity"
             android:exported="false"
-            android:parentActivityName=".activities.StartingPageActivity" />
+            android:parentActivityName=".activities.HubActivity" />
         <activity
-            android:name=".activities.StartingPageActivity"
+            android:name=".activities.HubActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.ViewCommentsActivity"
+            android:name=".activities.CommentActivity"
             android:exported="false" />
         <activity
             android:name=".activities.GenerateActivity"
             android:exported="false"
-            android:parentActivityName=".activities.StartingPageActivity" />
+            android:parentActivityName=".activities.HubActivity" />
         <activity
             android:name=".activities.EditProfileActivity"
             android:exported="false"
-            android:parentActivityName=".activities.StartingPageActivity" />
+            android:parentActivityName=".activities.HubActivity" />
         <activity
-            android:name=".activities.ProfileViewerActivity"
+            android:name=".activities.ProfileActivity"
             android:exported="false"
-            android:parentActivityName=".activities.StartingPageActivity" />
+            android:parentActivityName=".activities.HubActivity" />
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

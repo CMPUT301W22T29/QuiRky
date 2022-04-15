@@ -15,7 +15,7 @@ import android.widget.EditText;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
-import com.example.quirky.activities.StartingPageActivity;
+import com.example.quirky.activities.HubActivity;
 import com.example.quirky.activities.ViewQRActivity;
 import com.robotium.solo.Solo;
 
@@ -29,7 +29,7 @@ public class ViewQRANDCommentTest {
     private Solo solo;
 
     @Rule
-    public ActivityTestRule rule = new ActivityTestRule(StartingPageActivity.class,true,true);
+    public ActivityTestRule rule = new ActivityTestRule(HubActivity.class,true,true);
 
     @Before
     public void setUp() throws Exception{

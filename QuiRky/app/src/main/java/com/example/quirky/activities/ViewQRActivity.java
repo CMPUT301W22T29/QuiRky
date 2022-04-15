@@ -27,9 +27,6 @@ import com.example.quirky.R;
 import com.example.quirky.ViewQRButtonsFragment;
 import com.example.quirky.ViewQRFragmentListener;
 import com.example.quirky.ViewQRScannersFragment;
-import com.example.quirky.activities.ProfileViewerActivity;
-import com.example.quirky.activities.StartingPageActivity;
-import com.example.quirky.activities.ViewCommentsActivity;
 import com.example.quirky.controllers.DatabaseController;
 import com.example.quirky.controllers.MemoryController;
 import com.example.quirky.models.Profile;
@@ -109,7 +106,7 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
      */
     @Override
     public void commentsButton() {
-        Intent intent = new Intent(this, ViewCommentsActivity.class);
+        Intent intent = new Intent(this, CommentActivity.class);
         intent.putExtra("qr", qr);
         startActivity(intent);
     }
@@ -131,7 +128,7 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
 
             Toast.makeText(this, "Removed from your scanned codes!", Toast.LENGTH_SHORT).show();
 
-            Intent i = new Intent(this, StartingPageActivity.class);
+            Intent i = new Intent(this, HubActivity.class);
             startActivity(i);
         } else {
             Toast.makeText(this, "You did not have that code anyways!", Toast.LENGTH_SHORT).show();
@@ -145,7 +142,7 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
             @Override
             public void onAdd(ListeningList<Profile> listeningList) {
                 Profile p = listeningList.get(0);
-                Intent intent = new Intent(getApplicationContext(), ProfileViewerActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
                 intent.putExtra("profile", p);
                 startActivity(intent);
             }

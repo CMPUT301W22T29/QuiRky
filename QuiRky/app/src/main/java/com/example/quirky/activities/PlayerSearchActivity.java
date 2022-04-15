@@ -108,13 +108,13 @@ public class PlayerSearchActivity extends AppCompatActivity {
     }
 
     /**
-     * Starts up the ProfileViewerActivity. Called when an item in the RecyclerView is clicked on.
+     * Starts up the ProfileActivity. Called when an item in the RecyclerView is clicked on.
      * @param position The position of the item the user clicked on.
      */
     private void startViewProfileActivity(int position) {
         Profile p = queryResults.get(position);
 
-        Intent i = new Intent(this, ProfileViewerActivity.class);
+        Intent i = new Intent(this, ProfileActivity.class);
         i.putExtra("profile", p);
         startActivity(i);
     }
