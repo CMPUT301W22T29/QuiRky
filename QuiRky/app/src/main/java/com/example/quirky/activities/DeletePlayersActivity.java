@@ -17,8 +17,8 @@ import android.widget.LinearLayout;
 
 import com.example.quirky.ListeningList;
 import com.example.quirky.OnAddListener;
+import com.example.quirky.TextPhotoAdapter;
 import com.example.quirky.models.Profile;
-import com.example.quirky.QRAdapter;
 import com.example.quirky.R;
 import com.example.quirky.RecyclerClickerListener;
 import com.example.quirky.controllers.DatabaseController;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
 public class DeletePlayersActivity extends AppCompatActivity {
 
     private RecyclerView playersList;
-    private QRAdapter adapter;
+    private TextPhotoAdapter adapter;
     private RecyclerClickerListener listener;
 
     private LinearLayout confirmBox;
@@ -85,7 +85,7 @@ public class DeletePlayersActivity extends AppCompatActivity {
         for(int i = 0; i < readResults.size(); i ++){
             Usernames.add(readResults.get(i).getUname());
         }
-        adapter = new QRAdapter(Usernames, new ArrayList<>(), this, listener);
+        adapter = new TextPhotoAdapter(Usernames, new ArrayList<>(), this, listener);
 
         playersList.setAdapter(adapter);
 

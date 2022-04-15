@@ -31,9 +31,6 @@
             android:name=".activities.DeleteCodesActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.OwnerMenu"
-            android:exported="false" />
-        <activity
             android:name=".activities.ManageCodesActivity"
             android:exported="false"
             android:label="@string/title_activity_manage_codes"

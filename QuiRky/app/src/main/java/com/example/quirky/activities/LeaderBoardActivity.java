@@ -20,7 +20,7 @@ import com.example.quirky.ListeningList;
 import com.example.quirky.controllers.MemoryController;
 import com.example.quirky.OnAddListener;
 import com.example.quirky.models.Profile;
-import com.example.quirky.QRAdapter;
+import com.example.quirky.TextPhotoAdapter;
 import com.example.quirky.R;
 import com.example.quirky.controllers.DatabaseController;
 
@@ -35,7 +35,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
 
     private Button sortPoints, sortScanned, sortGreatest, myRank, topRanks;
     private RecyclerView list;
-    private QRAdapter adapter;
+    private TextPhotoAdapter adapter;
 
     private Profile user;
     private ArrayList<String> data; // For use with the adapter
@@ -86,7 +86,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
         lbc = new LeaderBoardController(players);
         sortByPoints();
 
-        adapter = new QRAdapter(data, new ArrayList<>(), this);
+        adapter = new TextPhotoAdapter(data, new ArrayList<>(), this);
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 

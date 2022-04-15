@@ -15,7 +15,6 @@ import androidx.test.rule.ActivityTestRule;
 
 import com.example.quirky.activities.HubActivity;
 import com.example.quirky.activities.LoginActivity;
-import com.example.quirky.activities.OwnerMenu;
 import com.robotium.solo.Solo;
 
 import org.junit.After;
@@ -54,13 +53,6 @@ public class LoginActivityTest {
         solo.enterText((EditText) solo.getView(R.id.login_frag_input_field), "jiawei3");
         solo.clickOnButton("Confirm");
         solo.assertCurrentActivity("Wrong Activity", HubActivity.class);
-    }
-    //Needs to be an owner in order to see Owner Setting Button
-    @Test
-    public void checkSettings(){
-        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.clickOnButton("Settings");
-        solo.assertCurrentActivity("Wrong Activity", OwnerMenu.class);
     }
     /**
      * Close activity after each test

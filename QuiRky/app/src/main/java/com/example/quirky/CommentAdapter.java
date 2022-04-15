@@ -20,12 +20,12 @@ import java.util.ArrayList;
  * @author Raymart Bless C. Datuin
  *
  */
-public class CommentList extends RecyclerView.Adapter<CommentList.CommentViewHolder> {
+public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
 
     private ArrayList<Comment> comments;
     private Context context;
 
-    public CommentList(Context context, ArrayList<Comment> comments) {
+    public CommentAdapter(Context context, ArrayList<Comment> comments) {
         this.comments = comments;
         this.context = context;
     }

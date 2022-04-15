@@ -25,7 +25,7 @@ import java.util.ArrayList;
  * An Adapter for RecyclerViews that takes in two ArrayLists: one for drawable objects & one for strings,
  * and maps them to the layout file for the QRCode adapter in qr_recycler_items.xml
  */
-public class QRAdapter extends RecyclerView.Adapter<QRAdapter.QRViewHolder> {
+public class TextPhotoAdapter extends RecyclerView.Adapter<TextPhotoAdapter.QRViewHolder> {
     private ArrayList<Drawable> photos;
     private ArrayList<String> data;
     Context ct;
@@ -37,14 +37,14 @@ public class QRAdapter extends RecyclerView.Adapter<QRAdapter.QRViewHolder> {
      * @param data The array of string objects
      * @param ct Context because it does things that helps the adapter do stuff. Duh.
      */
-    public QRAdapter(ArrayList<String> data, ArrayList<Drawable> photos,  Context ct, RecyclerClickerListener listener) {
+    public TextPhotoAdapter(ArrayList<String> data, ArrayList<Drawable> photos, Context ct, RecyclerClickerListener listener) {
         this.photos = photos;
         this.data = data;
         this.ct = ct;
         this.listener = listener;
     }
 
-    public QRAdapter(ArrayList<String> data, ArrayList<Drawable> photos,  Context ct) {
+    public TextPhotoAdapter(ArrayList<String> data, ArrayList<Drawable> photos, Context ct) {
         this.photos = photos;
         this.data = data;
         this.ct = ct;

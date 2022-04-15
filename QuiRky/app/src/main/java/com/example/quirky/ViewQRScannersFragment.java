@@ -7,7 +7,6 @@
 package com.example.quirky;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,11 +21,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
 
 /**
@@ -40,7 +34,7 @@ public class ViewQRScannersFragment extends Fragment {
     private RecyclerView list;
     private ArrayList<String> players;
     private final ArrayList<Drawable> images = new ArrayList<>();
-    private QRAdapter adapter;
+    private TextPhotoAdapter adapter;
 
 
     @Override
@@ -69,7 +63,7 @@ public class ViewQRScannersFragment extends Fragment {
 
         recyclerListener = position -> startViewPlayerActivity(players.get(position));
 
-        adapter = new QRAdapter(players, images, getActivity(), recyclerListener);
+        adapter = new TextPhotoAdapter(players, images, getActivity(), recyclerListener);
         list.setAdapter(adapter);
         list.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 

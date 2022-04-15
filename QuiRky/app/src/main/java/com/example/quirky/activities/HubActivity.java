@@ -15,7 +15,7 @@ import com.example.quirky.R;
 import com.example.quirky.controllers.CameraActivitiesController;
 
 /**
- * Hub-Style Activity that directs to all the other activites
+ * Hub-Style Activity that directs to all the other activities
  */
 public class HubActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 

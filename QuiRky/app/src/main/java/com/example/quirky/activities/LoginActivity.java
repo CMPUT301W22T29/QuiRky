@@ -9,7 +9,6 @@ package com.example.quirky.activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -51,10 +50,10 @@ public class LoginActivity extends AppCompatActivity implements
         dm = new DatabaseController();
         mc = new MemoryController(this);
 
+        returningUser = mc.exists();
+
         Button getStarted = findViewById(R.id.getStarted);
         Button quit = findViewById(R.id.quit);
-
-        checkOwner();
 
         getStarted.setOnClickListener(view -> login(returningUser));
         quit.setOnClickListener(view -> finishAffinity());
@@ -142,32 +141,5 @@ public class LoginActivity extends AppCompatActivity implements
     private void startHubActivity() {
         Intent i = new Intent(this, HubActivity.class);
         startActivity(i);
-    }
-
-    // Checks if the app holder is an owner
-    private void checkOwner() {
-        returningUser = mc.exists();
-        if(returningUser) {
-            String user = mc.readUser();
-            ListeningList<Boolean> isOwner = new ListeningList<>();
-            isOwner.setOnAddListener(new OnAddListener<Boolean>() {
-                @Override
-                public void onAdd(ListeningList<Boolean> listeningList) {
-                    if( listeningList.get(0) )
-                        displayOwnerButtons();
-                }
-            });
-
-            dm.isOwner(user, isOwner);
-        }
-    }
-
-    private void displayOwnerButtons() {
-        Button ownerButton = findViewById(R.id.owner_button);
-        ownerButton.setVisibility(View.VISIBLE);
-        ownerButton.setOnClickListener(view -> {
-            Intent i = new Intent(this, OwnerMenu.class);
-            startActivity(i);
-        });
     }
 }

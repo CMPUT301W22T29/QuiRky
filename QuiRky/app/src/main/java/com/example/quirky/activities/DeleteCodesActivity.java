@@ -17,7 +17,7 @@ import android.widget.LinearLayout;
 
 import com.example.quirky.ListeningList;
 import com.example.quirky.OnAddListener;
-import com.example.quirky.QRAdapter;
+import com.example.quirky.TextPhotoAdapter;
 import com.example.quirky.models.QRCode;
 import com.example.quirky.R;
 import com.example.quirky.RecyclerClickerListener;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
 public class DeleteCodesActivity extends AppCompatActivity {
 
     private RecyclerView qrList;
-    private QRAdapter adapter;
+    private TextPhotoAdapter adapter;
     private RecyclerClickerListener listener;
 
     private LinearLayout confirmBox;
@@ -84,7 +84,7 @@ public class DeleteCodesActivity extends AppCompatActivity {
         for(int i = 0; i < readResults.size(); i ++){
             scores.add(String.valueOf(readResults.get(i).getScore()));
         }
-        adapter = new QRAdapter(scores, new ArrayList<>(), this, listener);
+        adapter = new TextPhotoAdapter(scores, new ArrayList<>(), this, listener);
 
         qrList.setAdapter(adapter);
 

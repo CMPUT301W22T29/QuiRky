@@ -8,11 +8,11 @@
     android:layout_width="match_parent">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/welcome_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="QuiRky's Hub!"
+        android:text="Welcome to the Hub!"
         android:textAlignment="center"
         android:textColor="@color/dark"
         android:textSize="40sp"
@@ -20,74 +20,38 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/hub_qr_codes"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:text="@string/qr_codes"
-        android:textColor="@color/dark"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Check out the most recent scans!"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/hub_profile_button"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/welcome_message" />
 
-    <Button
-        android:id="@+id/hub_profile_button"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:text="My Profile"
-        android:textColor="@color/dark"
-        android:textSize="16sp"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/hub_features_list"
+        android:layout_width="match_parent"
+        android:layout_height="125dp"
+        android:layout_margin="8dp"
+        android:scrollbarAlwaysDrawHorizontalTrack="true"
+        android:scrollbarStyle="insideOverlay"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/hub_community_button"
-        style="?android:attr/buttonBarButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:text="@string/community"
-
-        android:textColor="@color/dark"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/hub_photo_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/hub_features_list"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/hub_profile_button" />
-
-    <Button
-        android:id="@+id/hub_button1"
-        android:layout_width="200dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="64dp"
-        android:hint="To be replaced"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-    <Button
-        android:id="@+id/hub_button2"
-        android:layout_width="200dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="32dp"
-        android:hint="To be replaced"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hub_button1" />
-
-    <Button
-        android:id="@+id/hub_button3"
-        android:layout_width="200dp"
-        android:layout_height="75dp"
-        android:layout_marginTop="32dp"
-        android:hint="To be replaced"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hub_button2" />
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

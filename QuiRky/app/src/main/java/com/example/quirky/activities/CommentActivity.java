@@ -19,7 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.quirky.CommentList;
+import com.example.quirky.CommentAdapter;
 import com.example.quirky.R;
 import com.example.quirky.controllers.DatabaseController;
 import com.example.quirky.controllers.MemoryController;
@@ -42,7 +42,7 @@ public class CommentActivity extends AppCompatActivity {
 
     RecyclerView commentList;
     ArrayList<Comment> commentDataList;
-    CommentList commentAdapter;
+    CommentAdapter commentAdapter;
     QRCode qr;
 
     @Override
@@ -63,7 +63,7 @@ public class CommentActivity extends AppCompatActivity {
         QRCodeImage.setImageResource(R.drawable.temp); // This is going to have to be something in order to view Image.
 
         commentDataList = qr.getComments();
-        commentAdapter = new CommentList(this, commentDataList);
+        commentAdapter = new CommentAdapter(this, commentDataList);
         commentList.setAdapter(commentAdapter);
         commentList.setLayoutManager(new LinearLayoutManager(this));
 
