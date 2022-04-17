@@ -18,7 +18,6 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public class ViewQRScannersFragment extends Fragment {
     private RecyclerView list;
     private ArrayList<String> players;
     private final ArrayList<Drawable> images = new ArrayList<>();
-    private TextPhotoAdapter adapter;
+    private AdapterTextPhoto adapter;
 
 
     @Override
@@ -63,7 +62,7 @@ public class ViewQRScannersFragment extends Fragment {
 
         recyclerListener = position -> startViewPlayerActivity(players.get(position));
 
-        adapter = new TextPhotoAdapter(players, images, getActivity(), recyclerListener);
+        adapter = new AdapterTextPhoto(players, images, getActivity(), recyclerListener);
         list.setAdapter(adapter);
         list.setLayoutManager( adapter.getLayoutManager() );
 

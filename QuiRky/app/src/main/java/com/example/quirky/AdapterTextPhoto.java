@@ -17,51 +17,57 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
 /**
- * An Adapter for RecyclerViews that takes in a list of drawable objects
+ * An Adapter for RecyclerViews that takes in two ArrayLists: one for drawable objects & one for strings,
  * and maps them to the layout file for the QRCode adapter in qr_recycler_items.xml
  */
-public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.QRViewHolder> {
+public class AdapterTextPhoto extends RecyclerView.Adapter<AdapterTextPhoto.QRViewHolder> {
     private ArrayList<Drawable> photos;
+    private ArrayList<String> data;
     Context ct;
     RecyclerClickerListener listener;
 
     /**
-     * Constructor with an item listener.
+     * Constructor for the adapter.
      * @param photos The array of drawable objects
+     * @param data The array of string objects
      * @param ct Context because it does things that helps the adapter do stuff. Duh.
-     * @param listener An instance of a recycler clicker listener that is called when a photo is clicked on
      */
-    public PhotoAdapter(ArrayList<Drawable> photos, Context ct, RecyclerClickerListener listener) {
+    public AdapterTextPhoto(ArrayList<String> data, ArrayList<Drawable> photos, Context ct, RecyclerClickerListener listener) {
         this.photos = photos;
+        this.data = data;
         this.ct = ct;
         this.listener = listener;
     }
 
-    /**
-     * Constructor without a listener. If this constructor is used, the photos will not be clickable
-     * @param photos An array of drawable objects
-     * @param ct Context
-     */
-    public PhotoAdapter(ArrayList<Drawable> photos, Context ct) {
+    public AdapterTextPhoto(ArrayList<String> data, ArrayList<Drawable> photos, Context ct) {
         this.photos = photos;
+        this.data = data;
         this.ct = ct;
         this.listener = null;
+    }
+
+    public LinearLayoutManager getLayoutManager() {
+        return new LinearLayoutManager(ct, LinearLayoutManager.VERTICAL, false);
     }
 
     /**
      * Helper subclass. It does things that help the other things do the things.
      * Hey I don't know how it works! I just know how to do it.
      */
-    public static class QRViewHolder extends RecyclerView.ViewHolder {
-        ImageView image;
+    public class QRViewHolder extends RecyclerView.ViewHolder {
+        ImageView image; TextView text; ConstraintLayout background;
         public QRViewHolder(@NonNull View itemView) {
             super(itemView);
+
             image = itemView.findViewById(R.id.recycler_image_item);
+            text = itemView.findViewById(R.id.recycler_text_item);
+            background = itemView.findViewById(R.id.recycler_item_background);
         }
     }
 
@@ -72,7 +78,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.QRViewHolder
      */
     public QRViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(ct);
-        View view = inflater.inflate(R.layout.qr_recycler_items, parent, false);
+        View view = inflater.inflate(R.layout.recycler_text_photo, parent, false);
         return new QRViewHolder(view);
     }
 
@@ -81,13 +87,16 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.QRViewHolder
      * Obviously this method is the binder. Like, who wouldn't understand that?
      */
     public void onBindViewHolder(@NonNull QRViewHolder holder, int position) {
+        if(position < data.size())
+            holder.text.setText(data.get(position));
+        if(position < photos.size())
             holder.image.setImageDrawable(photos.get(position));
 
         if(listener != null)
-            holder.image.setOnClickListener(view -> {
-                Log.d("Adapter says:", "Clicked on item " + position);
-                listener.OnClickListItem(holder.getAdapterPosition());
-            });
+            holder.background.setOnClickListener(view -> {
+            Log.d("Adapter says:", "Clicked on item " + position);
+            listener.OnClickListItem(holder.getAdapterPosition());
+        });
     }
 
     @Override
@@ -97,6 +106,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.QRViewHolder
      * I know. I don't get it either.
      */
     public int getItemCount() {
-        return photos.size();
+        return data.size();
     }
 }

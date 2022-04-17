@@ -7,7 +7,6 @@
 package com.example.quirky.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -19,10 +18,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
+import com.example.quirky.AdapterTextPhoto;
 import com.example.quirky.ListeningList;
 import com.example.quirky.OnAddListener;
 import com.example.quirky.models.Profile;
-import com.example.quirky.TextPhotoAdapter;
 import com.example.quirky.R;
 import com.example.quirky.RecyclerClickerListener;
 import com.example.quirky.controllers.DatabaseController;
@@ -41,7 +40,7 @@ public class PlayerSearchActivity extends AppCompatActivity {
     private ArrayList<String> usernames;
     private ArrayList<Drawable> photos;
 
-    private TextPhotoAdapter adapter;
+    private AdapterTextPhoto adapter;
 
     private RecyclerView list;
     private ImageButton button;
@@ -72,7 +71,7 @@ public class PlayerSearchActivity extends AppCompatActivity {
         };
 
 
-        adapter = new TextPhotoAdapter(usernames, photos, this, listener);
+        adapter = new AdapterTextPhoto(usernames, photos, this, listener);
         list.setLayoutManager( adapter.getLayoutManager() );
         list.setAdapter(adapter);
 

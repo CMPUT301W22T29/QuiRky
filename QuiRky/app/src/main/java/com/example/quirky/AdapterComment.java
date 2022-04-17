@@ -20,12 +20,12 @@ import java.util.ArrayList;
  * @author Raymart Bless C. Datuin
  *
  */
-public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
+public class AdapterComment extends RecyclerView.Adapter<AdapterComment.CommentViewHolder> {
 
     private ArrayList<Comment> comments;
-    private Context context;
+    private final Context context;
 
-    public CommentAdapter(Context context, ArrayList<Comment> comments) {
+    public AdapterComment(Context context, ArrayList<Comment> comments) {
         this.comments = comments;
         this.context = context;
     }
@@ -34,7 +34,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     @Override
     public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.comment_list, parent, false); // List of comments
+        View view = inflater.inflate(R.layout.recycler_comment, parent, false); // List of comments
         return new CommentViewHolder(view);
     }
 
@@ -50,7 +50,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     }
 
 
-    public class CommentViewHolder extends RecyclerView.ViewHolder {
+    public static class CommentViewHolder extends RecyclerView.ViewHolder {
         TextView commentText, uNameText;
 
         public CommentViewHolder(@NonNull View itemView) {

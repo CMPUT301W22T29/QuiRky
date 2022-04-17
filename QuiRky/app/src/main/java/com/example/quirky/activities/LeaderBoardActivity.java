@@ -7,7 +7,6 @@
 package com.example.quirky.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -15,12 +14,12 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.quirky.AdapterTextPhoto;
 import com.example.quirky.controllers.LeaderBoardController;
 import com.example.quirky.ListeningList;
 import com.example.quirky.controllers.MemoryController;
 import com.example.quirky.OnAddListener;
 import com.example.quirky.models.Profile;
-import com.example.quirky.TextPhotoAdapter;
 import com.example.quirky.R;
 import com.example.quirky.controllers.DatabaseController;
 
@@ -35,7 +34,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
 
     private Button sortPoints, sortScanned, sortGreatest, myRank, topRanks;
     private RecyclerView list;
-    private TextPhotoAdapter adapter;
+    private AdapterTextPhoto adapter;
 
     private Profile user;
     private ArrayList<String> data; // For use with the adapter
@@ -86,7 +85,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
         lbc = new LeaderBoardController(players);
         sortByPoints();
 
-        adapter = new TextPhotoAdapter(data, new ArrayList<>(), this);
+        adapter = new AdapterTextPhoto(data, new ArrayList<>(), this);
         list.setAdapter(adapter);
         list.setLayoutManager(adapter.getLayoutManager());
 

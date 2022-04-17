@@ -51,7 +51,7 @@ public class InputUnameLoginFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.input_uname_login_fragment, null);
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_login, null);
         input = view.findViewById(R.id.login_frag_input_field);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());

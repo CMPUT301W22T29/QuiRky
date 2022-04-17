@@ -15,12 +15,12 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import androidx.recyclerview.widget.LinearLayoutManager;
+
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.quirky.ListeningList;
 import com.example.quirky.OnAddListener;
-import com.example.quirky.TextPhotoAdapter;
+import com.example.quirky.AdapterTextPhoto;
 import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
 import com.example.quirky.controllers.QRCodeController;
@@ -40,7 +40,7 @@ public class ManageCodesActivity extends AppCompatActivity {
     private ToggleButton arrangementOrder;
     private RecyclerView qr_list;
 
-    private TextPhotoAdapter QRCodeAdapter;
+    private AdapterTextPhoto QRCodeAdapter;
     private ArrayList<String> codes;
     private ArrayList<String> points;
     private RecyclerClickerListener recyclerListener;
@@ -74,7 +74,7 @@ public class ManageCodesActivity extends AppCompatActivity {
                 startViewQRActivity(position);
             }
         };
-        QRCodeAdapter = new TextPhotoAdapter(points, new ArrayList<>(),this, recyclerListener);
+        QRCodeAdapter = new AdapterTextPhoto(points, new ArrayList<>(),this, recyclerListener);
         qr_list.setAdapter(QRCodeAdapter);
         qr_list.setLayoutManager(QRCodeAdapter.getLayoutManager());
 

@@ -6,7 +6,7 @@
 
 package com.example.quirky;
 
-// This interface is used in PlayerSearchActivity.java, TextPhotoAdapter.java
+// This interface is used in PlayerSearchActivity.java, AdapterTextPhoto.java
 
 // RecyclerClickerListener code sourced form:
 // https://www.tutorialspoint.com/get-clicked-item-and-its-position-in-recyclerview
