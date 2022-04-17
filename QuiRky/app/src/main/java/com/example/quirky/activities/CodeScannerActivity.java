@@ -7,6 +7,8 @@
 package com.example.quirky.activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +21,7 @@ import androidx.camera.view.PreviewView;
 
 import com.example.quirky.controllers.DatabaseController;
 import com.example.quirky.ListeningList;
+import com.example.quirky.controllers.MapController;
 import com.example.quirky.controllers.MemoryController;
 import com.example.quirky.OnAddListener;
 import com.example.quirky.models.Profile;
@@ -28,6 +31,7 @@ import com.example.quirky.R;
 import com.example.quirky.controllers.CameraController;
 
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
 
 /**
  * Previews camera feed and allows scanning QR codes.
@@ -45,6 +49,7 @@ public class CodeScannerActivity extends AppCompatActivity {
     private PreviewView previewView;
     private Button scan_button, cancel_button, save_button;
     private Switch location_switch, photo_switch;
+
 
     private CameraController cameraController;
     private DatabaseController dc;
@@ -115,18 +120,31 @@ public class CodeScannerActivity extends AppCompatActivity {
 
     /**
      * Displays the save buttons and hide the Scan button. Set on click listeners to save the QRCode if the user chooses
-     * @param listeningList The listening list that holds the QRCode scanned by CameraController
+     * @param capturedQRCode The listening list that holds the QRCode scanned by CameraController
      */
-    private void showSavingInterface(ListeningList<QRCode> listeningList) {
+    private void showSavingInterface(ListeningList<QRCode> capturedQRCode) {
         setVisibility(false);
-        if(listeningList.get(0) == null)
-            Log.d(TAG, "QRCode is null for some goddamn reason");
-        else
-            Log.d(TAG, "QRCode is apparently not null...");
-        QRCode qr = listeningList.get(0);
+        QRCode qr = capturedQRCode.get(0);
 
         save_button.setOnClickListener(view -> {
-            save(qr);
+
+            if (location_switch.isChecked()) {
+                ListeningList<Location> locations = new ListeningList<>();
+                locations.setOnAddListener(new OnAddListener<Location>() {
+                    public void onAdd(ListeningList<Location> locationListeningList) {
+                        Location location = locationListeningList.get(0);
+                        GeoPoint gp = new GeoPoint(location);
+                        qr.addLocation(gp);
+                        save(qr);
+                    }
+                });
+
+                MapController mapController = new MapController(this);
+                mapController.getLocation(locations);
+            } else {
+                save(qr);
+            }
+
             setVisibility(true);
         });
 

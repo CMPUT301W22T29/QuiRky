@@ -18,6 +18,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.location.LocationListenerCompat;
@@ -27,6 +28,13 @@ import static android.content.Context.LOCATION_SERVICE;
 import com.example.quirky.ListeningList;
 import com.example.quirky.activities.MapActivity;
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Map;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
@@ -134,52 +142,56 @@ public class MapController {
     public void getLocation(ListeningList<Location> locations) {
         Log.d("map", "getLocation");
         permissionsThenRun(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.R)
             @Override
             public void run() {
                 Log.d("map", "runGetLocation");
-
-                if (Build.VERSION.SDK_INT < 30) {
-                    locationManager.requestSingleUpdate(PROVIDER, new LocationListenerCompat() {
-                        @Override
-                        public void onLocationChanged(@NonNull Location location) {
-                            locations.add(location);
-                        }
-                    }, null);
-
-                } else {    // API level >= 30
-                    locationManager.getCurrentLocation(PROVIDER,
-                                             null,
-                                  ContextCompat.getMainExecutor(context), new Consumer<Location>() {
-                        @SuppressLint("MissingPermission")
-                        @Override
-                        public void accept(Location location) {
-                            if (location != null) {
+                if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                    if (hasLocationPermissions(context)){
+                        if (Integer.valueOf(android.os.Build.VERSION.SDK) < 30){
+                        locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new LocationListenerCompat() {
+                            @Override
+                            public void onLocationChanged(@NonNull Location location) {
                                 locations.add(location);
-                            } else {
-                                Toast.makeText(context,
-                                        "Oops! Couldn't find you... Teehee.",
-                                                                          Toast.LENGTH_LONG).show();
                             }
+                        },null);
+                        }//RequestLocationUpdate once
+                        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0, (LocationListener) context);
+                    else {
+                            locationManager.getCurrentLocation(LocationManager.GPS_PROVIDER, null, ContextCompat.getMainExecutor(context), new Consumer<Location>() {
+                                @SuppressLint("MissingPermission")
+                                @Override
+                                public void accept(Location location) {
+                                    locations.add(location);
+                                }
+                            });
                         }
-                    });
+                    }
                 }
-
             }
         });
     }
+    public void writeQrCodesToMap(DatabaseController dc,MapView nearbymap, String title){
+        ArrayList<GeoPoint> locations = new ArrayList<>();
+        locations.add(new GeoPoint(10.0, 10.0, 3.0));
+        for (int i =0; i< locations.size();i++){
+            GeoPoint location = locations.get(i);
+            Marker qrmarker = new Marker(nearbymap);
+            qrmarker.setPosition(location);
+            qrmarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            qrmarker.setAlpha((float) 0.6);
+            nearbymap.getOverlays().add(qrmarker);
+            qrmarker.setTitle(title);
+        }
+    }
 
-    /**
-     * Place a marker on the map
-     * @param geoPoint The location of the marker
-     * @param nearbyMap The map to place the marker on
-     * @param title The text to be displayed on the marker
-     */
-    public static void qrMarkerOnMap(@NonNull GeoPoint geoPoint, @NonNull MapView nearbyMap, String title) {
-        Marker qrMarker = new Marker(nearbyMap);
-        qrMarker.setPosition(geoPoint);
-        qrMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        nearbyMap.getOverlays().add(qrMarker);
-        qrMarker.setTitle(title);
+    public void qrMarkerOnMap(GeoPoint startPoint, MapView nearbymap, String title) {
+        Marker qrmarker = new Marker(nearbymap);
+        qrmarker.setPosition(startPoint);
+        qrmarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        qrmarker.setAlpha((float)1);
+        nearbymap.getOverlays().add(qrmarker);
+        qrmarker.setTitle(title);
     }
 
     public LocationManager getLocationManager() {

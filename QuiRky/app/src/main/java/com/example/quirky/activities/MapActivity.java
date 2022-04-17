@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.example.quirky.ListeningList;
+import com.example.quirky.controllers.DatabaseController;
 import com.example.quirky.controllers.MapController;
 import com.example.quirky.OnAddListener;
 import com.example.quirky.R;
@@ -49,6 +50,7 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
     private MapView nearbyMap;
     private MapController mapController;
     private IMapController iMapController;
+    private DatabaseController dc;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -63,6 +65,7 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
         setContentView(R.layout.activity_map_layout);
 
         Location location;
+        dc = new DatabaseController();
         nearbyMap = (MapView) findViewById(R.id.map1);
         iMapController = nearbyMap.getController();
         mapController = new MapController(this);
@@ -70,9 +73,7 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
         nearbyMap.setBuiltInZoomControls(true);
         nearbyMap.setMultiTouchControls(true);
         iMapController.setZoom((double) 15);
-
         Log.d("map", "mapOnCreate");
-
         //Set a oncode listener, it's a call back when something is added to the list
         ListeningList<Location> locations = new ListeningList<>();
         locations.setOnAddListener(new OnAddListener<Location>() {
@@ -83,12 +84,11 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
                 Location location = listeningList.get(0);
                 GeoPoint startPoint = new GeoPoint((double) location.getLatitude(), (double) location.getLongitude());
                 iMapController.setCenter(startPoint);
-                MapController.qrMarkerOnMap(startPoint, nearbyMap, "Current location");
+                mapController.qrMarkerOnMap(startPoint,nearbyMap,"Current location");
+                mapController.writeQrCodesToMap(dc,nearbyMap,"A wild QR code appears");
             }
 
         });
-
-        Log.d("map", "map getLocation");
         mapController.getLocation(locations);
     }
 
@@ -98,6 +98,17 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
                                                                       @NonNull int[] grantResults) {
         mapController.onLocationPermissionRequestResult(requestCode, grantResults);
     }
+
+
+    //MapActivity test.
+    /*Case1:I open the MapActivity and allow the device to read my location, It directs me to my current location and
+    and I see a marker on the map that shows my current location and nearby qr codes stored in the firebase store.
+    I can zoom in and out with my finger and move around the map with my finger and the map will update my location as long
+    as I move.
+
+    Case2: I open the app and goes to MapActivity, I deny it's request to ask for accessing location permission I'm
+    not able to enter MapActivity and the app will prompt a Toast to encourage me to allow it's request.
+     */
 
     public void onResume () {
         super.onResume();

@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -145,10 +146,11 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
 
             case "Find Nearby QRCodes!":
                 if (MapController.hasLocationPermissions(this)) {
-                    i = new Intent(this, MapActivity.class);    // FIXME: Intent i is grayed out here. Why? Will it cause bugs?
+                    i = new Intent(this, MapActivity.class);
                     startActivity(i);
                 } else
                     MapController.requestLocationPermission(this);
+                break;
 
             case "Search Other Players":
                 i = new Intent(this, PlayerSearchActivity.class);
