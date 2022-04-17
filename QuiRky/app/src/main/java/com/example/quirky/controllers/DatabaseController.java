@@ -6,9 +6,15 @@
 
 package com.example.quirky.controllers;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.example.quirky.ListeningList;
+import com.example.quirky.R;
 import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -16,6 +22,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -149,5 +156,8 @@ public class DatabaseController {
                 data.add (p);
             }
         });
+    }
+
+    public void recentPhotos(ListeningList<Drawable> photos) {
     }
 }

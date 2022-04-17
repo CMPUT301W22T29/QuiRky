@@ -7,6 +7,9 @@
 package com.example.quirky.activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -22,6 +25,7 @@ import com.example.quirky.R;
 import com.example.quirky.RecyclerClickerListener;
 import com.example.quirky.controllers.CameraActivitiesController;
 import com.example.quirky.controllers.DatabaseController;
+import com.example.quirky.controllers.MapController;
 import com.example.quirky.controllers.MemoryController;
 import com.example.quirky.models.Profile;
 
@@ -32,7 +36,7 @@ import java.util.ArrayList;
  */
 public class HubActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private CameraActivitiesController cameraActivitiesController;
+    private CameraActivitiesController cac;
     private MemoryController mc;
     private DatabaseController dc;
 
@@ -45,7 +49,7 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hub);
 
-        cameraActivitiesController = new CameraActivitiesController(this, false);
+        cac = new CameraActivitiesController(this, false);
         mc = new MemoryController(this);
         dc = new DatabaseController();
         features = new ArrayList<>();
@@ -65,9 +69,20 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         photos.setOnAddListener(new OnAddListener<Drawable>() {
             @Override
             public void onAdd(ListeningList<Drawable> listeningList) {
+
+            }
+        });
+        /*photos.setOnAddListener(new OnAddListener<Drawable>() {
+            @Override
+            public void onAdd(ListeningList<Drawable> listeningList) {
                 doneRead();
             }
         });
+        dc.recentPhotos(photos); */
+        Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.temp);
+        BitmapDrawable bd = new BitmapDrawable(getResources(), b);
+        photos.add(bd); photos.add(bd);
+        doneRead();
 
     }
 
@@ -103,38 +118,52 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         Profile p = mc.read();
         switch (feature) {
             case "Scan Codes!" :
-                i = new Intent(this, CodeScannerActivity.class);
+                cac.startCodeScannerActivity();
                 break;
+
             case "Make some QRs!" :
                 i = new Intent(this, GenerateActivity.class);
+                startActivity(i);
                 break;
+
             case "My QRCodes" :
                 i = new Intent(this, ManageCodesActivity.class);
                 i.putExtra("profile", p);
+                startActivity(i);
                 break;
+
             case "My Profile" :
                 i = new Intent(this, ProfileActivity.class);
                 i.putExtra("profile", p);
+                startActivity(i);
                 break;
+
             case "The Leaderboards!":
                 i = new Intent(this, LeaderBoardActivity.class);
+                startActivity(i);
                 break;
+
             case "Find Nearby QRCodes!":
-                i = new Intent(this, MapActivity.class);
-                break;
+                if (MapController.hasLocationPermissions(this)) {
+                    i = new Intent(this, MapActivity.class);    // FIXME: Intent i is grayed out here. Why? Will it cause bugs?
+                    startActivity(i);
+                } else
+                    MapController.requestLocationPermission(this);
+
             case "Search Other Players":
                 i = new Intent(this, PlayerSearchActivity.class);
+                startActivity(i);
                 break;
+
             case "Delete Players" :
                 i = new Intent(this, DeletePlayersActivity.class);
+                startActivity(i);
                 break;
+
             case "Delete QRCodes" :
                 i = new Intent(this, DeleteCodesActivity.class);
+                startActivity(i);
                 break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + feature);
         }
-
-        startActivity(i);
     }
 }

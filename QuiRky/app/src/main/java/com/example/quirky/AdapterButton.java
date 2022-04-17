@@ -67,7 +67,7 @@ public class AdapterButton extends RecyclerView.Adapter<AdapterButton.QRViewHold
     @Override
     public QRViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(ct);
-        View view = inflater.inflate(R.layout.recycler_image, parent, false);
+        View view = inflater.inflate(R.layout.recycler_button, parent, false);
         return new QRViewHolder(view);
     }
 
