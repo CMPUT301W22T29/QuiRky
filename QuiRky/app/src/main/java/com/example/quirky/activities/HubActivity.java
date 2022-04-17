@@ -38,16 +38,22 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         mc = new MemoryController(this);
         dc = new DatabaseController();
 
+        owner = false;
         ListeningList<Boolean> ownerResult = new ListeningList<>();
         ownerResult.setOnAddListener(new OnAddListener<Boolean>() {
             @Override
             public void onAdd(ListeningList<Boolean> listeningList) {
                 owner = listeningList.get(0);
+                if(owner)
+                    addOwnerButtons();
             }
         });
         dc.isOwner( mc.readUser(), ownerResult);
 
         RecyclerView PhotoList = findViewById(R.id.hub_photo_list);
 
+    }
+
+    private void addOwnerButtons() {
     }
 }

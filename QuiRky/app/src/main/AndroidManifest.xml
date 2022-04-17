@@ -24,7 +24,7 @@
         <activity
             android:name=".activities.LeaderBoardActivity"
             android:exported="false" />
-	<activity
+        <activity
             android:name=".activities.DeletePlayersActivity"
             android:exported="false" />
         <activity

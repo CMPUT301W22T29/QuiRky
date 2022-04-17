@@ -5,10 +5,6 @@
     <string name="community">Community</string>
 
     <string name="back">Back</string>
-    <string name="my_stats">My Stats</string>
-    <string name="total_scanned">Total Scanned:</string>
-    <string name="ranking">Ranking:</string>
-    <string name="total_score">Total Score:</string>
     <string name="input_a_new_username">Input a New Username</string>
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_manage_codes">ManageCodesActivity</string>
@@ -17,7 +13,4 @@
     <string name="second_fragment_label">Second Fragment</string>
 
     <string name="deny_camera_permissions_toast">Please allow camera permissions to scan QR codes.</string>
-    <string name="largest_scanned">Largest Scanned:</string>
-    <string name="none">None</string>
-    <string name="no_ranking">No Ranking</string>
 </resources>
