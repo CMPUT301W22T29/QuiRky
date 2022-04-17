@@ -127,7 +127,6 @@ public class CodeScannerActivity extends AppCompatActivity {
         QRCode qr = capturedQRCode.get(0);
 
         save_button.setOnClickListener(view -> {
-
             if (location_switch.isChecked()) {
                 ListeningList<Location> locations = new ListeningList<>();
                 locations.setOnAddListener(new OnAddListener<Location>() {
