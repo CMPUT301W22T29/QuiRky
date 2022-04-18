@@ -56,7 +56,10 @@ public class LoginActivity extends AppCompatActivity implements
         Button quit = findViewById(R.id.quit);
 
         getStarted.setOnClickListener(view -> login(returningUser));
-        quit.setOnClickListener(view -> finishAffinity());
+        quit.setOnClickListener(view -> {
+            finishAffinity();
+            System.exit(0);
+        });
     }
 
 

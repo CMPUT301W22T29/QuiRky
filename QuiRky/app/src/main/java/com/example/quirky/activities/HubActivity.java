@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +30,7 @@ import com.example.quirky.controllers.MemoryController;
 import com.example.quirky.models.Profile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Hub-Style Activity that directs to all the other activities
@@ -41,6 +41,7 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
     private MemoryController mc;
     private DatabaseController dc;
 
+    private final String[] button_texts = {"Scan Codes!", "Make some QRs!", "My QRCodes", "My Profile", "The Leaderboards!", "Find Nearby QRCodes!", "Search Other Players", "Logout"};
     private ArrayList<String> features;
     private ListeningList<Drawable> photos;
     private boolean owner;
@@ -53,7 +54,7 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         cac = new CameraActivitiesController(this, false);
         mc = new MemoryController(this);
         dc = new DatabaseController();
-        features = new ArrayList<>();
+        features = new ArrayList<>( Arrays.asList(button_texts) );
 
         ListeningList<Boolean> ownerResult = new ListeningList<>();
         ownerResult.setOnAddListener(new OnAddListener<Boolean>() {
@@ -78,13 +79,15 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
             public void onAdd(ListeningList<Drawable> listeningList) {
                 doneRead();
             }
-        });
+        }); FIXME: Currently just hardcoding in 3 photos, need to actually read them from firebase.
         dc.recentPhotos(photos); */
         Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.temp);
         BitmapDrawable bd = new BitmapDrawable(getResources(), b);
         photos.add(bd); photos.add(bd);
+        Bitmap c = BitmapFactory.decodeResource(getResources(), R.drawable.cat);
+        BitmapDrawable cd = new BitmapDrawable(getResources(), c);
+        photos.add(cd);
         doneRead();
-
     }
 
     private void doneRead() {
@@ -95,14 +98,6 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         PhotoList.setAdapter(adapterPhoto);
         PhotoList.setLayoutManager( adapterPhoto.getLayoutManager() );
 
-        features.add("Scan Codes!");
-        features.add("Make some QRs!");
-        features.add("My QRCodes");
-        features.add("My Profile");
-        features.add("The Leaderboards!");
-        features.add("Find Nearby QRCodes!");
-        features.add("Search Other Players");
-
         RecyclerClickerListener listener = position -> StartActivity( features.get(position) );
         AdapterButton adapterButton = new AdapterButton(features, this, listener);
         FeatureList.setAdapter( adapterButton );
@@ -112,13 +107,14 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
     private void addOwnerButtons() {
         features.add("Delete Players");
         features.add("Delete QRCodes");
+
     }
 
     private void StartActivity(String feature) {
         Intent i;
         Profile p = mc.read();
         switch (feature) {
-            case "Scan Codes!" :
+            case "Scan Codes!":
                 cac.startCodeScannerActivity();
                 break;
 
@@ -164,6 +160,13 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
 
             case "Delete QRCodes" :
                 i = new Intent(this, DeleteCodesActivity.class);
+                startActivity(i);
+                break;
+
+            case "Logout" :
+                mc.deleteUser();
+                i = new Intent(this, LoginActivity.class);
+                finish();
                 startActivity(i);
                 break;
         }

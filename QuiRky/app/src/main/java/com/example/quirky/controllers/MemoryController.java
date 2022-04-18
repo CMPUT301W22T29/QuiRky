@@ -191,4 +191,16 @@ public class MemoryController {
         File file = new File(dir, "name");
         return file.exists();
     }
+
+    public boolean deleteUser() {
+        File file = new File(dir, "profile");
+        if(file.exists())
+            file.delete();
+
+        file = new File(dir, "name");
+        if(file.exists())
+            file.delete();
+
+        return dir.delete();
+    }
 }

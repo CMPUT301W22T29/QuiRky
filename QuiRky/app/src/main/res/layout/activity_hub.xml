@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Welcome to the Hub!"
+        android:text="Welcome to the App!"
         android:textAlignment="center"
         android:textColor="@color/dark"
         android:textSize="40sp"
@@ -26,18 +26,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="Check out the most recent scans!"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/welcome_message"
-        />
+        app:layout_constraintTop_toBottomOf="@id/welcome_message" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/hub_photo_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/hub_feature_list"
         app:layout_constraintEnd_toEndOf="parent"
@@ -48,10 +47,9 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/hub_feature_list"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="100dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

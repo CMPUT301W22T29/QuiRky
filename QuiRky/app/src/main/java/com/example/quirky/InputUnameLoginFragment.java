@@ -57,8 +57,8 @@ public class InputUnameLoginFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
                 .setView(view)
-                .setTitle("Username for Your Profile")
-                .setPositiveButton("Confirm", (dialogInterface, i) -> {
+                .setTitle("Create a new account!")
+                .setPositiveButton("Sign up!", (dialogInterface, i) -> {
                     String uname = input.getText().toString();
                     listener.OnClickConfirm(uname);
                 })
