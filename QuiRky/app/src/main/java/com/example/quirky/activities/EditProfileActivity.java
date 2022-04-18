@@ -108,6 +108,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         }
                     }
                 });
+                dc.readProfile(p.getUname(), result);
             } else {
                 write(false);
             }

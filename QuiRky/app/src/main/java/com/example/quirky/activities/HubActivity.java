@@ -44,6 +44,7 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
     private final String[] button_texts = {"Scan Codes!", "Make some QRs!", "My QRCodes", "My Profile", "The Leaderboards!", "Find Nearby QRCodes!", "Search Other Players", "Logout"};
     private ArrayList<String> features;
     private ListeningList<Drawable> photos;
+    private AdapterButton adapterButton;
     private boolean owner;
 
     @Override
@@ -99,7 +100,7 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         PhotoList.setLayoutManager( adapterPhoto.getLayoutManager() );
 
         RecyclerClickerListener listener = position -> StartActivity( features.get(position) );
-        AdapterButton adapterButton = new AdapterButton(features, this, listener);
+        adapterButton = new AdapterButton(features, this, listener);
         FeatureList.setAdapter( adapterButton );
         FeatureList.setLayoutManager( adapterButton.getLayoutManager() );
     }
@@ -107,7 +108,8 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
     private void addOwnerButtons() {
         features.add("Delete Players");
         features.add("Delete QRCodes");
-
+        adapterButton.notifyItemInserted(8);
+        adapterButton.notifyItemInserted(9);
     }
 
     private void StartActivity(String feature) {
