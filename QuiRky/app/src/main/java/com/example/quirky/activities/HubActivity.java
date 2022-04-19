@@ -8,9 +8,6 @@ package com.example.quirky.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.quirky.AdapterButton;
 import com.example.quirky.AdapterPhoto;
 import com.example.quirky.ListeningList;
-import com.example.quirky.OnAddListener;
 import com.example.quirky.R;
 import com.example.quirky.RecyclerClickerListener;
 import com.example.quirky.controllers.CameraActivitiesController;
@@ -43,7 +39,7 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
 
     private final String[] button_texts = {"Scan Codes!", "Make some QRs!", "My QRCodes", "My Profile", "The Leaderboards!", "Find Nearby QRCodes!", "Search Other Players", "Logout"};
     private ArrayList<String> features;
-    private ListeningList<Drawable> photos;
+    private ListeningList<Bitmap> photos;
     private AdapterButton adapterButton;
     private boolean owner;
 
@@ -58,39 +54,22 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         features = new ArrayList<>( Arrays.asList(button_texts) );
 
         ListeningList<Boolean> ownerResult = new ListeningList<>();
-        ownerResult.setOnAddListener(new OnAddListener<Boolean>() {
-            @Override
-            public void onAdd(ListeningList<Boolean> listeningList) {
-                owner = listeningList.get(0);
-                if(owner)
-                    addOwnerButtons();
-            }
+        ownerResult.setOnAddListener(listeningList -> {
+            owner = listeningList.get(0);
+            if(owner)
+                addOwnerButtons();
         });
         dc.isOwner( mc.readUser(), ownerResult);
 
         photos = new ListeningList<>();
-        photos.setOnAddListener(new OnAddListener<Drawable>() {
-            @Override
-            public void onAdd(ListeningList<Drawable> listeningList) {
+        photos.setOnAddListener(listeningList -> doneRead());
 
-            }
-        });
-        /*photos.setOnAddListener(new OnAddListener<Drawable>() {
-            @Override
-            public void onAdd(ListeningList<Drawable> listeningList) {
-                doneRead();
-            }
-        }); FIXME: Currently just hardcoding in 3 photos, need to actually read them from firebase.
-        dc.recentPhotos(photos); */
-        Bitmap b = BitmapFactory.decodeResource(getResources(), R.drawable.temp);
-        BitmapDrawable bd = new BitmapDrawable(getResources(), b);
-        photos.add(bd); photos.add(bd);
-        Bitmap c = BitmapFactory.decodeResource(getResources(), R.drawable.cat);
-        BitmapDrawable cd = new BitmapDrawable(getResources(), c);
-        photos.add(cd);
-        doneRead();
+        dc.recentPhotos(photos);
     }
 
+    /**
+     * Called once done reading from firebase. Finishes setting up the recycler views
+     */
     private void doneRead() {
         RecyclerView PhotoList = findViewById(R.id.hub_photo_list);
         RecyclerView FeatureList = findViewById(R.id.hub_feature_list);
@@ -105,6 +84,9 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         FeatureList.setLayoutManager( adapterButton.getLayoutManager() );
     }
 
+    /**
+     * Add Delete Players and Delete QRCode buttons to the list of scrollable buttons
+     */
     private void addOwnerButtons() {
         features.add("Delete Players");
         features.add("Delete QRCodes");
@@ -112,6 +94,11 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         adapterButton.notifyItemInserted(9);
     }
 
+    /**
+     * Start a new activity, or logout of the app. Called when one of the feature buttons is clicked on.
+     * @param feature The text of the button that was clicked on.
+     *                TODO: see CMPUT301 slides, the factory design pattern may simplify the code below. It deals with long switch statements or if statements.
+     */
     private void StartActivity(String feature) {
         Intent i;
         Profile p = mc.read();

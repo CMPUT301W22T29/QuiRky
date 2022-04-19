@@ -7,7 +7,7 @@
 package com.example.quirky;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,29 +23,29 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 /**
- * An Adapter for RecyclerViews that takes in two ArrayLists: one for drawable objects & one for strings,
+ * An Adapter for RecyclerViews that takes in two ArrayLists: one for Bitmap objects & one for strings,
  * and maps them to the layout file for the QRCode adapter in qr_recycler_items.xml
  */
 public class AdapterTextPhoto extends RecyclerView.Adapter<AdapterTextPhoto.QRViewHolder> {
-    private ArrayList<Drawable> photos;
+    private ArrayList<Bitmap> photos;
     private ArrayList<String> data;
     Context ct;
     RecyclerClickerListener listener;
 
     /**
      * Constructor for the adapter.
-     * @param photos The array of drawable objects
+     * @param photos The array of Bitmap objects
      * @param data The array of string objects
      * @param ct Context because it does things that helps the adapter do stuff. Duh.
      */
-    public AdapterTextPhoto(ArrayList<String> data, ArrayList<Drawable> photos, Context ct, RecyclerClickerListener listener) {
+    public AdapterTextPhoto(ArrayList<String> data, ArrayList<Bitmap> photos, Context ct, RecyclerClickerListener listener) {
         this.photos = photos;
         this.data = data;
         this.ct = ct;
         this.listener = listener;
     }
 
-    public AdapterTextPhoto(ArrayList<String> data, ArrayList<Drawable> photos, Context ct) {
+    public AdapterTextPhoto(ArrayList<String> data, ArrayList<Bitmap> photos, Context ct) {
         this.photos = photos;
         this.data = data;
         this.ct = ct;
@@ -60,7 +60,7 @@ public class AdapterTextPhoto extends RecyclerView.Adapter<AdapterTextPhoto.QRVi
      * Helper subclass. It does things that help the other things do the things.
      * Hey I don't know how it works! I just know how to do it.
      */
-    public class QRViewHolder extends RecyclerView.ViewHolder {
+    public static class QRViewHolder extends RecyclerView.ViewHolder {
         ImageView image; TextView text; ConstraintLayout background;
         public QRViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -73,9 +73,6 @@ public class AdapterTextPhoto extends RecyclerView.Adapter<AdapterTextPhoto.QRVi
 
     @NonNull
     @Override
-    /**
-     * Method that does the uhhh, inflating, and the uhhhh, holding, of uhh, the views..? Nailed it.
-     */
     public QRViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(ct);
         View view = inflater.inflate(R.layout.recycler_text_photo, parent, false);
@@ -83,14 +80,11 @@ public class AdapterTextPhoto extends RecyclerView.Adapter<AdapterTextPhoto.QRVi
     }
 
     @Override
-    /**
-     * Obviously this method is the binder. Like, who wouldn't understand that?
-     */
     public void onBindViewHolder(@NonNull QRViewHolder holder, int position) {
         if(position < data.size())
             holder.text.setText(data.get(position));
         if(position < photos.size())
-            holder.image.setImageDrawable(photos.get(position));
+            holder.image.setImageBitmap(photos.get(position));
 
         if(listener != null)
             holder.background.setOnClickListener(view -> {
@@ -100,11 +94,6 @@ public class AdapterTextPhoto extends RecyclerView.Adapter<AdapterTextPhoto.QRVi
     }
 
     @Override
-    /**
-     * The most advanced method in the class, I understand why you are looking at the javadoc for it.
-     * This, intense, advanced, computational algorithm returns the number of elements in the adapter.
-     * I know. I don't get it either.
-     */
     public int getItemCount() {
         return data.size();
     }

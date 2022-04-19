@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,7 +39,7 @@ public class PlayerSearchActivity extends AppCompatActivity {
     private DatabaseController dc;
     ListeningList<Profile> queryResults;
     private ArrayList<String> usernames;
-    private ArrayList<Drawable> photos;
+    private ArrayList<Bitmap> photos;
 
     private AdapterTextPhoto adapter;
 

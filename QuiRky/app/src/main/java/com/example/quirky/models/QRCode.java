@@ -70,8 +70,7 @@ public class QRCode implements Parcelable {
     public QRCode() {}
 
     /**
-     * Getter for ID
-     * @return The ID of the qrcode
+     * Getter for QRCode's ID
      */
     public String getId() {
         return id;
@@ -79,7 +78,6 @@ public class QRCode implements Parcelable {
 
     /**
      * Getter for score
-     * @return The score of the qrcode
      */
     public int getScore() {
         return score;
@@ -87,14 +85,19 @@ public class QRCode implements Parcelable {
 
     /**
      * Getter for the comments on the QRCode
-     * @return ArrayList containing each comment on the qrcode
      */
     public ArrayList<Comment> getComments() {
         return comments;
     }
 
+    /**
+     * Get the list of players that have scanned this QRCode
+     */
     public ArrayList<String> getScanners() { return scanners; }
 
+    /**
+     * Get the list of locations this QRCode has been scanned at
+     */
     public ArrayList<GeoPoint> getLocations() { return locations; }
 
     /**
@@ -117,10 +120,19 @@ public class QRCode implements Parcelable {
             comments.remove(c);
     }
 
+    /**
+     * Add a location to the list of places the QRCode has been scanned at
+     * @param gp The GeoPoint to add
+     */
     public void addLocation(GeoPoint gp) {
         locations.add(gp);
     }
 
+    /**
+     * Remove a location from the list of places the QRCode has been scanned at
+     * @param gp The GeoPoint to remove
+     *           TODO: Consider if we need this method. Under what circumstance will it be called?
+     */
     public void removeLocation(GeoPoint gp) {
         locations.remove(gp);
     }
@@ -137,10 +149,18 @@ public class QRCode implements Parcelable {
         this.comments = comments;
     }
 
+    /**
+     * Add a scanner to the list of players that have scanned the code
+     * @param username The username of the player that has scanned it
+     */
     public void addScanner(String username) {
         scanners.add(username);
     }
 
+    /**
+     * Remove a scanner from the list of players that have scanned the code
+     * @param username The username of the player to remove
+     */
     public void removeScanner(String username) {
         scanners.remove(username);
     }

@@ -75,6 +75,10 @@ public class DatabaseController {
         };
     }
 
+    /**
+     * Write a QRCode to the database. Use this method to update any of the fields a QRCode has.
+     * @param qr The QRCode to write/update
+     */
     public void writeQRCode(QRCode qr) {
         assert qr != null : "You can't write a null object to the database!";
 
@@ -82,12 +86,20 @@ public class DatabaseController {
         collection.document(qr.getId()).set(qr).addOnCompleteListener(writeListener);
     }
 
+    /**
+     * Write a profile to the database. Use this method to also update a profile in the database, if any field has changed
+     * @param p The profile to write/update
+     */
     public void writeProfile(Profile p) {
         assert p != null : "You can't write a null object to the database!";
         collection = firestore.collection("users");
         collection.document(p.getUname()).set(p).addOnCompleteListener(writeListener);
     }
 
+    /**
+     * Delete a QRCode from the database. Also deletes any associated photos from Firebase Storage
+     * @param qr The QRCode to delete
+     */
     public void deleteQRCode(String qr) {
         // Delete from FireStore
         collection = firestore.collection("QRCodes");
@@ -98,11 +110,22 @@ public class DatabaseController {
         storage.delete().addOnCompleteListener(deleteListener);
     }
 
+    /**
+     * Delete a profile from the database
+     * @param username The username of the profile to delete
+     */
     public void deleteProfile(String username) {
         collection = firestore.collection("users");
         collection.document(username).delete().addOnCompleteListener(deleteListener);
     }
 
+    /**
+     * Read the profile with the given username from the database.
+     * This is an asynchronous operation, and as such will not return the read result.
+     * When the read completes, the data is added to the passed ListeningList<>.
+     * @param username The username of the profile to read
+     * @param data A listening list containing profiles. The read result is added to this list.
+     */
     public void readProfile(String username, ListeningList<Profile> data) {
         assert (!username.equals("") && !username.equals(" ")) : "Tried calling readProfile() with an empty username! Did you mean to use readAllUsers()?";
 
@@ -112,6 +135,13 @@ public class DatabaseController {
         });
     }
 
+    /**
+     * Check if the given user is an admin.
+     * This is an asynchronous operation, and as such will not return the read result.
+     * When the read completes, the data is added to the passed ListeningList<>.
+     * @param username The username to check for
+     * @param data A listening list containing Booleans. The read result is added to this list.
+     */
     public void isOwner(String username, ListeningList<Boolean> data) {
         collection = firestore.collection("users");
         collection.document(username).get().addOnCompleteListener(task -> {
@@ -122,7 +152,14 @@ public class DatabaseController {
         });
     }
 
-    // This method can be used to Query the database for specific users, or read the whole database at once, by passing an empty string.
+    /**
+     * Read a collection of users from the database. This method may be used to read every single player, or
+     * this method may be used to search for players by username. Pass an empty string to read the whole population.
+     * This is an asynchronous operation, and as such will not return the read result.
+     * When the read completes, the data is added to the passed ListeningList<>.
+     * @param search The username to use to search for players. If this is empty, read will return every player.
+     * @param data A listening list containing Profiles. Read result is added here.
+     */
     public void readAllUsers(String search, ListeningList<Profile> data) {
         collection = firestore.collection("users");
         OnCompleteListener<QuerySnapshot> complete = task -> {
@@ -136,6 +173,13 @@ public class DatabaseController {
             collection.whereGreaterThanOrEqualTo("uname", search).get().addOnCompleteListener(complete);
     }
 
+    /**
+     * Read the QRCode with the given ID from the database.
+     * This is an asynchronous operation, and as such will not return the read result.
+     * When the read completes, the data is added to the passed ListeningList<>.
+     * @param id The ID of the QRCode to read
+     * @param data A listening list containing QRCodes. The read result is added here.
+     */
     public void readQRCode(String id, ListeningList<QRCode> data) {
         collection = firestore.collection("QRCodes");
         collection.document(id).get().addOnCompleteListener(task -> {
@@ -144,6 +188,12 @@ public class DatabaseController {
         });
     }
 
+    /**
+     * Read every QRCode from the database.
+     * This is an asynchronous operation, and as such will not return the read result.
+     * When the read completes, the data is added to the passed ListeningList<>.
+     * @param data A listening list containing QRCodes.
+     */
     public void readAllQRCodes(ListeningList<QRCode> data) {
         collection = firestore.collection("QRCodes");
         collection.get().addOnCompleteListener(task -> {
@@ -152,11 +202,24 @@ public class DatabaseController {
         });
     }
 
+    /**
+     * Write a one-use login password to a profile in the database.
+     * The password should be the hash of the QRCode the player will scan to login to their account.
+     * @param hash The password to write to the account
+     * @param user The username of the profile to write the password to
+     */
     public void writeLoginHash(String hash, String user) {
         collection = firestore.collection("users");
         collection.document(user).update("loginhash", hash).addOnCompleteListener(writeListener);
     }
 
+    /**
+     * Search the database for a user with whose password field matches the given password.
+     * This is an asynchronous operation, and as such will not return the read result.
+     * When the read completes, the data is added to the passed ListeningList<>.
+     * @param hash The password to search for
+     * @param data A listening list containing Profiles. The read result is placed here.
+     */
     public void readLoginHash(String hash, ListeningList<Profile> data) {
         collection = firestore.collection("users");
         collection.whereEqualTo("loginhash", hash).get().addOnCompleteListener(task -> {
@@ -167,14 +230,43 @@ public class DatabaseController {
             } else {
                 Profile p = q.getDocuments().get(0).toObject(Profile.class);
                 firestore.collection("users").document(p.getUname()).update("loginhash", "");
-                data.add (p);
+                data.add(p);
             }
         });
     }
 
+    /**
+     * Read the 5 most recent photos taken from the database.
+     * This is an asynchronous operation, and as such will not return the read result.
+     * When the read completes, the data is added to the passed ListeningList<>.
+     * @param photos A listening list containing Bitmaps. The photos read are placed here
+     */
     public void recentPhotos(ListeningList<Bitmap> photos) {
+        storage = firebase.getReference().child("recent");
+        Task<ListResult> task_read_list = storage.list(5);
+
+        Collection<Bitmap> results = new ArrayList<>();
+        task_read_list.addOnCompleteListener(task -> {
+            List<StorageReference> files = task.getResult().getItems();
+            for(StorageReference fileRef : files) {
+                fileRef.getBytes(1048576).addOnCompleteListener(task_read_photo -> {
+                    byte[] photo = task_read_photo.getResult();
+                    results.add( BitmapFactory.decodeByteArray( photo, 0, photo.length) );
+
+                    if(results.size() == files.size())
+                        photos.addAll(results);
+                });
+            }
+        });
     }
 
+    /**
+     * Read up to 10 photos from a QRCode from the database
+     * This is an asynchronous operation, and as such will not return the read result.
+     * When the read completes, the data is added to the passed ListeningList<>.
+     * @param id The ID of the QRCode to get the photos from
+     * @param photos A listening list containing Bitmaps. The photos read are placed here.
+     */
     public void readPhotos(String id, ListeningList<Bitmap> photos) {
         storage = firebase.getReference().child("photos").child(id);
         Task<ListResult> task_read_list = storage.list(10);
@@ -199,13 +291,23 @@ public class DatabaseController {
     // Written by user
     // https://stackoverflow.com/users/4853690/%e6%9c%b1%e8%a5%bf%e8%a5%bf
     // Published Dec. 8, 2015
+    /**
+     * Write a photo to a QRCode in the database. The photo is also written to the Most Recent Photos,
+     * overwriting the oldest of the 5 photos.
+     * @param id The ID of the QRCode the photo should be written under
+     * @param photo A bitmap representing the photo.
+     */
     public void writePhoto(String id, Bitmap photo) {
-        storage = firebase.getReference().child("photos");
 
         ByteBuffer buff = ByteBuffer.allocate( photo.getByteCount() );
         photo.copyPixelsToBuffer(buff);
 
-        UploadTask task = storage.child(id).putBytes( buff.array() );
+        storage = firebase.getReference().child("photos").child(id);
+        UploadTask task = storage.putBytes( buff.array() );
         task.addOnCompleteListener(writeListener);
+
+        //storage = firebase.getReference().child("recent");
+        //UploadTask writeRecent = storage.putBytes( buff.array() );
+        //writeRecent.addOnCompleteListener(writeListener);
     }
 }

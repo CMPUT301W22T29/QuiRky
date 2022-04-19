@@ -16,8 +16,6 @@ import java.util.ArrayList;
  */
 public class ProfileController {
 
-    private static String TAG = "Profile Controller Says ";
-
     /**
      * Calculate the total number of QRCodes a profile has scanned
      * @param p The profile in question
@@ -70,7 +68,7 @@ public class ProfileController {
 
         // See UTF-8 Character chart
         for(byte b : bytes) {
-            if(b < 0x30)    // Bytes < 30 are not alphanumeric. Bytes >= 30 are the digits
+            if(b < 0x30)    // Bytes < 0x30 are not alphanumeric. Bytes >= 30 are the digits
                 return false;
             if(b > 0x39 && b < 0x41)    // Bytes between 0x39 and 0x41 are not alphanumeric
                 return false;           // Bytes starting at 0x41 are upper case letters

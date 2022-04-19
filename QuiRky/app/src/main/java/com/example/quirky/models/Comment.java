@@ -35,7 +35,7 @@ public class Comment implements Parcelable {
     public Comment(String content, String uname) {
         this.content = content;
         this.uname = uname;
-        this.id = QRCodeController.SHA256(content);
+        this.id = QRCodeController.SHA256(content+uname);
     }
 
     /**

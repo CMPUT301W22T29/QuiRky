@@ -7,6 +7,7 @@
 package com.example.quirky;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,7 +33,7 @@ public class ViewQRScannersFragment extends Fragment {
     private Button back;
     private RecyclerView list;
     private ArrayList<String> players;
-    private final ArrayList<Drawable> images = new ArrayList<>();
+    private final ArrayList<Bitmap> images = new ArrayList<>();
     private AdapterTextPhoto adapter;
 
 
