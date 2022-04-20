@@ -13,6 +13,11 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.media.Image;
 import android.widget.Toast;
 
@@ -38,6 +43,8 @@ import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 
+import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -60,6 +67,10 @@ public class CameraController {
     private static final String[] CAMERA_PERMISSION = new String[]{Manifest.permission.CAMERA};
     private static final int CAMERA_REQUEST_CODE = 10;
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
+
+    private static final BarcodeScanner codeScanner = BarcodeScanning.getClient(
+            new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build());
+
     private Preview preview;
     private ImageCapture imageCapture;
     private CameraSelector cameraSelector;
@@ -163,10 +174,9 @@ public class CameraController {
      * @return
      *      - An <code>ArrayList</code> of <code>QRCode</code>s generated from codes found in the
      *        captured image.
-     * @see QRCodeController
      */
     @androidx.camera.core.ExperimentalGetImage
-    public void captureQRCodes(Context context, ListeningList<QRCode> codes) {
+    public void captureQRCode(Context context, ListeningList<QRCode> codes) {
         // TODO: edit javadoc
         imageCapture.takePicture(ContextCompat.getMainExecutor(context),
                 new ImageCapture.OnImageCapturedCallback() {
@@ -183,8 +193,21 @@ public class CameraController {
                 });
     }
 
-    private static final BarcodeScanner codeScanner = BarcodeScanning.getClient(
-            new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build());
+    @androidx.camera.core.ExperimentalGetImage
+    public void captureImage(Context context, ListeningList<Bitmap> photo) {
+        imageCapture.takePicture(ContextCompat.getMainExecutor(context),
+                new ImageCapture.OnImageCapturedCallback() {
+                    @Override
+                    public void onCaptureSuccess(@NonNull ImageProxy proxy) {
+                        Image image = proxy.getImage();
+                        if (image != null) {
+                            Bitmap bitmap = imageToBitmap(image);
+                            photo.add(bitmap);
+                        }
+                        proxy.close();
+                    }
+                });
+    }
 
     /**
      * Analyzes an image for qr codes, and constructs <code>QRCode</code>s from their data.
@@ -211,5 +234,55 @@ public class CameraController {
                         Toast.makeText(context, text, Toast.LENGTH_LONG).show();
                     }
                 });
+    }
+
+    public static void scanFromBitmap(Bitmap bitmap, ListeningList<QRCode> codes, Context context) {
+        InputImage inputImage = InputImage.fromBitmap(bitmap, 0);
+        Task<List<Barcode>> result = codeScanner.process(inputImage);
+        result.addOnSuccessListener(barcodes -> {
+            // Construct a QRCode with the scanned raw data
+            for (Barcode barcode: barcodes) {
+                codes.add(new QRCode(barcode.getRawValue()));
+            }
+            if (codes.size() == 0) {
+                String text
+                        = "Could not find any QR codes. Move closer or further and try scanning again.";
+                Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    /**
+     * Convert an Image object into a Bitmap object
+     * @param image The Image object
+     * @return The corresponding Bitmap
+     */
+    private static Bitmap imageToBitmap(Image image) {
+        // Converting to Bitmap taken directly from
+        // https://stackoverflow.com/a/58568495
+        // Created by https://stackoverflow.com/users/10205791/mike-a
+        // Converted to java by https://stackoverflow.com/users/7001213/ahwar
+        // Published June 28, 2019
+        Image.Plane[] planes = image.getPlanes();
+        ByteBuffer yBuffer = planes[0].getBuffer();
+        ByteBuffer uBuffer = planes[1].getBuffer();
+        ByteBuffer vBuffer = planes[2].getBuffer();
+
+        int ySize = yBuffer.remaining();
+        int uSize = uBuffer.remaining();
+        int vSize = vBuffer.remaining();
+
+        byte[] nv21 = new byte[ySize + uSize + vSize];
+        //U and V are swapped
+        yBuffer.get(nv21, 0, ySize);
+        vBuffer.get(nv21, ySize, vSize);
+        uBuffer.get(nv21, ySize + vSize, uSize);
+
+        YuvImage yuvImage = new YuvImage(nv21, ImageFormat.NV21, image.getWidth(), image.getHeight(), null);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        yuvImage.compressToJpeg(new Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 75, out);
+
+        byte[] imageBytes = out.toByteArray();
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
     }
 }

@@ -7,10 +7,8 @@
 package com.example.quirky.activities;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
@@ -23,7 +21,6 @@ import com.example.quirky.controllers.DatabaseController;
 import com.example.quirky.ListeningList;
 import com.example.quirky.controllers.MapController;
 import com.example.quirky.controllers.MemoryController;
-import com.example.quirky.OnAddListener;
 import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
 import com.example.quirky.controllers.QRCodeController;
@@ -31,7 +28,6 @@ import com.example.quirky.R;
 import com.example.quirky.controllers.CameraController;
 
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
 
 /**
  * Previews camera feed and allows scanning QR codes.
@@ -57,20 +53,19 @@ public class CodeScannerActivity extends AppCompatActivity {
 
     private Boolean login;
 
-    private final String TAG = "CodeScannerActivity says";
-
 
     @Override
     @androidx.camera.core.ExperimentalGetImage
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_code_scanner);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             this.login = extras.getBoolean("login");
+        } else {
+            this.login = false;
         }
-
-        setContentView(R.layout.activity_code_scanner);
 
         previewView = findViewById(R.id.previewView);
         scan_button = findViewById(R.id.scan_button);
@@ -95,27 +90,21 @@ public class CodeScannerActivity extends AppCompatActivity {
     @androidx.camera.core.ExperimentalGetImage
     public void scan() {
         ListeningList<QRCode> codes = new ListeningList<>();
-        codes.setOnAddListener(new OnAddListener<QRCode>() {
-            @Override
-            public void onAdd(ListeningList<QRCode> listeningList) {
-                if (login) {
-                    String password = listeningList.get(0).getId();
-                    ListeningList<Profile> profile = new ListeningList<>();
-                    profile.setOnAddListener(new OnAddListener<Profile>() {
-                        @Override
-                        public void onAdd(ListeningList<Profile> listeningList) {
-                            Profile p = listeningList.get(0);
-                            login(p);
-                        }
-                    });
-                    dc.readLoginHash(password, profile);
-                } else {
-                    showSavingInterface(listeningList);
-                }
-            }
 
+        codes.setOnAddListener(listeningList -> {
+            if (login) {
+                String password = listeningList.get(0).getId();
+                ListeningList<Profile> profile = new ListeningList<>();
+                profile.setOnAddListener(listeningList1 -> {
+                    Profile p = listeningList1.get(0);
+                    login(p);
+                });
+                dc.readLoginHash(password, profile);
+            } else {
+                showSavingInterface(listeningList);
+            }
         });
-        cameraController.captureQRCodes(this, codes);
+        cameraController.captureQRCode(this, codes);
     }
 
     /**
@@ -129,13 +118,11 @@ public class CodeScannerActivity extends AppCompatActivity {
         save_button.setOnClickListener(view -> {
             if (location_switch.isChecked()) {
                 ListeningList<Location> locations = new ListeningList<>();
-                locations.setOnAddListener(new OnAddListener<Location>() {
-                    public void onAdd(ListeningList<Location> locationListeningList) {
-                        Location location = locationListeningList.get(0);
-                        GeoPoint gp = new GeoPoint(location);
-                        qr.addLocation(gp);
-                        save(qr);
-                    }
+                locations.setOnAddListener(locationListeningList -> {
+                    Location location = locationListeningList.get(0);
+                    GeoPoint gp = new GeoPoint(location);
+                    qr.addLocation(gp);
+                    save(qr);
                 });
 
                 MapController mapController = new MapController(this);
@@ -182,18 +169,6 @@ public class CodeScannerActivity extends AppCompatActivity {
             Toast.makeText(this, "You already have that QRCode!", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        if (location_switch.isChecked()) {
-            // TODO: GeoPoint gp = MapController.getLocation();
-            GeoPoint gp = new GeoPoint(10.0, 10.0);
-            qr.addLocation(gp);
-        }
-
-        if (photo_switch.isChecked()) {
-            // TODO: photo = takePhoto();
-            // TODO: dc.writePhoto(codeId, photo);
-        }
-
 
         qr.addScanner(p.getUname());
         dc.writeQRCode(qr);
