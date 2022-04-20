@@ -15,6 +15,7 @@ import android.app.Activity;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.example.quirky.activities.DeletePlayersActivity;
 import com.robotium.solo.Solo;
 
 import org.junit.After;
@@ -27,7 +28,7 @@ public class Owner_DeletePlayerTest {
     private Solo solo;
 
     @Rule
-    public ActivityTestRule rule = new ActivityTestRule(delete_Players.class,true,true);
+    public ActivityTestRule rule = new ActivityTestRule(DeletePlayersActivity.class,true,true);
 
     @Before
     public void setUp() throws Exception{
@@ -42,7 +43,7 @@ public class Owner_DeletePlayerTest {
     //Before test it out, need to add an account using jiawei as username first
     @Test
     public void checkDeletePlayer(){
-        solo.assertCurrentActivity("Wrong Activity",delete_Players.class);
+        solo.assertCurrentActivity("Wrong Activity", DeletePlayersActivity.class);
         assertTrue(solo.searchText("jiawei"));
         solo.clickOnText("jiawei");
         solo.clickOnButton("Yes");

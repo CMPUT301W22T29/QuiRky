@@ -15,6 +15,8 @@ import android.widget.EditText;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.example.quirky.activities.HubActivity;
+import com.example.quirky.activities.ViewQRActivity;
 import com.robotium.solo.Solo;
 
 import org.junit.After;
@@ -27,7 +29,7 @@ public class ViewQRANDCommentTest {
     private Solo solo;
 
     @Rule
-    public ActivityTestRule rule = new ActivityTestRule(StartingPageActivity.class,true,true);
+    public ActivityTestRule rule = new ActivityTestRule(HubActivity.class,true,true);
 
     @Before
     public void setUp() throws Exception{
@@ -43,7 +45,7 @@ public class ViewQRANDCommentTest {
     public void checkComments(){
         solo.clickOnButton("Manage Codes");
         solo.clickOnText("1115083");//QRCode that you scanned before testing
-        solo.assertCurrentActivity("Wrong Activity",ViewQRActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", ViewQRActivity.class);
         solo.clickOnButton("View Comments");
         solo.enterText((EditText) solo.getView(R.id.editText_comment), "TestComments");
         solo.clickOnButton("Save");

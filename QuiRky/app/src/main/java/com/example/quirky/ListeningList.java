@@ -73,4 +73,13 @@ public class ListeningList<E> extends ArrayList<E> {
         }
         return false;
     }
+
+    @Override
+    public boolean addAll(@NonNull Collection<? extends E> c) {
+        if(super.addAll(c)) {
+            listener.onAdd(this);
+            return true;
+        }
+        return false;
+    }
 }

@@ -17,5 +17,6 @@ public interface ViewQRFragmentListener {
     void changeFragment(Fragment frag);
     void commentsButton();
     void deleteButton();
+    void viewProfile(String username);
     ArrayList<String> getPlayers();
 }

@@ -3,7 +3,6 @@ package com.example.quirky;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.quirky.activities.CodeScannerActivity;
+
 /**
  * @author Jonathen Adsit
- * Fragment that is attached to MainActivity, which is the Login Activity.
+ * Fragment that is attached to LoginActivity, which is the Login Activity.
  * Prompts the user for a username, and provides an option to login through QRCode scanning instead.
  * Does no work on it's own, instead communicates it's input to the calling activity
  * @see CodeScannerActivity
@@ -50,14 +51,14 @@ public class InputUnameLoginFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
 
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.input_uname_login_fragment, null);
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_login, null);
         input = view.findViewById(R.id.login_frag_input_field);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         return builder
                 .setView(view)
-                .setTitle("Username for Your Profile")
-                .setPositiveButton("Confirm", (dialogInterface, i) -> {
+                .setTitle("Create a new account!")
+                .setPositiveButton("Sign up!", (dialogInterface, i) -> {
                     String uname = input.getText().toString();
                     listener.OnClickConfirm(uname);
                 })
