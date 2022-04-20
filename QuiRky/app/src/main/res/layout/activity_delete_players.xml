@@ -35,6 +35,7 @@
         android:layout_width="300dp"
         android:layout_height="150dp"
         android:id="@+id/linearLayout1"
+        android:background="@color/dark"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -53,17 +54,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
+
             <Button
                 android:id="@+id/confirm"
-                android:layout_width="150dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
                 android:text="Yes"
-                android:textSize="40dp">
-            </Button>
+                android:textSize="40dp"></Button>
+
             <Button
                 android:id="@+id/cancel"
-                android:layout_width="150dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
                 android:text="No"

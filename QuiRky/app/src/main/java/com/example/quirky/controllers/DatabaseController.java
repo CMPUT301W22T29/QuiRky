@@ -249,11 +249,13 @@ public class DatabaseController {
         task_read_list.addOnCompleteListener(task -> {
             List<StorageReference> files = task.getResult().getItems();
             for(StorageReference fileRef : files) {
-                fileRef.getBytes(1048576).addOnCompleteListener(task_read_photo -> {
-                    byte[] photo = task_read_photo.getResult();
-                    results.add( BitmapFactory.decodeByteArray( photo, 0, photo.length) );
+                Task<byte[]> read_photo = fileRef.getBytes(10485760); // 10'485'760 == 10 mB
+                read_photo.addOnCompleteListener(task1 -> {
+                    byte[] bytes = task1.getResult();
+                    Bitmap photo = BitmapFactory.decodeByteArray( bytes, 0, bytes.length);
+                    results.add(photo);
 
-                    if(results.size() == files.size())
+                    if(results.size() == 5)
                         photos.addAll(results);
                 });
             }
@@ -261,24 +263,36 @@ public class DatabaseController {
     }
 
     /**
-     * Read up to 10 photos from a QRCode from the database
+     * Read up to 6 photos from a QRCode from the database
      * This is an asynchronous operation, and as such will not return the read result.
      * When the read completes, the data is added to the passed ListeningList<>.
      * @param id The ID of the QRCode to get the photos from
      * @param photos A listening list containing Bitmaps. The photos read are placed here.
+     * @param maxPhotos The maximum number of photos to be read.
      */
-    public void readPhotos(String id, ListeningList<Bitmap> photos) {
+    public void readPhotos(String id, ListeningList<Bitmap> photos, int maxPhotos) {
         storage = firebase.getReference().child("photos").child(id);
-        Task<ListResult> task_read_list = storage.list(10);
-
         Collection<Bitmap> results = new ArrayList<>();
+
+        // Get the list of all photos from the Database
+        Task<ListResult> task_read_list = storage.list(maxPhotos);
+
         task_read_list.addOnCompleteListener(task -> {
+
+            // Loop through each file in the list
             List<StorageReference> files = task.getResult().getItems();
             for(StorageReference fileRef : files) {
-                fileRef.getBytes(1048576).addOnCompleteListener(task_read_photo -> {
-                    byte[] photo = task_read_photo.getResult();
-                    results.add( BitmapFactory.decodeByteArray( photo, 0, photo.length) );
 
+                // Reading the bytes of the file is a separate read operation
+                Task<byte[]> read_photo = fileRef.getBytes(10485760); // 10'485'760 = 10 mB
+                read_photo.addOnCompleteListener(task1 -> {
+
+                    // Turn the byte array into a Bitmap object and add it to the results
+                    byte[] bytes = task1.getResult();
+                    Bitmap photo = BitmapFactory.decodeByteArray( bytes, 0, bytes.length);
+                    results.add(photo);
+
+                    // Once done, add all results to the ListeningList at once, so as to only call the Listener once, rather than each time a read finishes.
                     if(results.size() == files.size())
                         photos.addAll(results);
                 });

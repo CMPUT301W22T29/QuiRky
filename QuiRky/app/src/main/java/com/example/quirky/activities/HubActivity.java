@@ -9,6 +9,8 @@ package com.example.quirky.activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -53,14 +55,6 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         dc = new DatabaseController();
         features = new ArrayList<>( Arrays.asList(button_texts) );
 
-        ListeningList<Boolean> ownerResult = new ListeningList<>();
-        ownerResult.setOnAddListener(listeningList -> {
-            owner = listeningList.get(0);
-            if(owner)
-                addOwnerButtons();
-        });
-        dc.isOwner( mc.readUser(), ownerResult);
-
         photos = new ListeningList<>();
         photos.setOnAddListener(listeningList -> doneRead());
 
@@ -82,6 +76,17 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         adapterButton = new AdapterButton(features, this, listener);
         FeatureList.setAdapter( adapterButton );
         FeatureList.setLayoutManager( adapterButton.getLayoutManager() );
+
+        ListeningList<Boolean> ownerResult = new ListeningList<>();
+        ownerResult.setOnAddListener(listeningList -> {
+            owner = listeningList.get(0);
+            if(owner)
+                addOwnerButtons();
+
+            ProgressBar loadbar = findViewById(R.id.hub_load_bar);
+            loadbar.setVisibility(View.GONE);
+        });
+        dc.isOwner( mc.readUser(), ownerResult);
     }
 
     /**
