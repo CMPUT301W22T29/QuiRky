@@ -7,6 +7,7 @@
 package com.example.quirky.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
@@ -33,7 +34,7 @@ public class DeletePlayersActivity extends AppCompatActivity {
     private AdapterTextPhoto adapter;
     private RecyclerClickerListener listener;
 
-    private LinearLayout confirmBox;
+    private ConstraintLayout confirmBox;
     private Button yes;
     private Button no;
     private DatabaseController dc;
@@ -50,10 +51,10 @@ public class DeletePlayersActivity extends AppCompatActivity {
         Usernames = new ArrayList<>();
 
 
-        playersList = findViewById(R.id.players);
-        confirmBox = findViewById(R.id.linearLayout1);
-        yes = findViewById(R.id.confirm);
-        no = findViewById(R.id.cancel);
+        playersList = findViewById(R.id.qrCodes);
+        confirmBox = findViewById(R.id.prompt_delete_qrcode);
+        yes = findViewById(R.id.confirm_delete_qrcode);
+        no = findViewById(R.id.cancel_delete_qrcode);
 
         listener = new RecyclerClickerListener(){
             @Override
