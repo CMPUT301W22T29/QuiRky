@@ -120,7 +120,7 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         Profile p = mc.read();
 
         if(p.removeScanned(qr.getId())) {
-            mc.write(p);
+            mc.writeUser(p);
             dc.writeProfile(p);
 
             qr.removeScanner(p.getUname());

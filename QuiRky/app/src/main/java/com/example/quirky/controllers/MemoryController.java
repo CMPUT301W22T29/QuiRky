@@ -54,7 +54,7 @@ public class MemoryController {
      * @param p The profile to be written to local memory. Will overwrite any existing data.
      * @return True if the write was successful, false otherwise
      */
-    public Boolean write(Profile p) {
+    public Boolean writeUser(Profile p) {
 
         assert p != null : "A null object was passed to MemoryController.write(Profile p)!";
         File file = new File(dir, "profile");
@@ -79,7 +79,8 @@ public class MemoryController {
 
             oos.close();
             fos.close();
-            return true;
+
+            return writeUsername( p.getUname() );
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -90,7 +91,7 @@ public class MemoryController {
      * Write a username to memory. Will overwrite any data already stored in the 'name' file.
      * @param user The new username to write
      */
-    public void writeUser(String user) {
+    private boolean writeUsername(String user) {
         // Delete the name file in memory, if it exists
         File file = new File(dir, "name");
         if(file.exists())
@@ -105,8 +106,11 @@ public class MemoryController {
 
             fos.flush();
             fos.close();
+
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
     }
 

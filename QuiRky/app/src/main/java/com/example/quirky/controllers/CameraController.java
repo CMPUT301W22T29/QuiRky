@@ -193,22 +193,6 @@ public class CameraController {
                 });
     }
 
-    @androidx.camera.core.ExperimentalGetImage
-    public void captureImage(Context context, ListeningList<Bitmap> photo) {
-        imageCapture.takePicture(ContextCompat.getMainExecutor(context),
-                new ImageCapture.OnImageCapturedCallback() {
-                    @Override
-                    public void onCaptureSuccess(@NonNull ImageProxy proxy) {
-                        Image image = proxy.getImage();
-                        if (image != null) {
-                            Bitmap bitmap = imageToBitmap(image);
-                            photo.add(bitmap);
-                        }
-                        proxy.close();
-                    }
-                });
-    }
-
     /**
      * Analyzes an image for qr codes, and constructs <code>QRCode</code>s from their data.
      *
@@ -236,7 +220,24 @@ public class CameraController {
                 });
     }
 
-    public static void scanFromBitmap(Bitmap bitmap, ListeningList<QRCode> codes, Context context) {
+
+    @androidx.camera.core.ExperimentalGetImage
+    public void captureImage(Context context, ListeningList<Bitmap> photo) {
+        imageCapture.takePicture(ContextCompat.getMainExecutor(context),
+                new ImageCapture.OnImageCapturedCallback() {
+                    @Override
+                    public void onCaptureSuccess(@NonNull ImageProxy proxy) {
+                        Image image = proxy.getImage();
+                        if (image != null) {
+                            Bitmap bitmap = imageToBitmap(image);
+                            photo.add(bitmap);
+                        }
+                        proxy.close();
+                    }
+                });
+    }
+
+    public void scanFromBitmap(Bitmap bitmap, ListeningList<QRCode> codes, Context context) {
         InputImage inputImage = InputImage.fromBitmap(bitmap, 0);
         Task<List<Barcode>> result = codeScanner.process(inputImage);
         result.addOnSuccessListener(barcodes -> {

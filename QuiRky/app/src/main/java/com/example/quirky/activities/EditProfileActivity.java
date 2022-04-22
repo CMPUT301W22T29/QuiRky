@@ -119,8 +119,7 @@ public class EditProfileActivity extends AppCompatActivity {
      * @param newUsername If a new username was selected
      */
     private void write(Boolean newUsername) {
-        mc.write(p);
-        mc.writeUser(p.getUname());
+        mc.writeUser(p);
         dc.writeProfile(p);
 
         if(newUsername) {
