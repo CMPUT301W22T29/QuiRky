@@ -18,7 +18,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.view.PreviewView;
 
-import com.example.quirky.OnAddListener;
 import com.example.quirky.controllers.DatabaseController;
 import com.example.quirky.ListeningList;
 import com.example.quirky.controllers.MapController;
@@ -173,7 +172,7 @@ public class CodeScannerActivity extends AppCompatActivity {
             dc.writePhoto( qr.getId(), capture.get(0) );
         }
 
-        Toast.makeText(this, "QRCode saved!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "QRCode saved!", Toast.LENGTH_SHORT).show();
 
         setVisibility(true);
     }

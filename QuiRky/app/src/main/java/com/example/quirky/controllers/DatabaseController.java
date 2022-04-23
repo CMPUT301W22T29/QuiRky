@@ -10,8 +10,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.example.quirky.ListeningList;
 import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
@@ -64,14 +62,14 @@ public class DatabaseController {
             if(task.isSuccessful())
                 Log.d(TAG, "Last write was a success");
             else
-                Log.d(TAG, "Last write was a fail, cause: " + task.getException().getMessage()); // TODO: find a way to determine what the last write was. Should be easy.
+                Log.d(TAG, "Last write was a fail, cause: " + task.getException().getMessage());
         };
 
         this.deleteListener = task -> {
             if(task.isSuccessful())
                 Log.d(TAG, "Deletion from database success!");
             else
-                Log.d(TAG, "Deletion from database failed!!"); // TODO: find a way to determine what the last write was. Should be easy.
+                Log.d(TAG, "Deletion from database failed!!");
         };
     }
 
@@ -106,7 +104,7 @@ public class DatabaseController {
         collection.document(qr).delete().addOnCompleteListener(deleteListener);
 
         // Delete from Firebase Storage
-        storage = firebase.getReference().child("photos").child(qr); // FIXME: I think firebase.getReference(String) does not do what you think it does. You may need to use firebase.getReference().child(photos).child(id); instead
+        storage = firebase.getReference().child("photos").child(qr);
         storage.delete().addOnCompleteListener(deleteListener);
     }
 
@@ -300,23 +298,20 @@ public class DatabaseController {
         });
     }
 
-    // ByteBuffer code sourced from
-    // https://stackoverflow.com/a/34165515
-    // Written by user
-    // https://stackoverflow.com/users/4853690/%e6%9c%b1%e8%a5%bf%e8%a5%bf
-    // Published Dec. 8, 2015
     /**
      * Write a photo to a QRCode in the database. The photo is also written to the Most Recent Photos,
      * overwriting the oldest of the 5 photos.
-     * @param id The ID of the QRCode the photo should be written under
+     * @param CodeId The ID of the QRCode the photo should be written under
      * @param photo A bitmap representing the photo.
      */
-    public void writePhoto(String id, Bitmap photo) {
+    public void writePhoto(String CodeId, Bitmap photo) {
 
         ByteBuffer buff = ByteBuffer.allocate( photo.getByteCount() );
         photo.copyPixelsToBuffer(buff);
 
-        storage = firebase.getReference().child("photos").child(id);
+        String PhotoId = QRCodeController.SHA256( buff.toString() );
+
+        storage = firebase.getReference().child("photos").child(CodeId + "/" + PhotoId);
         UploadTask task = storage.putBytes( buff.array() );
         task.addOnCompleteListener(writeListener);
 

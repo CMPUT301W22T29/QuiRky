@@ -16,9 +16,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
-import android.graphics.Rect;
-import android.graphics.YuvImage;
 import android.media.Image;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,7 +42,6 @@ import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 
-import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -160,6 +158,7 @@ public class CameraController {
         }, ContextCompat.getMainExecutor(context));
     }
 
+
     /**
      * Capture images and construct <code>QRCode</code> instances from all QR codes in the image.
      *
@@ -174,7 +173,7 @@ public class CameraController {
      * @return
      *      - An <code>ArrayList</code> of <code>QRCode</code>s generated from codes found in the
      *        captured image.
-     */
+     */ /*
     @androidx.camera.core.ExperimentalGetImage
     public void captureQRCode(Context context, ListeningList<QRCode> codes) {
         // TODO: edit javadoc
@@ -191,9 +190,9 @@ public class CameraController {
                         image.close();
                     }
                 });
-    }
+    } */
 
-    /**
+    /*
      * Analyzes an image for qr codes, and constructs <code>QRCode</code>s from their data.
      *
      * @param inputImage
@@ -203,7 +202,7 @@ public class CameraController {
      * @param context
      *      - The activity that the user is interacting with to capture QR code images.
      * @see CameraController
-     */
+     */ /*
     public static void scanQRCodes(InputImage inputImage, ListeningList<QRCode> codes, Context context) {
         // TODO: edit javadoc
         Task<List<Barcode>> result = codeScanner.process(inputImage)
@@ -218,8 +217,7 @@ public class CameraController {
                         Toast.makeText(context, text, Toast.LENGTH_LONG).show();
                     }
                 });
-    }
-
+    } */
 
     @androidx.camera.core.ExperimentalGetImage
     public void captureImage(Context context, ListeningList<Bitmap> photo) {
@@ -229,7 +227,8 @@ public class CameraController {
                     public void onCaptureSuccess(@NonNull ImageProxy proxy) {
                         Image image = proxy.getImage();
                         if (image != null) {
-                            Bitmap bitmap = imageToBitmap(image);
+                            logImageType(image);
+                            Bitmap bitmap = JPEGToBitmap(image);
                             photo.add(bitmap);
                         }
                         proxy.close();
@@ -254,36 +253,71 @@ public class CameraController {
     }
 
     /**
-     * Convert an Image object into a Bitmap object
-     * @param image The Image object
+     * Convert a JPEG Image object into a Bitmap
+     * @param image An Image object whose format is type JPEG
      * @return The corresponding Bitmap
      */
-    private static Bitmap imageToBitmap(Image image) {
-        // Converting to Bitmap taken directly from
-        // https://stackoverflow.com/a/58568495
-        // Created by https://stackoverflow.com/users/10205791/mike-a
-        // Converted to java by https://stackoverflow.com/users/7001213/ahwar
-        // Published June 28, 2019
-        Image.Plane[] planes = image.getPlanes();
-        ByteBuffer yBuffer = planes[0].getBuffer();
-        ByteBuffer uBuffer = planes[1].getBuffer();
-        ByteBuffer vBuffer = planes[2].getBuffer();
+    private static Bitmap JPEGToBitmap(Image image) {
+        assert ( image.getFormat() == ImageFormat.JPEG ) : "You must pass an Image of format JPEG! Check image type with logImageType(image)";
 
-        int ySize = yBuffer.remaining();
-        int uSize = uBuffer.remaining();
-        int vSize = vBuffer.remaining();
+        Image.Plane x = image.getPlanes()[0];
+        ByteBuffer buff = x.getBuffer();
+        byte[] y = new byte[buff.capacity()];
+        buff.get(y);
 
-        byte[] nv21 = new byte[ySize + uSize + vSize];
-        //U and V are swapped
-        yBuffer.get(nv21, 0, ySize);
-        vBuffer.get(nv21, ySize, vSize);
-        uBuffer.get(nv21, ySize + vSize, uSize);
+        return BitmapFactory.decodeByteArray(y, 0, y.length);
+    }
 
-        YuvImage yuvImage = new YuvImage(nv21, ImageFormat.NV21, image.getWidth(), image.getHeight(), null);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        yuvImage.compressToJpeg(new Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 75, out);
 
-        byte[] imageBytes = out.toByteArray();
-        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+    private void logImageType(Image i) {
+        int type = i.getFormat();
+        Log.d(" - - - - - CameraController says", "image is of type\n");
+
+        switch (type) {
+            case ImageFormat.DEPTH16:
+                Log.d("", "\tDepth16\n");
+            case ImageFormat.DEPTH_JPEG:
+                Log.d("", "\tDepth_Jpeg\n");
+            case ImageFormat.DEPTH_POINT_CLOUD:
+                Log.d("", "\tDepth Point Cloud\n");
+            case ImageFormat.FLEX_RGBA_8888:
+                Log.d("", "\tFlex \n");
+            case ImageFormat.FLEX_RGB_888:
+                Log.d("", "\tFlex 888\n");
+            case ImageFormat.HEIC:
+                Log.d("", "\tHeic\n");
+            case ImageFormat.JPEG:
+                Log.d("", "\tJpeg\n");
+            case ImageFormat.NV16:
+                Log.d("", "\tNV16\n");
+            case ImageFormat.NV21:
+                Log.d("", "\tNV21\n");
+            case ImageFormat.PRIVATE:
+                Log.d("", "\tPrivate\n");
+            case ImageFormat.RAW10:
+                Log.d("", "\tRAW10\n");
+            case ImageFormat.RAW12:
+                Log.d("", "\tRAW12\n");
+            case ImageFormat.RAW_PRIVATE:
+                Log.d("", "\tRAW PRIVATE\n");
+            case ImageFormat.RAW_SENSOR:
+                Log.d("", "\tRAW SENSOR\n");
+            case ImageFormat.UNKNOWN:
+                Log.d("", "\t?????????\n");
+            case ImageFormat.Y8:
+                Log.d("", "\tY8\n");
+            case ImageFormat.YCBCR_P010:
+                Log.d("", "\tYCBCR PO10\n");
+            case ImageFormat.YUV_420_888:
+                Log.d("", "\tYUV 420\n");
+            case ImageFormat.YUV_422_888:
+                Log.d("", "\tYUV 422\n");
+            case ImageFormat.YUV_444_888:
+                Log.d("", "\tYUV 444\n");
+            case ImageFormat.YUY2:
+                Log.d("", "\tYUY2\n");
+            case ImageFormat.YV12:
+                Log.d("", "\tYV12\n");
+        }
     }
 }

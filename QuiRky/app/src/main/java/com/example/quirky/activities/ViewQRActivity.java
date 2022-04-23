@@ -72,11 +72,21 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
 
         scoreText.setText(String.valueOf(qr.getScore()));
 
-        photo = BitmapFactory.decodeResource(getResources(), R.drawable.temp);
-        image.setImageBitmap(photo);
-
         players = qr.getScanners();
         changeFragment(buttonsFrag);
+
+        ListeningList<Bitmap> photos = new ListeningList<>();
+        photos.setOnAddListener(listeningList -> {
+            Toast.makeText(this, "Done reading", Toast.LENGTH_SHORT).show();
+            if(listeningList.size() == 0) {
+                photo = BitmapFactory.decodeResource(getResources(), R.drawable.temp);
+                image.setImageBitmap(photo);
+            } else {
+                image.setImageBitmap( listeningList.get(0) );
+            }
+        });
+
+        dc.readPhotos( qr.getId(), photos, 3);
     }
 
     /**
