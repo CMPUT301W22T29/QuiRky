@@ -23,8 +23,11 @@ import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -44,6 +47,7 @@ import java.util.List;
 @SuppressWarnings({"unchecked", "ConstantConditions"})
 public class DatabaseController {
     private final String TAG = "DatabaseController says: ";
+    private final long MAX_DOWNLOAD_SIZE = 10485760; // 10485760 Bytes == 10 mB
 
     private final FirebaseFirestore firestore;
     private CollectionReference collection;
@@ -247,7 +251,7 @@ public class DatabaseController {
         task_read_list.addOnCompleteListener(task -> {
             List<StorageReference> files = task.getResult().getItems();
             for(StorageReference fileRef : files) {
-                Task<byte[]> read_photo = fileRef.getBytes(10485760); // 10'485'760 == 10 mB
+                Task<byte[]> read_photo = fileRef.getBytes(MAX_DOWNLOAD_SIZE);
                 read_photo.addOnCompleteListener(task1 -> {
                     byte[] bytes = task1.getResult();
                     Bitmap photo = BitmapFactory.decodeByteArray( bytes, 0, bytes.length);
@@ -282,7 +286,7 @@ public class DatabaseController {
             for(StorageReference fileRef : files) {
 
                 // Reading the bytes of the file is a separate read operation
-                Task<byte[]> read_photo = fileRef.getBytes(10485760); // 10'485'760 = 10 mB
+                Task<byte[]> read_photo = fileRef.getBytes(MAX_DOWNLOAD_SIZE);
                 read_photo.addOnCompleteListener(task1 -> {
 
                     // Turn the byte array into a Bitmap object and add it to the results
@@ -306,17 +310,53 @@ public class DatabaseController {
      */
     public void writePhoto(String CodeId, Bitmap photo) {
 
-        ByteBuffer buff = ByteBuffer.allocate( photo.getByteCount() );
-        photo.copyPixelsToBuffer(buff);
+        MockOutputStream stream = new MockOutputStream( photo.getByteCount() );
+        photo.compress( Bitmap.CompressFormat.JPEG, 20, stream);
 
-        String PhotoId = QRCodeController.SHA256( buff.toString() );
+        String PhotoId = QRCodeController.SHA256(Arrays.toString(stream.getMockSink()));
 
         storage = firebase.getReference().child("photos").child(CodeId + "/" + PhotoId);
-        UploadTask task = storage.putBytes( buff.array() );
+        UploadTask task = storage.putBytes( stream.getMockSink() );
         task.addOnCompleteListener(writeListener);
 
         //storage = firebase.getReference().child("recent");
         //UploadTask writeRecent = storage.putBytes( buff.array() );
         //writeRecent.addOnCompleteListener(writeListener);
+    }
+
+
+    private class MockOutputStream extends OutputStream {
+        byte[] MockSink;
+        int pointer = 0;
+
+        public MockOutputStream(int size) {
+            MockSink = new byte[size];
+        }
+
+        @Override
+        public void write(int i) throws IndexOutOfBoundsException {
+            MockSink[pointer] = (byte) i;
+            pointer++;
+        }
+
+        @Override
+        public void write(byte[] b) {
+            write(b, 0, b.length);
+        }
+
+        @Override
+        public void write(byte[] b, int offset, int length) {
+            pointer = offset;
+            try {
+                for(int i = 0; i < length; i++)
+                    write(b[i]);
+            } catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public byte[] getMockSink() {
+            return this.MockSink;
+        }
     }
 }
