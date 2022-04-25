@@ -1,48 +1,263 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content" >
 
-    <TextView
-        android:id="@+id/text_showScore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="To be replaced by score"
-        android:textColor="@color/dark"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minWidth="200dp"
-        android:minHeight="200dp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_showScore"/>
-
-    <FrameLayout
-        android:id="@+id/view_qr_frame"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content">
 
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-  
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" >
+        <ProgressBar
+            android:id="@+id/progressBar3"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/code_photo_list"
+            app:layout_constraintBottom_toBottomOf="@id/code_photo_list" />
 
-    </FrameLayout>
+        <TextView
+            android:id="@+id/text_showScore"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="99999 pts"
+            android:textColor="@color/dark"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <View
+            style="@style/DividerBar"
+            app:layout_constraintBottom_toTopOf="@id/player_titles_text"
+            tools:ignore="MissingConstraints" />
+
+        <View
+            style="@style/DividerBar"
+            app:layout_constraintTop_toBottomOf="@id/player_titles_text"
+            tools:ignore="MissingConstraints" />
+
+        <ListView
+            android:id="@+id/player_titles_text"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/dark"
+            app:layout_constraintEnd_toStartOf="@id/text_showScore"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/code_photo_list"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+
+            android:layout_marginTop="12dp"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/player_titles_text"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+
+            android:text="What's It Say?"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/code_photo_list" />
+
+        <TextView
+            android:id="@+id/qrcode_type_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+
+            android:hint="Type: Web Link"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/code_photo_list" />
+
+        <TextView
+            android:id="@+id/qrcode_content_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="8dp"
+            android:hint="QRCode content goes here\n"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/code_photo_list" />
+
+        <TextView
+            android:id="@+id/x_players_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+
+            android:text="X Players have found this"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/qrcode_content_text" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/scanners_list"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:layout_marginStart="8dp"
+
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/code_locations_list"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/x_players_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+
+            android:text="At these Locations"
+            android:textSize="15sp"
+            app:layout_constraintStart_toStartOf="@+id/code_locations_list"
+            app:layout_constraintTop_toBottomOf="@+id/qrcode_content_text" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/code_locations_list"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/scanners_list"
+            app:layout_constraintTop_toBottomOf="@id/x_players_text">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <View
+            style="@style/DividerBar"
+            app:layout_constraintBottom_toTopOf="@id/code_locations_list"
+            tools:ignore="MissingConstraints" />
+
+        <View
+            style="@style/DividerBar"
+            app:layout_constraintTop_toBottomOf="@id/code_locations_list"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Comments"
+            android:textSize="20sp"
+
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/code_locations_list" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/comments_list"
+            android:layout_width="match_parent"
+
+            android:layout_height="200dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/code_locations_list" />
+
+        <View
+            style="@style/DividerBar"
+            app:layout_constraintBottom_toTopOf="@id/comments_list"
+            tools:ignore="MissingConstraints" />
+
+        <View
+            style="@style/DividerBar"
+            app:layout_constraintTop_toBottomOf="@id/comments_list"
+            tools:ignore="MissingConstraints" />
+
+        <Button
+            android:id="@+id/make_comment_button"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+
+            android:layout_marginStart="8dp"
+
+            android:layout_marginTop="12dp"
+            android:text="Write a Comment"
+            app:layout_constraintBottom_toBottomOf="@+id/remove_from_acc_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/comments_list" />
+
+        <Button
+            android:id="@+id/remove_from_acc_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
+            android:text="Remove from\nAccount"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/comments_list" />
+
+        <EditText
+            android:id="@+id/text_input_field"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+
+            android:layout_marginEnd="8dp"
+            android:hint="Write Something!"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/comments_list" />
+
+        <Button
+            android:id="@+id/save_comment_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="12dp"
+
+            android:text="Save"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cancel_comment_button"
+            app:layout_constraintTop_toBottomOf="@id/text_input_field" />
+
+        <Button
+            android:id="@+id/cancel_comment_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="12dp"
+
+            android:text="Cancel"
+            app:layout_constraintEnd_toStartOf="@+id/save_comment_button"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_input_field" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
+

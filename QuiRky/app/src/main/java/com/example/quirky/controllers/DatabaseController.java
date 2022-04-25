@@ -6,11 +6,13 @@
 
 package com.example.quirky.controllers;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.example.quirky.ListeningList;
+import com.example.quirky.R;
 import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -283,6 +285,9 @@ public class DatabaseController {
 
             // Loop through each file in the list
             List<StorageReference> files = task.getResult().getItems();
+            if(files.size() == 0)
+                photos.add( BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.temp));  // FIXME: this may crash the app, needs testing
+
             for(StorageReference fileRef : files) {
 
                 // Reading the bytes of the file is a separate read operation
