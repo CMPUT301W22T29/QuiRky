@@ -27,11 +27,12 @@ import java.util.ArrayList;
  *
  */
 public class QRCode implements Parcelable {
-    private String id; // id is hash of content.
+    private String content, id; // id is hash of content.
     private int score;
     private ArrayList<Comment> comments;
     private ArrayList<GeoPoint> locations;
-    private ArrayList<String> scanners;
+    private ArrayList<String> scanners; // Users who have scanned this code.
+    private ArrayList<String> titles; // User created titles for the QRCode.
 
     /**
      * Initialize this <code>QRCode</code> with only the content. To be used when creating a new QRCode.
@@ -40,6 +41,7 @@ public class QRCode implements Parcelable {
      *            <code>QRCodeController.scanQRCodes()</code> method.
      */
     public QRCode(String content) {
+        this.content = content;
         this.id = QRCodeController.SHA256(content);
         this.score = QRCodeController.score(id);
 
@@ -68,6 +70,11 @@ public class QRCode implements Parcelable {
      * Empty constructor because FireStore tutorial told me to...
      */
     public QRCode() {}
+
+    /**
+     * Getter for QRCode content
+     */
+    public String getContent() { return content; }
 
     /**
      * Getter for QRCode's ID
@@ -100,6 +107,8 @@ public class QRCode implements Parcelable {
      */
     public ArrayList<GeoPoint> getLocations() { return locations; }
 
+    public ArrayList<String> getTitles() { return titles; }
+
     /**
      * Adds a comment to the array. Throws an assertion error if the parameter is null.
      * @param c
@@ -116,8 +125,15 @@ public class QRCode implements Parcelable {
      *      - The comment to be removed
      */
     public void removeComment(Comment c) {
-        if(comments.contains(c))
-            comments.remove(c);
+        comments.remove(c);
+    }
+
+    /** FIXME: determine if FireStore needs setters for custom object reading. Prefer not to have a direct setter.
+     * Set the comments on the QRCode
+     * @param comments An arraylist of comments
+     */
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
     }
 
     /**
@@ -141,13 +157,6 @@ public class QRCode implements Parcelable {
         this.locations = locations;
     }
 
-    /** FIXME: determine if FireStore needs setters for custom object reading. Prefer not to have a direct setter.
-     * Set the comments on the QRCode
-     * @param comments An arraylist of comments
-     */
-    public void setComments(ArrayList<Comment> comments) {
-        this.comments = comments;
-    }
 
     /**
      * Add a scanner to the list of players that have scanned the code
@@ -168,6 +177,12 @@ public class QRCode implements Parcelable {
     public void setScanners(ArrayList<String> scanners) {
         this.scanners = scanners;
     }
+
+    public void addTitle(String title) { titles.add(title); }
+
+    public void removeTitle(String title) { titles.remove(title); }
+
+    public void setTitle(ArrayList<String> titles) { this.titles = titles; }
 
 
     // Parcelable stuff below
