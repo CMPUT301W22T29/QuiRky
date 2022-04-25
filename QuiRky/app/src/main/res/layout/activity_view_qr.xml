@@ -24,7 +24,7 @@
             android:id="@+id/text_showScore"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="8dp"
             android:text="99999 pts"
             android:textColor="@color/dark"
@@ -42,10 +42,10 @@
             app:layout_constraintTop_toBottomOf="@id/player_titles_text"
             tools:ignore="MissingConstraints" />
 
-        <ListView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/player_titles_text"
             android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
@@ -196,38 +196,26 @@
             tools:ignore="MissingConstraints" />
 
         <Button
-            android:id="@+id/make_comment_button"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-
-            android:layout_marginStart="8dp"
-
-            android:layout_marginTop="12dp"
-            android:text="Write a Comment"
-            app:layout_constraintBottom_toBottomOf="@+id/remove_from_acc_button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/comments_list" />
-
-        <Button
             android:id="@+id/remove_from_acc_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
             android:text="Remove from\nAccount"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/comments_list" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/save_comment_button" />
 
         <EditText
-            android:id="@+id/text_input_field"
+            android:id="@+id/comment_input_field"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="24dp"
 
             android:layout_marginEnd="8dp"
-            android:hint="Write Something!"
+            android:hint="Write your own comment!"
+            android:importantForAutofill="no"
             android:inputType="text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -239,25 +227,11 @@
             android:layout_height="wrap_content"
 
             android:layout_marginTop="12dp"
-
             android:text="Save"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/cancel_comment_button"
-            app:layout_constraintTop_toBottomOf="@id/text_input_field" />
-
-        <Button
-            android:id="@+id/cancel_comment_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_marginTop="12dp"
-
-            android:text="Cancel"
-            app:layout_constraintEnd_toStartOf="@+id/save_comment_button"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_input_field" />
+            app:layout_constraintTop_toBottomOf="@id/comment_input_field" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
 

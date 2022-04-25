@@ -6,13 +6,10 @@
 
 package com.example.quirky;
 
-// This interface is used in PlayerSearchActivity.java, AdapterTextPhoto.java
-
 // RecyclerClickerListener code sourced form:
 // https://www.tutorialspoint.com/get-clicked-item-and-its-position-in-recyclerview
 // Made by:
 // https://www.tutorialspoint.com/answers/Nitya-Raut
-
 /**
  * Interface to allow communication between a recycler and the activity it is in
  */

@@ -13,11 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 
 import com.example.quirky.ListeningList;
 import com.example.quirky.OnAddListener;
-import com.example.quirky.AdapterTextPhoto;
+import com.example.quirky.AdapterText;
 import com.example.quirky.models.QRCode;
 import com.example.quirky.R;
 import com.example.quirky.RecyclerClickerListener;
@@ -31,7 +30,7 @@ import java.util.ArrayList;
 public class DeleteCodesActivity extends AppCompatActivity {
 
     private RecyclerView qrList;
-    private AdapterTextPhoto adapter;
+    private AdapterText adapter;
     private RecyclerClickerListener listener;
 
     private ConstraintLayout confirmBox;
@@ -84,7 +83,7 @@ public class DeleteCodesActivity extends AppCompatActivity {
         for(int i = 0; i < readResults.size(); i ++){
             scores.add(String.valueOf(readResults.get(i).getScore()));
         }
-        adapter = new AdapterTextPhoto(scores, new ArrayList<>(), this, listener);
+        adapter = new AdapterText(scores, this, listener);
 
         qrList.setAdapter(adapter);
 

@@ -16,7 +16,6 @@ import org.osmdroid.util.GeoPoint;
 import java.util.ArrayList;
 
 
-
 // Praise this absolute mad lad who literally answered all of my questions at once.
 // I didn't even take any code from him but he's getting a cite anyways.
 // https://stackoverflow.com/a/54194734
@@ -48,22 +47,25 @@ public class QRCode implements Parcelable {
         this.comments = new ArrayList<>();
         this.locations = new ArrayList<>();
         this.scanners = new ArrayList<>();
+        this.titles = new ArrayList<>();
     }
 
     /**
      * Initialize this QRCode with every field. To be used when reading from FireStore
-     * @param id The id of the QRCode
+     * @param content The content of the QRCode
      * @param score The score of the QRCode
      * @param comments The list of comments on the code
      * @param locations The list of locations the code has been scanned
      * @param scanners The list of users that has scanned the code
      */
-    public QRCode(String id, int score, ArrayList<Comment> comments, ArrayList<GeoPoint> locations, ArrayList<String> scanners) {
-        this.id = id;
+    public QRCode(String content, int score, ArrayList<Comment> comments, ArrayList<GeoPoint> locations, ArrayList<String> scanners, ArrayList<String> titles) {
+        this.content = content;
+        this.id = QRCodeController.SHA256(content);
         this.score = score;
         this.comments = comments;
         this.locations = locations;
         this.scanners = scanners;
+        this.titles = titles;
     }
 
     /**
@@ -107,7 +109,11 @@ public class QRCode implements Parcelable {
      */
     public ArrayList<GeoPoint> getLocations() { return locations; }
 
-    public ArrayList<String> getTitles() { return titles; }
+    public ArrayList<String> getTitles() {
+        if(titles == null)
+            titles = new ArrayList<>();
+        return this.titles;
+    }
 
     /**
      * Adds a comment to the array. Throws an assertion error if the parameter is null.
@@ -184,6 +190,22 @@ public class QRCode implements Parcelable {
 
     public void setTitle(ArrayList<String> titles) { this.titles = titles; }
 
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void setTitles(ArrayList<String> titles) {
+        this.titles = titles;
+    }
 
     // Parcelable stuff below
     protected QRCode(Parcel in) {
