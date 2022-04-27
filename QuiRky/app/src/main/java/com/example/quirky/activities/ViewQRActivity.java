@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -72,7 +73,7 @@ public class ViewQRActivity extends AppCompatActivity {
 
         // Set the titles list
         ArrayList<String> titles = qr.getTitles();
-        titles.add("Player written title");
+        titles.add("McDonald's menu code");
         RecyclerView titlesList = findViewById(R.id.player_titles_text);
         AdapterText titlesAdapter = new AdapterText(titles, this);
         titlesList.setAdapter(titlesAdapter);

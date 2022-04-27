@@ -27,6 +27,7 @@ import com.example.quirky.controllers.QRCodeController;
 import com.example.quirky.R;
 import com.example.quirky.RecyclerClickerListener;
 import com.example.quirky.controllers.DatabaseController;
+import com.google.rpc.Code;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -37,13 +38,8 @@ import java.util.Comparator;
 public class ManageCodesActivity extends AppCompatActivity {
     private final String TAG = "ManageCodesActivity says";
 
-    private ToggleButton arrangementOrder;
-    private RecyclerView qr_list;
-
-    private AdapterText QRCodeAdapter;
-    private ArrayList<String> codes;
-    private ArrayList<String> points;
-    private RecyclerClickerListener recyclerListener;
+    private ListeningList<QRCode> codes;
+    private DatabaseController dc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,62 +50,41 @@ public class ManageCodesActivity extends AppCompatActivity {
         if(p == null)
             ExitWithError();
 
+        dc = new DatabaseController();
+
         TextView title = findViewById(R.id.manage_codes_title);
         String text = p.getUname() + "'s Codes";
         title.setText(text);
 
-        codes = p.getScanned();
-        points = new ArrayList<>();
-        for(String id : codes) {
-            String score = String.valueOf( QRCodeController.score(id) );
-            points.add(score);
-        }
-
-        arrangementOrder = findViewById(R.id.toggleButton);
-        qr_list = findViewById(R.id.qr_list);
-
-        recyclerListener = new RecyclerClickerListener(){
-            @Override
-            public void OnClickListItem(int position){
-                startViewQRActivity(position);
-            }
-        };
-        QRCodeAdapter = new AdapterText(points, this, recyclerListener);
-        qr_list.setAdapter(QRCodeAdapter);
-        qr_list.setLayoutManager(QRCodeAdapter.getLayoutManager());
-
-        arrangementOrder.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setOrder(isChecked);
-            }
+        ArrayList<String> ids = p.getScanned();
+        codes = new ListeningList<>();
+        codes.setOnAddListener(listeningList -> {
+            if(listeningList.size() == ids.size())
+                doneReading();
         });
+
+        for(String id : ids) {
+            dc.readQRCode(id, codes);
+        }
     }
 
     /**
-     * Sets the order to display the QRCodes
-     * @param isChecked The state of the ordering switch
+     * Called once the activity is done reading all of the QRCodes from the database.
+     * Finishes setting up the views, including the recycler view.
      */
-    private void setOrder(boolean isChecked) {
-        Comparator<String> c = new Comparator<String>() {
-            @Override
-            public int compare(String s, String t1) {
-                return (Integer.valueOf(s) - Integer.valueOf(t1));
-            }
-        };
-        Comparator<String> d = new Comparator<String>() {
-            @Override
-            public int compare(String s, String t1) {
-                return Integer.valueOf(t1) - Integer.valueOf(s);
-            }
-        };
+    private void doneReading() {
+        RecyclerView qr_list = findViewById(R.id.qr_list);
 
-        if(isChecked) {
-            points.sort(c);
-            QRCodeAdapter.notifyDataSetChanged();
-        } else {
-            points.sort(d);
-            QRCodeAdapter.notifyDataSetChanged();
+        ArrayList<String> CodeData = new ArrayList<>();
+        for(QRCode qr : codes) {
+            CodeData.add(qr.getContent());
         }
+
+        RecyclerClickerListener recyclerListener = this::startViewQRActivity;   // This is an onClickListener for the Recycler's Items, it looks weird because Android Studio wants me to simplify it.
+
+        AdapterText QRCodeAdapter = new AdapterText(CodeData, this, recyclerListener);
+        qr_list.setAdapter(QRCodeAdapter);
+        qr_list.setLayoutManager(QRCodeAdapter.getLayoutManager());
     }
 
     /**
@@ -117,19 +92,10 @@ public class ManageCodesActivity extends AppCompatActivity {
      * @param position The position in the recycler that the user clicked on
      */
     private void startViewQRActivity(int position) {
-        String id = codes.get(position);
-        ListeningList<QRCode> readResult = new ListeningList<>();
-        readResult.setOnAddListener(new OnAddListener<QRCode>() {
-            @Override
-            public void onAdd(ListeningList<QRCode> listeningList) {
-                QRCode qr = listeningList.get(0);
-                Intent i = new Intent(getApplicationContext(), ViewQRActivity.class);
-                i.putExtra("qr", qr);
-                startActivity(i);
-            }
-        });
-        DatabaseController dc = new DatabaseController();
-        dc.readQRCode(id, readResult);
+        QRCode qr = codes.get(position);
+        Intent i = new Intent(this, ViewQRActivity.class);
+        i.putExtra("qr", qr);
+        startActivity(i);
     }
 
     /**
