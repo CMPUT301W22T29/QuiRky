@@ -158,67 +158,6 @@ public class CameraController {
         }, ContextCompat.getMainExecutor(context));
     }
 
-
-    /**
-     * Capture images and construct <code>QRCode</code> instances from all QR codes in the image.
-     *
-     * <code>QRCode</code> construction is done in <code>QRCodeController</code>.
-     * The returned <code>ArrayList</code> will be empty until QR code processing is done. This does not take
-     * long, but it is worth noting as it could affect whether operating on the list will do what is
-     * expected.
-     *
-     * @param context
-     *      - The activity that the user is interacting with to scan QR codes, same as in
-     *        <code>startCamera</code>.
-     * @return
-     *      - An <code>ArrayList</code> of <code>QRCode</code>s generated from codes found in the
-     *        captured image.
-     */ /*
-    @androidx.camera.core.ExperimentalGetImage
-    public void captureQRCode(Context context, ListeningList<QRCode> codes) {
-        // TODO: edit javadoc
-        imageCapture.takePicture(ContextCompat.getMainExecutor(context),
-                new ImageCapture.OnImageCapturedCallback() {
-                    @Override
-                    public void onCaptureSuccess(@NonNull ImageProxy image) {
-                        Image mediaImage = image.getImage();
-                        if (mediaImage != null) {
-                            InputImage inputImage = InputImage.fromMediaImage(
-                                             mediaImage, image.getImageInfo().getRotationDegrees());
-                            CameraController.scanQRCodes(inputImage, codes, context);
-                        }
-                        image.close();
-                    }
-                });
-    } */
-
-    /*
-     * Analyzes an image for qr codes, and constructs <code>QRCode</code>s from their data.
-     *
-     * @param inputImage
-     *      - The image to analyze.
-     * @param codes
-     *      - The list in which the <code>QRCode</code>s will be stored once they are constructed.
-     * @param context
-     *      - The activity that the user is interacting with to capture QR code images.
-     * @see CameraController
-     */ /*
-    public static void scanQRCodes(InputImage inputImage, ListeningList<QRCode> codes, Context context) {
-        // TODO: edit javadoc
-        Task<List<Barcode>> result = codeScanner.process(inputImage)
-                .addOnSuccessListener(barcodes -> {
-                    // Construct a QRCode with the scanned raw data
-                    for (Barcode barcode: barcodes) {
-                        codes.add(new QRCode(barcode.getRawValue()));
-                    }
-                    if (codes.size() == 0) {
-                        String text
-                                = "Could not find any QR codes. Move closer or further and try scanning again.";
-                        Toast.makeText(context, text, Toast.LENGTH_LONG).show();
-                    }
-                });
-    } */
-
     @androidx.camera.core.ExperimentalGetImage
     public void captureImage(Context context, ListeningList<Bitmap> photo) {
         imageCapture.takePicture(ContextCompat.getMainExecutor(context),
@@ -237,7 +176,7 @@ public class CameraController {
     }
 
     public void scanFromBitmap(Bitmap bitmap, ListeningList<QRCode> codes, Context context) {
-        InputImage inputImage = InputImage.fromBitmap(bitmap, 0);
+        InputImage inputImage = InputImage.fromBitmap(bitmap, 90);
         Task<List<Barcode>> result = codeScanner.process(inputImage);
         result.addOnSuccessListener(barcodes -> {
             // Construct a QRCode with the scanned raw data

@@ -7,15 +7,19 @@
 package com.example.quirky.controllers;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
 
 import com.example.quirky.models.Profile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.ByteBuffer;
 
 /*
 Data Storage is as follows:
@@ -206,5 +210,29 @@ public class MemoryController {
             file.delete();
 
         return dir.delete();
+    }
+
+    public Uri savePhoto(Bitmap bm, String id, int quality) {
+
+        assert(quality > 0 && quality < 101) : "The compression quality passed to MemoryController.savePhoto() is impossible!";
+
+        File subdir = new File(dir, "photos");
+        if(!subdir.exists())
+            subdir.mkdir();
+
+        File file = new File(subdir, id);
+        try {
+            file.createNewFile();
+            FileOutputStream fos = new FileOutputStream(file);
+
+            bm.compress(Bitmap.CompressFormat.JPEG, quality, fos);
+
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return Uri.fromFile(file);
     }
 }

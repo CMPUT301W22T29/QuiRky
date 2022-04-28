@@ -6,9 +6,11 @@
 
 package com.example.quirky.controllers;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 
 import com.example.quirky.ListeningList;
@@ -247,11 +249,20 @@ public class DatabaseController {
      */
     public void recentPhotos(ListeningList<Bitmap> photos) {
         storage = firebase.getReference().child("recent");
+        Collection<Bitmap> results = new ArrayList<>();
+
+        // Get the list of all photos from the Database
         Task<ListResult> task_read_list = storage.list(5);
 
-        Collection<Bitmap> results = new ArrayList<>();
         task_read_list.addOnCompleteListener(task -> {
+
+            // Loop through each file in the list
             List<StorageReference> files = task.getResult().getItems();
+            if(files.size() == 0) {
+                photos.addNone();
+                return;
+            }
+
             for(StorageReference fileRef : files) {
                 Task<byte[]> read_photo = fileRef.getBytes(MAX_DOWNLOAD_SIZE);
                 read_photo.addOnCompleteListener(task1 -> {
@@ -267,7 +278,7 @@ public class DatabaseController {
     }
 
     /**
-     * Read up to 6 photos from a QRCode from the database
+     * Read a limited number of photos from the database
      * This is an asynchronous operation, and as such will not return the read result.
      * When the read completes, the data is added to the passed ListeningList<>.
      * @param id The ID of the QRCode to get the photos from
@@ -285,8 +296,10 @@ public class DatabaseController {
 
             // Loop through each file in the list
             List<StorageReference> files = task.getResult().getItems();
-            if(files.size() == 0)
-                photos.add( BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.temp));  // FIXME: this may crash the app, needs testing
+            if(files.size() == 0) {
+                photos.addNone();
+                return;
+            }
 
             for(StorageReference fileRef : files) {
 
@@ -313,55 +326,19 @@ public class DatabaseController {
      * @param CodeId The ID of the QRCode the photo should be written under
      * @param photo A bitmap representing the photo.
      */
-    public void writePhoto(String CodeId, Bitmap photo) {
+    public void writePhoto(String CodeId, Bitmap photo, Context ct) {
 
-        MockOutputStream stream = new MockOutputStream( photo.getByteCount() );
-        photo.compress( Bitmap.CompressFormat.JPEG, 20, stream);
+        MemoryController mc = new MemoryController(ct);
 
-        String PhotoId = QRCodeController.SHA256(Arrays.toString(stream.getMockSink()));
+        String PhotoId = QRCodeController.SHA256(QRCodeController.getRandomString(20));
+        Uri location = mc.savePhoto(photo, PhotoId, 20);
 
-        storage = firebase.getReference().child("photos").child(CodeId + "/" + PhotoId);
-        UploadTask task = storage.putBytes( stream.getMockSink() );
+        storage = firebase.getReference().child("photos").child(CodeId).child(PhotoId);
+        UploadTask task = storage.putFile(location);
         task.addOnCompleteListener(writeListener);
 
         //storage = firebase.getReference().child("recent");
         //UploadTask writeRecent = storage.putBytes( buff.array() );
         //writeRecent.addOnCompleteListener(writeListener);
-    }
-
-
-    private class MockOutputStream extends OutputStream {
-        byte[] MockSink;
-        int pointer = 0;
-
-        public MockOutputStream(int size) {
-            MockSink = new byte[size];
-        }
-
-        @Override
-        public void write(int i) throws IndexOutOfBoundsException {
-            MockSink[pointer] = (byte) i;
-            pointer++;
-        }
-
-        @Override
-        public void write(byte[] b) {
-            write(b, 0, b.length);
-        }
-
-        @Override
-        public void write(byte[] b, int offset, int length) {
-            pointer = offset;
-            try {
-                for(int i = 0; i < length; i++)
-                    write(b[i]);
-            } catch (IndexOutOfBoundsException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public byte[] getMockSink() {
-            return this.MockSink;
-        }
     }
 }

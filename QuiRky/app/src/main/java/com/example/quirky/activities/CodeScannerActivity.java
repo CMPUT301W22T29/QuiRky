@@ -169,7 +169,7 @@ public class CodeScannerActivity extends AppCompatActivity {
         dc.writeProfile(p);
 
         if(photo_switch.isChecked()) {
-            dc.writePhoto( qr.getId(), capture.get(0) );
+            dc.writePhoto( qr.getId(), capture.get(0) , this);
         }
 
         Toast.makeText(this, "QRCode saved!", Toast.LENGTH_SHORT).show();
