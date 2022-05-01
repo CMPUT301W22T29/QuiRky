@@ -103,8 +103,7 @@ public class LoginActivity extends AppCompatActivity implements
                 if(listeningList.get(0) == null) {
                     Profile p = new Profile(uname);
 
-                    mc.write(p);
-                    mc.writeUser(uname);
+                    mc.writeUser(p);
                     dm.writeProfile(p);
 
                     startHubActivity();

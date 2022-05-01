@@ -11,26 +11,31 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
+import com.example.quirky.AdapterComment;
+import com.example.quirky.AdapterPhoto;
+import com.example.quirky.AdapterText;
 import com.example.quirky.ListeningList;
-import com.example.quirky.OnAddListener;
 import com.example.quirky.R;
-import com.example.quirky.ViewQRButtonsFragment;
-import com.example.quirky.ViewQRFragmentListener;
-import com.example.quirky.ViewQRScannersFragment;
 import com.example.quirky.controllers.DatabaseController;
 import com.example.quirky.controllers.MemoryController;
+import com.example.quirky.models.Comment;
 import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
+
+import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 
@@ -38,16 +43,18 @@ import java.util.ArrayList;
  * Activity to view a QRCode. Holds two fragments: one fragment to see the QRCode location, & start up the comments activity
  * Another fragment to see all other players who have scanned the QRCode
  * */
-public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentListener {
+public class ViewQRActivity extends AppCompatActivity {
 
     private final String TAG = "ViewQRActivity says";
-    ImageView image;
-    TextView scoreText;
-    Fragment buttonsFrag, playersFrag;
-    Bitmap photo;
 
     DatabaseController dc;
-    ArrayList<String> players;
+    ListeningList<Bitmap> photos;
+
+    ArrayList<Comment> comments;
+    AdapterComment commentAdapter;
+
+    Button deleteButton, saveButton;
+    EditText commentText;
 
     Intent i;
     QRCode qr;
@@ -64,63 +71,97 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         if(qr == null)
             ExitWithError();
 
-        image = findViewById(R.id.imageView2);
-        scoreText = findViewById(R.id.text_showScore);
+        // Set the titles list
+        ArrayList<String> titles = qr.getTitles();
+        titles.add("McDonald's menu code");
+        RecyclerView titlesList = findViewById(R.id.player_titles_text);
+        AdapterText titlesAdapter = new AdapterText(titles, this);
+        titlesList.setAdapter(titlesAdapter);
+        titlesList.setLayoutManager( titlesAdapter.getLayoutManager() );
 
-        buttonsFrag = new ViewQRButtonsFragment();
-        playersFrag = new ViewQRScannersFragment();
+        // Set the scanners list
+        ArrayList<String> players = qr.getScanners();
+        players.add("user1");
+        RecyclerView playersList = findViewById(R.id.scanners_list);
+        AdapterText scannersAdapter = new AdapterText(players, this);
+        playersList.setAdapter(scannersAdapter);
+        playersList.setLayoutManager( scannersAdapter.getLayoutManager() );
 
-        scoreText.setText(String.valueOf(qr.getScore()));
+        // Set the comments list
+        comments = qr.getComments();
+        comments.add( new Comment("words, bruh", "user1"));
+        RecyclerView commentsList = findViewById(R.id.comments_list);
+        commentAdapter = new AdapterComment(this, comments);
+        commentsList.setAdapter( commentAdapter );
+        commentsList.setLayoutManager( commentAdapter.getLayoutManager() );
 
-        photo = BitmapFactory.decodeResource(getResources(), R.drawable.temp);
-        image.setImageBitmap(photo);
+        // Set the score text
+        String temp;
+        temp = qr.getScore() + " pts.";
+        TextView score = findViewById(R.id.text_showScore);
+        score.setText(temp);
 
-        players = qr.getScanners();
-        changeFragment(buttonsFrag);
+        // Set the content text
+        TextView contentText = findViewById(R.id.qrcode_content_text);
+        contentText.setText( qr.getContent() );
+
+        temp = qr.getScanners().size() + " Players have found this code";
+        TextView scannersText = findViewById(R.id.x_players_text);
+        scannersText.setText(temp);
+
+        photos = new ListeningList<>();
+        photos.setOnAddListener(listeningList -> {
+            Toast.makeText(this, "Done reading", Toast.LENGTH_SHORT).show();
+            setPhotos();
+        });
+        dc.readPhotos( qr.getId(), photos, 3);
+
+        deleteButton = findViewById(R.id.remove_from_acc_button);
+        saveButton = findViewById(R.id.save_comment_button);
+        commentText = findViewById(R.id.comment_input_field);
+
+        deleteButton.setOnClickListener(view -> RemoveFromAcc());
+        saveButton.setOnClickListener(view -> writeComment());
     }
 
-    /**
-     * Changes the fragment in the FrameLayout
-     * @param frag The fragment to place in the layout
-     */
-    @Override
-    public void changeFragment(Fragment frag) {
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.view_qr_frame, frag);
-        ft.commit();
-    }
+
 
     /**
-     * Returns the list of players to the calling fragment
-     * @return All other players who have scanned the same QRCode
+     * Called once the DatabaseController is done reading the images from Firebase. Sets up the recyclerview with images
      */
-    @Override
-    public ArrayList<String> getPlayers() {
-        Log.d(TAG, "players is:\t" + players);
-        return players;
+    public void setPhotos() {
+        RecyclerView photo_list = findViewById(R.id.code_photo_list);
+        AdapterPhoto adapterPhoto = new AdapterPhoto(photos, this);
+        photo_list.setAdapter(adapterPhoto);
+        photo_list.setLayoutManager( adapterPhoto.getLayoutManager() );
+        ProgressBar bar = findViewById(R.id.progressBar3);
+        bar.setVisibility(View.GONE);
     }
 
-    /**
-     * Opens the Comment Activity. This will be called when the user clicks the Comments button in the fragment
-     */
-    @Override
-    public void commentsButton() {
-        Intent intent = new Intent(this, CommentActivity.class);
-        intent.putExtra("qr", qr);
-        startActivity(intent);
+    private void writeComment() {
+        MemoryController mc = new MemoryController(this);
+        String uName = mc.readUser();
+
+        String content = commentText.getText().toString();
+
+        Comment comment = new Comment(content, uName);
+
+        qr.addComment(comment);
+        dc.writeQRCode(qr);
+
+        commentAdapter.notifyItemInserted( comments.size() - 1);
+        Toast.makeText(this, "Comment Saved", Toast.LENGTH_SHORT).show();
     }
 
     /**
      * Deletes the QRCode from the list of codes the user has scanned. Exits the activity.
      */
-    @Override
-    public void deleteButton() {
+    public void RemoveFromAcc() {
         MemoryController mc = new MemoryController(this);
         Profile p = mc.read();
 
         if(p.removeScanned(qr.getId())) {
-            mc.write(p);
+            mc.writeUser(p);
             dc.writeProfile(p);
 
             qr.removeScanner(p.getUname());
@@ -133,22 +174,6 @@ public class ViewQRActivity extends AppCompatActivity implements ViewQRFragmentL
         } else {
             Toast.makeText(this, "You did not have that code anyways!", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @Override
-    public void viewProfile(String username) {
-        ListeningList<Profile> readResult = new ListeningList<>();
-        readResult.setOnAddListener(new OnAddListener<Profile>() {
-            @Override
-            public void onAdd(ListeningList<Profile> listeningList) {
-                Profile p = listeningList.get(0);
-                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-                intent.putExtra("profile", p);
-                startActivity(intent);
-            }
-        });
-
-        dc.readProfile(username, readResult);
     }
 
     /**

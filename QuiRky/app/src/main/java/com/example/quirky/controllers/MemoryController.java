@@ -7,15 +7,19 @@
 package com.example.quirky.controllers;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.net.Uri;
 
 import com.example.quirky.models.Profile;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.ByteBuffer;
 
 /*
 Data Storage is as follows:
@@ -54,7 +58,7 @@ public class MemoryController {
      * @param p The profile to be written to local memory. Will overwrite any existing data.
      * @return True if the write was successful, false otherwise
      */
-    public Boolean write(Profile p) {
+    public Boolean writeUser(Profile p) {
 
         assert p != null : "A null object was passed to MemoryController.write(Profile p)!";
         File file = new File(dir, "profile");
@@ -79,7 +83,8 @@ public class MemoryController {
 
             oos.close();
             fos.close();
-            return true;
+
+            return writeUsername( p.getUname() );
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -90,7 +95,7 @@ public class MemoryController {
      * Write a username to memory. Will overwrite any data already stored in the 'name' file.
      * @param user The new username to write
      */
-    public void writeUser(String user) {
+    private boolean writeUsername(String user) {
         // Delete the name file in memory, if it exists
         File file = new File(dir, "name");
         if(file.exists())
@@ -105,8 +110,11 @@ public class MemoryController {
 
             fos.flush();
             fos.close();
+
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -202,5 +210,29 @@ public class MemoryController {
             file.delete();
 
         return dir.delete();
+    }
+
+    public Uri savePhoto(Bitmap bm, String id, int quality) {
+
+        assert(quality > 0 && quality < 101) : "The compression quality passed to MemoryController.savePhoto() is impossible!";
+
+        File subdir = new File(dir, "photos");
+        if(!subdir.exists())
+            subdir.mkdir();
+
+        File file = new File(subdir, id);
+        try {
+            file.createNewFile();
+            FileOutputStream fos = new FileOutputStream(file);
+
+            bm.compress(Bitmap.CompressFormat.JPEG, quality, fos);
+
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return Uri.fromFile(file);
     }
 }

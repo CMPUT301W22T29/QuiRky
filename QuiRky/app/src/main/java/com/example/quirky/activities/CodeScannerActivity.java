@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
@@ -23,7 +22,6 @@ import com.example.quirky.controllers.DatabaseController;
 import com.example.quirky.ListeningList;
 import com.example.quirky.controllers.MapController;
 import com.example.quirky.controllers.MemoryController;
-import com.example.quirky.OnAddListener;
 import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
 import com.example.quirky.controllers.QRCodeController;
@@ -31,7 +29,6 @@ import com.example.quirky.R;
 import com.example.quirky.controllers.CameraController;
 
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapView;
 
 /**
  * Previews camera feed and allows scanning QR codes.
@@ -53,24 +50,25 @@ public class CodeScannerActivity extends AppCompatActivity {
 
     private CameraController cameraController;
     private DatabaseController dc;
-    MemoryController mc;
+    private MemoryController mc;
+
+    private ListeningList<Bitmap> capture;
 
     private Boolean login;
-
-    private final String TAG = "CodeScannerActivity says";
 
 
     @Override
     @androidx.camera.core.ExperimentalGetImage
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_code_scanner);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             this.login = extras.getBoolean("login");
+        } else {
+            this.login = false;
         }
-
-        setContentView(R.layout.activity_code_scanner);
 
         previewView = findViewById(R.id.previewView);
         scan_button = findViewById(R.id.scan_button);
@@ -89,86 +87,68 @@ public class CodeScannerActivity extends AppCompatActivity {
     }
 
     /**
-     * Create a ListeningList to listen for a QRCode to be added to it. Calls CameraController to scan for a QRCode to add to ListeningList.
-     * This method will be followed by either showSavingInterface() or login(), depending on whether the user was using this activity to login or not.
+     * Use the camera to take a picture, then scan the image for a QRCode. If one is found, continue at scannedCode()
      */
     @androidx.camera.core.ExperimentalGetImage
     public void scan() {
-        ListeningList<QRCode> codes = new ListeningList<>();
-        codes.setOnAddListener(new OnAddListener<QRCode>() {
-            @Override
-            public void onAdd(ListeningList<QRCode> listeningList) {
-                if (login) {
-                    String password = listeningList.get(0).getId();
-                    ListeningList<Profile> profile = new ListeningList<>();
-                    profile.setOnAddListener(new OnAddListener<Profile>() {
-                        @Override
-                        public void onAdd(ListeningList<Profile> listeningList) {
-                            Profile p = listeningList.get(0);
-                            login(p);
-                        }
-                    });
-                    dc.readLoginHash(password, profile);
-                } else {
-                    showSavingInterface(listeningList);
+        capture = new ListeningList<>();
+        ListeningList<QRCode> code = new ListeningList<>();
+
+        capture.setOnAddListener(listeningListPhoto ->
+                cameraController.scanFromBitmap(listeningListPhoto.get(0), code, this)
+        );
+
+        code.setOnAddListener(listeningList -> {
+            if(listeningList.size() != 1)
+                return;
+            scannedCode(listeningList.get(0));
+        });
+
+        cameraController.captureImage(this, capture);
+    }
+
+    public void scannedCode(QRCode qr) {
+
+        if(login) {
+
+            ListeningList<Profile> user = new ListeningList<>();
+            user.setOnAddListener(listeningList -> {
+                Profile p = listeningList.get(0);
+                if(p == null) {
+                    Toast.makeText(this, "No users with that QRCode!", Toast.LENGTH_SHORT).show();
+                    return;
                 }
-            }
 
-        });
-        cameraController.captureQRCodes(this, codes);
-    }
+                mc.writeUser(p);
 
-    /**
-     * Displays the save buttons and hide the Scan button. Set on click listeners to save the QRCode if the user chooses
-     * @param capturedQRCode The listening list that holds the QRCode scanned by CameraController
-     */
-    private void showSavingInterface(ListeningList<QRCode> capturedQRCode) {
-        setVisibility(false);
-        QRCode qr = capturedQRCode.get(0);
+                Intent i = new Intent(this, HubActivity.class);
+                startActivity(i);
+            });
 
-        save_button.setOnClickListener(view -> {
-            if (location_switch.isChecked()) {
-                ListeningList<Location> locations = new ListeningList<>();
-                locations.setOnAddListener(new OnAddListener<Location>() {
-                    public void onAdd(ListeningList<Location> locationListeningList) {
-                        Location location = locationListeningList.get(0);
-                        GeoPoint gp = new GeoPoint(location);
-                        qr.addLocation(gp);
+            dc.readLoginHash( qr.getId(), user);
+
+        } else {
+            setVisibility(false);
+
+            cancel_button.setOnClickListener(view -> setVisibility(true));
+
+            save_button.setOnClickListener(view -> {
+
+                if(location_switch.isChecked()) {
+                    MapController mapController = new MapController(this);
+
+                    ListeningList<Location> currentLocation = new ListeningList<>();
+                    currentLocation.setOnAddListener(listeningList -> {
+                        GeoPoint gp = new GeoPoint( listeningList.get(0) );
+                        qr.addLocation( gp );
                         save(qr);
-                    }
-                });
-
-                MapController mapController = new MapController(this);
-                mapController.getLocation(locations);
-            } else {
-                save(qr);
-            }
-
-            setVisibility(true);
-        });
-
-        cancel_button.setOnClickListener(view -> {
-            save_button.setOnClickListener(null);
-            setVisibility(true);
-        });
-    }
-
-    /**
-     * Attempt to login to an existing profile. Writes the profile to local memory and starts up a new activity
-     * @param p The profile to log in with. May be null, if the scan matched no user.
-     */
-    private void login(Profile p) {
-        if (p == null) {
-            Toast.makeText(this, "That QRCode did not match any users!", Toast.LENGTH_LONG).show();
-            return;
+                    });
+                    mapController.getLocation(currentLocation);
+                } else {
+                    save(qr);
+                }
+            });
         }
-
-        Toast.makeText(this, "Logging in as: " + p.getUname(), Toast.LENGTH_LONG).show();
-        mc.write(p);
-        mc.writeUser(p.getUname());
-
-        Intent i = new Intent(this, HubActivity.class);
-        startActivity(i);
     }
 
     /**
@@ -183,24 +163,18 @@ public class CodeScannerActivity extends AppCompatActivity {
             return;
         }
 
-        if (location_switch.isChecked()) {
-            // TODO: GeoPoint gp = MapController.getLocation();
-            GeoPoint gp = new GeoPoint(10.0, 10.0);
-            qr.addLocation(gp);
-        }
-
-        if (photo_switch.isChecked()) {
-            // TODO: photo = takePhoto();
-            // TODO: dc.writePhoto(codeId, photo);
-        }
-
-
         qr.addScanner(p.getUname());
         dc.writeQRCode(qr);
-        mc.write(p);
+        mc.writeUser(p);
         dc.writeProfile(p);
 
-        Toast.makeText(this, "QRCode saved!", Toast.LENGTH_LONG).show();
+        if(photo_switch.isChecked()) {
+            dc.writePhoto( qr.getId(), capture.get(0) , this);
+        }
+
+        Toast.makeText(this, "QRCode saved!", Toast.LENGTH_SHORT).show();
+
+        setVisibility(true);
     }
 
     /**

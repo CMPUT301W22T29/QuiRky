@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2022. CMPUT301W22T29
+  ~ Subject to MIT License
+  ~ See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
+  -->
+
+<resources>
+
+    <style name="DividerBar" parent="" >
+        <item name="android:background">@color/black</item>
+        <item name="layout_constraintStart_toStartOf">parent</item>
+        <item name="layout_constraintEnd_toEndOf">parent</item>
+        <item name="android:layout_height">2px</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+</resources>

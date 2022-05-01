@@ -6,13 +6,15 @@
 
 package com.example.quirky.controllers;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.example.quirky.ListeningList;
+import com.example.quirky.R;
 import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,8 +27,11 @@ import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -46,6 +51,7 @@ import java.util.List;
 @SuppressWarnings({"unchecked", "ConstantConditions"})
 public class DatabaseController {
     private final String TAG = "DatabaseController says: ";
+    private final long MAX_DOWNLOAD_SIZE = 10485760; // 10485760 Bytes == 10 mB
 
     private final FirebaseFirestore firestore;
     private CollectionReference collection;
@@ -64,14 +70,14 @@ public class DatabaseController {
             if(task.isSuccessful())
                 Log.d(TAG, "Last write was a success");
             else
-                Log.d(TAG, "Last write was a fail, cause: " + task.getException().getMessage()); // TODO: find a way to determine what the last write was. Should be easy.
+                Log.d(TAG, "Last write was a fail, cause: " + task.getException().getMessage());
         };
 
         this.deleteListener = task -> {
             if(task.isSuccessful())
                 Log.d(TAG, "Deletion from database success!");
             else
-                Log.d(TAG, "Deletion from database failed!!"); // TODO: find a way to determine what the last write was. Should be easy.
+                Log.d(TAG, "Deletion from database failed!!");
         };
     }
 
@@ -106,7 +112,7 @@ public class DatabaseController {
         collection.document(qr).delete().addOnCompleteListener(deleteListener);
 
         // Delete from Firebase Storage
-        storage = firebase.getReference().child("photos").child(qr); // FIXME: I think firebase.getReference(String) does not do what you think it does. You may need to use firebase.getReference().child(photos).child(id); instead
+        storage = firebase.getReference().child("photos").child(qr);
         storage.delete().addOnCompleteListener(deleteListener);
     }
 
@@ -243,13 +249,22 @@ public class DatabaseController {
      */
     public void recentPhotos(ListeningList<Bitmap> photos) {
         storage = firebase.getReference().child("recent");
+        Collection<Bitmap> results = new ArrayList<>();
+
+        // Get the list of all photos from the Database
         Task<ListResult> task_read_list = storage.list(5);
 
-        Collection<Bitmap> results = new ArrayList<>();
         task_read_list.addOnCompleteListener(task -> {
+
+            // Loop through each file in the list
             List<StorageReference> files = task.getResult().getItems();
+            if(files.size() == 0) {
+                photos.addNone();
+                return;
+            }
+
             for(StorageReference fileRef : files) {
-                Task<byte[]> read_photo = fileRef.getBytes(10485760); // 10'485'760 == 10 mB
+                Task<byte[]> read_photo = fileRef.getBytes(MAX_DOWNLOAD_SIZE);
                 read_photo.addOnCompleteListener(task1 -> {
                     byte[] bytes = task1.getResult();
                     Bitmap photo = BitmapFactory.decodeByteArray( bytes, 0, bytes.length);
@@ -263,7 +278,7 @@ public class DatabaseController {
     }
 
     /**
-     * Read up to 6 photos from a QRCode from the database
+     * Read a limited number of photos from the database
      * This is an asynchronous operation, and as such will not return the read result.
      * When the read completes, the data is added to the passed ListeningList<>.
      * @param id The ID of the QRCode to get the photos from
@@ -281,10 +296,15 @@ public class DatabaseController {
 
             // Loop through each file in the list
             List<StorageReference> files = task.getResult().getItems();
+            if(files.size() == 0) {
+                photos.addNone();
+                return;
+            }
+
             for(StorageReference fileRef : files) {
 
                 // Reading the bytes of the file is a separate read operation
-                Task<byte[]> read_photo = fileRef.getBytes(10485760); // 10'485'760 = 10 mB
+                Task<byte[]> read_photo = fileRef.getBytes(MAX_DOWNLOAD_SIZE);
                 read_photo.addOnCompleteListener(task1 -> {
 
                     // Turn the byte array into a Bitmap object and add it to the results
@@ -300,24 +320,21 @@ public class DatabaseController {
         });
     }
 
-    // ByteBuffer code sourced from
-    // https://stackoverflow.com/a/34165515
-    // Written by user
-    // https://stackoverflow.com/users/4853690/%e6%9c%b1%e8%a5%bf%e8%a5%bf
-    // Published Dec. 8, 2015
     /**
      * Write a photo to a QRCode in the database. The photo is also written to the Most Recent Photos,
      * overwriting the oldest of the 5 photos.
-     * @param id The ID of the QRCode the photo should be written under
+     * @param CodeId The ID of the QRCode the photo should be written under
      * @param photo A bitmap representing the photo.
      */
-    public void writePhoto(String id, Bitmap photo) {
+    public void writePhoto(String CodeId, Bitmap photo, Context ct) {
 
-        ByteBuffer buff = ByteBuffer.allocate( photo.getByteCount() );
-        photo.copyPixelsToBuffer(buff);
+        MemoryController mc = new MemoryController(ct);
 
-        storage = firebase.getReference().child("photos").child(id);
-        UploadTask task = storage.putBytes( buff.array() );
+        String PhotoId = QRCodeController.SHA256(QRCodeController.getRandomString(20));
+        Uri location = mc.savePhoto(photo, PhotoId, 20);
+
+        storage = firebase.getReference().child("photos").child(CodeId).child(PhotoId);
+        UploadTask task = storage.putFile(location);
         task.addOnCompleteListener(writeListener);
 
         //storage = firebase.getReference().child("recent");

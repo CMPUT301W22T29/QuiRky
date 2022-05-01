@@ -16,7 +16,6 @@ import org.osmdroid.util.GeoPoint;
 import java.util.ArrayList;
 
 
-
 // Praise this absolute mad lad who literally answered all of my questions at once.
 // I didn't even take any code from him but he's getting a cite anyways.
 // https://stackoverflow.com/a/54194734
@@ -27,11 +26,12 @@ import java.util.ArrayList;
  *
  */
 public class QRCode implements Parcelable {
-    private String id; // id is hash of content.
+    private String content, id; // id is hash of content.
     private int score;
     private ArrayList<Comment> comments;
     private ArrayList<GeoPoint> locations;
-    private ArrayList<String> scanners;
+    private ArrayList<String> scanners; // Users who have scanned this code.
+    private ArrayList<String> titles; // User created titles for the QRCode.
 
     /**
      * Initialize this <code>QRCode</code> with only the content. To be used when creating a new QRCode.
@@ -40,34 +40,43 @@ public class QRCode implements Parcelable {
      *            <code>QRCodeController.scanQRCodes()</code> method.
      */
     public QRCode(String content) {
+        this.content = content;
         this.id = QRCodeController.SHA256(content);
         this.score = QRCodeController.score(id);
 
         this.comments = new ArrayList<>();
         this.locations = new ArrayList<>();
         this.scanners = new ArrayList<>();
+        this.titles = new ArrayList<>();
     }
 
     /**
      * Initialize this QRCode with every field. To be used when reading from FireStore
-     * @param id The id of the QRCode
+     * @param content The content of the QRCode
      * @param score The score of the QRCode
      * @param comments The list of comments on the code
      * @param locations The list of locations the code has been scanned
      * @param scanners The list of users that has scanned the code
      */
-    public QRCode(String id, int score, ArrayList<Comment> comments, ArrayList<GeoPoint> locations, ArrayList<String> scanners) {
-        this.id = id;
+    public QRCode(String content, int score, ArrayList<Comment> comments, ArrayList<GeoPoint> locations, ArrayList<String> scanners, ArrayList<String> titles) {
+        this.content = content;
+        this.id = QRCodeController.SHA256(content);
         this.score = score;
         this.comments = comments;
         this.locations = locations;
         this.scanners = scanners;
+        this.titles = titles;
     }
 
     /**
      * Empty constructor because FireStore tutorial told me to...
      */
     public QRCode() {}
+
+    /**
+     * Getter for QRCode content
+     */
+    public String getContent() { return content; }
 
     /**
      * Getter for QRCode's ID
@@ -100,6 +109,12 @@ public class QRCode implements Parcelable {
      */
     public ArrayList<GeoPoint> getLocations() { return locations; }
 
+    public ArrayList<String> getTitles() {
+        if(titles == null)
+            titles = new ArrayList<>();
+        return this.titles;
+    }
+
     /**
      * Adds a comment to the array. Throws an assertion error if the parameter is null.
      * @param c
@@ -116,8 +131,15 @@ public class QRCode implements Parcelable {
      *      - The comment to be removed
      */
     public void removeComment(Comment c) {
-        if(comments.contains(c))
-            comments.remove(c);
+        comments.remove(c);
+    }
+
+    /** FIXME: determine if FireStore needs setters for custom object reading. Prefer not to have a direct setter.
+     * Set the comments on the QRCode
+     * @param comments An arraylist of comments
+     */
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
     }
 
     /**
@@ -141,13 +163,6 @@ public class QRCode implements Parcelable {
         this.locations = locations;
     }
 
-    /** FIXME: determine if FireStore needs setters for custom object reading. Prefer not to have a direct setter.
-     * Set the comments on the QRCode
-     * @param comments An arraylist of comments
-     */
-    public void setComments(ArrayList<Comment> comments) {
-        this.comments = comments;
-    }
 
     /**
      * Add a scanner to the list of players that have scanned the code
@@ -169,23 +184,48 @@ public class QRCode implements Parcelable {
         this.scanners = scanners;
     }
 
+    public void addTitle(String title) { titles.add(title); }
 
-    // Parcelable stuff below
+    public void removeTitle(String title) { titles.remove(title); }
+
+    public void setTitle(ArrayList<String> titles) { this.titles = titles; }
+
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public void setTitles(ArrayList<String> titles) {
+        this.titles = titles;
+    }
+
     protected QRCode(Parcel in) {
+        content = in.readString();
         id = in.readString();
         score = in.readInt();
         comments = in.createTypedArrayList(Comment.CREATOR);
         locations = in.createTypedArrayList(GeoPoint.CREATOR);
         scanners = in.createStringArrayList();
+        titles = in.createStringArrayList();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(content);
         dest.writeString(id);
         dest.writeInt(score);
         dest.writeTypedList(comments);
         dest.writeTypedList(locations);
         dest.writeStringList(scanners);
+        dest.writeStringList(titles);
     }
 
     @Override

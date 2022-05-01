@@ -14,7 +14,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.quirky.AdapterTextPhoto;
+import com.example.quirky.AdapterText;
 import com.example.quirky.controllers.LeaderBoardController;
 import com.example.quirky.ListeningList;
 import com.example.quirky.controllers.MemoryController;
@@ -34,7 +34,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
 
     private Button sortPoints, sortScanned, sortGreatest, myRank, topRanks;
     private RecyclerView list;
-    private AdapterTextPhoto adapter;
+    private AdapterText adapter;
 
     private Profile user;
     private ArrayList<String> data; // For use with the adapter
@@ -85,7 +85,7 @@ public class LeaderBoardActivity extends AppCompatActivity {
         lbc = new LeaderBoardController(players);
         sortByPoints();
 
-        adapter = new AdapterTextPhoto(data, new ArrayList<>(), this);
+        adapter = new AdapterText(data, this);
         list.setAdapter(adapter);
         list.setLayoutManager(adapter.getLayoutManager());
 

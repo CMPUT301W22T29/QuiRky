@@ -13,7 +13,11 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
 import android.media.Image;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,6 +42,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -60,6 +65,10 @@ public class CameraController {
     private static final String[] CAMERA_PERMISSION = new String[]{Manifest.permission.CAMERA};
     private static final int CAMERA_REQUEST_CODE = 10;
     private ListenableFuture<ProcessCameraProvider> cameraProviderFuture;
+
+    private static final BarcodeScanner codeScanner = BarcodeScanning.getClient(
+            new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build());
+
     private Preview preview;
     private ImageCapture imageCapture;
     private CameraSelector cameraSelector;
@@ -149,67 +158,105 @@ public class CameraController {
         }, ContextCompat.getMainExecutor(context));
     }
 
-    /**
-     * Capture images and construct <code>QRCode</code> instances from all QR codes in the image.
-     *
-     * <code>QRCode</code> construction is done in <code>QRCodeController</code>.
-     * The returned <code>ArrayList</code> will be empty until QR code processing is done. This does not take
-     * long, but it is worth noting as it could affect whether operating on the list will do what is
-     * expected.
-     *
-     * @param context
-     *      - The activity that the user is interacting with to scan QR codes, same as in
-     *        <code>startCamera</code>.
-     * @return
-     *      - An <code>ArrayList</code> of <code>QRCode</code>s generated from codes found in the
-     *        captured image.
-     * @see QRCodeController
-     */
     @androidx.camera.core.ExperimentalGetImage
-    public void captureQRCodes(Context context, ListeningList<QRCode> codes) {
-        // TODO: edit javadoc
+    public void captureImage(Context context, ListeningList<Bitmap> photo) {
         imageCapture.takePicture(ContextCompat.getMainExecutor(context),
                 new ImageCapture.OnImageCapturedCallback() {
                     @Override
-                    public void onCaptureSuccess(@NonNull ImageProxy image) {
-                        Image mediaImage = image.getImage();
-                        if (mediaImage != null) {
-                            InputImage inputImage = InputImage.fromMediaImage(
-                                             mediaImage, image.getImageInfo().getRotationDegrees());
-                            CameraController.scanQRCodes(inputImage, codes, context);
+                    public void onCaptureSuccess(@NonNull ImageProxy proxy) {
+                        Image image = proxy.getImage();
+                        if (image != null) {
+                            logImageType(image);
+                            Bitmap bitmap = JPEGToBitmap(image);
+                            photo.add(bitmap);
                         }
-                        image.close();
+                        proxy.close();
                     }
                 });
     }
 
-    private static final BarcodeScanner codeScanner = BarcodeScanning.getClient(
-            new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build());
+    public void scanFromBitmap(Bitmap bitmap, ListeningList<QRCode> codes, Context context) {
+        InputImage inputImage = InputImage.fromBitmap(bitmap, 90);
+        Task<List<Barcode>> result = codeScanner.process(inputImage);
+        result.addOnSuccessListener(barcodes -> {
+            // Construct a QRCode with the scanned raw data
+            for (Barcode barcode: barcodes) {
+                codes.add(new QRCode(barcode.getRawValue()));
+            }
+            if (codes.size() == 0) {
+                String text
+                        = "Could not find any QR codes. Move closer or further and try scanning again.";
+                Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 
     /**
-     * Analyzes an image for qr codes, and constructs <code>QRCode</code>s from their data.
-     *
-     * @param inputImage
-     *      - The image to analyze.
-     * @param codes
-     *      - The list in which the <code>QRCode</code>s will be stored once they are constructed.
-     * @param context
-     *      - The activity that the user is interacting with to capture QR code images.
-     * @see CameraController
+     * Convert a JPEG Image object into a Bitmap
+     * @param image An Image object whose format is type JPEG
+     * @return The corresponding Bitmap
      */
-    public static void scanQRCodes(InputImage inputImage, ListeningList<QRCode> codes, Context context) {
-        // TODO: edit javadoc
-        Task<List<Barcode>> result = codeScanner.process(inputImage)
-                .addOnSuccessListener(barcodes -> {
-                    // Construct a QRCode with the scanned raw data
-                    for (Barcode barcode: barcodes) {
-                        codes.add(new QRCode(barcode.getRawValue()));
-                    }
-                    if (codes.size() == 0) {
-                        String text
-                                = "Could not find any QR codes. Move closer or further and try scanning again.";
-                        Toast.makeText(context, text, Toast.LENGTH_LONG).show();
-                    }
-                });
+    private static Bitmap JPEGToBitmap(Image image) {
+        assert ( image.getFormat() == ImageFormat.JPEG ) : "You must pass an Image of format JPEG! Check image type with logImageType(image)";
+
+        Image.Plane x = image.getPlanes()[0];
+        ByteBuffer buff = x.getBuffer();
+        byte[] y = new byte[buff.capacity()];
+        buff.get(y);
+
+        return BitmapFactory.decodeByteArray(y, 0, y.length);
+    }
+
+
+    private void logImageType(Image i) {
+        int type = i.getFormat();
+        Log.d(" - - - - - CameraController says", "image is of type\n");
+
+        switch (type) {
+            case ImageFormat.DEPTH16:
+                Log.d("", "\tDepth16\n");
+            case ImageFormat.DEPTH_JPEG:
+                Log.d("", "\tDepth_Jpeg\n");
+            case ImageFormat.DEPTH_POINT_CLOUD:
+                Log.d("", "\tDepth Point Cloud\n");
+            case ImageFormat.FLEX_RGBA_8888:
+                Log.d("", "\tFlex \n");
+            case ImageFormat.FLEX_RGB_888:
+                Log.d("", "\tFlex 888\n");
+            case ImageFormat.HEIC:
+                Log.d("", "\tHeic\n");
+            case ImageFormat.JPEG:
+                Log.d("", "\tJpeg\n");
+            case ImageFormat.NV16:
+                Log.d("", "\tNV16\n");
+            case ImageFormat.NV21:
+                Log.d("", "\tNV21\n");
+            case ImageFormat.PRIVATE:
+                Log.d("", "\tPrivate\n");
+            case ImageFormat.RAW10:
+                Log.d("", "\tRAW10\n");
+            case ImageFormat.RAW12:
+                Log.d("", "\tRAW12\n");
+            case ImageFormat.RAW_PRIVATE:
+                Log.d("", "\tRAW PRIVATE\n");
+            case ImageFormat.RAW_SENSOR:
+                Log.d("", "\tRAW SENSOR\n");
+            case ImageFormat.UNKNOWN:
+                Log.d("", "\t?????????\n");
+            case ImageFormat.Y8:
+                Log.d("", "\tY8\n");
+            case ImageFormat.YCBCR_P010:
+                Log.d("", "\tYCBCR PO10\n");
+            case ImageFormat.YUV_420_888:
+                Log.d("", "\tYUV 420\n");
+            case ImageFormat.YUV_422_888:
+                Log.d("", "\tYUV 422\n");
+            case ImageFormat.YUV_444_888:
+                Log.d("", "\tYUV 444\n");
+            case ImageFormat.YUY2:
+                Log.d("", "\tYUY2\n");
+            case ImageFormat.YV12:
+                Log.d("", "\tYV12\n");
+        }
     }
 }

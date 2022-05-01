@@ -74,9 +74,6 @@
             android:name=".activities.HubActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.CommentActivity"
-            android:exported="false" />
-        <activity
             android:name=".activities.GenerateActivity"
             android:exported="false"
             android:parentActivityName=".activities.HubActivity" />

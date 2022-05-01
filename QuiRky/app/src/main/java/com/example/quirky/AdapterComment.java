@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.quirky.models.Comment;
@@ -28,6 +29,10 @@ public class AdapterComment extends RecyclerView.Adapter<AdapterComment.CommentV
     public AdapterComment(Context context, ArrayList<Comment> comments) {
         this.comments = comments;
         this.context = context;
+    }
+
+    public LinearLayoutManager getLayoutManager() {
+        return new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
     }
 
     @NonNull

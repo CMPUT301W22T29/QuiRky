@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,7 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 
-import com.example.quirky.AdapterTextPhoto;
+import com.example.quirky.AdapterText;
 import com.example.quirky.ListeningList;
 import com.example.quirky.OnAddListener;
 import com.example.quirky.models.Profile;
@@ -41,7 +40,7 @@ public class PlayerSearchActivity extends AppCompatActivity {
     private ArrayList<String> usernames;
     private ArrayList<Bitmap> photos;
 
-    private AdapterTextPhoto adapter;
+    private AdapterText adapter;
 
     private RecyclerView list;
     private ImageButton button;
@@ -72,7 +71,7 @@ public class PlayerSearchActivity extends AppCompatActivity {
         };
 
 
-        adapter = new AdapterTextPhoto(usernames, photos, this, listener);
+        adapter = new AdapterText(usernames, this, listener);
         list.setLayoutManager( adapter.getLayoutManager() );
         list.setAdapter(adapter);
 
