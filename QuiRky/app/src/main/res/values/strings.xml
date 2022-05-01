@@ -1,76 +1,16 @@
 <resources>
     <string name="app_name">QuiRky</string>
-    <string name="title_activity_setting">Settings</string>
-    <string name="grid_view">Grid View</string>
-    <string name="error_fragment">Error Fragment</string>
-    <string name="personal_settings">Personal Settings</string>
 
-    <!-- Error messages -->
-    <string name="error_fragment_message">An error occurred</string>
-    <string name="dismiss_error">Dismiss</string>
-
-    <string name="show_score">Show Score</string>
-    <string name="qr_code_selected">QR Code Selected</string>
-    <string name="button_comments">Comments</string>
-    <string name="button_who_else_has_this_code">Who Else has this Code?</string>
-    <string name="button_set_private">Set Private</string>
-    <string name="button_delete">Delete</string>
-    <string name="location">Location</string>
-    <string name="button_cancel">Cancel</string>
-    <string name="button_save">Save</string>
-    <string name="text_write_comment">Write A Comment?</string>
-    <string name="text_comment">Comments</string>
-    <string name="string_comment">Comment</string>
     <string name="qr_codes">QR Codes</string>
     <string name="community">Community</string>
-    <string name="settings">Settings</string>
 
-    <string name="my_profile1">My Profile</string>
     <string name="back">Back</string>
-    <string name="username">Username:</string>
-    <string name="change_a_new_one">change a new one?</string>
-    <string name="current_ranking">Current Ranking:</string>
-    <string name="contact_info">Contact Info:</string>
-    <string name="my_profile">My Profile</string>
-    <string name="my_qr_codes">My QR codes</string>
-    <string name="my_stats">My Stats</string>
-    <string name="my_profile_and_stats">My Profile and Stats</string>
-    <string name="total_scanned">Total Scanned:</string>
-    <string name="ranking">Ranking:</string>
-    <string name="ranking1">Ranking:</string>
-    <string name="my_stats1">My Stats</string>
-    <string name="total_score">Total Score:</string>
-    <string name="back2">Back</string>
-    <string name="back1">back</string>
-    <string name="input_phone_number">Input Phone Number</string>
-    <string name="input_email_address">Input email address</string>
-    <string name="my_profile2">my_profile1</string>
-    <string name="change_username">Change Username</string>
     <string name="input_a_new_username">Input a New Username</string>
-    <string name="save">save</string>
-    <string name="cancel">cancel</string>
-    <string name="editablename">editableName</string>
-    <string name="generate_qr_codes">Generate QR Codes</string>
-    <string name="backtopre">back</string>
-    <string name="generate_by_text">generate by text</string>
-    <string name="generate_by_integer">generate by integer</string>
-    <string name="generate_by_url_link">generate by URL Link</string>
-    <string name="generate">Generate</string>
-    <string name="button">Button</string>
-    <string name="bbaack"><![CDATA[<]]></string>
-    <string name="generate_random_code">Generate Random Code</string>
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_manage_codes">ManageCodesActivity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="deny_camera_permissions_toast">Please allow camera permissions to scan QR codes.</string>
-    <string name="largest_scanned">Largest Scanned:</string>
-    <string name="none">None</string>
-    <string name="no_ranking">No Ranking</string>
 </resources>

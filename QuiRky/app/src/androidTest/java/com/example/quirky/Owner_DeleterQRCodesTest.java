@@ -15,6 +15,7 @@ import android.app.Activity;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.example.quirky.activities.DeleteCodesActivity;
 import com.robotium.solo.Solo;
 
 import org.junit.After;
@@ -27,7 +28,7 @@ public class Owner_DeleterQRCodesTest {
     private Solo solo;
 
     @Rule
-    public ActivityTestRule rule = new ActivityTestRule(delete_QRCodes.class,true,true);
+    public ActivityTestRule rule = new ActivityTestRule(DeleteCodesActivity.class,true,true);
 
     @Before
     public void setUp() throws Exception{
@@ -41,7 +42,7 @@ public class Owner_DeleterQRCodesTest {
     //this will delete a QRCode from the QRCode List
     @Test
     public void checkDeleteQRCodes(){
-        solo.assertCurrentActivity("Wrong Activity",delete_QRCodes.class);
+        solo.assertCurrentActivity("Wrong Activity", DeleteCodesActivity.class);
         assertTrue(solo.searchText("724167"));//Need to know an existing QRCode from the database and use that to input
         solo.clickOnText("724167");
         solo.clickOnButton("Yes");

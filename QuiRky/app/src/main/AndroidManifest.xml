@@ -22,19 +22,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QuiRky">
         <activity
-            android:name=".LeaderBoardActivity"
-            android:exported="false" />
-	<activity
-            android:name=".delete_Players"
+            android:name=".activities.LeaderBoardActivity"
             android:exported="false" />
         <activity
-            android:name=".delete_QRCodes"
+            android:name=".activities.DeletePlayersActivity"
             android:exported="false" />
         <activity
-            android:name=".OwnerMenu"
+            android:name=".activities.DeleteCodesActivity"
             android:exported="false" />
         <activity
-            android:name=".ManageCodesActivity"
+            android:name=".activities.ManageCodesActivity"
             android:exported="false"
             android:label="@string/title_activity_manage_codes"
             android:theme="@style/Theme.QuiRky.NoActionBar" />
@@ -58,45 +55,38 @@
             android:value="YOUR_API_KEY" />
 
         <activity
-            android:name=".PlayerSearchActivity"
+            android:name=".activities.PlayerSearchActivity"
             android:exported="false" />
         <activity
-            android:name=".ViewQRActivity"
+            android:name=".activities.ViewQRActivity"
             android:exported="false"
-            android:parentActivityName=".StartingPageActivity" />
+            android:parentActivityName=".activities.HubActivity" />
         <activity
-            android:name=".MapActivity"
+            android:name=".activities.MapActivity"
             android:exported="false"
             android:label="@string/title_activity_map"
             />
         <activity
-            android:name=".CodeScannerActivity"
+            android:name=".activities.CodeScannerActivity"
             android:exported="false"
-            android:parentActivityName=".StartingPageActivity" />
+            android:parentActivityName=".activities.HubActivity" />
         <activity
-            android:name=".StartingPageActivity"
+            android:name=".activities.HubActivity"
             android:exported="false" />
         <activity
-            android:name=".ViewCommentsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".GenerateActivity"
+            android:name=".activities.GenerateActivity"
             android:exported="false"
-            android:parentActivityName=".StartingPageActivity" />
+            android:parentActivityName=".activities.HubActivity" />
         <activity
-            android:name=".EditProfileActivity"
+            android:name=".activities.EditProfileActivity"
             android:exported="false"
-            android:parentActivityName=".StartingPageActivity" />
+            android:parentActivityName=".activities.HubActivity" />
         <activity
-            android:name=".MyStatsActivity"
+            android:name=".activities.ProfileActivity"
             android:exported="false"
-            android:parentActivityName=".StartingPageActivity" />
+            android:parentActivityName=".activities.HubActivity" />
         <activity
-            android:name=".ProfileViewerActivity"
-            android:exported="false"
-            android:parentActivityName=".StartingPageActivity" />
-        <activity
-            android:name=".MainActivity"
+            android:name=".activities.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

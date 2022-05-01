@@ -9,12 +9,19 @@ package com.example.quirky;
 import static org.junit.Assert.assertTrue;
 
 import android.app.Activity;
-import android.app.Instrumentation;
 import android.widget.EditText;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
+import com.example.quirky.activities.EditProfileActivity;
+import com.example.quirky.activities.GenerateActivity;
+import com.example.quirky.activities.HubActivity;
+import com.example.quirky.activities.LeaderBoardActivity;
+import com.example.quirky.activities.ManageCodesActivity;
+import com.example.quirky.activities.MapActivity;
+import com.example.quirky.activities.PlayerSearchActivity;
+import com.example.quirky.activities.ProfileActivity;
 import com.robotium.solo.Solo;
 
 import org.junit.After;
@@ -27,7 +34,7 @@ public class StartingPageTest {
     private Solo solo;
 
     @Rule
-    public ActivityTestRule rule = new ActivityTestRule(StartingPageActivity.class,true,true);
+    public ActivityTestRule rule = new ActivityTestRule(HubActivity.class,true,true);
 
     @Before
     public void setUp() throws Exception{
@@ -41,14 +48,14 @@ public class StartingPageTest {
 //Need to Scan Some Codes If this is a new account
     @Test
     public void checkManageCodes(){
-        solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", HubActivity.class);
         solo.clickOnButton("Manage Codes");
         solo.assertCurrentActivity("Wrong Activity", ManageCodesActivity.class);
         assertTrue(solo.searchText("1115083"));//QRCode that you scanned
     }
     @Test
     public void checkGenerateCodes(){
-        solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", HubActivity.class);
         solo.clickOnButton("Generate Codes");
         solo.assertCurrentActivity("Wrong Activity", GenerateActivity.class);
         solo.enterText((EditText) solo.getView(R.id.genertateByTextField), "testTest");
@@ -57,14 +64,14 @@ public class StartingPageTest {
     //In order to test this, we need to create a user name jiawei3
     @Test
     public void checkMyProfileInfo(){
-        solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", HubActivity.class);
         solo.clickOnButton("My Profile");
-        solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", HubActivity.class);
         solo.clickOnButton("My Profile Info");
-        solo.assertCurrentActivity("Wrong Activity",ProfileViewerActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
         assertTrue(solo.searchText("jiawei3"));//user name
         solo.clickOnButton("Change Profile");
-        solo.assertCurrentActivity("Wrong Activity",EditProfileActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", EditProfileActivity.class);
         solo.clearEditText((EditText) solo.getView(R.id.EditProfileInput1));
         solo.clearEditText((EditText) solo.getView(R.id.EditProfileInput2));
         solo.clearEditText((EditText) solo.getView(R.id.EditProfileInput3));
@@ -72,35 +79,28 @@ public class StartingPageTest {
         solo.enterText((EditText) solo.getView(R.id.EditProfileInput3), "QuiRky@ualberta.ca");
         solo.enterText((EditText) solo.getView(R.id.EditProfileInput2), "1233455678");
         solo.clickOnButton("Save");
-        solo.assertCurrentActivity("Wrong Activity",ProfileViewerActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", ProfileActivity.class);
         assertTrue(solo.searchText("jiawei4"));
         assertTrue(solo.searchText("QuiRky@ualberta.ca"));
         assertTrue(solo.searchText("1233455678"));
     }
-    @Test
-    public void checkMyStats(){
-        solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
-        solo.clickOnButton("My Profile");
-        solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
-        solo.clickOnButton("My Stats");
-        solo.assertCurrentActivity("Wrong Activity",MyStatsActivity.class);
-    }
+
     @Test
     public void checkSearchOtherUsers(){
-        solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", HubActivity.class);
         solo.clickOnButton("Community");
-        solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", HubActivity.class);
         solo.clickOnButton("Search Other Users");
-        solo.assertCurrentActivity("Wrong Activity",PlayerSearchActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", PlayerSearchActivity.class);
     }
     //Before testing on Buttons FIND MY POSITION, you need to create an account
     @Test
     public void checkTheLeaderBoards(){
-        solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", HubActivity.class);
         solo.clickOnButton("Community");
-        solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", HubActivity.class);
         solo.clickOnText("The Leaderboards");
-        solo.assertCurrentActivity("Wrong Activity",LeaderBoardActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", LeaderBoardActivity.class);
         solo.clickOnButton("Find My Position");
         assertTrue(solo.searchText("jiawei3"));//username of your account
         solo.clickOnButton("Top Players");
@@ -109,11 +109,11 @@ public class StartingPageTest {
 
     @Test
     public void checkNearbyQRCodes(){
-        solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", HubActivity.class);
         solo.clickOnButton("Community");
-        solo.assertCurrentActivity("Wrong Activity",StartingPageActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", HubActivity.class);
         solo.clickOnText("Nearby QR Codes");
-        solo.assertCurrentActivity("Wrong Activity",MapActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MapActivity.class);
     }
     /**
      * Close activity after each test

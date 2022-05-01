@@ -10,6 +10,10 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
+import com.example.quirky.controllers.ProfileController;
+import com.example.quirky.controllers.QRCodeController;
+import com.example.quirky.models.Profile;
+
 import java.util.ArrayList;
 
 public class ProfileControllerTest {

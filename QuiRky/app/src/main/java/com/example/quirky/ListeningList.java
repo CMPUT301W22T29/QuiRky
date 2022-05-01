@@ -73,4 +73,26 @@ public class ListeningList<E> extends ArrayList<E> {
         }
         return false;
     }
+
+    /**
+     * Add a collection of items without specifying the index. Objects are added to the end of the list
+     * @param c The collection of objects to add
+     * @return If all objects were successfully added
+     */
+    @Override
+    public boolean addAll(@NonNull Collection<? extends E> c) {
+        if(super.addAll(c)) {
+            listener.onAdd(this);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Activates the listener without adding any items to the list.
+     * To be called when there are no objects to be added to the list, but activating the listener is still desirable
+     */
+    public void addNone() {
+        listener.onAdd(this);
+    }
 }

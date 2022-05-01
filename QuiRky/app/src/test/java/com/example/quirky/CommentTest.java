@@ -10,7 +10,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-import java.util.Date;
+import com.example.quirky.models.Comment;
 
 public class CommentTest {
 

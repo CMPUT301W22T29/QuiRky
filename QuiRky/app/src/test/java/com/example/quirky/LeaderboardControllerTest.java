@@ -10,6 +10,9 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
+import com.example.quirky.controllers.LeaderBoardController;
+import com.example.quirky.models.Profile;
+
 import java.util.ArrayList;
 
 public class LeaderboardControllerTest {
