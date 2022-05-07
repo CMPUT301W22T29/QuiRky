@@ -130,6 +130,9 @@ public class ViewQRActivity extends AppCompatActivity {
      * Called once the DatabaseController is done reading the images from Firebase. Sets up the recyclerview with images
      */
     public void setPhotos() {
+        if(photos.size() == 0)
+            photos.addWithoutListener(BitmapFactory.decodeResource( getResources(), R.drawable.no_photos_backup) );
+
         RecyclerView photo_list = findViewById(R.id.code_photo_list);
         AdapterPhoto adapterPhoto = new AdapterPhoto(photos, this);
         photo_list.setAdapter(adapterPhoto);

@@ -13,7 +13,10 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.example.quirky.ListeningList;
+import com.example.quirky.OnAddListener;
 import com.example.quirky.R;
 import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
@@ -24,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -247,7 +251,7 @@ public class DatabaseController {
      * When the read completes, the data is added to the passed ListeningList<>.
      * @param photos A listening list containing Bitmaps. The photos read are placed here
      */
-    public void recentPhotos(ListeningList<Bitmap> photos) {
+    public void getRecentPhotos(ListeningList<Bitmap> photos) {
         storage = firebase.getReference().child("recent");
         Collection<Bitmap> results = new ArrayList<>();
 
@@ -334,11 +338,60 @@ public class DatabaseController {
         Uri location = mc.savePhoto(photo, PhotoId, 20);
 
         storage = firebase.getReference().child("photos").child(CodeId).child(PhotoId);
-        UploadTask task = storage.putFile(location);
-        task.addOnCompleteListener(writeListener);
+        UploadTask uploadTask = storage.putFile(location);
+        uploadTask.addOnCompleteListener(writeListener);
 
-        //storage = firebase.getReference().child("recent");
-        //UploadTask writeRecent = storage.putBytes( buff.array() );
-        //writeRecent.addOnCompleteListener(writeListener);
+        // To update the recent images folder we must read from the database the oldest image, to replace it with the new image
+
+        // First get a list of the 5 images in the 'recent' folder
+        Task<ListResult> task_read_list = storage.list(5);
+        task_read_list.addOnCompleteListener(task -> {
+            List<StorageReference> files = task.getResult().getItems();
+            if(files.size() < 5)
+                return;
+
+            // Create a Listening List to read the MetaData of each file into.
+            ListeningList<StorageMetadata> metadata = new ListeningList<>();
+            metadata.setOnAddListener(listeningList -> {
+                if(listeningList.size() == 5) {
+
+                    int oldest = 0;
+                    for(int i = 0; i < 5; i++) {
+                        if(metadata.get(i).getCreationTimeMillis() < metadata.get(oldest).getCreationTimeMillis())
+                            oldest = i;
+                    }
+
+                    firebase.getReference().child("recent").child( metadata.get(oldest).getName() ).delete();
+                }
+            });
+
+            for(StorageReference fileRef : files)
+                fileRef.getMetadata().addOnCompleteListener(task1 -> metadata.add(task1.getResult()));
+        });
+
+        storage = firebase.getReference().child("recent");
+        UploadTask writeRecent = storage.putFile(location);
+        writeRecent.addOnCompleteListener(writeListener);
+    }
+
+    /**
+     * Helper function to delete all photos in the remote storage
+     * Calls recursive method deleteAllPhotos(StorageReference) to loop through each subfolder
+     * Wrote this method because Firebase Console is bugged and will not let me manually delete files.
+     */
+    public void deleteAllPhotos() {
+        deleteAllPhotos( firebase.getReference().child("photos"));
+        deleteAllPhotos( firebase.getReference().child("recent"));
+    }
+    private void deleteAllPhotos(StorageReference root) {
+        root.listAll().addOnCompleteListener(task -> {
+            List<StorageReference> list = task.getResult().getItems();
+            if(list.size() == 0)
+                return;
+            for(StorageReference ref : list) {
+                deleteAllPhotos(ref);
+                ref.delete();
+            }
+        });
     }
 }

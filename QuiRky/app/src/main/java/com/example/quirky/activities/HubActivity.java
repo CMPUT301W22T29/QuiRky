@@ -8,6 +8,7 @@ package com.example.quirky.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -39,7 +40,7 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
     private MemoryController mc;
     private DatabaseController dc;
 
-    private final String[] button_texts = {"Scan Codes!", "Make some QRs!", "My QRCodes", "My Profile", "The Leaderboards!", "Find Nearby QRCodes!", "Search Other Players", "Logout"};
+    private static final String[] button_texts = {"Scan Codes!", "Make some QRs!", "My QRCodes", "My Profile", "The Leaderboards!", "Find Nearby QRCodes!", "Search Other Players", "Logout"};
     private ArrayList<String> features;
     private ListeningList<Bitmap> photos;
     private AdapterButton adapterButton;
@@ -58,13 +59,16 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         photos = new ListeningList<>();
         photos.setOnAddListener(listeningList -> doneRead());
 
-        dc.recentPhotos(photos);
+        dc.getRecentPhotos(photos);
     }
 
     /**
      * Called once done reading from firebase. Finishes setting up the recycler views
      */
     private void doneRead() {
+        if(photos.size() == 0)
+            photos.addWithoutListener(BitmapFactory.decodeResource( getResources(), R.drawable.no_photos_backup) );
+
         RecyclerView PhotoList = findViewById(R.id.hub_photo_list);
         RecyclerView FeatureList = findViewById(R.id.hub_feature_list);
 

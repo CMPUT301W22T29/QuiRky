@@ -95,4 +95,8 @@ public class ListeningList<E> extends ArrayList<E> {
     public void addNone() {
         listener.onAdd(this);
     }
+
+    public void addWithoutListener(E element) {
+        super.add(element);
+    }
 }
