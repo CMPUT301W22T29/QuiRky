@@ -357,18 +357,22 @@ public class DatabaseController {
 
             if(files.size() >= 5) {
 
-                // Read the metadata of each file from Firebase. Use a ListeningList to store results
+                // Create a ListeningList to read the Metadata of each file into
                 ListeningList<StorageMetadata> metadata = new ListeningList<>();
                 metadata.setOnAddListener(listeningList -> {
 
+                    if(listeningList.size() < files.size())
+                        return;
+
                     // Use the metadata of the files to determine the oldest one
                     StorageMetadata oldest = metadata.get(0);
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < metadata.size(); i++) {
                         if (metadata.get(i).getCreationTimeMillis() < oldest.getCreationTimeMillis())
                             oldest = metadata.get(i);
                     }
 
                     // Delete the oldest file
+                    Log.d(TAG, "Deleting->|" + oldest.getPath());
                     firebase.getReference().child("recent").child( oldest.getName() ).delete();
                 });
 
