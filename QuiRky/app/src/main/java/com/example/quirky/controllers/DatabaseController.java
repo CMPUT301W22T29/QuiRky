@@ -274,7 +274,7 @@ public class DatabaseController {
                     Bitmap photo = BitmapFactory.decodeByteArray( bytes, 0, bytes.length);
                     results.add(photo);
 
-                    if(results.size() == 5)
+                    if(results.size() == files.size())
                         photos.addAll(results);
                 });
             }
@@ -341,37 +341,42 @@ public class DatabaseController {
         UploadTask uploadTask = storage.putFile(location);
         uploadTask.addOnCompleteListener(writeListener);
 
-        // To update the recent images folder we must read from the database the oldest image, to replace it with the new image
+        deleteOldestRecentPhoto();
 
-        // First get a list of the 5 images in the 'recent' folder
-        Task<ListResult> task_read_list = storage.list(5);
-        task_read_list.addOnCompleteListener(task -> {
-            List<StorageReference> files = task.getResult().getItems();
-            if(files.size() < 5)
-                return;
-
-            // Create a Listening List to read the MetaData of each file into.
-            ListeningList<StorageMetadata> metadata = new ListeningList<>();
-            metadata.setOnAddListener(listeningList -> {
-                if(listeningList.size() == 5) {
-
-                    int oldest = 0;
-                    for(int i = 0; i < 5; i++) {
-                        if(metadata.get(i).getCreationTimeMillis() < metadata.get(oldest).getCreationTimeMillis())
-                            oldest = i;
-                    }
-
-                    firebase.getReference().child("recent").child( metadata.get(oldest).getName() ).delete();
-                }
-            });
-
-            for(StorageReference fileRef : files)
-                fileRef.getMetadata().addOnCompleteListener(task1 -> metadata.add(task1.getResult()));
-        });
-
-        storage = firebase.getReference().child("recent");
+        storage = firebase.getReference().child("recent").child(PhotoId);
         UploadTask writeRecent = storage.putFile(location);
         writeRecent.addOnCompleteListener(writeListener);
+    }
+
+    private void deleteOldestRecentPhoto() {
+        storage = firebase.getReference().child("recent");
+
+        // Get a list of the files in the recent folder
+        storage.listAll().addOnCompleteListener(task -> {
+            List<StorageReference> files = task.getResult().getItems();
+
+            if(files.size() >= 5) {
+
+                // Read the metadata of each file from Firebase. Use a ListeningList to store results
+                ListeningList<StorageMetadata> metadata = new ListeningList<>();
+                metadata.setOnAddListener(listeningList -> {
+
+                    // Use the metadata of the files to determine the oldest one
+                    StorageMetadata oldest = metadata.get(0);
+                    for (int i = 0; i < 5; i++) {
+                        if (metadata.get(i).getCreationTimeMillis() < oldest.getCreationTimeMillis())
+                            oldest = metadata.get(i);
+                    }
+
+                    // Delete the oldest file
+                    firebase.getReference().child("recent").child( oldest.getName() ).delete();
+                });
+
+                // The actual read of metadata from Firebase
+                for (StorageReference fileRef : files)
+                    fileRef.getMetadata().addOnCompleteListener(task1 -> metadata.add(task1.getResult()));
+            }
+        });
     }
 
     /**
