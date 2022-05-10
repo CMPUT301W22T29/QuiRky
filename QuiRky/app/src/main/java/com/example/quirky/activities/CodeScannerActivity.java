@@ -22,6 +22,7 @@ import com.example.quirky.controllers.DatabaseController;
 import com.example.quirky.ListeningList;
 import com.example.quirky.controllers.MapController;
 import com.example.quirky.controllers.MemoryController;
+import com.example.quirky.models.GeoLocation;
 import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
 import com.example.quirky.controllers.QRCodeController;
@@ -137,10 +138,9 @@ public class CodeScannerActivity extends AppCompatActivity {
                 if(location_switch.isChecked()) {
                     MapController mapController = new MapController(this);
 
-                    ListeningList<Location> currentLocation = new ListeningList<>();
+                    ListeningList<GeoLocation> currentLocation = new ListeningList<>();
                     currentLocation.setOnAddListener(listeningList -> {
-                        GeoPoint gp = new GeoPoint( listeningList.get(0) );
-                        qr.addLocation( gp );
+                        qr.addLocation( listeningList.get(0) );
                         save(qr);
                     });
                     mapController.getLocation(currentLocation);
