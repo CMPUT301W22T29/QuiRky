@@ -12,6 +12,8 @@ import android.os.Parcelable;
 
 import org.osmdroid.util.GeoPoint;
 
+import java.lang.Math;
+
 /**
  * Adapter class (OO Design Pattern) to allow Firebase API and OSMDroid API to work together easily
  * Represents a location on the earth. Does not account for height/altitude
@@ -23,7 +25,7 @@ public class GeoLocation implements Parcelable {
     private double exactLong;
 
     // Coordinates above 180* are not valid
-    private static final double limit = (double) 180.1;
+    private static final int limit = 180;
 
     // These are approximate coordinates of the location, which are helpful for getting nearby points from FireStore using the Query class
     private int approxLat;
@@ -49,7 +51,7 @@ public class GeoLocation implements Parcelable {
      * Initialize GeoLocation with a latitude and longitude
      */
     public GeoLocation(double exactLat, double exactLong) {
-        assert (exactLat < limit && exactLong < limit) : "Those are invalid coordinates";
+        assert( Math.abs(exactLat) < limit && Math.abs(exactLong) < limit) : "Those are invalid coordinates";
         this.exactLat = exactLat;
         this.exactLong = exactLong;
 
@@ -63,7 +65,7 @@ public class GeoLocation implements Parcelable {
      * Initialize a GeoLocation with a latitude, longitude, and a description
      */
     public GeoLocation(double exactLat, double exactLong, String description) {
-        assert (exactLat < limit && exactLong < limit) : "Those are invalid coordinates";
+        assert( Math.abs(exactLat) < limit && Math.abs(exactLong) < limit) : "Those are invalid coordinates";
         this.exactLat = exactLat;
         this.exactLong = exactLong;
 
@@ -105,7 +107,7 @@ public class GeoLocation implements Parcelable {
      * Setter for exact latitude
      */
     public void setExactLat(double exactLat) {
-        assert exactLat < limit : "That is not a valid coordinate!";
+        assert Math.abs(exactLat) < limit : "That is not a valid coordinate!";
         this.exactLat = exactLat;
         this.approxLat = (int) exactLat;
     }
@@ -114,7 +116,7 @@ public class GeoLocation implements Parcelable {
      * Getter for exact longitude
      */
     public void setExactLong(double exactLong) {
-        assert exactLat < limit : "That is not a valid coordinate!";
+        assert Math.abs(exactLong) < limit : "That is not a valid coordinate!";
         this.exactLong = exactLong;
         this.approxLong = (int) exactLong;
     }
