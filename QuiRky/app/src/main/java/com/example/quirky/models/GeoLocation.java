@@ -26,8 +26,8 @@ public class GeoLocation implements Parcelable {
     private static final double limit = (double) 180.1;
 
     // These are approximate coordinates of the location, which are helpful for getting nearby points from FireStore using the Query class
-    private short approxLat;
-    private short approxLong;
+    private int approxLat;
+    private int approxLong;
 
     // An optional description of the location. ex. an address or area description
     private String description;
@@ -53,8 +53,8 @@ public class GeoLocation implements Parcelable {
         this.exactLat = exactLat;
         this.exactLong = exactLong;
 
-        approxLat = (short) exactLat;
-        approxLong = (short) exactLong;
+        approxLat = (int) exactLat;
+        approxLong = (int) exactLong;
 
         description = "";
     }
@@ -67,8 +67,8 @@ public class GeoLocation implements Parcelable {
         this.exactLat = exactLat;
         this.exactLong = exactLong;
 
-        approxLat = (short) exactLat;
-        approxLong = (short) exactLong;
+        approxLat = (int) exactLat;
+        approxLong = (int) exactLong;
 
         this.description = description;
     }
@@ -81,8 +81,8 @@ public class GeoLocation implements Parcelable {
         this.exactLat = location.getLatitude();
         this.exactLong = location.getLongitude();
 
-        this.approxLat = (short) exactLat;
-        this.approxLong = (short) exactLong;
+        this.approxLat = (int) exactLat;
+        this.approxLong = (int) exactLong;
 
         this.description = "";
     }
@@ -107,7 +107,7 @@ public class GeoLocation implements Parcelable {
     public void setExactLat(double exactLat) {
         assert exactLat < limit : "That is not a valid coordinate!";
         this.exactLat = exactLat;
-        this.approxLat = (short) exactLat;
+        this.approxLat = (int) exactLat;
     }
 
     /**
@@ -116,20 +116,20 @@ public class GeoLocation implements Parcelable {
     public void setExactLong(double exactLong) {
         assert exactLat < limit : "That is not a valid coordinate!";
         this.exactLong = exactLong;
-        this.approxLong = (short) exactLong;
+        this.approxLong = (int) exactLong;
     }
 
     /**
      * Getter for approximate latitude
      */
-    public short getApproxLat() {
+    public int getApproxLat() {
         return approxLat;
     }
 
     /**
      * Getter for approximate longitude
      */
-    public short getApproxLong() {
+    public int getApproxLong() {
         return approxLong;
     }
 
@@ -159,8 +159,8 @@ public class GeoLocation implements Parcelable {
     protected GeoLocation(Parcel in) {
         exactLat = in.readDouble();
         exactLong = in.readDouble();
-        approxLat = (short) in.readInt();
-        approxLong = (short) in.readInt();
+        approxLat = in.readInt();
+        approxLong = in.readInt();
         description = in.readString();
     }
 
@@ -168,8 +168,8 @@ public class GeoLocation implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeDouble(exactLat);
         dest.writeDouble(exactLong);
-        dest.writeInt((int) approxLat);
-        dest.writeInt((int) approxLong);
+        dest.writeInt(approxLat);
+        dest.writeInt(approxLong);
         dest.writeString(description);
     }
 
