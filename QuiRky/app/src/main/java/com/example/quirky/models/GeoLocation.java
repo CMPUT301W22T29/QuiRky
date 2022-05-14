@@ -12,6 +12,8 @@ import android.os.Parcelable;
 
 import org.osmdroid.util.GeoPoint;
 
+import java.lang.Math;
+
 /**
  * Adapter class (OO Design Pattern) to allow Firebase API and OSMDroid API to work together easily
  * Represents a location on the earth. Does not account for height/altitude
@@ -23,11 +25,11 @@ public class GeoLocation implements Parcelable {
     private double exactLong;
 
     // Coordinates above 180* are not valid
-    private static final double limit = (double) 180.1;
+    private static final int limit = 180;
 
     // These are approximate coordinates of the location, which are helpful for getting nearby points from FireStore using the Query class
-    private short approxLat;
-    private short approxLong;
+    private int approxLat;
+    private int approxLong;
 
     // An optional description of the location. ex. an address or area description
     private String description;
@@ -49,12 +51,12 @@ public class GeoLocation implements Parcelable {
      * Initialize GeoLocation with a latitude and longitude
      */
     public GeoLocation(double exactLat, double exactLong) {
-        assert (exactLat < limit && exactLong < limit) : "Those are invalid coordinates";
+        assert( Math.abs(exactLat) < limit && Math.abs(exactLong) < limit) : "Those are invalid coordinates";
         this.exactLat = exactLat;
         this.exactLong = exactLong;
 
-        approxLat = (short) exactLat;
-        approxLong = (short) exactLong;
+        approxLat = (int) exactLat;
+        approxLong = (int) exactLong;
 
         description = "";
     }
@@ -63,12 +65,12 @@ public class GeoLocation implements Parcelable {
      * Initialize a GeoLocation with a latitude, longitude, and a description
      */
     public GeoLocation(double exactLat, double exactLong, String description) {
-        assert (exactLat < limit && exactLong < limit) : "Those are invalid coordinates";
+        assert( Math.abs(exactLat) < limit && Math.abs(exactLong) < limit) : "Those are invalid coordinates";
         this.exactLat = exactLat;
         this.exactLong = exactLong;
 
-        approxLat = (short) exactLat;
-        approxLong = (short) exactLong;
+        approxLat = (int) exactLat;
+        approxLong = (int) exactLong;
 
         this.description = description;
     }
@@ -81,8 +83,8 @@ public class GeoLocation implements Parcelable {
         this.exactLat = location.getLatitude();
         this.exactLong = location.getLongitude();
 
-        this.approxLat = (short) exactLat;
-        this.approxLong = (short) exactLong;
+        this.approxLat = (int) exactLat;
+        this.approxLong = (int) exactLong;
 
         this.description = "";
     }
@@ -105,31 +107,31 @@ public class GeoLocation implements Parcelable {
      * Setter for exact latitude
      */
     public void setExactLat(double exactLat) {
-        assert exactLat < limit : "That is not a valid coordinate!";
+        assert Math.abs(exactLat) < limit : "That is not a valid coordinate!";
         this.exactLat = exactLat;
-        this.approxLat = (short) exactLat;
+        this.approxLat = (int) exactLat;
     }
 
     /**
      * Getter for exact longitude
      */
     public void setExactLong(double exactLong) {
-        assert exactLat < limit : "That is not a valid coordinate!";
+        assert Math.abs(exactLong) < limit : "That is not a valid coordinate!";
         this.exactLong = exactLong;
-        this.approxLong = (short) exactLong;
+        this.approxLong = (int) exactLong;
     }
 
     /**
      * Getter for approximate latitude
      */
-    public short getApproxLat() {
+    public int getApproxLat() {
         return approxLat;
     }
 
     /**
      * Getter for approximate longitude
      */
-    public short getApproxLong() {
+    public int getApproxLong() {
         return approxLong;
     }
 
@@ -159,8 +161,8 @@ public class GeoLocation implements Parcelable {
     protected GeoLocation(Parcel in) {
         exactLat = in.readDouble();
         exactLong = in.readDouble();
-        approxLat = (short) in.readInt();
-        approxLong = (short) in.readInt();
+        approxLat = in.readInt();
+        approxLong = in.readInt();
         description = in.readString();
     }
 
@@ -168,8 +170,8 @@ public class GeoLocation implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeDouble(exactLat);
         dest.writeDouble(exactLong);
-        dest.writeInt((int) approxLat);
-        dest.writeInt((int) approxLong);
+        dest.writeInt(approxLat);
+        dest.writeInt(approxLong);
         dest.writeString(description);
     }
 
