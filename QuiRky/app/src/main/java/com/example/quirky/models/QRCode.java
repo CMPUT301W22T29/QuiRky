@@ -186,9 +186,6 @@ public class QRCode implements Parcelable {
 
     public void removeTitle(String title) { titles.remove(title); }
 
-    public void setTitle(ArrayList<String> titles) { this.titles = titles; }
-
-
     public void setContent(String content) {
         this.content = content;
     }
