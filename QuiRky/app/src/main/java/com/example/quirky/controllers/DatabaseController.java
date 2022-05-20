@@ -7,22 +7,19 @@
 package com.example.quirky.controllers;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.example.quirky.ListeningList;
-import com.example.quirky.OnAddListener;
-import com.example.quirky.R;
 import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -31,11 +28,7 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -93,7 +86,7 @@ public class DatabaseController {
         assert qr != null : "You can't write a null object to the database!";
 
         collection = firestore.collection("QRCodes");
-        collection.document(qr.getId()).set(qr).addOnCompleteListener(writeListener);
+        collection.document().set(qr).addOnCompleteListener(writeListener);
     }
 
     /**
@@ -103,7 +96,7 @@ public class DatabaseController {
     public void writeProfile(Profile p) {
         assert p != null : "You can't write a null object to the database!";
         collection = firestore.collection("users");
-        collection.document(p.getUname()).set(p).addOnCompleteListener(writeListener);
+        collection.document().set(p).addOnCompleteListener(writeListener);
     }
 
     /**
@@ -111,9 +104,21 @@ public class DatabaseController {
      * @param qr The QRCode to delete
      */
     public void deleteQRCode(String qr) {
-        // Delete from FireStore
+
+        // Delete from FireStore. The Document ID is unknown so it must be read, then it can be referenced and deleted
         collection = firestore.collection("QRCodes");
-        collection.document(qr).delete().addOnCompleteListener(deleteListener);
+        collection.whereEqualTo("id", qr).get().addOnCompleteListener(task -> {
+
+            int size = task.getResult().getDocuments().size();
+            if(size > 1)
+                Log.d(TAG, "For some reason more than 1 QRCode had that ID! Only one was deleted!");
+            else if (size < 1)
+                Log.d(TAG, "A QRCode with that ID did not exist in the database!");
+
+            DocumentSnapshot doc = task.getResult().getDocuments().get(0);
+            doc.getReference().delete().addOnCompleteListener(deleteListener);
+
+        });
 
         // Delete from Firebase Storage
         storage = firebase.getReference().child("photos").child(qr);
@@ -125,7 +130,15 @@ public class DatabaseController {
      * @param username The username of the profile to delete
      */
     public void deleteProfile(String username) {
+        // Delete from FireStore. The Document ID is unknown so it must be read, then it can be referenced and deleted
         collection = firestore.collection("users");
+        collection.whereEqualTo("uname", username).get().addOnCompleteListener(task -> {
+            if (task.getResult().getDocuments().size() < 1)
+                Log.d(TAG, "A user with that name did not exist in the database!");
+
+            DocumentSnapshot doc = task.getResult().getDocuments().get(0);
+            doc.getReference().delete().addOnCompleteListener(deleteListener);
+        });
         collection.document(username).delete().addOnCompleteListener(deleteListener);
     }
 
@@ -140,8 +153,15 @@ public class DatabaseController {
         assert (!username.equals("") && !username.equals(" ")) : "Tried calling readProfile() with an empty username! Did you mean to use readAllUsers()?";
 
         collection = firestore.collection("users");
-        collection.document(username).get().addOnCompleteListener(task -> {
-            data.add( task.getResult().toObject(Profile.class) );
+        collection.whereEqualTo("name", username).get().addOnCompleteListener(task -> {
+            int size = task.getResult().getDocuments().size();
+            if(size < 1) {
+                Log.d(TAG, "A user with that name did not exist! No data deleted!");
+                return;
+            }
+
+            DocumentSnapshot doc = task.getResult().getDocuments().get(0);
+            data.add( doc.toObject(Profile.class));
         });
     }
 
@@ -154,9 +174,16 @@ public class DatabaseController {
      */
     public void isOwner(String username, ListeningList<Boolean> data) {
         collection = firestore.collection("users");
-        collection.document(username).get().addOnCompleteListener(task -> {
-            if(task.getResult().contains("owner"))
-                data.add( task.getResult().getBoolean("owner") );
+        collection.whereEqualTo("uname", username).get().addOnCompleteListener(task -> {
+
+            List<DocumentSnapshot> docs = task.getResult().getDocuments();
+            if(docs.size() < 1) {
+                data.add(false);
+                return;
+            }
+
+            if(docs.get(0).contains("owner"))
+                data.add( docs.get(0).getBoolean("owner") );
             else
                 data.add( false );
         });
@@ -192,9 +219,15 @@ public class DatabaseController {
      */
     public void readQRCode(String id, ListeningList<QRCode> data) {
         collection = firestore.collection("QRCodes");
-        collection.document(id).get().addOnCompleteListener(task -> {
-            QRCode result = task.getResult().toObject(QRCode.class);
-            data.add(result);
+        collection.whereEqualTo("id", id).get().addOnCompleteListener(task -> {
+            int size = task.getResult().getDocuments().size();
+            if(size != 1) {
+                Log.d(TAG, "That id did not match up with exactly 1 document! Adding Null");
+                data.add(null);
+            } else {
+                QRCode result = task.getResult().getDocuments().get(0).toObject(QRCode.class);
+                data.add(result);
+            }
         });
     }
 
@@ -216,11 +249,22 @@ public class DatabaseController {
      * Write a one-use login password to a profile in the database.
      * The password should be the hash of the QRCode the player will scan to login to their account.
      * @param hash The password to write to the account
-     * @param user The username of the profile to write the password to
+     * @param username The username of the profile to write the password to
      */
-    public void writeLoginHash(String hash, String user) {
+    public void writeLoginHash(String hash, String username) {
+        // The Document ID of this user is not known, so it must be read first
         collection = firestore.collection("users");
-        collection.document(user).update("loginhash", hash).addOnCompleteListener(writeListener);
+        collection.whereEqualTo("uname", username).get().addOnCompleteListener(task -> {
+            if(task.getResult().getDocuments().size() < 1)
+                Log.d(TAG, "No user with name " + username + " exists in the database! Login hash not written!");
+            else {
+                DocumentReference doc = task.getResult().getDocuments().get(0).getReference();
+                doc.update("loginhash", hash).addOnCompleteListener(writeListener);
+            }
+
+
+        });
+
     }
 
     /**
@@ -231,6 +275,9 @@ public class DatabaseController {
      * @param data A listening list containing Profiles. The read result is placed here.
      */
     public void readLoginHash(String hash, ListeningList<Profile> data) {
+
+        assert ! hash.equals("") : "Must provide a hash code to read!";
+
         collection = firestore.collection("users");
         collection.whereEqualTo("loginhash", hash).get().addOnCompleteListener(task -> {
             QuerySnapshot q = task.getResult();
@@ -239,7 +286,7 @@ public class DatabaseController {
                 data.add(null);
             } else {
                 Profile p = q.getDocuments().get(0).toObject(Profile.class);
-                firestore.collection("users").document(p.getUname()).update("loginhash", "");
+                writeLoginHash("", p.getUname());
                 data.add(p);
             }
         });
