@@ -97,22 +97,19 @@ public class LoginActivity extends AppCompatActivity implements
 
         // Read from the database to check if this username is already taken.
         ListeningList<Profile> doesExist = new ListeningList<>();
-        doesExist.setOnAddListener(new OnAddListener<Profile>() {
-            @Override
-            public void onAdd(ListeningList<Profile> listeningList) {
-                if(listeningList.get(0) == null) {
-                    Profile p = new Profile(uname);
+        doesExist.setOnAddListener(listeningList -> {
+            if(listeningList.size() == 0) {
+                Profile p = new Profile(uname);
 
-                    mc.writeUser(p);
-                    dm.writeProfile(p);
+                mc.writeUser(p);
+                dm.writeProfile(p);
 
-                    startHubActivity();
+                startHubActivity();
 
-                } else {
-                    Toast.makeText(getApplicationContext(), "This username already exists!", Toast.LENGTH_LONG).show();
-                    // Restart the process by calling login()
-                    login(false);
-                }
+            } else {
+                Toast.makeText(getApplicationContext(), "This username already exists!", Toast.LENGTH_LONG).show();
+                // Restart the process by calling login()
+                login(false);
             }
         });
 

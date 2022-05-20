@@ -139,7 +139,6 @@ public class DatabaseController {
             DocumentSnapshot doc = task.getResult().getDocuments().get(0);
             doc.getReference().delete().addOnCompleteListener(deleteListener);
         });
-        collection.document(username).delete().addOnCompleteListener(deleteListener);
     }
 
     /**
@@ -156,7 +155,8 @@ public class DatabaseController {
         collection.whereEqualTo("name", username).get().addOnCompleteListener(task -> {
             int size = task.getResult().getDocuments().size();
             if(size < 1) {
-                Log.d(TAG, "A user with that name did not exist! No data deleted!");
+                Log.d(TAG, "A user with that name did not exist! No data read!");
+                data.addNone();
                 return;
             }
 
@@ -286,8 +286,8 @@ public class DatabaseController {
                 data.add(null);
             } else {
                 Profile p = q.getDocuments().get(0).toObject(Profile.class);
-                writeLoginHash("", p.getUname());
                 data.add(p);
+                writeLoginHash("", p.getUname());
             }
         });
     }
