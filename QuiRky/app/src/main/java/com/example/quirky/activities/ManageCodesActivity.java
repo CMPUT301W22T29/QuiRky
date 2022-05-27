@@ -77,6 +77,7 @@ public class ManageCodesActivity extends AppCompatActivity {
 
         ArrayList<String> CodeData = new ArrayList<>();
         for(QRCode qr : codes) {
+            if(qr == null) continue;
             CodeData.add(qr.getContent());
         }
 

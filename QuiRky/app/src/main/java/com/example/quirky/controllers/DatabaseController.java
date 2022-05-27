@@ -222,8 +222,8 @@ public class DatabaseController {
         collection.whereEqualTo("id", id).get().addOnCompleteListener(task -> {
             int size = task.getResult().getDocuments().size();
             if(size != 1) {
-                Log.d(TAG, "That id did not match up with exactly 1 document! Adding Null");
-                data.add(null);
+                Log.d(TAG, "That id did not match up with exactly 1 document! Adding Nothing");
+                data.addNone();
             } else {
                 QRCode result = task.getResult().getDocuments().get(0).toObject(QRCode.class);
                 data.add(result);
@@ -283,7 +283,7 @@ public class DatabaseController {
             QuerySnapshot q = task.getResult();
             if(q.size() != 1) {
                 Log.d(TAG, "For some reason reading a login hash did not produce exactly 1 profile!");
-                data.add(null);
+                data.addNone();
             } else {
                 Profile p = q.getDocuments().get(0).toObject(Profile.class);
                 data.add(p);
