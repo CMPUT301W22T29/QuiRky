@@ -114,12 +114,12 @@ public class CodeScannerActivity extends AppCompatActivity {
 
             ListeningList<Profile> user = new ListeningList<>();
             user.setOnAddListener(listeningList -> {
-                Profile p = listeningList.get(0);
-                if(p == null) {
+                if(listeningList.size() == 0) {
                     Toast.makeText(this, "No users with that QRCode!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
+                Profile p = listeningList.get(0);
                 mc.writeUser(p);
 
                 Intent i = new Intent(this, HubActivity.class);

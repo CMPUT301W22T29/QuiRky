@@ -101,11 +101,10 @@ public class EditProfileActivity extends AppCompatActivity {
                 result.setOnAddListener(new OnAddListener<Profile>() {
                     @Override
                     public void onAdd(ListeningList<Profile> listeningList) {
-                        if(listeningList.get(0) != null) {
-                            Toast.makeText(getApplicationContext(), "That username is taken!", Toast.LENGTH_SHORT).show();
-                        } else {
+                        if(listeningList.size() == 0)
                             write(true);
-                        }
+                        else
+                            Toast.makeText(getApplicationContext(), "That username is taken!", Toast.LENGTH_SHORT).show();
                     }
                 });
                 dc.readProfile(p.getUname(), result);
