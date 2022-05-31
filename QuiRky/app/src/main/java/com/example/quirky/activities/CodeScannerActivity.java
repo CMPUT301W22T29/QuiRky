@@ -6,6 +6,7 @@
 
 package com.example.quirky.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -15,8 +16,10 @@ import android.widget.Button;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.view.PreviewView;
+import androidx.core.app.ActivityCompat;
 
 import com.example.quirky.controllers.DatabaseController;
 import com.example.quirky.ListeningList;
@@ -42,7 +45,7 @@ import org.osmdroid.util.GeoPoint;
  * @see QRCode
  * @see QRCodeController
  */
-public class CodeScannerActivity extends AppCompatActivity {
+public class CodeScannerActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private PreviewView previewView;
     private Button scan_button, cancel_button, save_button;
@@ -50,6 +53,7 @@ public class CodeScannerActivity extends AppCompatActivity {
 
 
     private CameraController cameraController;
+    private MapController mapController;
     private DatabaseController dc;
     private MemoryController mc;
 
@@ -136,7 +140,7 @@ public class CodeScannerActivity extends AppCompatActivity {
             save_button.setOnClickListener(view -> {
 
                 if(location_switch.isChecked()) {
-                    MapController mapController = new MapController(this);
+                    mapController = new MapController(this);
 
                     ListeningList<GeoLocation> currentLocation = new ListeningList<>();
                     currentLocation.setOnAddListener(listeningList -> {
@@ -197,5 +201,12 @@ public class CodeScannerActivity extends AppCompatActivity {
             location_switch.setVisibility(View.VISIBLE);
             photo_switch.setVisibility(View.VISIBLE);
         }
+    }
+
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                                                     @NonNull int[] grantResults) {
+        mapController.onLocationPermissionRequestResult(requestCode, grantResults);
     }
 }

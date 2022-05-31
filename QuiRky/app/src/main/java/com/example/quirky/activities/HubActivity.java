@@ -72,11 +72,26 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         dc.getRecentPhotos(photos);
     }
 
+    /**
+     * Called when a permissions dialogue started from the hub activity is resolved
+     *
+     * If permissions were granted, continues doing what the user was trying to do before the
+     * permission request dialogue showed up.
+     *
+     * @param requestCode Internal number representing what is being requested
+     * @param permissions
+     * @param grantResults Array containing the results of one or more permission requests
+     */
     @SuppressLint("MissingSuperCall")
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // Check the result of the permission request if camera permissions are being requested
         cac.getCameraPermissionRequestResult(requestCode, grantResults);
+
+        // If location permissions are being requested
         if (MapController.requestingLocationPermissions(requestCode)) {
+
+            // If location permissions were granted, start the map activity, else, don't.
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission Granted!", Toast.LENGTH_SHORT).show();
                 Intent in = new Intent(this, MapActivity.class);
@@ -86,7 +101,7 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
             }
         }
     }
-    
+
     /**
      * Called once done reading from firebase. Finishes setting up the recycler views
      */
