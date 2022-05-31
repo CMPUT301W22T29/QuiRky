@@ -6,13 +6,17 @@
 
 package com.example.quirky.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -68,6 +72,21 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         dc.getRecentPhotos(photos);
     }
 
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        cac.getCameraPermissionRequestResult(requestCode, grantResults);
+        if (MapController.requestingLocationPermissions(requestCode)) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission Granted!", Toast.LENGTH_SHORT).show();
+                Intent in = new Intent(this, MapActivity.class);
+                startActivity(in);
+            } else {
+                Toast.makeText(this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    
     /**
      * Called once done reading from firebase. Finishes setting up the recycler views
      */
