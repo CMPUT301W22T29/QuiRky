@@ -166,7 +166,7 @@ public class CodeScannerActivity extends AppCompatActivity {
         qr.addScanner(p.getUname());
         dc.writeQRCode(qr);
         mc.writeUser(p);
-        dc.writeProfile(p);
+        dc.writeProfile(p.getUname(), p);
 
         if(photo_switch.isChecked()) {
             dc.writePhoto( qr.getId(), capture.get(0) , this);

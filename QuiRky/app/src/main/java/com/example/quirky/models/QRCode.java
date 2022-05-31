@@ -120,6 +120,8 @@ public class QRCode implements Parcelable {
      */
     public void addComment(Comment c) throws AssertionError {
         assert c != null : "Can not add a null object to the list!";
+        if(comments.contains(content))
+            return;
         comments.add(c);
     }
 
@@ -145,6 +147,8 @@ public class QRCode implements Parcelable {
      * @param location The GeoPoint to add
      */
     public void addLocation(GeoLocation location) {
+        if(locations.contains(location))
+            return;
         locations.add(location);
     }
 
@@ -167,6 +171,8 @@ public class QRCode implements Parcelable {
      * @param username The username of the player that has scanned it
      */
     public void addScanner(String username) {
+        if( scanners.contains(username))
+            return;
         scanners.add(username);
     }
 
@@ -182,7 +188,11 @@ public class QRCode implements Parcelable {
         this.scanners = scanners;
     }
 
-    public void addTitle(String title) { titles.add(title); }
+    public void addTitle(String title) {
+        if( titles.contains(title) )
+            return;
+        titles.add(title);
+    }
 
     public void removeTitle(String title) { titles.remove(title); }
 

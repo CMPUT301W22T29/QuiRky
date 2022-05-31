@@ -19,7 +19,6 @@ import androidx.core.app.ActivityCompat;
 import com.example.quirky.InputUnameLoginFragment;
 import com.example.quirky.ListeningList;
 import com.example.quirky.controllers.MemoryController;
-import com.example.quirky.OnAddListener;
 import com.example.quirky.models.Profile;
 import com.example.quirky.controllers.ProfileController;
 import com.example.quirky.R;
@@ -96,24 +95,24 @@ public class LoginActivity extends AppCompatActivity implements
         }
 
         // Read from the database to check if this username is already taken.
-        ListeningList<Profile> doesExist = new ListeningList<>();
+        ListeningList<Boolean> doesExist = new ListeningList<>();
         doesExist.setOnAddListener(listeningList -> {
-            if(listeningList.size() == 0) {
-                Profile p = new Profile(uname);
+            if(doesExist.get(0)) {
 
-                mc.writeUser(p);
-                dm.writeProfile(p);
-
-                startHubActivity();
-
-            } else {
                 Toast.makeText(getApplicationContext(), "This username already exists!", Toast.LENGTH_LONG).show();
                 // Restart the process by calling login()
                 login(false);
+            } else {
+                Profile p = new Profile(uname);
+
+                mc.writeUser(p);
+                dm.writeProfile(p.getUname(), p);
+
+                startHubActivity();
             }
         });
 
-        dm.readProfile(uname, doesExist);
+        dm.userExists(uname, doesExist);
     }
 
     /**
