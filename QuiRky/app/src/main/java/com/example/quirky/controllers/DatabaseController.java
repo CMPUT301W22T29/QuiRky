@@ -12,7 +12,12 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.example.quirky.ListeningList;
+import com.example.quirky.OnAddListener;
+import com.example.quirky.models.Comment;
+import com.example.quirky.models.GeoLocation;
 import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,9 +41,7 @@ import java.util.List;
  * @author Jonathen Adsit
  * This is a controller class that does all the reading and writing to FireStore
  * TODO: Consider removing the coupling from the model classes,
- *      by creating methods to set the collection/document to read from
- *      And creating methods to read a single field, an object from a document, and a group of objects from a collection.
- */
+*/
 
 // Reading & Writing Custom Objects to FireStore taken from:
 // https://youtu.be/jJnm3YKfAUI
@@ -47,8 +50,8 @@ import java.util.List;
 // Published April 15, 2018
 @SuppressWarnings({"unchecked", "ConstantConditions"})
 public class DatabaseController {
-    private final String TAG = "DatabaseController says: ";
-    private final long MAX_DOWNLOAD_SIZE = 10485760; // 10485760 Bytes == 10 mB
+    private static final String TAG = "DatabaseController says: ";
+    private static final long MAX_DOWNLOAD_SIZE = 10485760; // 10485760 Bytes == 10 mB
 
     private final FirebaseFirestore firestore;
     private CollectionReference collection;
@@ -79,24 +82,64 @@ public class DatabaseController {
     }
 
     /**
-     * Write a QRCode to the database. Use this method to update any of the fields a QRCode has.
-     * @param qr The QRCode to write/update
+     * Write a QRCode to the database.
+     * Checks if the QRCode already exists in the database.
+     * If so, updates that document rather than creating a new one
+     * @param newCode The QRCode to write/update
      */
-    public void writeQRCode(QRCode qr) {
-        assert qr != null : "You can't write a null object to the database!";
+    public void writeQRCode(QRCode newCode) {
+        assert newCode != null : "You can't write a null QRCode to the database!";
+
+        ListeningList<QRCode> code = new ListeningList<>();
+        code.setOnAddListener(listeningList -> {
+            if(listeningList.size() > 0) {
+                updateQRCode(newCode, listeningList.get(0));
+            } else {
+                collection = firestore.collection("QRCodes");
+                collection.document().set(newCode).addOnCompleteListener(writeListener);
+            }
+        });
+        readQRCode( newCode.getId(), code);
+    }
+
+    private void updateQRCode(QRCode newCode, QRCode oldCode) {
+        for(String player : newCode.getScanners())
+            oldCode.addScanner(player);
+
+        for(String title : newCode.getTitles())
+            oldCode.addTitle(title);
+
+        for(Comment comment : newCode.getComments())
+            oldCode.addComment(comment);
+
+        for(GeoLocation location : newCode.getLocations())
+            oldCode.addLocation(location);
 
         collection = firestore.collection("QRCodes");
-        collection.document().set(qr).addOnCompleteListener(writeListener);
+        collection.whereEqualTo("id", oldCode.getId()).get().addOnCompleteListener(task ->
+                task.getResult().getDocuments().get(0).getReference().set(oldCode)
+        );
     }
 
     /**
-     * Write a profile to the database. Use this method to also update a profile in the database, if any field has changed
-     * @param p The profile to write/update
+     * Write a profile to the database
+     * Checks if the profile already exists in the database
+     * If a document already contains the profile, overwrite it.
+     * Otherwise, creates a new document for the profile.
+     * @param p The profile to write
      */
-    public void writeProfile(Profile p) {
+    public void writeProfile(String original_username, Profile p) {
         assert p != null : "You can't write a null object to the database!";
+
         collection = firestore.collection("users");
-        collection.document().set(p).addOnCompleteListener(writeListener);
+        collection.whereEqualTo("uname", original_username).get().addOnCompleteListener(task -> {
+            if(task.getResult().getDocuments().size() > 0) {
+                task.getResult().getDocuments().get(0).getReference().set(p).addOnCompleteListener(writeListener);
+            } else {
+                collection = firestore.collection("users");
+                collection.document().set(p).addOnCompleteListener(writeListener);
+            }
+        });
     }
 
     /**
@@ -162,6 +205,25 @@ public class DatabaseController {
 
             DocumentSnapshot doc = task.getResult().getDocuments().get(0);
             data.add( doc.toObject(Profile.class));
+        });
+    }
+
+    /**
+     * Checks if a user with the given username already exists in the database
+     * This is an asynch operation and will not return the result
+     * When the read completes, the boolean if placed in the listening list
+     * @param username A username to check the database for
+     * @param data A listening list containing booleans. If the username is taken, true is added to the list. False otherwise.
+     */
+    public void userExists(String username, ListeningList<Boolean> data) {
+        collection = firestore.collection("users");
+        collection.whereEqualTo("uname", username).get().addOnCompleteListener(task -> {
+            int docs = task.getResult().getDocuments().size();
+            Log.d(TAG, docs + " documents containing this players");
+            if(task.getResult().getDocuments().size() > 0)
+                data.add(true);
+            else
+                data.add(false);
         });
     }
 
