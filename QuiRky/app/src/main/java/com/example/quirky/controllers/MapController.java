@@ -101,25 +101,49 @@ public class MapController {
                                    (Activity) context, LOCATION_PERMISSIONS, LOCATION_REQUEST_CODE);
     }
 
+    /**
+     * Checks (and requests if needed) location permissions before running some code
+     *
+     * If we don't have location permissions, save the code we want to run for later and request
+     * permissions, once the user has given permissions, onLocationPermissionRequestResult() will
+     * run the code that needed the permissions.
+     *
+     * @param runnable The code to run once we have verified the location permissions are granted
+     */
     public void permissionsThenRun(Runnable runnable) {
         Log.d("map", "permissionsThenRun");
+
         if (hasLocationPermissions(context)) {
-            if (!locationManager.isProviderEnabled(PROVIDER)) {
-                Toast.makeText(context, "This might not do anything since your GPS is off!",
-                                                                            Toast.LENGTH_LONG).show();
-            }
+            // Run the runnable if we have location permissions
             runnable.run();
         } else {
+            // If we do not have location permissions, save the runnable for later and request permissions
             runnables.push(runnable);
             requestLocationPermission(context);
         }
     }
 
+    /**
+     * Handle the results of a location permission request
+     *
+     * This method is intended to be called from an onRequestPermissionsResult callback.
+     * If permissions were granted, this method will run the code that caused the permissions
+     * dialogue to appear, without the user having to re-press any buttons or whatever.
+     *
+     * @param requestCode Internal number representing the type of permission being requested
+     * @param grantResults Array containing the results of one or more permission requests.
+     */
     public void onLocationPermissionRequestResult(int requestCode, @NonNull int[] grantResults) {
+        // Check that we are requesting location permissions
         if (MapController.requestingLocationPermissions(requestCode)) {
+
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // If permissions were granted, run the code that required the permissions
                 runnables.pop().run();
+
             } else {
+                // If permissions were not granted, discard the code that required the permissions
+                // and notify the user.
                 runnables.pop();
                 Toast.makeText(context,
                         "Enable location permissions to do cool location things",
@@ -128,40 +152,64 @@ public class MapController {
         }
     }
 
-    // TODO: someone who knows how this works, javadoc it
     /**
      * Get the current location of the user
+     *
+     * Uses different approaches for getting the user's location depending on their android version.
+     * If the user's GPS provider is not enabled, this will only tell the user that their GPS is
+     * disabled, otherwise it will attempt to get their location, and store it in the provided
+     * ListeningList, which calls onAdd whenever something is added to it. Make sure to set an
+     * onAddListener and override onAdd!
+     *
      * @param locations A listening list to add the location to
      */
     @SuppressLint("MissingPermission")
     public void getLocation(ListeningList<GeoLocation> locations) {
         Log.d("map", "getLocation");
+
+        // Check and/or get location permissions, then try to get the current location
         permissionsThenRun(new Runnable() {
             @RequiresApi(api = Build.VERSION_CODES.R)
             @Override
             public void run() {
                 Log.d("map", "runGetLocation");
-                if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                    if (hasLocationPermissions(context)){
-                        if (Integer.parseInt(android.os.Build.VERSION.SDK) < 30){
-                        locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new LocationListenerCompat() {
+
+                // Make sure GPS is enabled
+                if(locationManager.isProviderEnabled(PROVIDER)) {
+
+                    // Different Android versions require different ways of getting location
+                    if (Integer.parseInt(android.os.Build.VERSION.SDK) < 30) {
+
+                        // Ask our location provider to hunt us down and tell us where we are
+                        locationManager.requestSingleUpdate(PROVIDER, new LocationListenerCompat() {
                             @Override
                             public void onLocationChanged(@NonNull Location location) {
+
+                                // Once we know our location, drop it in the ListeningList so other code can use it.
                                 locations.add( new GeoLocation(location) );
                             }
                         },null);
-                        }//RequestLocationUpdate once
+
+                    }//RequestLocationUpdate once
                         //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0, (LocationListener) context);
+
+                    // Newer Android versions use this code
                     else {
-                            locationManager.getCurrentLocation(LocationManager.GPS_PROVIDER, null, ContextCompat.getMainExecutor(context), new Consumer<Location>() {
-                                @SuppressLint("MissingPermission")
-                                @Override
-                                public void accept(Location location) {
-                                    locations.add( new GeoLocation(location) );
-                                }
-                            });
-                        }
+                        // Ask our provider to hunt us down, then, we'll have a Consumer deal with the location info
+                        locationManager.getCurrentLocation(PROVIDER, null, ContextCompat.getMainExecutor(context), new Consumer<Location>() {
+                            @SuppressLint("MissingPermission")
+                            @Override
+                            public void accept(Location location) {
+
+                                // Once we know our location, drop it in the ListeningList so other code can use it.
+                                locations.add( new GeoLocation(location) );
+                            }
+                        });
                     }
+
+                } else {    // If GPS is not enabled, complain to the user
+                    Toast.makeText(context, "Your GPS is probably off, turn it on to use this feature!",
+                            Toast.LENGTH_LONG).show();
                 }
             }
         });
