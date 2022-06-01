@@ -175,7 +175,7 @@ public class MapController {
                 Log.d("map", "runGetLocation");
 
                 // Make sure GPS is enabled
-                if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                if(locationManager.isProviderEnabled(PROVIDER)) {
 
                     // Different Android versions require different ways of getting location
                     if (Integer.parseInt(android.os.Build.VERSION.SDK) < 30) {
