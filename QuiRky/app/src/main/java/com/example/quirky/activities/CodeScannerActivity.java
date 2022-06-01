@@ -22,6 +22,7 @@ import com.example.quirky.controllers.DatabaseController;
 import com.example.quirky.ListeningList;
 import com.example.quirky.controllers.MapController;
 import com.example.quirky.controllers.MemoryController;
+import com.example.quirky.models.GeoLocation;
 import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
 import com.example.quirky.controllers.QRCodeController;
@@ -113,12 +114,12 @@ public class CodeScannerActivity extends AppCompatActivity {
 
             ListeningList<Profile> user = new ListeningList<>();
             user.setOnAddListener(listeningList -> {
-                Profile p = listeningList.get(0);
-                if(p == null) {
+                if(listeningList.size() == 0) {
                     Toast.makeText(this, "No users with that QRCode!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
+                Profile p = listeningList.get(0);
                 mc.writeUser(p);
 
                 Intent i = new Intent(this, HubActivity.class);
@@ -137,10 +138,9 @@ public class CodeScannerActivity extends AppCompatActivity {
                 if(location_switch.isChecked()) {
                     MapController mapController = new MapController(this);
 
-                    ListeningList<Location> currentLocation = new ListeningList<>();
+                    ListeningList<GeoLocation> currentLocation = new ListeningList<>();
                     currentLocation.setOnAddListener(listeningList -> {
-                        GeoPoint gp = new GeoPoint( listeningList.get(0) );
-                        qr.addLocation( gp );
+                        qr.addLocation( listeningList.get(0) );
                         save(qr);
                     });
                     mapController.getLocation(currentLocation);
@@ -166,7 +166,7 @@ public class CodeScannerActivity extends AppCompatActivity {
         qr.addScanner(p.getUname());
         dc.writeQRCode(qr);
         mc.writeUser(p);
-        dc.writeProfile(p);
+        dc.writeProfile(p.getUname(), p);
 
         if(photo_switch.isChecked()) {
             dc.writePhoto( qr.getId(), capture.get(0) , this);

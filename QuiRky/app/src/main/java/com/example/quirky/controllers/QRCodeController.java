@@ -49,19 +49,13 @@ public class QRCodeController {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] hash = md.digest(content.getBytes(StandardCharsets.UTF_8));
 
-            // The byte[] is converted into a String using the UTF-8 character set.
-            // In Firestore, it is illegal for Documents and Collections to have '/' or '.' in their ID
-            // So the byte[] is parsed for these characters before it is turned to a string.
-            // This reduces the number of unique ID's, but only by a small amount.
-            for(int i = 0; i < hash.length; i++) {
-                if(hash[i] == 0x2f)   // 0x2f -> '/'
-                    hash[i] = 0x30;
-                if(hash[i] == 0x2e)   // 0x2e -> '.'
-                    hash[i] = 0x30;
-            }
+            // https://stackoverflow.com/a/2817883
+            StringBuilder result = new StringBuilder("");
+            for(byte b : hash)
+                result.append(String.format("%02X", b));
 
-            // byte[] -> String using UTF_8 because that's the character set FireStore document names can use
-            return new String(hash, StandardCharsets.UTF_8);
+            return result.toString();
+
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage(), e.getCause());

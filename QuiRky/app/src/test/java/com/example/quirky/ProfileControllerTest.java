@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 public class ProfileControllerTest {
 
+    // Test that ProfileController properly calculates a profile's stats from it's list of scanned codes
     @Test
     public void CalculateStatsTest() {
         String id1 = "a";
@@ -36,6 +37,13 @@ public class ProfileControllerTest {
         assertEquals(2, ProfileController.calculateTotalScanned(p));
         assertEquals(sum, ProfileController.calculateTotalPoints(p));
         assertEquals(score2, ProfileController.calculateGreatestScore(p));
+
+        // Test that it works when the profile has no scanned codes
+        scanned.clear();
+        p = new Profile("", "", "", scanned);
+        assertEquals(0, ProfileController.calculateTotalScanned(p));
+        assertEquals(0, ProfileController.calculateTotalPoints(p));
+        assertEquals(0, ProfileController.calculateGreatestScore(p));
     }
 
     // This test checks that the ValidUsername method works properly.

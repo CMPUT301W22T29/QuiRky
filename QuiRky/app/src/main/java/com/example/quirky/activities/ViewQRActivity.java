@@ -165,7 +165,7 @@ public class ViewQRActivity extends AppCompatActivity {
 
         if(p.removeScanned(qr.getId())) {
             mc.writeUser(p);
-            dc.writeProfile(p);
+            dc.writeProfile(p.getUname(), p);
 
             qr.removeScanner(p.getUname());
             dc.writeQRCode(qr);

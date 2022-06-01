@@ -59,6 +59,12 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         photos = new ListeningList<>();
         photos.setOnAddListener(listeningList -> doneRead());
 
+        RecyclerView FeatureList = findViewById(R.id.hub_feature_list);
+        RecyclerClickerListener listener = position -> StartActivity( features.get(position) );
+        adapterButton = new AdapterButton(features, this, listener);
+        FeatureList.setAdapter( adapterButton );
+        FeatureList.setLayoutManager( adapterButton.getLayoutManager() );
+
         dc.getRecentPhotos(photos);
     }
 
@@ -67,19 +73,13 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
      */
     private void doneRead() {
         if(photos.size() == 0)
-            photos.addWithoutListener(BitmapFactory.decodeResource( getResources(), R.drawable.no_photos_backup) );
+            photos.addWithoutListener(BitmapFactory.decodeResource( getResources(), R.drawable.no_recent_backup) );
 
         RecyclerView PhotoList = findViewById(R.id.hub_photo_list);
-        RecyclerView FeatureList = findViewById(R.id.hub_feature_list);
 
         AdapterPhoto adapterPhoto = new AdapterPhoto(photos, this);
         PhotoList.setAdapter(adapterPhoto);
         PhotoList.setLayoutManager( adapterPhoto.getLayoutManager() );
-
-        RecyclerClickerListener listener = position -> StartActivity( features.get(position) );
-        adapterButton = new AdapterButton(features, this, listener);
-        FeatureList.setAdapter( adapterButton );
-        FeatureList.setLayoutManager( adapterButton.getLayoutManager() );
 
         ListeningList<Boolean> ownerResult = new ListeningList<>();
         ownerResult.setOnAddListener(listeningList -> {

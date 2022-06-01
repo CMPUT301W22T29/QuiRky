@@ -28,18 +28,13 @@ import static android.content.Context.LOCATION_SERVICE;
 import com.example.quirky.ListeningList;
 import com.example.quirky.activities.MapActivity;
 
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.example.quirky.models.GeoLocation;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Map;
-import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
-import java.util.ArrayDeque;
 import java.util.function.Consumer;
 
 
@@ -139,7 +134,7 @@ public class MapController {
      * @param locations A listening list to add the location to
      */
     @SuppressLint("MissingPermission")
-    public void getLocation(ListeningList<Location> locations) {
+    public void getLocation(ListeningList<GeoLocation> locations) {
         Log.d("map", "getLocation");
         permissionsThenRun(new Runnable() {
             @RequiresApi(api = Build.VERSION_CODES.R)
@@ -148,11 +143,11 @@ public class MapController {
                 Log.d("map", "runGetLocation");
                 if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                     if (hasLocationPermissions(context)){
-                        if (Integer.valueOf(android.os.Build.VERSION.SDK) < 30){
+                        if (Integer.parseInt(android.os.Build.VERSION.SDK) < 30){
                         locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, new LocationListenerCompat() {
                             @Override
                             public void onLocationChanged(@NonNull Location location) {
-                                locations.add(location);
+                                locations.add( new GeoLocation(location) );
                             }
                         },null);
                         }//RequestLocationUpdate once
@@ -162,7 +157,7 @@ public class MapController {
                                 @SuppressLint("MissingPermission")
                                 @Override
                                 public void accept(Location location) {
-                                    locations.add(location);
+                                    locations.add( new GeoLocation(location) );
                                 }
                             });
                         }
@@ -171,31 +166,28 @@ public class MapController {
             }
         });
     }
-    public void writeQrCodesToMap(DatabaseController dc,MapView nearbymap, String title){
-        ArrayList<GeoPoint> locations = new ArrayList<>();
-        locations.add(new GeoPoint(10.0, 10.0, 3.0));
-        for (int i =0; i< locations.size();i++){
-            GeoPoint location = locations.get(i);
-            Marker qrmarker = new Marker(nearbymap);
-            qrmarker.setPosition(location);
-            qrmarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-            qrmarker.setAlpha((float) 0.6);
-            nearbymap.getOverlays().add(qrmarker);
-            qrmarker.setTitle(title);
-        }
+
+    public void writeQrCodesToMap(MapView map){
+        ArrayList<GeoLocation> locations = new ArrayList<>();
+        locations.add(new GeoLocation(10.0, 10.0));
+
+        for (GeoLocation location : locations)
+            setMarker(location, map, location.getDescription(), true);
     }
 
-    public void qrMarkerOnMap(GeoPoint startPoint, MapView nearbymap, String title) {
-        Marker qrmarker = new Marker(nearbymap);
-        qrmarker.setPosition(startPoint);
-        qrmarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        qrmarker.setAlpha((float)1);
-        nearbymap.getOverlays().add(qrmarker);
-        qrmarker.setTitle(title);
-    }
+    public void setMarker(GeoLocation point, MapView map, String text, boolean translucent) {
+        Marker marker = new Marker(map);
 
-    public LocationManager getLocationManager() {
-        return locationManager;
+        marker.setPosition(point.toGeoPoint());
+        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+
+        if(translucent)
+            marker.setAlpha((float) 0.6);
+        else
+            marker.setAlpha(1);
+
+        map.getOverlays().add(marker);
+        marker.setTitle(text);
     }
 }
 

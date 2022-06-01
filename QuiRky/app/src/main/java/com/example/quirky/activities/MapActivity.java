@@ -8,25 +8,21 @@
 package com.example.quirky.activities;
 
 import android.annotation.SuppressLint;
-import android.location.Location;
 
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.example.quirky.ListeningList;
-import com.example.quirky.controllers.DatabaseController;
 import com.example.quirky.controllers.MapController;
-import com.example.quirky.OnAddListener;
 import com.example.quirky.R;
+import com.example.quirky.models.GeoLocation;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
-import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;//Tile source factory used for manipulating the map
 
@@ -47,47 +43,34 @@ Publish Date:2019-09-27
  * @See MapController
  */
 public class MapActivity extends AppCompatActivity implements /*LocationListener,*/ ActivityCompat.OnRequestPermissionsResultCallback {
-    private MapView nearbyMap;
+    private MapView map;
     private MapController mapController;
     private IMapController iMapController;
-    private DatabaseController dc;
 
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Initialize the osmdroid configuration which can be done through
-        //Activity for the following two lines
+        // Initialize the osmdroid configuration stuff
         Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
-
-        //Create a map
         setContentView(R.layout.activity_map_layout);
 
-        Location location;
-        dc = new DatabaseController();
-        nearbyMap = (MapView) findViewById(R.id.map1);
-        iMapController = nearbyMap.getController();
+        map = (MapView) findViewById(R.id.map1);
+        iMapController = map.getController();
         mapController = new MapController(this);
-        nearbyMap.setTileSource(TileSourceFactory.MAPNIK);
-        nearbyMap.setBuiltInZoomControls(true);
-        nearbyMap.setMultiTouchControls(true);
+
+        map.setTileSource(TileSourceFactory.MAPNIK);
+        map.setBuiltInZoomControls(true);
+        map.setMultiTouchControls(true);
         iMapController.setZoom((double) 15);
-        Log.d("map", "mapOnCreate");
-        //Set a oncode listener, it's a call back when something is added to the list
-        ListeningList<Location> locations = new ListeningList<>();
-        locations.setOnAddListener(new OnAddListener<Location>() {
 
-            @Override
-            public void onAdd(ListeningList<Location> listeningList) {
-                Log.d("map", "onCodeAdded");
-                Location location = listeningList.get(0);
-                GeoPoint startPoint = new GeoPoint((double) location.getLatitude(), (double) location.getLongitude());
-                iMapController.setCenter(startPoint);
-                mapController.qrMarkerOnMap(startPoint,nearbyMap,"Current location");
-                mapController.writeQrCodesToMap(dc,nearbyMap,"A wild QR code appears");
-            }
-
+        // Create a Listening to read the current location into
+        ListeningList<GeoLocation> locations = new ListeningList<>();
+        locations.setOnAddListener(listeningList -> {
+            iMapController.setCenter( listeningList.get(0).toGeoPoint() );
+            mapController.setMarker(listeningList.get(0), map, "Current location", false);
+            mapController.writeQrCodesToMap(map);
         });
         mapController.getLocation(locations);
     }
@@ -99,24 +82,13 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
         mapController.onLocationPermissionRequestResult(requestCode, grantResults);
     }
 
-
-    //MapActivity test.
-    /*Case1:I open the MapActivity and allow the device to read my location, It directs me to my current location and
-    and I see a marker on the map that shows my current location and nearby qr codes stored in the firebase store.
-    I can zoom in and out with my finger and move around the map with my finger and the map will update my location as long
-    as I move.
-
-    Case2: I open the app and goes to MapActivity, I deny it's request to ask for accessing location permission I'm
-    not able to enter MapActivity and the app will prompt a Toast to encourage me to allow it's request.
-     */
-
     public void onResume () {
         super.onResume();
-        nearbyMap.onResume();
+        map.onResume();
     }
     public void onPause () {
         super.onPause();
-        nearbyMap.onPause();  //Compass
+        map.onPause();  //Compass
     }
 }
 

@@ -10,13 +10,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.quirky.ListeningList;
 import com.example.quirky.controllers.MemoryController;
-import com.example.quirky.OnAddListener;
 import com.example.quirky.models.Profile;
 import com.example.quirky.controllers.ProfileController;
 import com.example.quirky.R;
@@ -30,9 +30,10 @@ public class EditProfileActivity extends AppCompatActivity {
     EditText name, email, phone;
     Button cancel, save;
     Profile p;
-    String originalUsername;
     MemoryController mc;
     DatabaseController dc;
+
+    String original_username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,7 @@ public class EditProfileActivity extends AppCompatActivity {
         if(p == null)
             ExitWithError();
 
-        originalUsername = p.getUname();
+        original_username = p.getUname();
 
         mc = new MemoryController(this);
         dc = new DatabaseController();
@@ -59,7 +60,7 @@ public class EditProfileActivity extends AppCompatActivity {
         email.setText(p.getEmail());
         phone.setText(p.getPhone());
 
-        save.setOnClickListener(view -> updateProfile());
+        save.setOnClickListener(view -> checkName());
         cancel.setOnClickListener(view -> exit());
     }
 
@@ -74,58 +75,48 @@ public class EditProfileActivity extends AppCompatActivity {
 
     /**
      * Called once the user clicks the save button.
-     * Gets the new values from the input fields and determines if a new username was inputted.
-     * If so, checks FireStore if the username was taken
+     * Gets the value from the username field and checks if it is new.
+     * If so, checks if the username is valid and checks if it is already taken
      * Calls write() to do the saving
      */
-    private void updateProfile() {
-            String new_name = name.getText().toString();
-            String new_mail = email.getText().toString();
-            String new_phone = phone.getText().toString();
+    private void checkName() {
+        String new_name = name.getText().toString();
 
-            p.setUname(new_name);
-            p.setEmail(new_mail);
-            p.setPhone(new_phone);
-
-            // Check if user wants to change their username. Changing username complicates things.
-            if(!p.getUname().equals(originalUsername)) {
-
-                // First check that the username is valid
-                if (!ProfileController.validUsername(new_name) ) {
-                    Toast.makeText(this, "That's not a valid username!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // Then check if the username is taken
-                ListeningList<Profile> result = new ListeningList<>();
-                result.setOnAddListener(new OnAddListener<Profile>() {
-                    @Override
-                    public void onAdd(ListeningList<Profile> listeningList) {
-                        if(listeningList.get(0) != null) {
-                            Toast.makeText(getApplicationContext(), "That username is taken!", Toast.LENGTH_SHORT).show();
-                        } else {
-                            write(true);
-                        }
-                    }
-                });
-                dc.readProfile(p.getUname(), result);
-            } else {
-                write(false);
+        if(!p.getUname().equals(new_name)) {
+            // First check that the username is valid
+            if (!ProfileController.validUsername(new_name) ) {
+                Toast.makeText(this, "That's not a valid username!", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            // Then check if the username is taken by attempting to read the profile
+            ListeningList<Boolean> result = new ListeningList<>();
+            result.setOnAddListener(listeningList -> {
+                if(listeningList.get(0)) {
+                    Toast.makeText(getApplicationContext(), "That username is taken!", Toast.LENGTH_SHORT).show();
+                } else {
+                    p.setUname(new_name);
+                    write();
+                }
+            });
+            dc.userExists(new_name, result);
+        } else {
+            write();
+        }
     }
 
     /**
-     * Writes the new information to local memory and FireStore. If a new username was selected, creates a new profile in FireStore with the username, and deletes the old profile.
-     * @param newUsername If a new username was selected
+     * Writes the new information to local memory and FireStore
      */
-    private void write(Boolean newUsername) {
+    private void write() {
+        String new_mail = email.getText().toString();
+        String new_phone = phone.getText().toString();
+
+        p.setEmail(new_mail);
+        p.setPhone(new_phone);
+
         mc.writeUser(p);
-        dc.writeProfile(p);
-
-        if(newUsername) {
-            dc.deleteProfile(originalUsername);
-        }
-
+        dc.writeProfile(original_username, p);
         Toast.makeText(this, "Profile Updated", Toast.LENGTH_SHORT).show();
         exit();
     }

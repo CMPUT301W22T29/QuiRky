@@ -1,0 +1,194 @@
+/*
+ * Copyright (c) 2022. CMPUT301W22T29
+ * Subject to MIT License
+ * See full terms at https://github.com/CMPUT301W22T29/QuiRky/blob/main/LICENSE
+ */
+
+package com.example.quirky.models;
+
+import android.location.Location;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import org.osmdroid.util.GeoPoint;
+
+import java.lang.Math;
+
+/**
+ * Adapter class (OO Design Pattern) to allow Firebase API and OSMDroid API to work together easily
+ * Represents a location on the earth. Does not account for height/altitude
+ */
+public class GeoLocation implements Parcelable {
+
+    // These are the exact coordinates of the location
+    private double exactLat;
+    private double exactLong;
+
+    // Coordinates above 180* are not valid
+    private static final int limit = 180;
+
+    // These are approximate coordinates of the location, which are helpful for getting nearby points from FireStore using the Query class
+    private int approxLat;
+    private int approxLong;
+
+    // An optional description of the location. ex. an address or area description
+    private String description;
+
+    /**
+     * Empty constructor for FireStore
+     */
+    public GeoLocation() {
+        exactLat = 0;
+        exactLong = 0;
+
+        approxLat = 0;
+        approxLong = 0;
+
+        description = "";
+    }
+
+    /**
+     * Initialize GeoLocation with a latitude and longitude
+     */
+    public GeoLocation(double exactLat, double exactLong) {
+        assert( Math.abs(exactLat) < limit && Math.abs(exactLong) < limit) : "Those are invalid coordinates";
+        this.exactLat = exactLat;
+        this.exactLong = exactLong;
+
+        approxLat = (int) exactLat;
+        approxLong = (int) exactLong;
+
+        description = "";
+    }
+
+    /**
+     * Initialize a GeoLocation with a latitude, longitude, and a description
+     */
+    public GeoLocation(double exactLat, double exactLong, String description) {
+        assert( Math.abs(exactLat) < limit && Math.abs(exactLong) < limit) : "Those are invalid coordinates";
+        this.exactLat = exactLat;
+        this.exactLong = exactLong;
+
+        approxLat = (int) exactLat;
+        approxLong = (int) exactLong;
+
+        this.description = description;
+    }
+
+    /**
+     * Initialize a Geolocation from an android.util.location
+     * @param location The location object to initialize from
+     */
+    public GeoLocation(Location location) {
+        this.exactLat = location.getLatitude();
+        this.exactLong = location.getLongitude();
+
+        this.approxLat = (int) exactLat;
+        this.approxLong = (int) exactLong;
+
+        this.description = "";
+    }
+
+    /**
+     * Getter for exact latitude
+     */
+    public double getExactLat() {
+        return exactLat;
+    }
+
+    /**
+     * Getter for exact longitude
+     */
+    public double getExactLong() {
+        return exactLong;
+    }
+
+    /**
+     * Setter for exact latitude
+     */
+    public void setExactLat(double exactLat) {
+        assert Math.abs(exactLat) < limit : "That is not a valid coordinate!";
+        this.exactLat = exactLat;
+        this.approxLat = (int) exactLat;
+    }
+
+    /**
+     * Getter for exact longitude
+     */
+    public void setExactLong(double exactLong) {
+        assert Math.abs(exactLong) < limit : "That is not a valid coordinate!";
+        this.exactLong = exactLong;
+        this.approxLong = (int) exactLong;
+    }
+
+    /**
+     * Getter for approximate latitude
+     */
+    public int getApproxLat() {
+        return approxLat;
+    }
+
+    /**
+     * Getter for approximate longitude
+     */
+    public int getApproxLong() {
+        return approxLong;
+    }
+
+    /**
+     * Getter for location description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Getter for exact longitude
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * Typecast this GeoLocation into a GeoPoint for OSMDroid tools
+     * @return A GeoPoint object representing the same point as this GeoLocation
+     */
+    public GeoPoint toGeoPoint() {
+        return new GeoPoint(exactLat, exactLong, 0);
+    }
+
+    /* - - - - - - Parcelable implementation - - - - - - - */
+    protected GeoLocation(Parcel in) {
+        exactLat = in.readDouble();
+        exactLong = in.readDouble();
+        approxLat = in.readInt();
+        approxLong = in.readInt();
+        description = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeDouble(exactLat);
+        dest.writeDouble(exactLong);
+        dest.writeInt(approxLat);
+        dest.writeInt(approxLong);
+        dest.writeString(description);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<GeoLocation> CREATOR = new Creator<GeoLocation>() {
+        @Override
+        public GeoLocation createFromParcel(Parcel in) {
+            return new GeoLocation(in);
+        }
+
+        @Override
+        public GeoLocation[] newArray(int size) {
+            return new GeoLocation[size];
+        }
+    };
+}

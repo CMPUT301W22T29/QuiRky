@@ -11,6 +11,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,6 +65,7 @@ public class ManageCodesActivity extends AppCompatActivity {
         });
 
         for(String id : ids) {
+            Log.d(TAG, "User's QRCode ID: |" + id + "|");
             dc.readQRCode(id, codes);
         }
     }
@@ -77,6 +79,7 @@ public class ManageCodesActivity extends AppCompatActivity {
 
         ArrayList<String> CodeData = new ArrayList<>();
         for(QRCode qr : codes) {
+            if(qr == null) continue;
             CodeData.add(qr.getContent());
         }
 

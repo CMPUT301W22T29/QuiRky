@@ -7,7 +7,6 @@
 package com.example.quirky.controllers;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -17,12 +16,15 @@ import androidx.annotation.NonNull;
 
 import com.example.quirky.ListeningList;
 import com.example.quirky.OnAddListener;
-import com.example.quirky.R;
+import com.example.quirky.models.Comment;
+import com.example.quirky.models.GeoLocation;
 import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -31,11 +33,7 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -43,9 +41,7 @@ import java.util.List;
  * @author Jonathen Adsit
  * This is a controller class that does all the reading and writing to FireStore
  * TODO: Consider removing the coupling from the model classes,
- *      by creating methods to set the collection/document to read from
- *      And creating methods to read a single field, an object from a document, and a group of objects from a collection.
- */
+*/
 
 // Reading & Writing Custom Objects to FireStore taken from:
 // https://youtu.be/jJnm3YKfAUI
@@ -54,8 +50,8 @@ import java.util.List;
 // Published April 15, 2018
 @SuppressWarnings({"unchecked", "ConstantConditions"})
 public class DatabaseController {
-    private final String TAG = "DatabaseController says: ";
-    private final long MAX_DOWNLOAD_SIZE = 10485760; // 10485760 Bytes == 10 mB
+    private static final String TAG = "DatabaseController says: ";
+    private static final long MAX_DOWNLOAD_SIZE = 10485760; // 10485760 Bytes == 10 mB
 
     private final FirebaseFirestore firestore;
     private CollectionReference collection;
@@ -86,24 +82,64 @@ public class DatabaseController {
     }
 
     /**
-     * Write a QRCode to the database. Use this method to update any of the fields a QRCode has.
-     * @param qr The QRCode to write/update
+     * Write a QRCode to the database.
+     * Checks if the QRCode already exists in the database.
+     * If so, updates that document rather than creating a new one
+     * @param newCode The QRCode to write/update
      */
-    public void writeQRCode(QRCode qr) {
-        assert qr != null : "You can't write a null object to the database!";
+    public void writeQRCode(QRCode newCode) {
+        assert newCode != null : "You can't write a null QRCode to the database!";
+
+        ListeningList<QRCode> code = new ListeningList<>();
+        code.setOnAddListener(listeningList -> {
+            if(listeningList.size() > 0) {
+                updateQRCode(newCode, listeningList.get(0));
+            } else {
+                collection = firestore.collection("QRCodes");
+                collection.document().set(newCode).addOnCompleteListener(writeListener);
+            }
+        });
+        readQRCode( newCode.getId(), code);
+    }
+
+    private void updateQRCode(QRCode newCode, QRCode oldCode) {
+        for(String player : newCode.getScanners())
+            oldCode.addScanner(player);
+
+        for(String title : newCode.getTitles())
+            oldCode.addTitle(title);
+
+        for(Comment comment : newCode.getComments())
+            oldCode.addComment(comment);
+
+        for(GeoLocation location : newCode.getLocations())
+            oldCode.addLocation(location);
 
         collection = firestore.collection("QRCodes");
-        collection.document(qr.getId()).set(qr).addOnCompleteListener(writeListener);
+        collection.whereEqualTo("id", oldCode.getId()).get().addOnCompleteListener(task ->
+                task.getResult().getDocuments().get(0).getReference().set(oldCode)
+        );
     }
 
     /**
-     * Write a profile to the database. Use this method to also update a profile in the database, if any field has changed
-     * @param p The profile to write/update
+     * Write a profile to the database
+     * Checks if the profile already exists in the database
+     * If a document already contains the profile, overwrite it.
+     * Otherwise, creates a new document for the profile.
+     * @param p The profile to write
      */
-    public void writeProfile(Profile p) {
+    public void writeProfile(String original_username, Profile p) {
         assert p != null : "You can't write a null object to the database!";
+
         collection = firestore.collection("users");
-        collection.document(p.getUname()).set(p).addOnCompleteListener(writeListener);
+        collection.whereEqualTo("uname", original_username).get().addOnCompleteListener(task -> {
+            if(task.getResult().getDocuments().size() > 0) {
+                task.getResult().getDocuments().get(0).getReference().set(p).addOnCompleteListener(writeListener);
+            } else {
+                collection = firestore.collection("users");
+                collection.document().set(p).addOnCompleteListener(writeListener);
+            }
+        });
     }
 
     /**
@@ -111,9 +147,21 @@ public class DatabaseController {
      * @param qr The QRCode to delete
      */
     public void deleteQRCode(String qr) {
-        // Delete from FireStore
+
+        // Delete from FireStore. The Document ID is unknown so it must be read, then it can be referenced and deleted
         collection = firestore.collection("QRCodes");
-        collection.document(qr).delete().addOnCompleteListener(deleteListener);
+        collection.whereEqualTo("id", qr).get().addOnCompleteListener(task -> {
+
+            int size = task.getResult().getDocuments().size();
+            if(size > 1)
+                Log.d(TAG, "For some reason more than 1 QRCode had that ID! Only one was deleted!");
+            else if (size < 1)
+                Log.d(TAG, "A QRCode with that ID did not exist in the database!");
+
+            DocumentSnapshot doc = task.getResult().getDocuments().get(0);
+            doc.getReference().delete().addOnCompleteListener(deleteListener);
+
+        });
 
         // Delete from Firebase Storage
         storage = firebase.getReference().child("photos").child(qr);
@@ -125,8 +173,15 @@ public class DatabaseController {
      * @param username The username of the profile to delete
      */
     public void deleteProfile(String username) {
+        // Delete from FireStore. The Document ID is unknown so it must be read, then it can be referenced and deleted
         collection = firestore.collection("users");
-        collection.document(username).delete().addOnCompleteListener(deleteListener);
+        collection.whereEqualTo("uname", username).get().addOnCompleteListener(task -> {
+            if (task.getResult().getDocuments().size() < 1)
+                Log.d(TAG, "A user with that name did not exist in the database!");
+
+            DocumentSnapshot doc = task.getResult().getDocuments().get(0);
+            doc.getReference().delete().addOnCompleteListener(deleteListener);
+        });
     }
 
     /**
@@ -140,8 +195,35 @@ public class DatabaseController {
         assert (!username.equals("") && !username.equals(" ")) : "Tried calling readProfile() with an empty username! Did you mean to use readAllUsers()?";
 
         collection = firestore.collection("users");
-        collection.document(username).get().addOnCompleteListener(task -> {
-            data.add( task.getResult().toObject(Profile.class) );
+        collection.whereEqualTo("name", username).get().addOnCompleteListener(task -> {
+            int size = task.getResult().getDocuments().size();
+            if(size < 1) {
+                Log.d(TAG, "A user with that name did not exist! No data read!");
+                data.addNone();
+                return;
+            }
+
+            DocumentSnapshot doc = task.getResult().getDocuments().get(0);
+            data.add( doc.toObject(Profile.class));
+        });
+    }
+
+    /**
+     * Checks if a user with the given username already exists in the database
+     * This is an asynch operation and will not return the result
+     * When the read completes, the boolean if placed in the listening list
+     * @param username A username to check the database for
+     * @param data A listening list containing booleans. If the username is taken, true is added to the list. False otherwise.
+     */
+    public void userExists(String username, ListeningList<Boolean> data) {
+        collection = firestore.collection("users");
+        collection.whereEqualTo("uname", username).get().addOnCompleteListener(task -> {
+            int docs = task.getResult().getDocuments().size();
+            Log.d(TAG, docs + " documents containing this players");
+            if(task.getResult().getDocuments().size() > 0)
+                data.add(true);
+            else
+                data.add(false);
         });
     }
 
@@ -154,9 +236,16 @@ public class DatabaseController {
      */
     public void isOwner(String username, ListeningList<Boolean> data) {
         collection = firestore.collection("users");
-        collection.document(username).get().addOnCompleteListener(task -> {
-            if(task.getResult().contains("owner"))
-                data.add( task.getResult().getBoolean("owner") );
+        collection.whereEqualTo("uname", username).get().addOnCompleteListener(task -> {
+
+            List<DocumentSnapshot> docs = task.getResult().getDocuments();
+            if(docs.size() < 1) {
+                data.add(false);
+                return;
+            }
+
+            if(docs.get(0).contains("owner"))
+                data.add( docs.get(0).getBoolean("owner") );
             else
                 data.add( false );
         });
@@ -192,9 +281,15 @@ public class DatabaseController {
      */
     public void readQRCode(String id, ListeningList<QRCode> data) {
         collection = firestore.collection("QRCodes");
-        collection.document(id).get().addOnCompleteListener(task -> {
-            QRCode result = task.getResult().toObject(QRCode.class);
-            data.add(result);
+        collection.whereEqualTo("id", id).get().addOnCompleteListener(task -> {
+            int size = task.getResult().getDocuments().size();
+            if(size != 1) {
+                Log.d(TAG, "That id did not match up with exactly 1 document! Adding Nothing");
+                data.addNone();
+            } else {
+                QRCode result = task.getResult().getDocuments().get(0).toObject(QRCode.class);
+                data.add(result);
+            }
         });
     }
 
@@ -216,11 +311,22 @@ public class DatabaseController {
      * Write a one-use login password to a profile in the database.
      * The password should be the hash of the QRCode the player will scan to login to their account.
      * @param hash The password to write to the account
-     * @param user The username of the profile to write the password to
+     * @param username The username of the profile to write the password to
      */
-    public void writeLoginHash(String hash, String user) {
+    public void writeLoginHash(String hash, String username) {
+        // The Document ID of this user is not known, so it must be read first
         collection = firestore.collection("users");
-        collection.document(user).update("loginhash", hash).addOnCompleteListener(writeListener);
+        collection.whereEqualTo("uname", username).get().addOnCompleteListener(task -> {
+            if(task.getResult().getDocuments().size() < 1)
+                Log.d(TAG, "No user with name " + username + " exists in the database! Login hash not written!");
+            else {
+                DocumentReference doc = task.getResult().getDocuments().get(0).getReference();
+                doc.update("loginhash", hash).addOnCompleteListener(writeListener);
+            }
+
+
+        });
+
     }
 
     /**
@@ -231,16 +337,19 @@ public class DatabaseController {
      * @param data A listening list containing Profiles. The read result is placed here.
      */
     public void readLoginHash(String hash, ListeningList<Profile> data) {
+
+        assert ! hash.equals("") : "Must provide a hash code to read!";
+
         collection = firestore.collection("users");
         collection.whereEqualTo("loginhash", hash).get().addOnCompleteListener(task -> {
             QuerySnapshot q = task.getResult();
             if(q.size() != 1) {
                 Log.d(TAG, "For some reason reading a login hash did not produce exactly 1 profile!");
-                data.add(null);
+                data.addNone();
             } else {
                 Profile p = q.getDocuments().get(0).toObject(Profile.class);
-                firestore.collection("users").document(p.getUname()).update("loginhash", "");
                 data.add(p);
+                writeLoginHash("", p.getUname());
             }
         });
     }
@@ -357,18 +466,22 @@ public class DatabaseController {
 
             if(files.size() >= 5) {
 
-                // Read the metadata of each file from Firebase. Use a ListeningList to store results
+                // Create a ListeningList to read the Metadata of each file into
                 ListeningList<StorageMetadata> metadata = new ListeningList<>();
                 metadata.setOnAddListener(listeningList -> {
 
+                    if(listeningList.size() < files.size())
+                        return;
+
                     // Use the metadata of the files to determine the oldest one
                     StorageMetadata oldest = metadata.get(0);
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < metadata.size(); i++) {
                         if (metadata.get(i).getCreationTimeMillis() < oldest.getCreationTimeMillis())
                             oldest = metadata.get(i);
                     }
 
                     // Delete the oldest file
+                    Log.d(TAG, "Deleting->|" + oldest.getPath());
                     firebase.getReference().child("recent").child( oldest.getName() ).delete();
                 });
 

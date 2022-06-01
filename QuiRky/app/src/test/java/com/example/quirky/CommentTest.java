@@ -13,34 +13,53 @@ import static org.junit.Assert.*;
 import com.example.quirky.models.Comment;
 
 public class CommentTest {
+    Comment c;
+    String content, user;
 
     // Test the constructor initialises values correctly
     @Test
     public void constructor() {
+        content = "content";
+        user = "users";
+        c = new Comment(content, user);
 
-        Comment c = new Comment("content", "user");
-
-        assertEquals("content", c.getContent());
-        assertEquals("user", c.getUname());
+        assertEquals(content, c.getContent());
+        assertEquals(user, c.getUname());
     }
 
+    // Follow up for edge cases
+    @Test
+    public void constructorEdgeCases() {
+        content = "";
+        user = "";
+        c = new Comment(content, user);
 
-//    @Test
-//    public void compare() {
-//        Date before = new Date(10);
-//        Date after = new Date(10000);
-//
-//        Comment OldComment = new Comment("", "", before);
-//        Comment YoungComment = new Comment("", "", after);
-//
-//        int result;
-//        result = OldComment.compareTo(YoungComment);
-//        assertTrue(result < 0);
-//
-//        result = YoungComment.compareTo(OldComment);
-//        assertTrue(result > 0);
-//
-//        result = OldComment.compareTo(OldComment);
-//        assertEquals(0, result);
-//    }
+        assertEquals(content, c.getContent());
+        assertEquals(user, c.getUname());
+
+        content = "123&\n~{aAzZ";
+        user = "123&\n~{aAzZ";
+        c = new Comment(content, user);
+
+        assertEquals(content, c.getContent());
+        assertEquals(user, c.getUname());
+    }
+
+    // Test the content setter method
+    @Test
+    public void setters() {
+        c = new Comment("initial content", "a");
+
+        content = "new content";
+        c.setContent(content);
+        assertEquals(content, c.getContent());
+
+        content = "";
+        c.setContent(content);
+        assertEquals(content, c.getContent());
+
+        content = "123&\n~{aAzZ";
+        c.setContent(content);
+        assertEquals(content, c.getContent());
+    }
 }

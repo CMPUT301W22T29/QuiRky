@@ -11,8 +11,6 @@ import android.os.Parcelable;
 
 import com.example.quirky.controllers.QRCodeController;
 
-import org.osmdroid.util.GeoPoint;
-
 import java.util.ArrayList;
 
 
@@ -29,7 +27,7 @@ public class QRCode implements Parcelable {
     private String content, id; // id is hash of content.
     private int score;
     private ArrayList<Comment> comments;
-    private ArrayList<GeoPoint> locations;
+    private ArrayList<GeoLocation> locations;
     private ArrayList<String> scanners; // Users who have scanned this code.
     private ArrayList<String> titles; // User created titles for the QRCode.
 
@@ -58,7 +56,7 @@ public class QRCode implements Parcelable {
      * @param locations The list of locations the code has been scanned
      * @param scanners The list of users that has scanned the code
      */
-    public QRCode(String content, int score, ArrayList<Comment> comments, ArrayList<GeoPoint> locations, ArrayList<String> scanners, ArrayList<String> titles) {
+    public QRCode(String content, int score, ArrayList<Comment> comments, ArrayList<GeoLocation> locations, ArrayList<String> scanners, ArrayList<String> titles) {
         this.content = content;
         this.id = QRCodeController.SHA256(content);
         this.score = score;
@@ -107,7 +105,7 @@ public class QRCode implements Parcelable {
     /**
      * Get the list of locations this QRCode has been scanned at
      */
-    public ArrayList<GeoPoint> getLocations() { return locations; }
+    public ArrayList<GeoLocation> getLocations() { return locations; }
 
     public ArrayList<String> getTitles() {
         if(titles == null)
@@ -122,6 +120,8 @@ public class QRCode implements Parcelable {
      */
     public void addComment(Comment c) throws AssertionError {
         assert c != null : "Can not add a null object to the list!";
+        if(comments.contains(content))
+            return;
         comments.add(c);
     }
 
@@ -144,22 +144,24 @@ public class QRCode implements Parcelable {
 
     /**
      * Add a location to the list of places the QRCode has been scanned at
-     * @param gp The GeoPoint to add
+     * @param location The GeoPoint to add
      */
-    public void addLocation(GeoPoint gp) {
-        locations.add(gp);
+    public void addLocation(GeoLocation location) {
+        if(locations.contains(location))
+            return;
+        locations.add(location);
     }
 
     /**
      * Remove a location from the list of places the QRCode has been scanned at
-     * @param gp The GeoPoint to remove
+     * @param location The GeoPoint to remove
      *           TODO: Consider if we need this method. Under what circumstance will it be called?
      */
-    public void removeLocation(GeoPoint gp) {
-        locations.remove(gp);
+    public void removeLocation(GeoLocation location) {
+        locations.remove(location);
     }
 
-    public void setLocations(ArrayList<GeoPoint> locations) {
+    public void setLocations(ArrayList<GeoLocation> locations) {
         this.locations = locations;
     }
 
@@ -169,6 +171,8 @@ public class QRCode implements Parcelable {
      * @param username The username of the player that has scanned it
      */
     public void addScanner(String username) {
+        if( scanners.contains(username))
+            return;
         scanners.add(username);
     }
 
@@ -184,12 +188,13 @@ public class QRCode implements Parcelable {
         this.scanners = scanners;
     }
 
-    public void addTitle(String title) { titles.add(title); }
+    public void addTitle(String title) {
+        if( titles.contains(title) )
+            return;
+        titles.add(title);
+    }
 
     public void removeTitle(String title) { titles.remove(title); }
-
-    public void setTitle(ArrayList<String> titles) { this.titles = titles; }
-
 
     public void setContent(String content) {
         this.content = content;
@@ -212,7 +217,7 @@ public class QRCode implements Parcelable {
         id = in.readString();
         score = in.readInt();
         comments = in.createTypedArrayList(Comment.CREATOR);
-        locations = in.createTypedArrayList(GeoPoint.CREATOR);
+        locations = in.createTypedArrayList(GeoLocation.CREATOR);
         scanners = in.createStringArrayList();
         titles = in.createStringArrayList();
     }

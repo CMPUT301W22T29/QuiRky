@@ -125,4 +125,15 @@ public class ProfileTest {
         assertEquals(score1+score2, p.getPointsOfScannedCodes());
         assertEquals(score2, p.getPointsOfLargestCodes());
     }
+
+    @Test
+    public void ToString() {
+        String name = "person";
+        Profile p = new Profile(name);
+        assertEquals(name, p.toString());
+
+        name = "";
+        p = new Profile(name);
+        assertEquals(name, p.toString());
+    }
 }
