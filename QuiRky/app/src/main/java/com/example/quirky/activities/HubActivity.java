@@ -6,6 +6,7 @@
 
 package com.example.quirky.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -117,9 +119,7 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
                 break;
 
             case "Make some QRs!" :
-                i = new Intent(this, GenerateActivity.class);
-                startActivity(i);
-                break;
+                startGenerateActivity();
 
             case "My QRCodes" :
                 i = new Intent(this, ManageCodesActivity.class);
@@ -162,11 +162,36 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
                 break;
 
             case "Logout" :
-                mc.deleteUser();
-                i = new Intent(this, LoginActivity.class);
-                finish();
-                startActivity(i);
-                break;
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                DialogInterface.OnClickListener LogoutListener = (dialog, button) -> {
+                    if(button == DialogInterface.BUTTON_NEUTRAL)
+                        startGenerateActivity();
+                    else if (button == DialogInterface.BUTTON_POSITIVE)
+                        confirmLogout();
+                };
+
+                builder.setTitle("Logout?").setMessage("The only way to log back in is with a generated QRCode.\nAre you sure you would like to logout?");
+                builder.setCancelable(true);
+                builder.setNegativeButton("Cancel", LogoutListener);
+                builder.setNeutralButton("Generate QRCode", LogoutListener);
+                builder.setPositiveButton("Yes, Logout", LogoutListener);
+
+                builder.create().show();
         }
+    }
+
+    private void startGenerateActivity() {
+        Intent i = new Intent(this, GenerateActivity.class);
+        startActivity(i);
+    }
+
+
+    public void confirmLogout() {
+        Intent i;
+        mc.deleteUser();
+        i = new Intent(this, LoginActivity.class);
+        finish();
+        startActivity(i);
     }
 }
