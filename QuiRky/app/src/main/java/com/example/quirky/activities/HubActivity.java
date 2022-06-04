@@ -7,14 +7,18 @@
 package com.example.quirky.activities;
 
 import android.content.DialogInterface;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -68,6 +72,36 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
         FeatureList.setLayoutManager( adapterButton.getLayoutManager() );
 
         dc.getRecentPhotos(photos);
+    }
+
+    /**
+     * Called when a permissions dialogue started from the hub activity is resolved
+     *
+     * If permissions were granted, continues doing what the user was trying to do before the
+     * permission request dialogue showed up.
+     *
+     * @param requestCode Internal number representing what is being requested
+     * @param permissions
+     * @param grantResults Array containing the results of one or more permission requests
+     */
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // Check the result of the permission request if camera permissions are being requested
+        cac.getCameraPermissionRequestResult(requestCode, grantResults);
+
+        // If location permissions are being requested
+        if (MapController.requestingLocationPermissions(requestCode)) {
+
+            // If location permissions were granted, start the map activity, else, don't.
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission Granted!", Toast.LENGTH_SHORT).show();
+                Intent in = new Intent(this, MapActivity.class);
+                startActivity(in);
+            } else {
+                Toast.makeText(this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     /**
