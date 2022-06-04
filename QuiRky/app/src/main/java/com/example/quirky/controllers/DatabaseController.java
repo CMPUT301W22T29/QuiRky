@@ -12,14 +12,12 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.example.quirky.ListeningList;
-import com.example.quirky.OnAddListener;
 import com.example.quirky.models.Comment;
 import com.example.quirky.models.GeoLocation;
 import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
+import com.example.quirky.models.UserOwnedQRCode;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -270,6 +268,16 @@ public class DatabaseController {
             collection.get().addOnCompleteListener(complete);
         else
             collection.whereGreaterThanOrEqualTo("uname", search).get().addOnCompleteListener(complete);
+    }
+
+    public void readNearbyCodes(GeoLocation location, ListeningList<UserOwnedQRCode> data) {
+        int lat = location.getApproxLat();
+        int lon = location.getApproxLong();
+        collection = firestore.collection(String.format("locations/latitude%d/longitude%d/qr/codes", lat, lon));
+        collection.get().addOnCompleteListener(task -> {
+            Collection<UserOwnedQRCode> result = task.getResult().toObjects(UserOwnedQRCode.class);
+            data.addAll(result);
+        });
     }
 
     /**
