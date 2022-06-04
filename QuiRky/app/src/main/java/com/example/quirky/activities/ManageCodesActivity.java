@@ -8,27 +8,23 @@ package com.example.quirky.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.util.Log;
-import android.widget.CompoundButton;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.quirky.ListeningList;
-import com.example.quirky.OnAddListener;
 import com.example.quirky.AdapterText;
-import com.example.quirky.models.Profile;
-import com.example.quirky.models.QRCode;
-import com.example.quirky.controllers.QRCodeController;
+import com.example.quirky.AdapterTextSubtext;
+import com.example.quirky.ListeningList;
 import com.example.quirky.R;
 import com.example.quirky.RecyclerClickerListener;
 import com.example.quirky.controllers.DatabaseController;
-import com.google.rpc.Code;
+import com.example.quirky.models.Profile;
+import com.example.quirky.models.QRCode;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -40,7 +36,15 @@ public class ManageCodesActivity extends AppCompatActivity {
     private final String TAG = "ManageCodesActivity says";
 
     private ListeningList<QRCode> codes;
+    private ArrayList<String> content;
+    private ArrayList<String> points;
+
     private DatabaseController dc;
+
+    private AdapterTextSubtext adapter;
+    private final RecyclerClickerListener recyclerListener = this::startViewQRActivity;
+
+    private ToggleButton sortButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +55,14 @@ public class ManageCodesActivity extends AppCompatActivity {
         if(p == null)
             ExitWithError();
 
-        dc = new DatabaseController();
+        String text = p.getUname() + "'s Codes";
 
         TextView title = findViewById(R.id.manage_codes_title);
-        String text = p.getUname() + "'s Codes";
         title.setText(text);
+
+        sortButton = findViewById(R.id.sort_by_score_toggle);
+        sortButton.setTextOff("Low to High");
+        sortButton.setTextOn("High to Low");
 
         ArrayList<String> ids = p.getScanned();
         codes = new ListeningList<>();
@@ -64,6 +71,7 @@ public class ManageCodesActivity extends AppCompatActivity {
                 doneReading();
         });
 
+        dc = new DatabaseController();
         for(String id : ids) {
             Log.d(TAG, "User's QRCode ID: |" + id + "|");
             dc.readQRCode(id, codes);
@@ -77,17 +85,16 @@ public class ManageCodesActivity extends AppCompatActivity {
     private void doneReading() {
         RecyclerView qr_list = findViewById(R.id.qr_list);
 
-        ArrayList<String> CodeData = new ArrayList<>();
-        for(QRCode qr : codes) {
-            if(qr == null) continue;
-            CodeData.add(qr.getContent());
-        }
+        content = new ArrayList<>();
+        points = new ArrayList<>();
 
-        RecyclerClickerListener recyclerListener = this::startViewQRActivity;   // This is an onClickListener for the Recycler's Items, it looks weird because Android Studio wants me to simplify it.
 
-        AdapterText QRCodeAdapter = new AdapterText(CodeData, this, recyclerListener);
-        qr_list.setAdapter(QRCodeAdapter);
-        qr_list.setLayoutManager(QRCodeAdapter.getLayoutManager());
+        adapter = new AdapterTextSubtext(content, points, this, recyclerListener);
+        qr_list.setAdapter(adapter);
+        qr_list.setLayoutManager(adapter.getLayoutManager());
+
+        sortButton.setOnClickListener(v -> sort());
+        sort();
     }
 
     /**
@@ -108,5 +115,29 @@ public class ManageCodesActivity extends AppCompatActivity {
     private void ExitWithError() {
         Toast.makeText(this, "User was not found!", Toast.LENGTH_SHORT).show();
         finish();
+    }
+
+    private void sort() {
+        boolean isChecked = sortButton.isChecked();
+
+        Comparator<QRCode> sorter;
+
+        if(isChecked) {
+            sorter = (code1, code2) -> (code2.getScore() - code1.getScore()); // Android studio would like to simplify this statement, but I have chosen not to.
+        } else {
+            sorter = (code1, code2) -> (code1.getScore() - code2.getScore());
+        }
+
+        codes.sort(sorter);
+        content.clear();
+        points.clear();
+        for(QRCode qr : codes) {
+            if(qr == null) continue;
+            content.add(qr.getContent());
+            points.add(qr.getScore() + " pts");
+        }
+
+        adapter.sortData(content, points);
+        adapter.notifyDataSetChanged();
     }
 }
