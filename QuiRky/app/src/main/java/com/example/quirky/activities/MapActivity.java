@@ -95,6 +95,7 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
             //dc.readNearbyCodes(listeningList.get(0), nearbyCodes);
 
             //sike, hardcoded long and lat:
+            //FIXME: Implement the other needed stuff and take away this hard coded crap.
             dc.readNearbyCodes(new GeoLocation(), nearbyCodes);
         });
 

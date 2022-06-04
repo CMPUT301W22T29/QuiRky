@@ -28,6 +28,10 @@ public class UserOwnedQRCode {
     private String title; // User created title for the QRCode.
     private Bitmap photo; // user's photo, could make this a list if we want user's to be able to add several pics.
 
+    public UserOwnedQRCode() {
+
+    }
+
     public UserOwnedQRCode(String id, GeoLocation location) {
         this.id = id;
         this.location = location;
@@ -40,4 +44,6 @@ public class UserOwnedQRCode {
     public GeoLocation getLocation() {
         return location;
     }
+
+
 }
