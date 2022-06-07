@@ -31,6 +31,7 @@ import com.example.quirky.models.QRCode;
 import com.example.quirky.controllers.QRCodeController;
 import com.example.quirky.R;
 import com.example.quirky.controllers.CameraController;
+import com.example.quirky.models.UserOwnedQRCode;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -144,12 +145,13 @@ public class CodeScannerActivity extends AppCompatActivity implements ActivityCo
 
                     ListeningList<GeoLocation> currentLocation = new ListeningList<>();
                     currentLocation.setOnAddListener(listeningList -> {
-                        qr.addLocation( listeningList.get(0) );
-                        save(qr);
+                        GeoLocation location = listeningList.get(0);
+                        qr.addLocation(location);
+                        save(qr, location);
                     });
                     mapController.getLocation(currentLocation);
                 } else {
-                    save(qr);
+                    save(qr, null);
                 }
             });
         }
@@ -159,12 +161,20 @@ public class CodeScannerActivity extends AppCompatActivity implements ActivityCo
      * Save a QRCode to the Database. Update the player's profile to include the newly scanned code.
      * @param qr The QRCode to be saved
      */
-    public void save(QRCode qr) {
+    public void save(QRCode qr, GeoLocation location) {
         Profile p = mc.read();
 
-        if(! p.addScanned(qr.getId())) {
+        if (! p.addScanned(qr.getId())) {
             Toast.makeText(this, "You already have that QRCode!", Toast.LENGTH_SHORT).show();
             return;
+        }
+
+        if (location != null) {
+            UserOwnedQRCode userOwnedQRCode = new UserOwnedQRCode(qr.getId(), location);
+            //TODO: saveNearbyCode()
+            // Basically, get the id and location data from qr, then make a
+            // UserOwnedQRCode with it, then save it to the database.
+            dc.writeNearbyQRCode(userOwnedQRCode);  //TODO: test and or finish me.
         }
 
         qr.addScanner(p.getUname());

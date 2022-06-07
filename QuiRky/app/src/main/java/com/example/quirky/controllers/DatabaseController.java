@@ -79,6 +79,26 @@ public class DatabaseController {
         };
     }
 
+    //TODO: Test me, and or finish me.
+    public void writeNearbyQRCode(UserOwnedQRCode nearbyCode) {
+        assert nearbyCode != null : "You can't write a null QRCode to the database!";
+
+        GeoLocation location = nearbyCode.getLocation();
+        int lat = location.getApproxLat();
+        int lon = location.getApproxLong();
+        collection = firestore.collection(String.format("locations/latitude%d/longitude%d/qr/codes", lat, lon));
+
+        collection
+                .whereEqualTo("location/exactLat", nearbyCode.getLocation().getExactLat())
+                .whereEqualTo("location/exactLong", nearbyCode.getLocation().getExactLong())
+                .whereEqualTo("id", nearbyCode.getId())
+                .get().addOnCompleteListener(task -> {
+                    if (task.getResult().getDocuments().size() == 0) {
+                        collection.document().set(nearbyCode).addOnCompleteListener(writeListener);
+                    }
+                });
+    }
+
     /**
      * Write a QRCode to the database.
      * Checks if the QRCode already exists in the database.
@@ -270,6 +290,24 @@ public class DatabaseController {
             collection.whereGreaterThanOrEqualTo("uname", search).get().addOnCompleteListener(complete);
     }
 
+    /**
+     * Read all QRCodes whose approximate longitude and latitude match location's
+     *
+     * QRCode references are stored in groups with other QRCode references that have the same floor
+     * of their coordinate values. E.g. 2 QRCodes with coordinates (6.9, 7.2) and (6.0, 7.6)
+     * respectively would be in the same group. This works out to a very very approximate 100km
+     * radius. If a smaller radius is desired, the qr codes returned from this method can be
+     * searched.
+     * This method stores the data retrieved from the database in a ListeningList, which calls
+     * onAdd() whenever something is added to it. Override onAdd() with whatever processing should
+     * be performed on the data.
+     * The data retrieved from the database is not the same as the QRCodes retrieved by
+     * readQRCode(). Rather, it retrieves a location specific subset of the data contained by the
+     * usual qr codes. Currently, it only retrieves the QRCode id and location.
+     *
+     * @param location The reference location in which the retrieved QRCodes will be near to.
+     * @param data The container in which the retrieved data will be add
+     */
     public void readNearbyCodes(GeoLocation location, ListeningList<UserOwnedQRCode> data) {
         int lat = location.getApproxLat();
         int lon = location.getApproxLong();
