@@ -79,24 +79,24 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
         nearbyCodes.setOnAddListener(new OnAddListener<UserOwnedQRCode>() {
             @Override
             public void onAdd(ListeningList<UserOwnedQRCode> listeningList) {
-                GeoLocation location = listeningList.get(listeningList.size() - 1).getLocation();
 
-                // Yeet QRCode the map.
-                mapController.setMarker(location, map, location.getDescription(), true);
+                // Yeet QRCodes the map.
+                for (UserOwnedQRCode userOwnedQRCode : listeningList) {
+                    GeoLocation location = userOwnedQRCode.getLocation();
+                    mapController.setMarker(location, map, location.getDescription(), true);
+                }
             }
         });
 
         // Specify what happens once we receive current location data from a provider.
+        //Note, if you cut and paste this code to use for dynamic location updates, be mindful that you may end up with duplicate qr code map markers.
+        //  might be able to fix this by clearing the map overlays in the nearbyCodes onAdd.
         locations.setOnAddListener(listeningList -> {
             iMapController.setCenter( listeningList.get(0).toGeoPoint() );
             mapController.setMarker(listeningList.get(0), map, "Current location", false);
 
             // Use our location to find nearby QRCodes
-            //dc.readNearbyCodes(listeningList.get(0), nearbyCodes);
-
-            //sike, hardcoded long and lat:
-            //FIXME: Implement the other needed stuff and take away this hard coded crap.
-            dc.readNearbyCodes(new GeoLocation(), nearbyCodes);
+            dc.readNearbyCodes(listeningList.get(0), nearbyCodes);
         });
 
         mapController.getLocation(locations);

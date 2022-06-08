@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -79,22 +80,25 @@ public class DatabaseController {
         };
     }
 
-    //TODO: Test me, and or finish me.
+    /**
+     * TODO: Finish the doc comment
+     * @param nearbyCode
+     */
     public void writeNearbyQRCode(UserOwnedQRCode nearbyCode) {
         assert nearbyCode != null : "You can't write a null QRCode to the database!";
 
         GeoLocation location = nearbyCode.getLocation();
         int lat = location.getApproxLat();
         int lon = location.getApproxLong();
-        collection = firestore.collection(String.format("locations/latitude%d/longitude%d/qr/codes", lat, lon));
+        CollectionReference nearbyCollection = firestore.collection(String.format("locations/latitude%d/longitude%d/qr/codes", lat, lon));
 
-        collection
-                .whereEqualTo("location/exactLat", nearbyCode.getLocation().getExactLat())
-                .whereEqualTo("location/exactLong", nearbyCode.getLocation().getExactLong())
+        nearbyCollection
+                .whereEqualTo(FieldPath.of("location/exactLat"), nearbyCode.getLocation().getExactLat())
+                .whereEqualTo(FieldPath.of("location/exactLong"), nearbyCode.getLocation().getExactLong())
                 .whereEqualTo("id", nearbyCode.getId())
                 .get().addOnCompleteListener(task -> {
                     if (task.getResult().getDocuments().size() == 0) {
-                        collection.document().set(nearbyCode).addOnCompleteListener(writeListener);
+                        nearbyCollection.document().set(nearbyCode).addOnCompleteListener(writeListener);
                     }
                 });
     }

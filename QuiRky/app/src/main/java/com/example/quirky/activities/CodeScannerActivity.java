@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
@@ -160,6 +161,7 @@ public class CodeScannerActivity extends AppCompatActivity implements ActivityCo
     /**
      * Save a QRCode to the Database. Update the player's profile to include the newly scanned code.
      * @param qr The QRCode to be saved
+     * @param location The location that the code was scanned at if location_switch is checked, may be null.
      */
     public void save(QRCode qr, GeoLocation location) {
         Profile p = mc.read();
@@ -171,9 +173,6 @@ public class CodeScannerActivity extends AppCompatActivity implements ActivityCo
 
         if (location != null) {
             UserOwnedQRCode userOwnedQRCode = new UserOwnedQRCode(qr.getId(), location);
-            //TODO: saveNearbyCode()
-            // Basically, get the id and location data from qr, then make a
-            // UserOwnedQRCode with it, then save it to the database.
             dc.writeNearbyQRCode(userOwnedQRCode);  //TODO: test and or finish me.
         }
 
