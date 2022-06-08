@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.quirky">
+    package="com.example.quirky" >
 
     <uses-feature
         android:name="android.hardware.camera.any"
@@ -20,7 +20,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.QuiRky">
+        android:theme="@style/Theme.QuiRky" >
+        <activity
+            android:name=".CodeSaveActivity"
+            android:exported="false" />
         <activity
             android:name=".activities.LeaderBoardActivity"
             android:exported="false" />
@@ -64,10 +67,9 @@
         <activity
             android:name=".activities.MapActivity"
             android:exported="false"
-            android:label="@string/title_activity_map"
-            />
+            android:label="@string/title_activity_map" />
         <activity
-            android:name=".activities.CodeScannerActivity"
+            android:name=".activities.CameraActivity"
             android:exported="false"
             android:parentActivityName=".activities.HubActivity" />
         <activity
@@ -87,7 +89,7 @@
             android:parentActivityName=".activities.HubActivity" />
         <activity
             android:name=".activities.LoginActivity"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -95,4 +97,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

@@ -9,7 +9,6 @@ package com.example.quirky.activities;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -32,8 +31,6 @@ import com.example.quirky.controllers.QRCodeController;
 import com.example.quirky.R;
 import com.example.quirky.controllers.CameraController;
 
-import org.osmdroid.util.GeoPoint;
-
 /**
  * Previews camera feed and allows scanning QR codes.
  *
@@ -45,7 +42,7 @@ import org.osmdroid.util.GeoPoint;
  * @see QRCode
  * @see QRCodeController
  */
-public class CodeScannerActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class CameraActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private PreviewView previewView;
     private Button scan_button, cancel_button, save_button;
@@ -66,7 +63,7 @@ public class CodeScannerActivity extends AppCompatActivity implements ActivityCo
     @androidx.camera.core.ExperimentalGetImage
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_code_scanner);
+        setContentView(R.layout.activity_camera);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {

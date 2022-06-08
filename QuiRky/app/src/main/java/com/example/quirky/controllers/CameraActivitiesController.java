@@ -13,7 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.quirky.activities.CodeScannerActivity;
+import com.example.quirky.activities.CameraActivity;
 import com.example.quirky.R;
 
 // Provides GUI utilities for Activities that can start other, camera using, Activities.
@@ -42,7 +42,7 @@ public class CameraActivitiesController {
      */
     public void startCodeScannerActivity() {
         if (CameraController.hasCameraPermission(currentActivity)) {
-            Intent intent = new Intent(currentActivity, CodeScannerActivity.class);
+            Intent intent = new Intent(currentActivity, CameraActivity.class);
             intent.putExtra("login", login);
             currentActivity.startActivity(intent);
         } else {

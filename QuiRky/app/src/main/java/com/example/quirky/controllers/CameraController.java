@@ -30,7 +30,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
-import com.example.quirky.activities.CodeScannerActivity;
+import com.example.quirky.activities.CameraActivity;
 import com.example.quirky.ListeningList;
 import com.example.quirky.activities.HubActivity;
 import com.example.quirky.models.QRCode;
@@ -57,7 +57,7 @@ import java.util.concurrent.ExecutionException;
  * @author Sean Meyers
  * @version 0.2.1
  * @see androidx.camera.core
- * @see CodeScannerActivity
+ * @see CameraActivity
  * @see QRCode
  * @see QRCodeController
  */
@@ -140,7 +140,7 @@ public class CameraController {
      * @param context
      *      - The activity responsible for doing camera things, it should contain a preview view and
      *        a button or something to capture images.
-     * @see CodeScannerActivity
+     * @see CameraActivity
      */
     public void startCamera(Preview.SurfaceProvider surfaceProvider, Context context) {
         cameraProviderFuture.addListener(new Runnable() {
