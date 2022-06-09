@@ -154,6 +154,7 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
 
             case "Make some QRs!" :
                 startGenerateActivity();
+                break;
 
             case "My QRCodes" :
                 i = new Intent(this, ManageCodesActivity.class);
@@ -212,6 +213,7 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
                 builder.setPositiveButton("Yes, Logout", LogoutListener);
 
                 builder.create().show();
+                break;
         }
     }
 
