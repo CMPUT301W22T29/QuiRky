@@ -14,7 +14,9 @@ import com.example.quirky.ListeningList;
 import com.example.quirky.R;
 import com.example.quirky.controllers.DatabaseController;
 import com.example.quirky.controllers.MapController;
+import com.example.quirky.controllers.MemoryController;
 import com.example.quirky.models.GeoLocation;
+import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
 
 import android.annotation.SuppressLint;
@@ -26,11 +28,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class CodeSaveActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    QRCode code;
+    QRCode qrcode;
     DatabaseController dc;
+    MemoryController mc;
     Bitmap photo;
     MapController mapController;
 
@@ -39,8 +43,12 @@ public class CodeSaveActivity extends AppCompatActivity implements ActivityCompa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_code_save);
 
+        // Get the intent and the passed parameters
+        // This activity expects a QRCode and a boolean
+        // Boolean designates if there is also a Bitmap in the intent
+        // If true, gets the Bitmap from the intent
         Intent i = getIntent();
-        code = (QRCode) i.getExtras().get("code");
+        qrcode = (QRCode) i.getExtras().get("code");
         if(i.getExtras().getBoolean("keep_photo")) {
             photo = i.getExtras().getParcelable("photo");
             ImageView image = findViewById(R.id.taken_photo);
@@ -48,10 +56,12 @@ public class CodeSaveActivity extends AppCompatActivity implements ActivityCompa
         } else
             photo = null;
 
+        // Initialise views & controllers
         dc = new DatabaseController();
+        mc = new MemoryController(this);
 
         TextView content = findViewById(R.id.saved_code_content);
-        content.setText( code.getContent() );
+        content.setText( qrcode.getContent() );
 
         Button cancel = findViewById(R.id.code_save_cancel_button);
         cancel.setOnClickListener(view -> finish());
@@ -60,13 +70,18 @@ public class CodeSaveActivity extends AppCompatActivity implements ActivityCompa
         save.setOnClickListener(view -> getData());
     }
 
+    /**
+     * Get the data that the user has chosen to save
+     * Will try to fetch a title from the EditText input field, and will try to fetch the user's location
+     * If the user chooses to save their location.
+     */
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     public void getData() {
 
         EditText titleView = findViewById(R.id.input_code_title);
         String title = String.valueOf(titleView.getText());
         if (!title.equals(""))
-            code.addTitle(title);
+            qrcode.addTitle(title);
 
         Switch locationSwitch = findViewById(R.id.keep_location_switch);
         if (locationSwitch.isChecked()) {
@@ -74,7 +89,7 @@ public class CodeSaveActivity extends AppCompatActivity implements ActivityCompa
 
             ListeningList<GeoLocation> currentLocation = new ListeningList<>();
             currentLocation.setOnAddListener(listeningList -> {
-                code.addLocation(listeningList.get(0));
+                qrcode.addLocation(listeningList.get(0));
                 save();
             });
             mapController.getLocation(currentLocation);
@@ -82,11 +97,25 @@ public class CodeSaveActivity extends AppCompatActivity implements ActivityCompa
             save();
     }
 
+    /**
+     * Method to do the actual saving & writing. Will add the player to the QRCode, add the QRCode
+     * to the player, and write the updated objects to local storage and firebase
+     */
     public void save() {
-        dc.writeQRCode(code);
-        if(photo != null)
-            dc.writePhoto(code.getId(), photo, this);
 
+        Profile p = mc.read();
+
+        p.addScanned( qrcode.getId() );
+        qrcode.addScanner(p.getUname());
+
+        dc.writeQRCode(qrcode);
+        mc.writeUser(p);
+        dc.writeProfile(p.getUname(), p);
+
+        if(photo != null)
+            dc.writePhoto(qrcode.getId(), photo, this);
+
+        Toast.makeText(this, "QRCode saved!", Toast.LENGTH_SHORT).show();
         finish();
     }
 

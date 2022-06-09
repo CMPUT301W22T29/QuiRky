@@ -9,6 +9,7 @@ package com.example.quirky.activities;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -80,14 +81,19 @@ public class CameraActivity extends AppCompatActivity {
      */
     @androidx.camera.core.ExperimentalGetImage
     public void getCode() {
-        capture = new ListeningList<>();
-        ListeningList<QRCode> code = new ListeningList<>();
 
+        // Create the ListeningList<> to put the camera photo into,
+        // and create a ListeningList<> to put the target QRCode into
+        capture = new ListeningList<>();
+        ListeningList<QRCode> scannedCode = new ListeningList<>();
+
+        // When the photo is added to the list, call camera controller to scan for QRCodes
         capture.setOnAddListener(listeningListPhoto ->
-                cameraController.scanFromBitmap(listeningListPhoto.get(0), code, this)
+            cameraController.scanFromBitmap(listeningListPhoto.get(0), scannedCode, this)
         );
 
-        code.setOnAddListener(listeningList -> {
+        // When a code is added to the list, call the followup method
+        scannedCode.setOnAddListener(listeningList -> {
             if(listeningList.size() != 1)
                 return;
             useCode(listeningList.get(0));
@@ -96,6 +102,10 @@ public class CameraActivity extends AppCompatActivity {
         cameraController.captureImage(this, capture);
     }
 
+    /**
+     * Followup method that is called once the QRCode has been scanned from the taken photo.
+     * Will attempt to login with the QRCode or start CodeSaveActivity
+     */
     public void useCode(QRCode qr) {
         if(login) {
 
@@ -116,6 +126,13 @@ public class CameraActivity extends AppCompatActivity {
             dc.readLoginHash( qr.getId(), user);
 
         } else {
+
+            // Check that the user does not have the code already
+            Profile p = mc.read();
+            if(! p.addScanned(qr.getId())) {
+                Toast.makeText(this, "You already have that QRCode!", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             Intent i = new Intent(this, CodeSaveActivity.class);
             i.putExtra("code", qr);
