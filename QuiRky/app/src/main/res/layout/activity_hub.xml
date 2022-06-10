@@ -64,6 +64,30 @@
         android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" >
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="0dp"
+        android:scaleType="center"
+        android:clickable="false"
+        android:contextClickable="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/hub_feature_list"
+        app:layout_constraintTop_toTopOf="@+id/hub_feature_list"
+        app:srcCompat="@drawable/fade_left" />
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="0dp"
+        android:scaleType="center"
+        android:clickable="false"
+        android:contextClickable="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/hub_feature_list"
+        app:layout_constraintTop_toTopOf="@+id/hub_feature_list"
+        app:srcCompat="@drawable/fade_right" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

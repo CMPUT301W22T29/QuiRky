@@ -73,7 +73,6 @@ public class ViewQRActivity extends AppCompatActivity {
 
         // Set the titles list
         ArrayList<String> titles = qr.getTitles();
-        titles.add("McDonald's menu code");
         RecyclerView titlesList = findViewById(R.id.player_titles_text);
         AdapterText titlesAdapter = new AdapterText(titles, this);
         titlesList.setAdapter(titlesAdapter);
@@ -81,7 +80,6 @@ public class ViewQRActivity extends AppCompatActivity {
 
         // Set the scanners list
         ArrayList<String> players = qr.getScanners();
-        players.add("user1");
         RecyclerView playersList = findViewById(R.id.scanners_list);
         AdapterText scannersAdapter = new AdapterText(players, this);
         playersList.setAdapter(scannersAdapter);
@@ -89,7 +87,6 @@ public class ViewQRActivity extends AppCompatActivity {
 
         // Set the comments list
         comments = qr.getComments();
-        comments.add( new Comment("words, bruh", "user1"));
         RecyclerView commentsList = findViewById(R.id.comments_list);
         commentAdapter = new AdapterComment(this, comments);
         commentsList.setAdapter( commentAdapter );
@@ -110,10 +107,9 @@ public class ViewQRActivity extends AppCompatActivity {
         scannersText.setText(temp);
 
         photos = new ListeningList<>();
-        photos.setOnAddListener(listeningList -> {
-            Toast.makeText(this, "Done reading", Toast.LENGTH_SHORT).show();
-            setPhotos();
-        });
+        photos.setOnAddListener(listeningList ->
+            setPhotos()
+        );
         dc.readPhotos( qr.getId(), photos, 3);
 
         deleteButton = findViewById(R.id.remove_from_acc_button);
