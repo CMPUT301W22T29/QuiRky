@@ -9,7 +9,6 @@ package com.example.quirky.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -17,7 +16,6 @@ import android.widget.ToggleButton;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.quirky.AdapterText;
 import com.example.quirky.AdapterTextSubtext;
 import com.example.quirky.ListeningList;
 import com.example.quirky.R;
@@ -46,6 +44,9 @@ public class ManageCodesActivity extends AppCompatActivity {
 
     private ToggleButton sortButton;
 
+
+    private int codes_read_counter = 0; // This counts the number of codes read from the database
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +68,10 @@ public class ManageCodesActivity extends AppCompatActivity {
         ArrayList<String> ids = p.getScanned();
         codes = new ListeningList<>();
         codes.setOnAddListener(listeningList -> {
-            if(listeningList.size() == ids.size())
+            // Each time a QRCode is read from the database, this listener is called
+            // However, we only want to call doneReading() once. Therefore, a counter is used
+            codes_read_counter++;
+            if(codes_read_counter == ids.size())
                 doneReading();
         });
 
