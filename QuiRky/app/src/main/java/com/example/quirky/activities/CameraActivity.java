@@ -82,7 +82,7 @@ public class CameraActivity extends AppCompatActivity {
     @androidx.camera.core.ExperimentalGetImage
     public void getCode() {
 
-        // Create the ListeningList<> to put the camera photo into,
+        //     Create a ListeningList<> to put the camera photo into,
         // and create a ListeningList<> to put the target QRCode into
         capture = new ListeningList<>();
         ListeningList<QRCode> scannedCode = new ListeningList<>();
@@ -138,10 +138,7 @@ public class CameraActivity extends AppCompatActivity {
             i.putExtra("code", qr);
 
             if(photo_switch.isChecked()) {
-                i.putExtra("keep_photo", true);
-                i.putExtra("photo", capture.get(0));
-            } else {
-                i.putExtra("keep_photo", false);
+                i.putExtra("uri", mc.savePhoto( capture.get(0), "taken_photo"));
             }
 
             startActivity(i);

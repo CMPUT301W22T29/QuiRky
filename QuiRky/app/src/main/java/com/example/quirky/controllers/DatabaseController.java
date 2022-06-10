@@ -444,7 +444,7 @@ public class DatabaseController {
         MemoryController mc = new MemoryController(ct);
 
         String PhotoId = QRCodeController.SHA256(QRCodeController.getRandomString(20));
-        Uri location = mc.savePhoto(photo, PhotoId, 20);
+        Uri location = mc.savePhoto(photo, PhotoId);
 
         storage = firebase.getReference().child("photos").child(CodeId).child(PhotoId);
         UploadTask uploadTask = storage.putFile(location);

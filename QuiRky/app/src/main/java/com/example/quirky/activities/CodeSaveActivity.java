@@ -43,22 +43,24 @@ public class CodeSaveActivity extends AppCompatActivity implements ActivityCompa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_code_save);
 
+        // Initialise views & controllers
+        dc = new DatabaseController();
+        mc = new MemoryController(this);
+
+
         // Get the intent and the passed parameters
-        // This activity expects a QRCode and a boolean
-        // Boolean designates if there is also a Bitmap in the intent
-        // If true, gets the Bitmap from the intent
+        // This activity expects a QRCode and an optional URI pointing to a photo in local memory
         Intent i = getIntent();
         qrcode = (QRCode) i.getExtras().get("code");
-        if(i.getExtras().getBoolean("keep_photo")) {
-            photo = i.getExtras().getParcelable("photo");
+
+        // If there are two extras in the intent, the second must be the optional URI
+        if(i.getExtras().size() == 2) {
+            photo = mc.loadPhoto( i.getExtras().getParcelable("uri") );
             ImageView image = findViewById(R.id.taken_photo);
             image.setImageBitmap(photo);
         } else
             photo = null;
 
-        // Initialise views & controllers
-        dc = new DatabaseController();
-        mc = new MemoryController(this);
 
         TextView content = findViewById(R.id.saved_code_content);
         content.setText( qrcode.getContent() );
