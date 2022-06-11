@@ -46,7 +46,8 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
     private MemoryController mc;
     private DatabaseController dc;
 
-    private static final String[] button_texts = {"Scan Codes!", "Make some QRs!", "My QRCodes", "My Profile", "The Leaderboards!", "Find Nearby QRCodes!", "Search Other Players", "Logout"};
+    private static final String[] button_texts = {"Scan Codes!", "Generate\nQRCode", "My QRCodes", "My Profile", "The\nLeaderboards!", "Map Activity", "Search\nPlayers", "Logout"};
+    private static final String[] owner_texts = {"Delete\nPlayers", "Delete\nQRCodes"};
     private ArrayList<String> features;
     private ListeningList<Bitmap> photos;
     private AdapterButton adapterButton;
@@ -133,8 +134,8 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
      * Add Delete Players and Delete QRCode buttons to the list of scrollable buttons
      */
     private void addOwnerButtons() {
-        features.add("Delete Players");
-        features.add("Delete QRCodes");
+        features.add(owner_texts[0]);
+        features.add(owner_texts[1]);
         adapterButton.notifyItemInserted(8);
         adapterButton.notifyItemInserted(9);
     }
@@ -147,73 +148,78 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
     private void StartActivity(String feature) {
         Intent i;
         Profile p = mc.read();
-        switch (feature) {
-            case "Scan Codes!":
+        
+        if ( feature.equals(button_texts[0]) )
                 cac.startCodeScannerActivity();
-                break;
 
-            case "Make some QRs!" :
+        else if ( feature.equals(button_texts[1]) )
                 startGenerateActivity();
-                break;
 
-            case "My QRCodes" :
-                i = new Intent(this, ManageCodesActivity.class);
-                i.putExtra("profile", p);
+        else if ( feature.equals(button_texts[2]) )
+        {
+            i = new Intent(this, ManageCodesActivity.class);
+            i.putExtra("profile", p);
+            startActivity(i);
+        }
+        
+        else if ( feature.equals(button_texts[3]) )
+        {
+            i = new Intent(this, ProfileActivity.class);
+            i.putExtra("profile", p);
+            startActivity(i);
+        }
+
+        else if ( feature.equals(button_texts[4]) )
+        {
+            i = new Intent(this, LeaderBoardActivity.class);
+            startActivity(i);
+        }
+
+        else if ( feature.equals(button_texts[5]) )
+        {
+            if (MapController.hasLocationPermissions(this)) {
+                i = new Intent(this, MapActivity.class);
                 startActivity(i);
-                break;
+            } else
+                MapController.requestLocationPermission(this);
+        }
+        
+        else if ( feature.equals(button_texts[6]) )
+        {
+            i = new Intent(this, PlayerSearchActivity.class);
+            startActivity(i);
+        }
+        
+        else if ( feature.equals(button_texts[7]) )
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-            case "My Profile" :
-                i = new Intent(this, ProfileActivity.class);
-                i.putExtra("profile", p);
-                startActivity(i);
-                break;
+            DialogInterface.OnClickListener LogoutListener = (dialog, button) -> {
+                if (button == DialogInterface.BUTTON_NEUTRAL)
+                    startGenerateActivity();
+                else if (button == DialogInterface.BUTTON_POSITIVE)
+                    confirmLogout();
+            };
 
-            case "The Leaderboards!":
-                i = new Intent(this, LeaderBoardActivity.class);
-                startActivity(i);
-                break;
+            builder.setTitle("Logout?").setMessage("The only way to log back in is with a generated QRCode.\nAre you sure you would like to logout?");
+            builder.setCancelable(true);
+            builder.setNegativeButton("Cancel", LogoutListener);
+            builder.setNeutralButton("Generate QRCode", LogoutListener);
+            builder.setPositiveButton("Yes, Logout", LogoutListener);
 
-            case "Find Nearby QRCodes!":
-                if (MapController.hasLocationPermissions(this)) {
-                    i = new Intent(this, MapActivity.class);
-                    startActivity(i);
-                } else
-                    MapController.requestLocationPermission(this);
-                break;
+            builder.create().show();
+        }
+        
+        else if ( feature.equals(owner_texts[0]) )
+        {
+            i = new Intent(this, DeletePlayersActivity.class);
+            startActivity(i);
+        }
 
-            case "Search Other Players":
-                i = new Intent(this, PlayerSearchActivity.class);
-                startActivity(i);
-                break;
-
-            case "Delete Players" :
-                i = new Intent(this, DeletePlayersActivity.class);
-                startActivity(i);
-                break;
-
-            case "Delete QRCodes" :
-                i = new Intent(this, DeleteCodesActivity.class);
-                startActivity(i);
-                break;
-
-            case "Logout" :
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-                DialogInterface.OnClickListener LogoutListener = (dialog, button) -> {
-                    if(button == DialogInterface.BUTTON_NEUTRAL)
-                        startGenerateActivity();
-                    else if (button == DialogInterface.BUTTON_POSITIVE)
-                        confirmLogout();
-                };
-
-                builder.setTitle("Logout?").setMessage("The only way to log back in is with a generated QRCode.\nAre you sure you would like to logout?");
-                builder.setCancelable(true);
-                builder.setNegativeButton("Cancel", LogoutListener);
-                builder.setNeutralButton("Generate QRCode", LogoutListener);
-                builder.setPositiveButton("Yes, Logout", LogoutListener);
-
-                builder.create().show();
-                break;
+        else if ( feature.equals(owner_texts[1]) )
+        {
+            i = new Intent(this, DeleteCodesActivity.class);
+            startActivity(i);
         }
     }
 
@@ -224,9 +230,8 @@ public class HubActivity extends AppCompatActivity implements ActivityCompat.OnR
 
 
     public void confirmLogout() {
-        Intent i;
         mc.deleteUser();
-        i = new Intent(this, LoginActivity.class);
+        Intent i = new Intent(this, LoginActivity.class);
         finish();
         startActivity(i);
     }
