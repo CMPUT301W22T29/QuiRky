@@ -50,7 +50,7 @@ import java.util.List;
 // Published April 15, 2018
 @SuppressWarnings({"unchecked", "ConstantConditions"})
 public class DatabaseController {
-    private static final String TAG = "DatabaseController says: ";
+    private static final String TAG = "DatabaseController says";
     private static final long MAX_DOWNLOAD_SIZE = 10485760; // 10485760 Bytes == 10 mB
 
     private final FirebaseFirestore firestore;
@@ -90,16 +90,17 @@ public class DatabaseController {
     public void writeQRCode(QRCode newCode) {
         assert newCode != null : "You can't write a null QRCode to the database!";
 
-        ListeningList<QRCode> code = new ListeningList<>();
-        code.setOnAddListener(listeningList -> {
-            if(listeningList.size() > 0) {
-                updateQRCode(newCode, listeningList.get(0));
+        collection = firestore.collection("QRCodes");
+        collection.whereEqualTo("id", newCode.getId()).get().addOnCompleteListener(task -> {
+            int size = task.getResult().getDocuments().size();
+            if(size > 0) {
+                Log.d(TAG, "Found " + size + " documents with id " + newCode.getId());
+                updateQRCode(newCode, task.getResult().getDocuments().get(0).toObject(QRCode.class));
             } else {
                 collection = firestore.collection("QRCodes");
                 collection.document().set(newCode).addOnCompleteListener(writeListener);
             }
         });
-        readQRCode( newCode.getId(), code);
     }
 
     private void updateQRCode(QRCode newCode, QRCode oldCode) {
@@ -284,7 +285,7 @@ public class DatabaseController {
         collection.whereEqualTo("id", id).get().addOnCompleteListener(task -> {
             int size = task.getResult().getDocuments().size();
             if(size != 1) {
-                Log.d(TAG, "That id did not match up with exactly 1 document! Adding Nothing");
+                Log.d(TAG, "readQRCode() added nothing to data! ID:|" + id + "|" + size);
                 data.addNone();
             } else {
                 QRCode result = task.getResult().getDocuments().get(0).toObject(QRCode.class);
