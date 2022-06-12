@@ -68,6 +68,12 @@ public class GenerateActivity extends AppCompatActivity {
         });
 
         generateViewProfile.setOnClickListener(v -> {
+            String text = "QuiRky.QRCODE.viewProfile:" + user;
+            Bitmap generated = QRCodeController.generateQR(text);
+            qrImage.setImageBitmap(generated);
+        });
+
+        generateViewProfile.setOnClickListener(v -> {
             String text = "quirky.view.profile." + user;
             Bitmap generated = QRCodeController.generateQR(text);
             qrImage.setImageBitmap(generated);

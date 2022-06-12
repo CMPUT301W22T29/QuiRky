@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.view.PreviewView;
 
+import com.example.quirky.OnAddListener;
 import com.example.quirky.controllers.DatabaseController;
 import com.example.quirky.ListeningList;
 import com.example.quirky.controllers.MemoryController;
@@ -126,22 +127,49 @@ public class CameraActivity extends AppCompatActivity {
             dc.readLoginHash( qr.getId(), user);
 
         } else {
-
-            // Check that the user does not have the code already
-            Profile p = mc.read();
-            if(! p.addScanned(qr.getId())) {
-                Toast.makeText(this, "You already have that QRCode!", Toast.LENGTH_SHORT).show();
-                return;
+            // Check if the QRCode is a player profile code
+            // If it is start the profile activity. If it isn't, start the CodeSave activity
+            String content = qr.getContent();
+            if( content.contains("QuiRky.QRCODE.viewProfile:") ) {
+                viewProfile(content);
+            } else {
+                saveCode(qr);
             }
-
-            Intent i = new Intent(this, CodeSaveActivity.class);
-            i.putExtra("code", qr);
-
-            if(photo_switch.isChecked()) {
-                i.putExtra("uri", mc.savePhoto( capture.get(0), "taken_photo"));
-            }
-
-            startActivity(i);
         }
+    }
+
+    public void viewProfile(String content) {
+        assert content.length() > "QuiRky.QRCODE.viewProfile:".length() : "For some reason this code does not have a username extension?";
+        String username = content.substring(26);
+
+        ListeningList<Profile> ReadUser = new ListeningList<>();
+        ReadUser.setOnAddListener(listeningList -> {
+            if(listeningList.size() == 0)
+                return;
+
+            Intent i = new Intent(this, ProfileActivity.class);
+            i.putExtra("profile", listeningList.get(0));
+            startActivity(i);
+        });
+
+        dc.readProfile(username, ReadUser);
+    }
+
+    public void saveCode(QRCode qr) {
+        // Check that the user does not have the code already
+        Profile p = mc.read();
+        if(! p.addScanned(qr.getId())) {
+            Toast.makeText(this, "You already have that QRCode!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent i = new Intent(this, CodeSaveActivity.class);
+        i.putExtra("code", qr);
+
+        if(photo_switch.isChecked()) {
+            i.putExtra("uri", mc.savePhoto( capture.get(0), "taken_photo"));
+        }
+
+        startActivity(i);
     }
 }
