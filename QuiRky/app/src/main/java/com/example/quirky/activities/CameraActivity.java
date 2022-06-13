@@ -39,6 +39,7 @@ import com.example.quirky.controllers.CameraController;
  * @see QRCodeController
  */
 public class CameraActivity extends AppCompatActivity {
+    private final String TAG = "QuiRky.CameraActivity";
 
     private Switch photo_switch;
 
@@ -93,54 +94,55 @@ public class CameraActivity extends AppCompatActivity {
             cameraController.scanFromBitmap(listeningListPhoto.get(0), scannedCode, this)
         );
 
-        // When a code is added to the list, call the followup method
+        // When a code is added to the list, call a followup method
         scannedCode.setOnAddListener(listeningList -> {
             if(listeningList.size() != 1)
                 return;
-            useCode(listeningList.get(0));
+
+            QRCode qr = listeningList.get(0);
+            if(login)
+                loginUser(qr);
+            else if ( qr.getContent().contains( GenerateActivity.IDENTIFIER ))
+                viewProfile(qr);
+            else
+                saveCode(qr);
         });
 
         cameraController.captureImage(this, capture);
     }
 
     /**
-     * Followup method that is called once the QRCode has been scanned from the taken photo.
-     * Will attempt to login with the QRCode or start CodeSaveActivity
+     * Check the database for the user with this QRCode content as a password, write them to
+     * memory, and start HubActivity
      */
-    public void useCode(QRCode qr) {
-        if(login) {
-
-            ListeningList<Profile> user = new ListeningList<>();
-            user.setOnAddListener(listeningList -> {
-                if(listeningList.size() == 0) {
-                    Toast.makeText(this, "No users with that QRCode!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                Profile p = listeningList.get(0);
-                mc.writeUser(p);
-
-                Intent i = new Intent(this, HubActivity.class);
-                startActivity(i);
-            });
-
-            dc.readLoginHash( qr.getId(), user);
-
-        } else {
-            // Check if the QRCode is a player profile code
-            // If it is start the profile activity. If it isn't, start the CodeSave activity
-            String content = qr.getContent();
-            if( content.contains("QuiRky.QRCODE.viewProfile:") ) {
-                viewProfile(content);
-            } else {
-                saveCode(qr);
+    public void loginUser(QRCode qr) {
+        ListeningList<Profile> user = new ListeningList<>();
+        user.setOnAddListener(listeningList -> {
+            if(listeningList.size() == 0) {
+                Toast.makeText(this, "No users with that QRCode!", Toast.LENGTH_SHORT).show();
+                return;
             }
-        }
+
+            Profile p = listeningList.get(0);
+            mc.writeUser(p);
+
+            Intent i = new Intent(this, HubActivity.class);
+            startActivity(i);
+        });
+
+        dc.readLoginHash( qr.getId(), user);
     }
 
-    public void viewProfile(String content) {
-        assert content.length() > "QuiRky.QRCODE.viewProfile:".length() : "For some reason this code does not have a username extension?";
-        String username = content.substring(26);
+    /**
+     * Parse the content of the QRCode for the username, read the user from the database,
+     * and start an activity to view the profile
+     */
+    public void viewProfile(QRCode qr) {
+        String content = qr.getContent();
+        assert content.length() > GenerateActivity.IDENTIFIER.length() : "For some reason this code does not have a username extension?";
+
+        String username = content.substring( GenerateActivity.IDENTIFIER.length() );
+        Log.d(TAG, "Attempting to view:|" + username + "|");
 
         ListeningList<Profile> ReadUser = new ListeningList<>();
         ReadUser.setOnAddListener(listeningList -> {
@@ -155,6 +157,9 @@ public class CameraActivity extends AppCompatActivity {
         dc.readProfile(username, ReadUser);
     }
 
+    /**
+     * Start CodeSaveActivity with the QRCode, and optionally the photo taken
+     */
     public void saveCode(QRCode qr) {
         // Check that the user does not have the code already
         Profile p = mc.read();

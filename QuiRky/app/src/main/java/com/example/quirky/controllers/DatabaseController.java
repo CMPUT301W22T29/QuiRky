@@ -196,7 +196,7 @@ public class DatabaseController {
         assert (!username.equals("") && !username.equals(" ")) : "Tried calling readProfile() with an empty username! Did you mean to use readAllUsers()?";
 
         collection = firestore.collection("users");
-        collection.whereEqualTo("name", username).get().addOnCompleteListener(task -> {
+        collection.whereEqualTo("uname", username).get().addOnCompleteListener(task -> {
             int size = task.getResult().getDocuments().size();
             if(size < 1) {
                 Log.d(TAG, "A user with that name did not exist! No data read!");
