@@ -102,7 +102,7 @@ public class ViewQRActivity extends AppCompatActivity {
         TextView contentText = findViewById(R.id.qrcode_content_text);
         contentText.setText( qr.getContent() );
 
-        temp = qr.getScanners().size() + " Players have found this code";
+        temp = qr.getScanners().size() + " Players have found this code, at these locations";
         TextView scannersText = findViewById(R.id.x_players_text);
         scannersText.setText(temp);
 
