@@ -50,6 +50,10 @@ public class AdapterText extends RecyclerView.Adapter<AdapterText.QRViewHolder> 
         return new LinearLayoutManager(ct, LinearLayoutManager.VERTICAL, false);
     }
 
+    public void sortData(ArrayList<String> data) {
+        this.data = data;
+    }
+
     /**
      * Helper subclass. It does things that help the other things do the things.
      * Hey I don't know how it works! I just know how to do it.

@@ -70,12 +70,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         DatabaseController dc = new DatabaseController();
         readResults = new ListeningList<>();
-        readResults.setOnAddListener(new OnAddListener<Profile>() {
-            @Override
-            public void onAdd(ListeningList<Profile> listeningList) {
-                doneReading();
-            }
-        });
+        readResults.setOnAddListener(listeningList -> doneReading());
 
         dc.readAllUsers("", readResults);
         mc = new MemoryController(this);
@@ -95,19 +90,25 @@ public class ProfileActivity extends AppCompatActivity {
     private void doneReading() {
         LeaderBoardController lbc = new LeaderBoardController(readResults);
         int position;
+        String text_builder;
 
         position = lbc.findRankPoints(p);
-
-        PointsText.setText( String.valueOf( p.getPointsOfScannedCodes() ) );
-        PointsRankText.setText( String.valueOf(position+1) );
+        text_builder = p.getPointsOfScannedCodes() + " pts";
+        PointsText.setText( text_builder );
+        text_builder = "Rank: " + (position + 1);
+        PointsRankText.setText( text_builder );
 
         position = lbc.findRankScanned(p);
-        NumScannedText.setText(String.valueOf(p.getNumberCodesScanned() ) );
-        NumScannedRank.setText(String.valueOf(position+1) );
+        text_builder = p.getNumberCodesScanned() + " codes scanned";
+        NumScannedText.setText( text_builder );
+        text_builder = "Rank: " + (position+1);
+        NumScannedRank.setText( text_builder );
 
         position = lbc.findRankLargest(p);
-        LargestScannedText.setText(String.valueOf(p.getPointsOfLargestCodes() ) );
-        LargestScannedRank.setText(String.valueOf(position+1) );
+        text_builder = p.getPointsOfLargestCodes() + " pts";
+        LargestScannedText.setText( text_builder );
+        text_builder = "Rank: " + (position+1);
+        LargestScannedRank.setText( text_builder );
     }
 
     private void viewQRCodes() {
