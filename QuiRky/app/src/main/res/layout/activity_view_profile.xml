@@ -12,10 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="16dp"
         android:gravity="center_horizontal"
         android:hint="To be replaced"
-        android:textSize="48sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -45,20 +45,20 @@
                 android:id="@+id/email_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 android:hint="User has no email"
-                android:textSize="28sp"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/phone_text"
-                android:layout_width="361dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:hint="User has no phone number"
-                android:textSize="28sp"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/email_text" />
@@ -68,10 +68,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
 
                 android:text="Points Acquired"
-                android:textSize="32sp"
+                android:textSize="28sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/phone_text" />
 
@@ -83,7 +83,7 @@
                 android:layout_marginTop="4dp"
 
                 android:hint="Replace me! pts"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/points_title_text" />
 
@@ -94,7 +94,7 @@
                 android:layout_marginStart="24dp"
                 android:hint="Rank: Replace me!"
 
-                android:textSize="24sp"
+                android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/points_stat_text" />
 
@@ -106,7 +106,7 @@
                 android:layout_marginTop="16dp"
 
                 android:text="Codes Scanned"
-                android:textSize="32sp"
+                android:textSize="28sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/points_rank_text" />
 
@@ -118,7 +118,7 @@
                 android:layout_marginTop="4dp"
 
                 android:hint="Replace me! QRCodes scanned"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/codes_scanned_title" />
 
@@ -129,7 +129,7 @@
                 android:layout_marginStart="24dp"
                 android:hint="Rank: Replace me!"
 
-                android:textSize="24sp"
+                android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/scanned_stat_text" />
 
@@ -140,8 +140,8 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
 
-                android:text="Codes Scanned"
-                android:textSize="32sp"
+                android:text="Largest Code"
+                android:textSize="28sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/scanned_rank_text" />
 
@@ -153,7 +153,7 @@
                 android:layout_marginTop="4dp"
 
                 android:hint="Replace me! QRCodes scanned"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/largest_scanned_title" />
 
@@ -165,7 +165,7 @@
 
                 android:layout_marginBottom="4dp"
                 android:hint="Rank: Replace me!"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/largest_stat_text" />

@@ -12,14 +12,15 @@
     android:layout_height="match_parent"
     tools:context=".activities.ManageCodesActivity"
     android:orientation="vertical">
+
     <TextView
         android:id="@+id/manage_codes_title"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_height="100dp"
-        android:textSize="50dp"
         android:text="Your QR Codes"
         android:textAlignment="center"
+        android:textSize="50sp"
         app:layout_anchor="@+id/manage_codes_title"
         app:layout_anchorGravity="bottom|center" />
     <LinearLayout
@@ -32,15 +33,15 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:text="sort by score: "
-        android:textSize="20dp"/>
+        android:textSize="20sp"/>
 
         <ToggleButton
-            android:id="@+id/toggleButton"
+            android:id="@+id/sort_by_score_toggle"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginLeft="20dp"
-            android:textOff="high to low"
-            android:textOn="low to high"
+            android:textOff="Low to High"
+            android:textOn="High to Low"
             tools:ignore="TouchTargetSizeCheck" />
 
     </LinearLayout>

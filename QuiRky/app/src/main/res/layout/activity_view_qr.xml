@@ -78,18 +78,6 @@
             app:layout_constraintTop_toBottomOf="@+id/code_photo_list" />
 
         <TextView
-            android:id="@+id/qrcode_type_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-
-            android:hint="Type: Web Link"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/code_photo_list" />
-
-        <TextView
             android:id="@+id/qrcode_content_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -110,7 +98,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
 
-            android:text="X Players have found this"
+            android:text="X Players have found this at these locations"
             android:textSize="15sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/qrcode_content_text" />
@@ -127,16 +115,6 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/x_players_text" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-
-            android:text="At these Locations"
-            android:textSize="15sp"
-            app:layout_constraintStart_toStartOf="@+id/code_locations_list"
-            app:layout_constraintTop_toBottomOf="@+id/qrcode_content_text" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/code_locations_list"

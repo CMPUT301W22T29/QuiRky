@@ -25,12 +25,13 @@ import com.example.quirky.controllers.DatabaseController;
  */
 public class GenerateActivity extends AppCompatActivity {
 
-    Button generateLogin, generateViewProfile, generateText;
-    EditText inputField;
-    ImageView qrImage;
+    public static final String IDENTIFIER = "quirky.qrcode.view.profile.";
+    private Button generateLogin, generateViewProfile, generateText;
+    private EditText inputField;
+    private ImageView qrImage;
 
-    String user;
-    DatabaseController dc;
+    private String user;
+    private DatabaseController dc;
 
 
     @Override
@@ -68,7 +69,7 @@ public class GenerateActivity extends AppCompatActivity {
         });
 
         generateViewProfile.setOnClickListener(v -> {
-            String text = "quirky.view.profile." + user;
+            String text = IDENTIFIER + user;
             Bitmap generated = QRCodeController.generateQR(text);
             qrImage.setImageBitmap(generated);
         });
