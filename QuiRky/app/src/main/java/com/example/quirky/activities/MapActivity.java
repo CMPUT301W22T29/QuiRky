@@ -17,9 +17,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.example.quirky.ListeningList;
+import com.example.quirky.OnAddListener;
+import com.example.quirky.controllers.DatabaseController;
 import com.example.quirky.controllers.MapController;
 import com.example.quirky.R;
 import com.example.quirky.models.GeoLocation;
+import com.example.quirky.models.UserOwnedQRCode;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -46,6 +49,7 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
     private MapView map;
     private MapController mapController;
     private IMapController iMapController;
+    private DatabaseController dc;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -65,13 +69,36 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
         map.setMultiTouchControls(true);
         iMapController.setZoom((double) 15);
 
-        // Create a Listening to read the current location into
-        ListeningList<GeoLocation> locations = new ListeningList<>();
+        dc = new DatabaseController();
+
+        // Create ListeningLists to read location data into
+        ListeningList<UserOwnedQRCode> nearbyCodes = new ListeningList<>(); // List for QRCodes near the user
+        ListeningList<GeoLocation> locations = new ListeningList<>(); // List for the user's current location
+
+        // Specify what happens when a nearby QRCode is retrieved from the database
+        nearbyCodes.setOnAddListener(new OnAddListener<UserOwnedQRCode>() {
+            @Override
+            public void onAdd(ListeningList<UserOwnedQRCode> listeningList) {
+
+                // Yeet QRCodes the map.
+                for (UserOwnedQRCode userOwnedQRCode : listeningList) {
+                    GeoLocation location = userOwnedQRCode.getLocation();
+                    mapController.setMarker(location, map, location.getDescription(), true);
+                }
+            }
+        });
+
+        // Specify what happens once we receive current location data from a provider.
+        //Note, if you cut and paste this code to use for dynamic location updates, be mindful that you may end up with duplicate qr code map markers.
+        //  might be able to fix this by clearing the map overlays in the nearbyCodes onAdd.
         locations.setOnAddListener(listeningList -> {
             iMapController.setCenter( listeningList.get(0).toGeoPoint() );
             mapController.setMarker(listeningList.get(0), map, "Current location", false);
-            mapController.writeQrCodesToMap(map);
+
+            // Use our location to find nearby QRCodes
+            dc.readNearbyCodes(listeningList.get(0), nearbyCodes);
         });
+
         mapController.getLocation(locations);
     }
 

@@ -31,7 +31,7 @@ import com.example.quirky.activities.MapActivity;
 import com.example.quirky.models.GeoLocation;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
+
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
@@ -213,14 +213,6 @@ public class MapController {
                 }
             }
         });
-    }
-
-    public void writeQrCodesToMap(MapView map){
-        ArrayList<GeoLocation> locations = new ArrayList<>();
-        locations.add(new GeoLocation(10.0, 10.0));
-
-        for (GeoLocation location : locations)
-            setMarker(location, map, location.getDescription(), true);
     }
 
     public void setMarker(GeoLocation point, MapView map, String text, boolean translucent) {

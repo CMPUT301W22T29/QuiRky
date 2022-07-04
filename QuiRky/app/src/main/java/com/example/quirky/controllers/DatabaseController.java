@@ -12,19 +12,18 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.example.quirky.ListeningList;
-import com.example.quirky.OnAddListener;
 import com.example.quirky.models.Comment;
 import com.example.quirky.models.GeoLocation;
 import com.example.quirky.models.Profile;
 import com.example.quirky.models.QRCode;
+import com.example.quirky.models.UserOwnedQRCode;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -79,6 +78,29 @@ public class DatabaseController {
             else
                 Log.d(TAG, "Deletion from database failed!!");
         };
+    }
+
+    /**
+     * TODO: Finish the doc comment
+     * @param nearbyCode
+     */
+    public void writeNearbyQRCode(UserOwnedQRCode nearbyCode) {
+        assert nearbyCode != null : "You can't write a null QRCode to the database!";
+
+        GeoLocation location = nearbyCode.getLocation();
+        int lat = location.getApproxLat();
+        int lon = location.getApproxLong();
+        CollectionReference nearbyCollection = firestore.collection(String.format("locations/latitude%d/longitude%d/qr/codes", lat, lon));
+
+        nearbyCollection
+                .whereEqualTo(FieldPath.of("location/exactLat"), nearbyCode.getLocation().getExactLat())
+                .whereEqualTo(FieldPath.of("location/exactLong"), nearbyCode.getLocation().getExactLong())
+                .whereEqualTo("id", nearbyCode.getId())
+                .get().addOnCompleteListener(task -> {
+                    if (task.getResult().getDocuments().size() == 0) {
+                        nearbyCollection.document().set(nearbyCode).addOnCompleteListener(writeListener);
+                    }
+                });
     }
 
     /**
@@ -271,6 +293,34 @@ public class DatabaseController {
             collection.get().addOnCompleteListener(complete);
         else
             collection.whereGreaterThanOrEqualTo("uname", search).get().addOnCompleteListener(complete);
+    }
+
+    /**
+     * Read all QRCodes whose approximate longitude and latitude match location's
+     *
+     * QRCode references are stored in groups with other QRCode references that have the same floor
+     * of their coordinate values. E.g. 2 QRCodes with coordinates (6.9, 7.2) and (6.0, 7.6)
+     * respectively would be in the same group. This works out to a very very approximate 100km
+     * radius. If a smaller radius is desired, the qr codes returned from this method can be
+     * searched.
+     * This method stores the data retrieved from the database in a ListeningList, which calls
+     * onAdd() whenever something is added to it. Override onAdd() with whatever processing should
+     * be performed on the data.
+     * The data retrieved from the database is not the same as the QRCodes retrieved by
+     * readQRCode(). Rather, it retrieves a location specific subset of the data contained by the
+     * usual qr codes. Currently, it only retrieves the QRCode id and location.
+     *
+     * @param location The reference location in which the retrieved QRCodes will be near to.
+     * @param data The container in which the retrieved data will be add
+     */
+    public void readNearbyCodes(GeoLocation location, ListeningList<UserOwnedQRCode> data) {
+        int lat = location.getApproxLat();
+        int lon = location.getApproxLong();
+        collection = firestore.collection(String.format("locations/latitude%d/longitude%d/qr/codes", lat, lon));
+        collection.get().addOnCompleteListener(task -> {
+            Collection<UserOwnedQRCode> result = task.getResult().toObjects(UserOwnedQRCode.class);
+            data.addAll(result);
+        });
     }
 
     /**
