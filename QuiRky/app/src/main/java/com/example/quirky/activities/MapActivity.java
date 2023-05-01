@@ -29,6 +29,9 @@ import org.osmdroid.config.Configuration;
 import org.osmdroid.views.MapView;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;//Tile source factory used for manipulating the map
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 
 
@@ -51,6 +54,21 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
     private IMapController iMapController;
     private DatabaseController dc;
 
+    // Listening lists to get locations of QRCodes and the user
+    private ListeningList<UserOwnedQRCode> nearbyCodes;
+    private ListeningList<GeoLocation>     user_location;
+
+    private Timer           location_update_timer;
+    private final TimerTask location_update_task = new TimerTask() {
+        @Override
+        public void run() {
+            user_location.clear();
+            mapController.getLocation(user_location);
+        }
+    };
+
+    private static final int UPDATE_TIME = (2) * 1000; // (2) seconds
+
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +88,11 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
         iMapController.setZoom((double) 15);
 
         dc = new DatabaseController();
+        location_update_timer = new Timer();
 
         // Create ListeningLists to read location data into
-        ListeningList<UserOwnedQRCode> nearbyCodes = new ListeningList<>(); // List for QRCodes near the user
-        ListeningList<GeoLocation> locations = new ListeningList<>(); // List for the user's current location
+        nearbyCodes = new ListeningList<>();
+        user_location = new ListeningList<>();
 
         // Specify what happens when a nearby QRCode is retrieved from the database
         nearbyCodes.setOnAddListener(new OnAddListener<UserOwnedQRCode>() {
@@ -83,23 +102,25 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
                 // Yeet QRCodes the map.
                 for (UserOwnedQRCode userOwnedQRCode : listeningList) {
                     GeoLocation location = userOwnedQRCode.getLocation();
-                    mapController.setMarker(location, map, location.getDescription(), true);
+                    mapController.setMarkerQR(location, map, location.getDescription());
                 }
             }
         });
 
-        // Specify what happens once we receive current location data from a provider.
-        //Note, if you cut and paste this code to use for dynamic location updates, be mindful that you may end up with duplicate qr code map markers.
-        //  might be able to fix this by clearing the map overlays in the nearbyCodes onAdd.
-        locations.setOnAddListener(listeningList -> {
+        // Read the user's current location
+        user_location.setOnAddListener(listeningList -> {
             iMapController.setCenter( listeningList.get(0).toGeoPoint() );
-            mapController.setMarker(listeningList.get(0), map, "Current location", false);
+            mapController.setMarkerUser(listeningList.get(0), map);
 
             // Use our location to find nearby QRCodes
             dc.readNearbyCodes(listeningList.get(0), nearbyCodes);
+
+            // Start a timer to read location again in UPDATE_TIME seconds
+            location_update_timer.schedule(location_update_task, UPDATE_TIME);
         });
 
-        mapController.getLocation(locations);
+        // Read the user location once immediately
+        mapController.getLocation(user_location);
     }
 
     @SuppressLint("MissingSuperCall")

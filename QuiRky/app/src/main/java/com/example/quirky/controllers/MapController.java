@@ -26,6 +26,7 @@ import androidx.core.location.LocationListenerCompat;
 import static android.content.Context.LOCATION_SERVICE;
 
 import com.example.quirky.ListeningList;
+import com.example.quirky.OnAddListener;
 import com.example.quirky.activities.MapActivity;
 
 import com.example.quirky.models.GeoLocation;
@@ -34,7 +35,9 @@ import java.util.ArrayDeque;
 
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Overlay;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 
@@ -63,6 +66,8 @@ public class MapController {
                                                                         : LocationManager.GPS_PROVIDER;
     private final ArrayDeque<Runnable> runnables;
 
+    private Marker marker_user;
+
 
     /**
      * Constructor initialised with context
@@ -71,6 +76,7 @@ public class MapController {
         this.context = context;
         locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
         runnables = new ArrayDeque<>();
+        marker_user = null;
     }
 
     public static boolean requestingLocationPermissions(int request_code) {
@@ -174,6 +180,8 @@ public class MapController {
             public void run() {
                 Log.d("map", "runGetLocation");
 
+
+
                 // Make sure GPS is enabled
                 if(locationManager.isProviderEnabled(PROVIDER)) {
 
@@ -215,19 +223,49 @@ public class MapController {
         });
     }
 
-    public void setMarker(GeoLocation point, MapView map, String text, boolean translucent) {
+    /**
+     * Add a new translucent marker to the map
+     * @param point the position to put the marker
+     * @param map the mapview to put the marker on
+     * @param text a title to give the marker
+     */
+    public void setMarkerQR(GeoLocation point, MapView map, String text) {
         Marker marker = new Marker(map);
 
         marker.setPosition(point.toGeoPoint());
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-
-        if(translucent)
-            marker.setAlpha((float) 0.6);
-        else
-            marker.setAlpha(1);
-
-        map.getOverlays().add(marker);
         marker.setTitle(text);
+        marker.setAlpha((float) 0.6);
+
+        List<Overlay> markers = map.getOverlays();
+
+        // If the map already has this marker, don't add it again
+        if(markers.contains(marker))
+            return;
+
+        // By convention, markers[0] will store the user location
+        if(markers.size() == 0)
+            markers.add(null);  // if markers[0] does not exist, set a placeholder
+        // FIXME: a null object in this list might crash the app, need to test.
+        markers.add(marker);
+    }
+
+    /**
+     * Create or move the user's marker to the map. Only one user location marker can be present
+     * on the map at once, subsequent calls with move the marker rather than create new ones
+     * @param map the mapview to put the marker on
+     */
+    public void setMarkerUser(GeoLocation point, MapView map) {
+        if(marker_user == null) {
+            marker_user = new Marker(map);
+            marker_user.setAlpha(1);
+            marker_user.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            marker_user.setTitle("Current Location");
+        }
+        marker_user.setPosition(point.toGeoPoint());
+
+        // By convention, map.getOverlays()[0] holds the user's location, so replace index 0
+        map.getOverlays().set(0, marker_user);
     }
 }
 
