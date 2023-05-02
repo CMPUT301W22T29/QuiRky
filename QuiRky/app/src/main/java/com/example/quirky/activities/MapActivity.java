@@ -9,6 +9,7 @@ package com.example.quirky.activities;
 
 import android.annotation.SuppressLint;
 
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
@@ -28,6 +29,8 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.views.MapView;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;//Tile source factory used for manipulating the map
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -58,16 +61,7 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
     private ListeningList<UserOwnedQRCode> nearbyCodes;
     private ListeningList<GeoLocation>     user_location;
 
-    private Timer           location_update_timer;
-    private final TimerTask location_update_task = new TimerTask() {
-        @Override
-        public void run() {
-            user_location.clear();
-            mapController.getLocation(user_location);
-        }
-    };
-
-    private static final int UPDATE_TIME = (2) * 1000; // (2) seconds
+    private MyLocationNewOverlay myLocation;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -88,7 +82,6 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
         iMapController.setZoom((double) 15);
 
         dc = new DatabaseController();
-        location_update_timer = new Timer();
 
         // Create ListeningLists to read location data into
         nearbyCodes = new ListeningList<>();
@@ -110,14 +103,20 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
         // Read the user's current location
         user_location.setOnAddListener(listeningList -> {
             iMapController.setCenter( listeningList.get(0).toGeoPoint() );
-            mapController.setMarkerUser(listeningList.get(0), map);
 
             // Use our location to find nearby QRCodes
             dc.readNearbyCodes(listeningList.get(0), nearbyCodes);
         });
 
-        // Get the user location once immediately, get every UPDATE_TIME milliseconds
-        location_update_timer.scheduleAtFixedRate(location_update_task, 0, UPDATE_TIME);
+        // Get the user location once to center map and find nearby QR Codes
+        mapController.getLocation(user_location);
+
+        // Users location is marked by this overlay
+        myLocation = new MyLocationNewOverlay(new GpsMyLocationProvider(this), map);
+        myLocation.setPersonIcon(BitmapFactory.decodeResource( getResources(), R.drawable.pindrop));
+
+        myLocation.enableMyLocation();
+        map.getOverlays().add(myLocation);
     }
 
     @SuppressLint("MissingSuperCall")
@@ -129,10 +128,14 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
 
     public void onResume () {
         super.onResume();
+        myLocation.enableMyLocation();
+        myLocation.onResume();
         map.onResume();
     }
     public void onPause () {
         super.onPause();
+        myLocation.disableMyLocation();
+        myLocation.onPause();
         map.onPause();  //Compass
     }
 }

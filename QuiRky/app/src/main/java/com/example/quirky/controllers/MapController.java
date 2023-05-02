@@ -66,9 +66,6 @@ public class MapController {
                                                                         : LocationManager.GPS_PROVIDER;
     private final ArrayDeque<Runnable> runnables;
 
-    private Marker marker_user;
-
-
     /**
      * Constructor initialised with context
      */
@@ -76,7 +73,6 @@ public class MapController {
         this.context = context;
         locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
         runnables = new ArrayDeque<>();
-        marker_user = null;
     }
 
     public static boolean requestingLocationPermissions(int request_code) {
@@ -248,28 +244,6 @@ public class MapController {
             markers.add(null);  // if markers[0] does not exist, set a placeholder
         // FIXME: a null object in this list might crash the app, need to test.
         markers.add(marker);
-    }
-
-    /**
-     * Create or move the user's marker to the map. Only one user location marker can be present
-     * on the map at once, subsequent calls with move the marker rather than create new ones
-     * @param map the mapview to put the marker on
-     */
-    public void setMarkerUser(GeoLocation point, MapView map) {
-        if(marker_user == null) {
-            marker_user = new Marker(map);
-            marker_user.setAlpha(1);
-            marker_user.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-            marker_user.setTitle("Current Location");
-        }
-        marker_user.setPosition(point.toGeoPoint());
-
-        // By convention, map.getOverlays()[0] holds the user's location, so replace index 0
-        List<Overlay> markers = map.getOverlays();
-        if(map.getOverlays().size() == 0)
-            markers.add(marker_user);
-        else
-            map.getOverlays().set(0, marker_user);
     }
 }
 
