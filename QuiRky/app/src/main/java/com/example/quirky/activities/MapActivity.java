@@ -114,13 +114,10 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
 
             // Use our location to find nearby QRCodes
             dc.readNearbyCodes(listeningList.get(0), nearbyCodes);
-
-            // Start a timer to read location again in UPDATE_TIME seconds
-            location_update_timer.schedule(location_update_task, UPDATE_TIME);
         });
 
-        // Read the user location once immediately
-        mapController.getLocation(user_location);
+        // Get the user location once immediately, get every UPDATE_TIME milliseconds
+        location_update_timer.scheduleAtFixedRate(location_update_task, 0, UPDATE_TIME);
     }
 
     @SuppressLint("MissingSuperCall")

@@ -265,7 +265,11 @@ public class MapController {
         marker_user.setPosition(point.toGeoPoint());
 
         // By convention, map.getOverlays()[0] holds the user's location, so replace index 0
-        map.getOverlays().set(0, marker_user);
+        List<Overlay> markers = map.getOverlays();
+        if(map.getOverlays().size() == 0)
+            markers.add(marker_user);
+        else
+            map.getOverlays().set(0, marker_user);
     }
 }
 
