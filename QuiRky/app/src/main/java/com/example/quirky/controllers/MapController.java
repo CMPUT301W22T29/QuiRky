@@ -26,6 +26,7 @@ import androidx.core.location.LocationListenerCompat;
 import static android.content.Context.LOCATION_SERVICE;
 
 import com.example.quirky.ListeningList;
+import com.example.quirky.OnAddListener;
 import com.example.quirky.activities.MapActivity;
 
 import com.example.quirky.models.GeoLocation;
@@ -34,7 +35,9 @@ import java.util.ArrayDeque;
 
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Overlay;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 
@@ -62,7 +65,6 @@ public class MapController {
     private static final String PROVIDER = (Build.VERSION.SDK_INT > 30) ? LocationManager.FUSED_PROVIDER
                                                                         : LocationManager.GPS_PROVIDER;
     private final ArrayDeque<Runnable> runnables;
-
 
     /**
      * Constructor initialised with context
@@ -174,6 +176,8 @@ public class MapController {
             public void run() {
                 Log.d("map", "runGetLocation");
 
+
+
                 // Make sure GPS is enabled
                 if(locationManager.isProviderEnabled(PROVIDER)) {
 
@@ -215,19 +219,31 @@ public class MapController {
         });
     }
 
-    public void setMarker(GeoLocation point, MapView map, String text, boolean translucent) {
+    /**
+     * Add a new translucent marker to the map
+     * @param point the position to put the marker
+     * @param map the mapview to put the marker on
+     * @param text a title to give the marker
+     */
+    public void setMarkerQR(GeoLocation point, MapView map, String text) {
         Marker marker = new Marker(map);
 
         marker.setPosition(point.toGeoPoint());
         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-
-        if(translucent)
-            marker.setAlpha((float) 0.6);
-        else
-            marker.setAlpha(1);
-
-        map.getOverlays().add(marker);
         marker.setTitle(text);
+        marker.setAlpha((float) 0.6);
+
+        List<Overlay> markers = map.getOverlays();
+
+        // If the map already has this marker, don't add it again
+        if(markers.contains(marker))
+            return;
+
+        // By convention, markers[0] will store the user location
+        if(markers.size() == 0)
+            markers.add(null);  // if markers[0] does not exist, set a placeholder
+        // FIXME: a null object in this list might crash the app, need to test.
+        markers.add(marker);
     }
 }
 

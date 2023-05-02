@@ -9,6 +9,7 @@ package com.example.quirky.activities;
 
 import android.annotation.SuppressLint;
 
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
@@ -28,6 +29,11 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.views.MapView;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;//Tile source factory used for manipulating the map
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 
@@ -51,6 +57,12 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
     private IMapController iMapController;
     private DatabaseController dc;
 
+    // Listening lists to get locations of QRCodes and the user
+    private ListeningList<UserOwnedQRCode> nearbyCodes;
+    private ListeningList<GeoLocation>     user_location;
+
+    private MyLocationNewOverlay myLocation;
+
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +84,8 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
         dc = new DatabaseController();
 
         // Create ListeningLists to read location data into
-        ListeningList<UserOwnedQRCode> nearbyCodes = new ListeningList<>(); // List for QRCodes near the user
-        ListeningList<GeoLocation> locations = new ListeningList<>(); // List for the user's current location
+        nearbyCodes = new ListeningList<>();
+        user_location = new ListeningList<>();
 
         // Specify what happens when a nearby QRCode is retrieved from the database
         nearbyCodes.setOnAddListener(new OnAddListener<UserOwnedQRCode>() {
@@ -83,23 +95,28 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
                 // Yeet QRCodes the map.
                 for (UserOwnedQRCode userOwnedQRCode : listeningList) {
                     GeoLocation location = userOwnedQRCode.getLocation();
-                    mapController.setMarker(location, map, location.getDescription(), true);
+                    mapController.setMarkerQR(location, map, location.getDescription());
                 }
             }
         });
 
-        // Specify what happens once we receive current location data from a provider.
-        //Note, if you cut and paste this code to use for dynamic location updates, be mindful that you may end up with duplicate qr code map markers.
-        //  might be able to fix this by clearing the map overlays in the nearbyCodes onAdd.
-        locations.setOnAddListener(listeningList -> {
+        // Read the user's current location
+        user_location.setOnAddListener(listeningList -> {
             iMapController.setCenter( listeningList.get(0).toGeoPoint() );
-            mapController.setMarker(listeningList.get(0), map, "Current location", false);
 
             // Use our location to find nearby QRCodes
             dc.readNearbyCodes(listeningList.get(0), nearbyCodes);
         });
 
-        mapController.getLocation(locations);
+        // Get the user location once to center map and find nearby QR Codes
+        mapController.getLocation(user_location);
+
+        // Users location is marked by this overlay
+        myLocation = new MyLocationNewOverlay(new GpsMyLocationProvider(this), map);
+        myLocation.setPersonIcon(BitmapFactory.decodeResource( getResources(), R.drawable.pindrop));
+
+        myLocation.enableMyLocation();
+        map.getOverlays().add(myLocation);
     }
 
     @SuppressLint("MissingSuperCall")
@@ -111,10 +128,14 @@ public class MapActivity extends AppCompatActivity implements /*LocationListener
 
     public void onResume () {
         super.onResume();
+        myLocation.enableMyLocation();
+        myLocation.onResume();
         map.onResume();
     }
     public void onPause () {
         super.onPause();
+        myLocation.disableMyLocation();
+        myLocation.onPause();
         map.onPause();  //Compass
     }
 }
